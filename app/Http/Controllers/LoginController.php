@@ -18,7 +18,7 @@ class LoginController extends Controller
 
     public function index()
     {
-        return view('login');
+        return view('auth.login');
     }
 
     public function __construct(AuthService $authService)
@@ -30,12 +30,14 @@ class LoginController extends Controller
     {
         $username = $request->input('username');
         $password = $request->input('password');
+        $remember_me = $request->input('remember_me', false); // Default to false if not provided
         try {
-            $result = $this->authService->checkLogin($username, $password);
-
+            // Pass the "remember" parameter to the authService
+            $result = $this->authService->checkLogin($username, $password, $remember_me);
             if ($result['success']) {
                 return response()->json([
-                    'success' => true
+                    'success' => true,
+                    'message' => "Success login, Welcome " . $username
                 ], 200);
             } else {
                 return response()->json([
@@ -58,5 +60,6 @@ class LoginController extends Controller
             ], 500);
         }
     }
+
 
 }

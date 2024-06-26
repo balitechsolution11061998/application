@@ -6,6 +6,7 @@ use App\Models\QueryPerformanceLog;
 use App\Services\Order\OrderService;
 use App\Services\Rcv\RcvService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class HomeController extends Controller
 {
@@ -24,8 +25,8 @@ class HomeController extends Controller
         $this->middleware('auth');
 
     }
-
     public function index(){
+
         return view('home');
     }
 
@@ -36,7 +37,7 @@ class HomeController extends Controller
         try {
             $filterDate = $request->filterDate;
             $filterSupplier = $request->filterSupplier;
-            $total = $this->orderService->countDataPoPerDays($filterDate, $filterSupplier);
+            $data = $this->orderService->countDataPoPerDays($filterDate, $filterSupplier);
 
             // Calculate execution time and memory usage
             $executionTime = microtime(true) - $startTime;
@@ -52,7 +53,7 @@ class HomeController extends Controller
 
             return response()->json([
                 'success' => true,
-                'total' => $total,
+                'data' => $data,
                 'execution_time' => $executionTime,
                 'memory_usage' => $memoryUsage
             ]);

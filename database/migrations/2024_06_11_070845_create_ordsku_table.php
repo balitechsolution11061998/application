@@ -24,6 +24,7 @@ return new class extends Migration
             $table->double('vat_cost')->nullable();
             $table->integer('luxury_cost')->nullable();
             $table->integer('qty_ordered')->nullable();
+            $table->integer('qty_fulfilled')->nullable();
             $table->integer('qty_received')->nullable();
             $table->integer('unit_discount')->nullable();
             $table->integer('unit_permanent_discount')->nullable();

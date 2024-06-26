@@ -28,7 +28,7 @@ return new class extends Migration
             $table->integer('supplier');
             $table->string('sup_name', 191)->collation('utf8mb4_unicode_ci');
             $table->string('comment_desc', 191)->collation('utf8mb4_unicode_ci');
-            $table->string('status', 191)->collation('utf8mb4_unicode_ci');
+            $table->string('status', 191)->collation('utf8mb4_unicode_ci')->nullable();
             $table->bigInteger('sub_total')->nullable();
             $table->bigInteger('sub_total_vat_cost')->nullable();
             $table->double('average_service_level')->nullable();;

@@ -8,7 +8,7 @@
     <title>Login</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="{{ asset('css/toastr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/toastify.min.css') }}">
 
     <style>
@@ -161,7 +161,7 @@
     </section>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{{ asset('js/toastr.min.js') }}"></script>
     <script src="{{ asset('js/toastify-js.js') }}"></script>
 
 
@@ -177,6 +177,8 @@
 
                 var username = $("#username").val();
                 var password = $("#password").val();
+                var remember_me = $("#remember_me").val();
+
                 var token = $("meta[name='csrf-token']").attr("content");
 
                 if (username.length == "") {

@@ -1,7 +1,7 @@
 <!--begin::Logo-->
 <div class="app-sidebar-logo px-6" id="kt_app_sidebar_logo">
 	<!--begin::Logo image-->
-	<a href="{{ route('dashboard') }}">
+	<a href="{{ route('home') }}">
         <div class="app-sidebar-logo-default d-flex align-items-center theme-light-show">
             <img alt="Logo" src="{{ asset(config('settings.KT_APP_LOGO', 'assets/media/logos/m-mart.svg')) }}" class="h-40px app-sidebar-logo-default" />
             <div class="ms-3 app-sidebar-logo-default">

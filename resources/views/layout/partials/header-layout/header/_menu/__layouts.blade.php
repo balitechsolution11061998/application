@@ -14,7 +14,7 @@
 					<!--begin:Menu item-->
 					<div class="menu-item p-0 m-0">
 						<!--begin:Menu link-->
-						<a href="{{ route('dashboard') }}" class="menu-link">
+						<a href="{{ route('home') }}" class="menu-link">
 							<span class="menu-bullet">
 								<span class="bullet bullet-dot bg-gray-300i h-6px w-6px"></span>
 							</span>
@@ -26,7 +26,7 @@
 					<!--begin:Menu item-->
 					<div class="menu-item p-0 m-0">
 						<!--begin:Menu link-->
-						<a href="{{ route('dashboard') }}" class="menu-link">
+						<a href="{{ route('home') }}" class="menu-link">
 							<span class="menu-bullet">
 								<span class="bullet bullet-dot bg-gray-300i h-6px w-6px"></span>
 							</span>
@@ -38,7 +38,7 @@
 					<!--begin:Menu item-->
 					<div class="menu-item p-0 m-0">
 						<!--begin:Menu link-->
-						<a href="{{ route('dashboard') }}" class="menu-link">
+						<a href="{{ route('home') }}" class="menu-link">
 							<span class="menu-bullet">
 								<span class="bullet bullet-dot bg-gray-300i h-6px w-6px"></span>
 							</span>
@@ -50,7 +50,7 @@
 					<!--begin:Menu item-->
 					<div class="menu-item p-0 m-0">
 						<!--begin:Menu link-->
-						<a href="{{ route('dashboard') }}" class="menu-link">
+						<a href="{{ route('home') }}" class="menu-link">
 							<span class="menu-bullet">
 								<span class="bullet bullet-dot bg-gray-300i h-6px w-6px"></span>
 							</span>
@@ -69,7 +69,7 @@
 					<!--begin:Menu item-->
 					<div class="menu-item p-0 m-0">
 						<!--begin:Menu link-->
-						<a href="{{ route('dashboard') }}" class="menu-link">
+						<a href="{{ route('home') }}" class="menu-link">
 							<span class="menu-bullet">
 								<span class="bullet bullet-dot bg-gray-300i h-6px w-6px"></span>
 							</span>
@@ -81,7 +81,7 @@
 					<!--begin:Menu item-->
 					<div class="menu-item p-0 m-0">
 						<!--begin:Menu link-->
-						<a href="{{ route('dashboard') }}" class="menu-link">
+						<a href="{{ route('home') }}" class="menu-link">
 							<span class="menu-bullet">
 								<span class="bullet bullet-dot bg-gray-300i h-6px w-6px"></span>
 							</span>
@@ -93,7 +93,7 @@
 					<!--begin:Menu item-->
 					<div class="menu-item p-0 m-0">
 						<!--begin:Menu link-->
-						<a href="{{ route('dashboard') }}" class="menu-link">
+						<a href="{{ route('home') }}" class="menu-link">
 							<span class="menu-bullet">
 								<span class="bullet bullet-dot bg-gray-300i h-6px w-6px"></span>
 							</span>
@@ -105,7 +105,7 @@
 					<!--begin:Menu item-->
 					<div class="menu-item p-0 m-0">
 						<!--begin:Menu link-->
-						<a href="{{ route('dashboard') }}" class="menu-link">
+						<a href="{{ route('home') }}" class="menu-link">
 							<span class="menu-bullet">
 								<span class="bullet bullet-dot bg-gray-300i h-6px w-6px"></span>
 							</span>
@@ -117,7 +117,7 @@
 					<!--begin:Menu item-->
 					<div class="menu-item p-0 m-0">
 						<!--begin:Menu link-->
-						<a href="{{ route('dashboard') }}" class="menu-link">
+						<a href="{{ route('home') }}" class="menu-link">
 							<span class="menu-bullet">
 								<span class="bullet bullet-dot bg-gray-300i h-6px w-6px"></span>
 							</span>
@@ -137,7 +137,7 @@
 					<div class="fs-6 fw-bold text-gray-800">Layout Builder</div>
 					<div class="fs-7 fw-semibold text-muted">Customize, preview and export</div>
 				</div>
-				<a href="{{ route('dashboard') }}" class="btn btn-sm btn-primary fw-bold">Try Builder</a>
+				<a href="{{ route('home') }}" class="btn btn-sm btn-primary fw-bold">Try Builder</a>
 			</div>
 			<!--end:Layout Builder-->
 		</div>

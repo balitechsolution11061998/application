@@ -22,6 +22,7 @@ return new class extends Migration
             $table->date('not_before_date')->nullable();
             $table->date('not_after_date')->nullable();
             $table->date('approval_date')->nullable();
+            $table->date('release_date')->nullable();
             $table->string('approval_id', 191)->nullable();
             $table->date('cancelled_date')->nullable();
             $table->string('canceled_id', 191)->nullable();

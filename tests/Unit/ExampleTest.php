@@ -20,42 +20,33 @@ class ExampleTest extends TestCase
     public function test_insert_order_through_api(): void
     {
         // Replace with your actual API endpoint
-        // Replace with your actual API endpoint
-        $apiEndpoint = 'https://application.test/api/po/store';
+        $apiEndpoint = 'https://application-all.test/api/po/store';
 
         // Initialize an empty array to store all orders
-
-
-        // Generate 10 sets of order data
-        $faker = Faker::create();
         $allOrders = [];
-
-
-        // Set the not after date to a random date within 30 days after the current date
-
-        $startDate = date('Y-01-01'); // First day of the current year
-        $currentDate = date('Y-m-d');
-        $currentDatePlus30 = date('Y-m-d', strtotime($currentDate . ' +1 days'));
         $orderNo = 1;
+        $faker = Faker::create();
+
+        // Set the start date to the beginning of the current year
+        $startDate = date('Y-01-01');
+        $currentDatePlus30 = date('Y-m-d', strtotime('+30 days'));
+
         // Loop through each day from the start date until 30 days from the current date
         for ($date = $startDate; $date <= $currentDatePlus30; $date = date('Y-m-d', strtotime($date . ' +1 day'))) {
-            $notAfterDate = date('Y-m-d', strtotime($date . ' +30 days'));
-
-            // Generate 2 data entries for each date
-            for ($entry = 1; $entry <= 2; $entry++) {
+            // Generate order data for each date
+            for ($entry = 1; $entry <= 20; $entry++) { // Adjust entry count as needed
                 $orderNumbers = [];
-                $randomLimit = mt_rand(1, 100);
 
                 // Generate unique order numbers
-                for ($i = 1; $i <= 10; $i++) {
+                for ($i = 1; $i <= 30; $i++) { // Adjust number of unique orders per day
                     $orderNumbers[] = ((int)str_replace('-', '', $date) * 100) + ($entry * 10) + $i;
                 }
 
                 // Randomly select 2 to 9 order numbers to duplicate
-                $duplicates = $faker->randomElements($orderNumbers, mt_rand(2, 9));
+                $duplicates = $faker->randomElements($orderNumbers, mt_rand(2, min(9, count($orderNumbers))));
 
                 // Generate order data for each set
-                for ($i = 1; $i <= 10; $i++) {
+                foreach ($orderNumbers as $orderNumber) {
                     $sku = mt_rand(1000, 1000000); // Example: SKU_2024-01-01_1_1, SKU_2024-01-01_1_2, ...
                     $upc = mt_rand(1000, 1000000); // Example: UPC_2024-01-01_1_1, UPC_2024-01-01_1_2, ...
 
@@ -84,7 +75,7 @@ class ExampleTest extends TestCase
                         'status_ind' => 10,
                         'written_date' => $date,
                         'not_before_date' => $date,
-                        'not_after_date' => $notAfterDate,
+                        'not_after_date' => $currentDatePlus30,
                         'approval_date' => $date,
                         'approval_id' => '123',
                         'cancelled_date' => null,
@@ -115,43 +106,31 @@ class ExampleTest extends TestCase
 
                     $allOrders[] = $orderData; // Add the order data to the array
                 }
-
-                // Duplicate the selected order numbers
-                foreach ($duplicates as $duplicateOrderNo) {
-                    // Duplicate the corresponding order data
-                    $duplicateData = array_filter($allOrders, function ($order) use ($duplicateOrderNo) {
-                        return $order['order_no'] == $duplicateOrderNo;
-                    });
-
-                    // Add duplicated order data to the array
-                    foreach ($duplicateData as $data) {
-                        $allOrders[] = $data;
-                    }
-                }
             }
         }
-        $allOrders = array_map(function ($order) {
-            return (object) $order;
-        }, $allOrders);
 
+        // Optionally, output $allOrders for debugging
+        // dd($allOrders);
 
+        // Transform $allOrders into objects if needed (commented out as per your requirement)
+        // $allOrders = array_map(function ($order) {
+        //     return (object) $order;
+        // }, $allOrders);
 
+        // Fake the HTTP response from the API endpoint
         Http::fake([
             $apiEndpoint => Http::response(['status' => 'success'], 200)
         ]);
 
-        // Send a POST request to the API endpoint
+        // Send a POST request to the API endpoint with JSON-encoded $allOrders
         $response = $this->postJson($apiEndpoint, $allOrders);
 
-
-
-        dd($response);
-        $message = $response->json('message');
         // Assert that the request was successful
-        $response->assertStatus(200)
+        $response->assertStatus(201) // Adjust status as per your API response status
             ->assertJson(['status' => 'success']);
 
-        // Optionally, check if the data was inserted into the database (assuming you have an 'orders' table)
-        $this->assertDatabaseHas('orders', $orderData);
+        // Optionally, assert that the data was inserted into the database
+        // Adjust 'orders' to match your database table name and $orderData to match your expected data
+        // $this->assertDatabaseHas('orders', $orderData);
     }
 }

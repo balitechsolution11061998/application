@@ -51,5 +51,14 @@ class OrderServiceImplement extends ServiceApi implements OrderService{
         }
     }
 
+    public function data($filterDate,$filterSupplier){
+        try {
+            return $this->mainRepository->data($filterDate, $filterSupplier);
+        } catch (Exception $exception) {
+            Log::error($exception);
+            return null;
+        }
+    }
+
     // Define your custom methods :)
 }

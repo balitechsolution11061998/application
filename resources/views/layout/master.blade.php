@@ -42,6 +42,10 @@
     @stack('styles')
     <link rel="stylesheet" href="{{ asset('css/introjs.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/toastify.min.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
     <!--end::Javascript-->
 </head>
 <!--end::Head-->
@@ -75,6 +79,9 @@
 
 {{-- custome js --}}
 <script src="{{ asset('js/intro.min.js') }}"></script>
+<script src="{{ asset('js/toastr.min.js') }}"></script>
+<script src="{{ asset('js/toastify-js.js') }}"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <!--end::Custom Javascript-->
 @stack('scripts')

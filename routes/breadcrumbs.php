@@ -5,8 +5,13 @@ use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 
 // Dashboard
 Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
-    $trail->push('Dashboard', route('example.dashboard.default'));
+    $trail->push('Dashboard', route('home'));
 });
+
+Breadcrumbs::for('order', function (BreadcrumbTrail $trail) {
+    $trail->push('Order', route('po.index'));
+});
+
 // Dashboard > Default
 Breadcrumbs::for('dashboard.default', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');

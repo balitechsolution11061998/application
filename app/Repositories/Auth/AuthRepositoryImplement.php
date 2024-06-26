@@ -20,7 +20,7 @@ class AuthRepositoryImplement extends Eloquent implements AuthRepository{
         $this->model = $model;
     }
 
-    public function findActiveUserByUsername($username,$password)
+    public function findActiveUserByUsername($username,$password,$remember_me)
     {
         return $this->model::where('username', $username)->where('status', 'y')->first();
     }

@@ -68,29 +68,28 @@ class DatabaseSeeder extends Seeder
         }
 
            // // Insert data into suppliers table
-           $faker = Faker::create();
+           $faker = Faker::create('id_ID'); // Set locale to Indonesia
 
            for ($i = 0; $i < 5000; $i++) {
-               Supplier::create([
-                   'supp_code' => $faker->unique()->numberBetween(10000, 99999),
-                   'supp_name' => $faker->company,
-                   'terms' => $faker->numberBetween(1, 60),
-                   'contact_name' => $faker->name,
-                   'contact_phone' => $faker->phoneNumber,
-                   'contact_fax' => $faker->phoneNumber,
-                   'email' => $faker->unique()->safeEmail,
-                   'address_1' => $faker->streetAddress,
-                   'address_2' => $faker->secondaryAddress,
-                   'city' => $faker->city,
-                   'post_code' => $faker->postcode,
-                   'tax_ind' => $faker->randomElement(['Y', 'N']),
-                   'tax_no' => $faker->randomNumber(9, true),
-                   'retur_ind' => $faker->randomElement(['Y', 'N']),
-                   'consig_ind' => $faker->randomElement(['Y', 'N']),
-                   'status' => $faker->randomElement(['A', 'I']),
-               ]);
-           }
-
+                Supplier::create([
+                    'supp_code' => $faker->unique()->numberBetween(1, 5000),
+                    'supp_name' => $faker->company,
+                    'terms' => $faker->numberBetween(1, 60),
+                    'contact_name' => $faker->name,
+                    'contact_phone' => $faker->phoneNumber,
+                    'contact_fax' => $faker->phoneNumber,
+                    'email' => $faker->unique()->safeEmail,
+                    'address_1' => $faker->streetAddress,
+                    'address_2' => $faker->address, // Changed to a general address format
+                    'city' => $faker->city,
+                    'post_code' => $faker->postcode,
+                    'tax_ind' => $faker->randomElement(['Y', 'N']),
+                    'tax_no' => $faker->randomNumber(9, true),
+                    'retur_ind' => $faker->randomElement(['Y', 'N']),
+                    'consig_ind' => $faker->randomElement(['Y', 'N']),
+                    'status' => $faker->randomElement(['A', 'I']),
+                ]);
+            }
 
 
 

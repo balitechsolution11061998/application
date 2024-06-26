@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\ErrorLog;
 use App\Models\OrdHead;
 use App\Models\RcvDetail;
 use App\Models\RcvHead;
@@ -16,32 +17,24 @@ class RcvController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validate the request to ensure it's an array
             $requestData = $request->all();
-
-            if (!is_array($requestData)) {
-                throw new \Exception('Request data is not an array');
-            }
 
             $chunkSize = 100;
 
-            // Chunk the data and insert in batches
             collect($requestData)->chunk($chunkSize)->each(function ($chunk) {
                 DB::table('temp_rcv')->insert($chunk->toArray());
             });
 
-            // Select data from temp_rcv where it does not exist in rcvhead
-            $rcvNotExists = DB::select("SELECT * FROM temp_rcv a");
-
-            // Ensure $rcvNotExists is an array
+            $rcvNotExists = DB::table('temp_rcv')->get()->toArray();
+            // Ensure $rcvNotExists is an array of objects or associative arrays
             if (!is_array($rcvNotExists)) {
-                throw new \Exception('Data retrieved from temp_rcv is not an array');
+                return throw new \Exception('Data retrieved from temp_rcv is not an array');
             }
 
             $datas = collect($rcvNotExists);
 
-            // Store data to rcvhead and rcvdetail
             foreach ($datas->groupBy('receive_no') as $data) {
+
                 $totalServiceLevel = 0;
                 $sub_total = 0;
                 $sub_total_vat_cost = 0;
@@ -66,7 +59,7 @@ class RcvController extends Controller
                         "supplier" => $data[0]->supplier,
                         "sup_name" => $data[0]->sup_name,
                         "comment_desc" => $data[0]->comment_desc,
-                        "status" => "Progress",
+                        // Add other columns as needed
                     ]
                 );
 
@@ -104,14 +97,13 @@ class RcvController extends Controller
                     'sub_total_vat_cost' => $sub_total_vat_cost,
                 ]);
 
-                $podata = OrdHead::where('order_no', $data[0]->order_no)->first();
-
-                if ($podata != null && $averageServiceLevel == 100) {
+                $podata =  OrdHead::where('order_no', $data[0]->order_no)->first();
+                if($podata != null && $averageServiceLevel == 100){
                     $podata->update([
                         'status' => 'Completed',
                         'estimated_delivery_date' => $data[0]->receive_date,
                     ]);
-                } else if ($podata != null && $averageServiceLevel < 100) {
+                }else if($podata != null && $averageServiceLevel < 100){
                     $podata->update([
                         'status' => 'Incompleted',
                         'estimated_delivery_date' => $data[0]->receive_date,
@@ -127,18 +119,15 @@ class RcvController extends Controller
                 'message' => 'Data inserted successfully',
             ], 201);
         } catch (\Throwable $th) {
-            Log::error('Error in store method', [
-                'message' => $th->getMessage(),
-                'line' => $th->getLine(),
-                'file' => $th->getFile(),
-                'trace' => $th->getTraceAsString(),
-            ]);
+            return $th->getMessage();
             return response()->json([
                 'success' => false,
-                'message' => $th->getMessage(),
-                'trace' => $th->getTrace()
+                'message' => 'Terjadi kesalahan pada server. Silakan coba lagi nanti.',
+                'trace' => $th->getTrace(),
             ], 409);
         }
     }
+
+
 
 }

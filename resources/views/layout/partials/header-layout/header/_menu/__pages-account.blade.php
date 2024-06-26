@@ -9,7 +9,7 @@
 				<!--begin:Menu item-->
 				<div class="menu-item p-0 m-0">
 					<!--begin:Menu link-->
-					<a href="{{ route('dashboard') }}" class="menu-link">
+					<a href="{{ route('home') }}" class="menu-link">
 						<span class="menu-title">Overview</span>
 					</a>
 					<!--end:Menu link-->
@@ -18,7 +18,7 @@
 				<!--begin:Menu item-->
 				<div class="menu-item p-0 m-0">
 					<!--begin:Menu link-->
-					<a href="{{ route('dashboard') }}" class="menu-link">
+					<a href="{{ route('home') }}" class="menu-link">
 						<span class="menu-title">Settings</span>
 					</a>
 					<!--end:Menu link-->
@@ -27,7 +27,7 @@
 				<!--begin:Menu item-->
 				<div class="menu-item p-0 m-0">
 					<!--begin:Menu link-->
-					<a href="{{ route('dashboard') }}" class="menu-link">
+					<a href="{{ route('home') }}" class="menu-link">
 						<span class="menu-title">Security</span>
 					</a>
 					<!--end:Menu link-->
@@ -36,7 +36,7 @@
 				<!--begin:Menu item-->
 				<div class="menu-item p-0 m-0">
 					<!--begin:Menu link-->
-					<a href="{{ route('dashboard') }}" class="menu-link">
+					<a href="{{ route('home') }}" class="menu-link">
 						<span class="menu-title">Activity</span>
 					</a>
 					<!--end:Menu link-->
@@ -45,7 +45,7 @@
 				<!--begin:Menu item-->
 				<div class="menu-item p-0 m-0">
 					<!--begin:Menu link-->
-					<a href="{{ route('dashboard') }}" class="menu-link">
+					<a href="{{ route('home') }}" class="menu-link">
 						<span class="menu-title">Billing</span>
 					</a>
 					<!--end:Menu link-->
@@ -58,7 +58,7 @@
 				<!--begin:Menu item-->
 				<div class="menu-item p-0 m-0">
 					<!--begin:Menu link-->
-					<a href="{{ route('dashboard') }}" class="menu-link">
+					<a href="{{ route('home') }}" class="menu-link">
 						<span class="menu-title">Statements</span>
 					</a>
 					<!--end:Menu link-->
@@ -67,7 +67,7 @@
 				<!--begin:Menu item-->
 				<div class="menu-item p-0 m-0">
 					<!--begin:Menu link-->
-					<a href="{{ route('dashboard') }}" class="menu-link">
+					<a href="{{ route('home') }}" class="menu-link">
 						<span class="menu-title">Referrals</span>
 					</a>
 					<!--end:Menu link-->
@@ -76,7 +76,7 @@
 				<!--begin:Menu item-->
 				<div class="menu-item p-0 m-0">
 					<!--begin:Menu link-->
-					<a href="{{ route('dashboard') }}" class="menu-link">
+					<a href="{{ route('home') }}" class="menu-link">
 						<span class="menu-title">API Keys</span>
 					</a>
 					<!--end:Menu link-->
@@ -85,7 +85,7 @@
 				<!--begin:Menu item-->
 				<div class="menu-item p-0 m-0">
 					<!--begin:Menu link-->
-					<a href="{{ route('dashboard') }}" class="menu-link">
+					<a href="{{ route('home') }}" class="menu-link">
 						<span class="menu-title">Logs</span>
 					</a>
 					<!--end:Menu link-->

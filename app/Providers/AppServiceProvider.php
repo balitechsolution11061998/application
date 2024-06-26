@@ -10,6 +10,7 @@ use App\Services\Order\OrderService;
 use App\Services\Order\OrderServiceImplement;
 use Illuminate\Database\Schema\Builder;
 use App\Jobs\ExampleJob;
+use Illuminate\Support\Facades\Auth;
 use Inspector\Laravel\Facades\Inspector;
 
 class AppServiceProvider extends ServiceProvider

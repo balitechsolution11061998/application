@@ -40,6 +40,7 @@ class PoController extends Controller
             $datas = collect($poNotExists);
             $totalPo = count($datas);
             foreach ($datas->groupBy('order_no') as $data) {
+
                 $diffCost = DB::table('temp_po as a')
                     ->select('a.order_no', 'a.supplier', 'b.sup_name', 'a.sku', 'a.sku_desc', 'a.unit_cost as cost_po', 'b.unit_cost as cost_supplier')
                     ->join('item_supplier as b', function ($join) {
@@ -65,6 +66,7 @@ class PoController extends Controller
                         "not_before_date" => $data[0]->not_before_date,
                         "not_after_date" => $data[0]->not_after_date,
                         "approval_date" => $data[0]->approval_date,
+                        "release_date"=>date('Y-m-d'),
                         "approval_id" => $data[0]->approval_id,
                         "cancelled_date" => $data[0]->cancelled_date,
                         "canceled_id" => $data[0]->canceled_id,
@@ -281,7 +283,6 @@ class PoController extends Controller
 
 
         } catch (\Throwable $th) {
-            dd($th->getMessage());
             // Save error log
             DB::table('order_log')->insert([
                 'order_no' => $request->order_no ?? null,

@@ -1,4 +1,3 @@
-
 <div class="modal fade" id="mdlForm" aria-hidden="true" role="dialog" aria-hidden="true">
     <!--begin::Modal dialog-->
     <div class="modal-dialog modal-dialog-centered modal-xl"> <!-- Added modal-lg class here -->
@@ -12,7 +11,8 @@
                 <!--begin::Print button-->
                 <!--end::Print button-->
                 <!--begin::Close-->
-                <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close" id="dismissModal">
+                <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal" aria-label="Close"
+                    id="dismissModal">
                     <i class="ki-duotone ki-cross fs-1"></i>
                 </div>
                 <!--end::Close-->
@@ -22,11 +22,9 @@
             <div class="modal-body scroll-y" id="mdlFormContent">
                 <!--begin::Form-->
 
-                <!--end::Form-->
+                <!--end::Modal body-->
             </div>
-            <!--end::Modal body-->
+            <!--end::Modal content-->
         </div>
-        <!--end::Modal content-->
+        <!--end::Modal dialog-->
     </div>
-    <!--end::Modal dialog-->
-</div>

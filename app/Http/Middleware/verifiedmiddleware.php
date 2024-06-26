@@ -22,14 +22,13 @@ class verifiedmiddleware
 
         try {
             if (Auth::user() != null) {
-                // if (Auth::check() && Auth::user()->hasRole('vendor')) {
-                //     return redirect('/');
-                // }
+
                 foreach (Auth::user()->allPermissions() as $permission) {
                     Gate::define($permission->name, function () {
                         return true;
                     });
                 }
+
                 View::share('authVariable', Auth::user());
 
                 return $next($request);

@@ -444,13 +444,13 @@ if (!function_exists('renderMenus')) {
         return theme()->renderMenus($menus);
     }
 }
-
 if (!function_exists('permissionExist')) {
     /**
      * Render menus from settings
      *
      * @return string
      */
+
     function permissionExist(array $permission)
     {
         return theme()->permissionExist($permission);

@@ -14,6 +14,7 @@ class HelperServiceProvider extends ServiceProvider
     public function register()
     {
         $helperFiles = glob(app_path('Helpers/Skin').'/*.php');
+
         foreach ($helperFiles as $file) {
             require_once $file;
         }

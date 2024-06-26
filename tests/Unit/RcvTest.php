@@ -16,27 +16,27 @@ class RcvTest extends TestCase
      */
     public function test_insert_order_through_api(): void
     {
-        $apiEndpointRcv = 'https://application.test/api/rcv/store';
+        $apiEndpointRcv = 'https://application-all.test/api/rcv/store';
         $faker = Faker::create();
         $allRcv = [];
 
         // Set the not after date to a random date within 30 days after the current date
         $startDate = date('Y-01-01'); // First day of the current year
         $currentDate = date('Y-m-d');
-        $currentDatePlus30 = date('Y-m-d', strtotime($currentDate . ' +30 days'));
+        $currentDatePlus30 = date('Y-m-d', strtotime($currentDate));
         $receiveNo = 1;
         $orderNo = 1;
         // Loop through each day from the start date until 30 days from the current date
         for ($date = $startDate; $date <= $currentDatePlus30; $date = date('Y-m-d', strtotime($date . ' +1 day'))) {
-            $notAfterDate = date('Y-m-d', strtotime($date . ' +30 days'));
+            $notAfterDate = date('Y-m-d', strtotime($date));
 
             // Generate 2 data entries for each date
-            for ($entry = 1; $entry <= 2; $entry++) {
+            for ($entry = 1; $entry <= 10; $entry++) {
                 $orderNumbers = [];
                 $randomLimit = mt_rand(1, 100);
 
                 // Generate unique order numbers
-                for ($i = 1; $i <= 10; $i++) {
+                for ($i = 1; $i <= 20; $i++) {
                     $orderNumbers[] = ((int)str_replace('-', '', $date) * 100) + ($entry * 10) + $i;
                 }
 
@@ -111,7 +111,9 @@ class RcvTest extends TestCase
                 }
             }
         }
-
+        Http::fake([
+            $apiEndpointRcv => Http::response(['status' => 'success'], 200)
+        ]);
         // Send the data to the API endpoint
         $response = $this->postJson($apiEndpointRcv, $allRcv);
         dd($response);

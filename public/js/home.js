@@ -11,6 +11,12 @@ document.addEventListener("DOMContentLoaded", function () {
                             position: "right",
                             title: "Purcase Order", // Add the title here
                         },
+                        {
+                            element: "#cardCountRcv",
+                            intro: "This card is used to track the number of Receivings (RCVs) processed through the system in terms of currency (rupiah) and quantity (qty).",
+                            position: "right",
+                            title: "Receivings", // Add the title here
+                        },
                     ],
                     tooltipClass: "custom-tooltip-class",
                 })
@@ -120,6 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 fetchCountPo(statusData,dateRange);
                 fetchCountPoDays(statusData,dateRange);
                 fetchCountRcv(statusData,dateRange);
+                fetchCountRcvDays(statusData,dateRange);
 
                 // Close modal after processing
                 $("#mdlForm").modal("hide");
@@ -154,21 +161,21 @@ async function fetchCountPoDays(status,filterDate) {
     // Populate categories and seriesData arrays based on the fetched data
     // Example: Assuming your data contains objects with 'date' and 'count' properties
     if(status == "rupiah"){
-        data.total.forEach(item => {
+        data.data.forEach(item => {
             categories.push(item.tanggal); // Push date to categories array
             seriesData.push(formatRupiah(item.totalCost)); // Push count to seriesData array
         });
     }else if(status=="qty"){
         console.log(categories,seriesData,status,data.total,'seriesData');
 
-        data.total.forEach(item => {
+        data.data.forEach(item => {
             categories.push(item.tanggal); // Push date to categories array
             seriesData.push(formatRupiah(item.totalPo)); // Push count to seriesData array
         });
     }else{
-        console.log(categories,seriesData,status,data.total,'seriesData1');
+        console.log(categories,seriesData,status,data,'seriesData1');
 
-        data.total.forEach(item => {
+        data.data.forEach(item => {
             categories.push(item.tanggal); // Push date to categories array
             seriesData.push(formatRupiah(item.totalCost)); // Push count to seriesData array
         });
@@ -433,7 +440,7 @@ async function fetchCountRcvDays(status,filterDate) {
             seriesData.push(formatRupiah(item.totalCostRcv)); // Push count to seriesData array
         });
     }else if(status=="qty"){
-
+        console.log("masuk sini ya");
         data.total.dailyCounts.forEach(item => {
             categories.push(item.tanggal); // Push date to categories array
             seriesData.push(formatRupiah(item.totalRcv)); // Push count to seriesData array
