@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\Supplier;
 use Faker\Factory as Faker;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,7 +17,33 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $faker = Faker::create();
+         $faker = Faker::create('id_ID');
+
+         // Daftar nama departemen dalam bahasa Indonesia
+
+
+         $departments = [
+            'Keuangan',
+            'Sumber Daya Manusia',
+            'Pemasaran',
+            'Penjualan',
+            'Teknologi Informasi',
+            'Operasional',
+            'Produksi',
+            'Riset dan Pengembangan',
+            'Logistik',
+            'Layanan Pelanggan'
+        ];
+
+        foreach ($departments as $department) {
+            DB::table('departments')->insert([
+                'kode_department' => Str::random(10),
+                'name' => $department,
+                'descriptions' => Str::random(20),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
         $this->call(LaratrustSeeder::class);
         // Seed users
@@ -28,7 +56,7 @@ class DatabaseSeeder extends Seeder
                 'password' => bcrypt('t34m1tmm'),
                 'region' => '1',
                 'phone_number' => '1',
-                'link_sync' => 'https://supplier.m-mart.co.id',
+                'status' => 'y',
             ],
             [
                 'username' => '219811991',
@@ -37,7 +65,7 @@ class DatabaseSeeder extends Seeder
                 'password' => bcrypt('Superman2000@'),
                 'region' => '1',
                 'phone_number' => '62895343866012',
-                'link_sync' => 'https://supplier.m-mart.co.id',
+                'status' => 'y',
             ]
 
         ];
@@ -48,8 +76,8 @@ class DatabaseSeeder extends Seeder
                 'email' => $data['email'], // Parse and extract emails
                 'phone_number' => $data['phone_number'],
                 'password' => $data['password'], // Set default password
+                'status' => $data['status'],
                 'region' => '1', // Assuming default region is '1'
-                'link_sync' => $data['link_sync'],
             ]);
             $user = User::where('email', $data['email'])->first();
 

@@ -270,18 +270,7 @@ function confirmPo(event) {
                             <th><label for="expiredDate" class="form-label">Expired Date</label></th>
                             <td><input type="text" class="form-control" id="expiredDate" name="expired_date" disabled></td>
                         </tr>
-                        <tr>
-                            <th>Total (Before PPN)</th>
-                            <td id="subTotalBeforePPN">${formatRupiah(subtotal)}</td>
-                        </tr>
-                        <tr>
-                            <th>PPN</th>
-                            <td id = "subTotalPPN">${formatRupiah(Math.round(ppn))}</td>
-                        </tr>
-                        <tr>
-                            <th>Sub Total (after PPN - Discount)</th>
-                            <td id="subTotalPPNDisc">${formatRupiah(Math.round(subtotalAfterPPNAndDiscount))}</td>
-                        </tr>
+
                     </table>
                      <div class="d-flex flex-column">
                             <button type="button" class="btn btn-success w-100 mb-2">
@@ -426,30 +415,10 @@ function decreaseQty(upc) {
 
     if (currentQty > 0) {
         input.value = currentQty - 1;
-        recalculateSubtotal(upc);
     }
 }
 
-function recalculateSubtotal(upc) {
-    let input = document.getElementById(`qty-fulfillable-${upc}`);
-    let unitCostSpan = document.getElementById(`subtotal-${upc}`).innerText;
-    let currentQty = parseInt(input.value, 10);
 
-    let cleanedUnitCostText = unitCostSpan.split('.').join("");
-
-    // Log currentQty and unitCost to debug
-    console.log('currentQty:', currentQty, 'unitCost:', cleanedUnitCostText);
-
-
-    let itemSubtotal = currentQty * cleanedUnitCostText;
-    let ppnSubtotalPPN = parseInt(itemSubtotal * 0.11);
-    let totalAfterPPN = itemSubtotal + ppnSubtotalPPN;
-
-    document.getElementById('subTotalBeforePPN').innerText = formatRupiah(itemSubtotal);
-    document.getElementById('subTotalPPN').innerText = formatRupiah(ppnSubtotalPPN);
-    document.getElementById('subTotalPPNDisc').innerText = formatRupiah(totalAfterPPN);
-
-}
 
 
 

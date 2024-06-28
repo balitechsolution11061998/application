@@ -202,6 +202,16 @@ return [
             'iconPath'       => 5,
             'route'          => 'po.index',
         ],
+        [
+            'label'          => 'User',
+            'type'           => 'item',
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'ki',
+            'iconName'       => 'ki-element-11',
+            'iconPath'       => 4,
+            'route'          => 'users.index',
+        ],
 
         [
             'label' => 'Pages',

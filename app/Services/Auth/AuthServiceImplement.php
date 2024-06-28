@@ -36,7 +36,6 @@ class AuthServiceImplement extends ServiceApi implements AuthService
     public function checkLogin($username, $password, $remember_me)
     {
         $user = $this->mainRepository->findActiveUserByUsername($username, $password, $remember_me);
-
         // If user is found and the password matches
         if ($user && Hash::check($password, $user->password)) {
             // Log in the user with the "remember me" option

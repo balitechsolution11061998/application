@@ -39,6 +39,14 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
 
     });
 
+    Route::prefix('users')->name('users.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'UserController@index')->name('index');
+    });
+
+    Route::prefix('departments')->name('departments.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/data', 'DepartmentController@data')->name('data');
+    });
+
 });
 
 
