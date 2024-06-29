@@ -438,7 +438,6 @@
     @include('modals.modal')
     <!--end::Row-->
     @push('scripts')
-        <script src="{{ asset('js/ordhead.js') }}"></script>
         <script src="{{ asset('js/formatRupiah.js') }}"></script>
         <script src="{{ asset('js/user.js') }}"></script>
 

@@ -24,6 +24,8 @@ return new class extends Migration
             $table->string('kode_jabatan')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('password')->nullable();
+            $table->string('nik')->nullable();
+            $table->date('join_data')->nullable();
             $table->integer('region')->nullable();
             $table->text('alamat')->nullable();
             $table->text('about_us')->nullable();

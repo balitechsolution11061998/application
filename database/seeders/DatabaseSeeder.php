@@ -50,12 +50,14 @@ class DatabaseSeeder extends Seeder
         $dataUser =
         [
             [
-                'username' => 'administrator',
-                'name' => 'Administrator',
+                'username' => 'sulaksana60',
+                'name' => 'I Wayan Bayu Sulaksana',
                 'email' => 'notification@supplier.m-mart.co.id',
                 'password' => bcrypt('t34m1tmm'),
                 'region' => '1',
                 'phone_number' => '1',
+                'nik' => '11223344',
+                'join_date' => '2022-12-02',
                 'status' => 'y',
             ],
             [

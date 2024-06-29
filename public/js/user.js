@@ -335,7 +335,7 @@ function createUser() {
         }).showToast();
     });
 
-    fetchDepartments
+    fetchDepartments();
 }
 
 function fetchDepartments() {
@@ -363,6 +363,11 @@ function populateDepartments(departments) {
         option.textContent = department.name;  // Assuming each department has a 'name' field
         departmentsDropdown.appendChild(option);
     });
+}
+
+function showError(message) {
+    const errorElement = document.getElementById('departments-error');
+    errorElement.textContent = message;
 }
 
 // Function to generate a random password
