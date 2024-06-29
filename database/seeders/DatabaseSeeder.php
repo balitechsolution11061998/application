@@ -79,6 +79,8 @@ class DatabaseSeeder extends Seeder
                 'phone_number' => $data['phone_number'],
                 'password' => $data['password'], // Set default password
                 'status' => $data['status'],
+                'nik' => $data['nik'],
+                'join_date' => $data['join_date'],
                 'region' => '1', // Assuming default region is '1'
             ]);
             $user = User::where('email', $data['email'])->first();
