@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -28,7 +30,7 @@ class LoginController extends Controller
         $credentials = $request->only('username', 'password');
 
         // If auth failed
-        if (!$token = auth()->guard('api')->attempt($credentials)) {
+        if (!$token = Auth::guard('api')->attempt($credentials)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Username atau Password Anda salah'
@@ -36,18 +38,19 @@ class LoginController extends Controller
         }
 
         // If auth success
-        $user = auth()->guard('api')->user();
+        $user = Auth::guard('api')->user();
 
-        // Get user's roles and permissions using Laratrust
-        $roles = $user->roles->pluck('name'); // Get role names
-        $permissions = $user->permissions->pluck('name'); // Get permission names
+        // Get user's roles' display names and permissions using Laratrust
+        $roleDisplayNames = $user->roles->pluck('display_name'); // Get role display names
+        $permissions = $user->allPermissions()->pluck('name'); // Get permission names
 
         return response()->json([
             'success' => true,
             'user' => $user,
-            'roles' => $roles,
+            'roles' => $roleDisplayNames,
             'permissions' => $permissions,
             'token' => $token
         ], 200);
     }
 }
+
