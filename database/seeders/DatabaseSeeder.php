@@ -66,6 +66,8 @@ class DatabaseSeeder extends Seeder
                 'email' => 'sulaksana60@gmail.com',
                 'password' => bcrypt('Superman2000@'),
                 'region' => '1',
+                'nik' => '11223344',
+                'join_date' => '2022-12-02',
                 'phone_number' => '62895343866012',
                 'status' => 'y',
             ]
