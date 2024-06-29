@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -40,15 +39,15 @@ class LoginController extends Controller
         // If auth success
         $user = Auth::guard('api')->user();
 
-        // Get user's roles' display names and permissions using Laratrust
-        $roleDisplayNames = $user->roles->pluck('display_name'); // Get role display names
-        $permissions = $user->allPermissions()->pluck('name'); // Get permission names
+        // Get user's roles' display names using Laratrust
+        $roles = $user->roles->pluck('display_name'); // Get role display names
+
+        // Add roles to user object
+        $user->roles = $roles;
 
         return response()->json([
             'success' => true,
             'user' => $user,
-            'roles' => $roleDisplayNames,
-            'permissions' => $permissions,
             'token' => $token
         ], 200);
     }
