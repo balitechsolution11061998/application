@@ -40,14 +40,15 @@ class LoginController extends Controller
         $user = Auth::guard('api')->user();
 
         // Get user's roles' display names using Laratrust
-        $roles = $user->roles->pluck('display_name'); // Get role display names
+        $roles = $user->roles->pluck('display_name')->first(); // Get role display names
 
-        // Add roles to user object
-        $user->roles = $roles;
+        // Prepare user data
+        $userData = $user->toArray();
+        $userData['roles'] = $roles;
 
         return response()->json([
             'success' => true,
-            'user' => $user,
+            'user' => $userData,
             'token' => $token
         ], 200);
     }
