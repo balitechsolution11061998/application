@@ -13,34 +13,41 @@ class LoginController extends Controller
      */
     public function __invoke(Request $request)
     {
-        //
-         //set validation
-         $validator = Validator::make($request->all(), [
-            'username'     => 'required',
-            'password'  => 'required'
+        // Set validation
+        $validator = Validator::make($request->all(), [
+            'username' => 'required',
+            'password' => 'required'
         ]);
 
-        //if validation fails
+        // If validation fails
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        //get credentials from request
+        // Get credentials from request
         $credentials = $request->only('username', 'password');
 
-        //if auth failed
-        if(!$token = auth()->guard('api')->attempt($credentials)) {
+        // If auth failed
+        if (!$token = auth()->guard('api')->attempt($credentials)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Username atau Password Anda salah'
             ], 401);
         }
 
-        //if auth success
+        // If auth success
+        $user = auth()->guard('api')->user();
+
+        // Get user's roles and permissions using Laratrust
+        $roles = $user->roles->pluck('name'); // Get role names
+        $permissions = $user->permissions->pluck('name'); // Get permission names
+
         return response()->json([
             'success' => true,
-            'user'    => auth()->guard('api')->user(),
-            'token'   => $token
+            'user' => $user,
+            'roles' => $roles,
+            'permissions' => $permissions,
+            'token' => $token
         ], 200);
     }
 }
