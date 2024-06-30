@@ -197,6 +197,7 @@ function createUser() {
 
     // Append the form content to the element with the ID 'mdlFormContent'
     document.getElementById("mdlFormContent").appendChild(formContent);
+    fetchDepartments();
 
 
     $("#formUser").validate({
@@ -335,7 +336,6 @@ function createUser() {
         }).showToast();
     });
 
-    fetchDepartments();
 }
 
 function fetchDepartments() {

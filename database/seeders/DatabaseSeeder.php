@@ -70,6 +70,17 @@ class DatabaseSeeder extends Seeder
                 'join_date' => '2022-12-02',
                 'phone_number' => '62895343866012',
                 'status' => 'y',
+            ],
+            [
+                'username' => 'karyawan1',
+                'name' => 'Karyawan 1',
+                'email' => 'karyawan1@gmail.com',
+                'password' => bcrypt('karyawan'),
+                'region' => '1',
+                'nik' => '11223344',
+                'join_date' => '2022-12-02',
+                'phone_number' => '0812345789',
+                'status' => 'y',
             ]
 
         ];
