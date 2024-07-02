@@ -74,12 +74,27 @@ function createUser() {
                     <!--end::Label-->
                     <!--begin::Input-->
                     <div class="input-group">
-                        <select id="departments" class="form-control form-control-solid mb-3 mb-lg-0">
+                        <select id="departments" name="departments" class="form-control form-control-solid mb-3 mb-lg-0">
                             <option value="">Select a department</option>
                         </select>
                     </div>
                     <!-- Error message placeholder -->
                     <div id="departments-error" class="text-danger"></div>
+                    <!--end::Input-->
+                </div>
+
+                <div class="fv-row mb-7">
+                    <!--begin::Label-->
+                    <label class="required fw-semibold fs-6 mb-2">Provinsi</label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <div class="input-group">
+                        <select id="cabang" name="cabang" class="form-control form-control-solid mb-3 mb-lg-0">
+                            <option value="">Select a provinsi</option>
+                        </select>
+                    </div>
+                    <!-- Error message placeholder -->
+                    <div id="provinsi-error" class="text-danger"></div>
                     <!--end::Input-->
                 </div>
                  <!--begin::Input group-->
@@ -222,6 +237,9 @@ function createUser() {
                 required: true,
                 equalTo: "#password", // Validation to match password and confirm password
             },
+            departments:{
+                required: true,
+            }
         },
         messages: {
             name: {
@@ -244,6 +262,9 @@ function createUser() {
                 required: "Please confirm your password",
                 equalTo: "Passwords do not match",
             },
+            departments: {
+                required: "Please select departments",
+            },
         },
         errorPlacement: function (error, element) {
             // Custom error placement below the input group
@@ -257,6 +278,8 @@ function createUser() {
                 error.appendTo("#password-error");
             }else if (element.attr("name") === "confirm_password") {
                 error.appendTo("#confirm-password-error");
+            }else if (element.attr("name") === "departments") {
+                error.appendTo("#departments-error");
             }
             else {
                 error.insertAfter(element); // Fallback to default placement
