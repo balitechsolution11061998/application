@@ -24,8 +24,8 @@
                         <!--end::Title-->
                         <!--begin::Illustration-->
                         <div class="py-10 text-center">
-                            <img src="{{ asset(config('settings.KT_APP_LOGO', 'assets/media/logos/m-mart.svg')) }}" class="theme-light-show w-200px" alt="" />
-                            <img src="{{ asset(config('settings.KT_APP_LOGO', 'assets/media/logos/m-mart.svg')) }}" class="theme-dark-show w-200px" alt="" />
+                            <img src="{{ asset(config('settings.KT_APP_LOGO', '/image/logo.png')) }}" class="theme-light-show w-200px" alt="" />
+                            <img src="{{ asset(config('settings.KT_APP_LOGO', '/image/logo.png')) }}" class="theme-dark-show w-200px" alt="" />
                         </div>
                         <!--end::Illustration-->
                     </div>

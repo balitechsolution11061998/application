@@ -20,7 +20,10 @@ return new class extends Migration
             $table->string('photo')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('kode_dept')->nullable();
-            $table->string('kode_cabang')->nullable();
+            $table->unsignedBigInteger('provinsi_id')->nullable();
+            $table->unsignedBigInteger('kabupaten_id')->nullable();
+            $table->unsignedBigInteger('kecamatan_id')->nullable();
+            $table->unsignedBigInteger('kelurahan_id')->nullable();
             $table->string('kode_jabatan')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('password')->nullable();

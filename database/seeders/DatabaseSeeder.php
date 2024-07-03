@@ -55,6 +55,33 @@ class DatabaseSeeder extends Seeder
             echo "Done seeder data Kelurahan... ke " . $key + 1 . "000\n";
         }
 
+        $jabatans = [
+            ['name' => 'President', 'kode_jabatan' => 'PRES'],
+            ['name' => 'Vice President', 'kode_jabatan' => 'VPRES'],
+            ['name' => 'Governor', 'kode_jabatan' => 'GOV'],
+            ['name' => 'Deputy Governor', 'kode_jabatan' => 'DGOV'],
+            ['name' => 'Mayor', 'kode_jabatan' => 'MAYOR'],
+            ['name' => 'Deputy Mayor', 'kode_jabatan' => 'DMAYOR'],
+            ['name' => 'District Head', 'kode_jabatan' => 'DHEAD'],
+            ['name' => 'Sub-district Head', 'kode_jabatan' => 'SDHEAD'],
+            ['name' => 'Department Head', 'kode_jabatan' => 'DEPTHEAD'],
+            ['name' => 'Manager', 'kode_jabatan' => 'MGR'],
+            ['name' => 'Chief', 'kode_jabatan' => 'CHIEF'],
+            ['name' => 'Supervisor', 'kode_jabatan' => 'SUP'],
+            ['name' => 'Team Leader', 'kode_jabatan' => 'TLDR'],
+            ['name' => 'Staff', 'kode_jabatan' => 'STF'],
+            ['name' => 'Assistant', 'kode_jabatan' => 'AST'],
+            // Add more positions as needed
+        ];
+
+        // Chunking the data and inserting in batches
+        $chunkSize = 1000; // Adjust chunk size as needed
+        foreach (array_chunk($jabatans, $chunkSize) as $key => $chunk) {
+            echo "Starting seeder data Jabatan... batch " . ($key + 1) . "\n";
+            DB::table('jabatan')->insert($chunk);
+            echo "Done seeder data Jabatan... batch " . ($key + 1) . "\n";
+        }
+
          $faker = Faker::create('id_ID');
 
          // Daftar nama departemen dalam bahasa Indonesia

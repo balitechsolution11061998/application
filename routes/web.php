@@ -41,12 +41,32 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
 
     Route::prefix('users')->name('users.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/index', 'UserController@index')->name('index');
+        Route::get('/create', 'UserController@create')->name('create');
     });
 
     Route::prefix('departments')->name('departments.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/data', 'DepartmentController@data')->name('data');
     });
 
+    Route::prefix('provinsi')->name('provinsi.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/data', 'ProvinsiController@data')->name('data');
+    });
+
+    Route::prefix('kabupaten')->name('kabupaten.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/data', 'KabupatenController@data')->name('data');
+    });
+
+    Route::prefix('kecamatan')->name('kecamatan.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/data', 'KecamatanController@data')->name('data');
+    });
+
+    Route::prefix('kelurahan')->name('kelurahan.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/data', 'KelurahanController@data')->name('data');
+    });
+
+    Route::prefix('jabatan')->name('jabatan.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/data', 'JabatanController@data')->name('data');
+    });
 });
 
 
