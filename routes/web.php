@@ -42,6 +42,8 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     Route::prefix('users')->name('users.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/index', 'UserController@index')->name('index');
         Route::get('/create', 'UserController@create')->name('create');
+        Route::post('/store','UserController@store')->name('store');
+
     });
 
     Route::prefix('departments')->name('departments.')->namespace('App\Http\Controllers')->group(function () {

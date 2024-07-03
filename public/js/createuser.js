@@ -1,305 +1,329 @@
 $(document).ready(function() {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
     var formContent = document.createElement("div");
     formContent.innerHTML = `
-         <form id="formUser" class="form">
-             <!--begin::Scroll-->
-             <div class="d-flex flex-column scroll-y px-5 px-lg-10" id="kt_modal_add_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header" data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
+    <form id="formUser" class="form">
+        <!--begin::Scroll-->
+        <div class="d-flex flex-column scroll-y px-5 px-lg-10" id="kt_modal_add_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header" data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
 
-                 <!--begin::Input group-->
-                <div class="fv-row mb-7">
-                    <!--begin::Label-->
-                    <label class="required fw-semibold fs-6 mb-2">Name</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <input type="text" name="name" id="name" class="form-control form-control-solid mb-3 mb-lg-0"
-                        placeholder="Enter your name" />
-                    <!-- Error message placeholder -->
-                    <div id="name-error" class="text-danger"></div>
-                    <!--end::Input-->
-                </div>
-                 <!--end::Input group-->
-                 <!--begin::Input group-->
-                <div class="fv-row mb-7">
-                    <!--begin::Label-->
-                    <label class="required fw-semibold fs-6 mb-2">Email</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <input type="email" name="email" id="email" class="form-control form-control-solid mb-3 mb-lg-0"
-                        placeholder="example@domain.com" />
-                    <!-- Error message placeholder -->
-                    <div id="email-error" class="text-danger"></div>
-                    <!--end::Input-->
-                </div>
-                 <!--end::Input group-->
-                <!--begin::Input group for password-->
-               <div class="fv-row mb-7">
-                    <!--begin::Label-->
-                    <label class="required fw-semibold fs-6 mb-2">Password</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <div class="input-group">
-                        <input type="password" name="password" id="password" class="form-control form-control-solid mb-3 mb-lg-0"
-                            placeholder="Enter your password" />
-                        <button type="button" id="generatePassword" class="btn btn-primary btn-sm">
-                            <i class="fas fa-random"></i>
-                        </button>
-                        <button type="button" id="togglePassword" class="btn btn-secondary btn-sm">
-                            <i class="fas fa-eye"></i>
-                        </button>
+            <div class="row">
+                <!-- Column 1 -->
+                <div class="col-md-6">
+                      <!--begin::Input group-->
+                    <div class="fv-row mb-7">
+                        <!--begin::Label-->
+                        <label class="required fw-semibold fs-6 mb-2">Username</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <input type="text" name="username" id="username" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Username" />
+                        <!-- Error message placeholder -->
+                        <div id="username-error" class="text-danger"></div>
+                        <!--end::Input-->
                     </div>
-                    <!-- Error message placeholder -->
-                    <div id="password-error" class="text-danger"></div>
-                    <!--end::Input-->
-                </div>
-                <!--end::Input group-->
-                <div class="fv-row mb-7">
-                    <!--begin::Label-->
-                    <label class="required fw-semibold fs-6 mb-2">Confirm Password</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <div class="input-group">
-                        <input type="password" name="confirm_password" id="confirm_password" class="form-control form-control-solid mb-3 mb-lg-0"
-                            placeholder="Re-enter your password" />
+                    <!--end::Input group-->
+                    <!--begin::Input group-->
+                    <div class="fv-row mb-7">
+                        <!--begin::Label-->
+                        <label class="required fw-semibold fs-6 mb-2">Name</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <input type="text" name="name" id="name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Enter your name" />
+                        <!-- Error message placeholder -->
+                        <div id="name-error" class="text-danger"></div>
+                        <!--end::Input-->
                     </div>
-                    <!-- Error message placeholder -->
-                    <div id="confirm-password-error" class="text-danger"></div>
-                    <!--end::Input-->
-                </div>
-                <div class="fv-row mb-7">
-                    <!--begin::Label-->
-                    <label class="required fw-semibold fs-6 mb-2">Departments</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <div class="input-group">
-                        <select id="departments" name="departments" class="form-control form-control-solid mb-3 mb-lg-0">
-                            <option value="">Select a department</option>
-                        </select>
+                    <!--end::Input group-->
+
+                    <!--begin::Input group-->
+                    <div class="fv-row mb-7">
+                        <!--begin::Label-->
+                        <label class="required fw-semibold fs-6 mb-2">Email</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <input type="email" name="email" id="email" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="example@domain.com" />
+                        <!-- Error message placeholder -->
+                        <div id="email-error" class="text-danger"></div>
+                        <!--end::Input-->
                     </div>
-                    <!-- Error message placeholder -->
-                    <div id="departments-error" class="text-danger"></div>
-                    <!--end::Input-->
-                </div>
+                    <!--end::Input group-->
 
-                <div class="fv-row mb-7">
-                    <!--begin::Label-->
-                    <label class="required fw-semibold fs-6 mb-2">Jabatan</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <div class="input-group">
-                        <select id="jabatan" name="jabatan" class="form-control form-control-solid mb-3 mb-lg-0">
-                            <option value="">Select a jabatan</option>
-                        </select>
+                    <!--begin::Input group for password-->
+                    <div class="fv-row mb-7">
+                        <!--begin::Label-->
+                        <label class="required fw-semibold fs-6 mb-2">Password</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <div class="input-group">
+                            <input type="password" name="password" id="password" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Enter your password" />
+                            <button type="button" id="generatePassword" class="btn btn-primary btn-sm">
+                                <i class="fas fa-random"></i>
+                            </button>
+                            <button type="button" id="togglePassword" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <!-- Error message placeholder -->
+                        <div id="password-error" class="text-danger"></div>
+                        <!--end::Input-->
                     </div>
-                    <!-- Error message placeholder -->
-                    <div id="jabatan-error" class="text-danger"></div>
-                    <!--end::Input-->
+                    <!--end::Input group-->
+
+                    <div class="fv-row mb-7">
+                        <!--begin::Label-->
+                        <label class="required fw-semibold fs-6 mb-2">Confirm Password</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <div class="input-group">
+                            <input type="password" name="confirm_password" id="confirm_password" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Re-enter your password" />
+                        </div>
+                        <!-- Error message placeholder -->
+                        <div id="confirm-password-error" class="text-danger"></div>
+                        <!--end::Input-->
+                    </div>
+
+                    <div class="fv-row mb-7">
+                        <!--begin::Label-->
+                        <label class="required fw-semibold fs-6 mb-2">Departments</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <div class="input-group">
+                            <select id="departments" name="departments" class="form-control form-control-solid mb-3 mb-lg-0">
+                                <option value="">Select a department</option>
+                            </select>
+                        </div>
+                        <!-- Error message placeholder -->
+                        <div id="departments-error" class="text-danger"></div>
+                        <!--end::Input-->
+                    </div>
+
+                    <div class="fv-row mb-7">
+                        <!--begin::Label-->
+                        <label class="required fw-semibold fs-6 mb-2">Jabatan</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <div class="input-group">
+                            <select id="jabatan" name="jabatan" class="form-control form-control-solid mb-3 mb-lg-0">
+                                <option value="">Select a jabatan</option>
+                            </select>
+                        </div>
+                        <!-- Error message placeholder -->
+                        <div id="jabatan-error" class="text-danger"></div>
+                        <!--end::Input-->
+                    </div>
+
+                    <!--begin::Input group-->
+                    <div class="fv-row mb-7">
+                        <!--begin::Label-->
+                        <label class="required fw-semibold fs-6 mb-2">No Handphone</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <input type="text" name="no_handphone" id="no_handphone" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="0812345678" />
+                        <!-- Error message placeholder -->
+                        <div id="no_handphone_error" class="text-danger"></div>
+                        <!--end::Input-->
+                    </div>
                 </div>
 
-                <!--begin::Input group-->
-                <div class="fv-row mb-7">
-                    <!--begin::Label-->
-                    <label class="required fw-semibold fs-6 mb-2">No Handphone</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <input type="text" name="no_handphone" id="no_handphone" class="form-control form-control-solid mb-3 mb-lg-0"
-                        placeholder="0812345678" />
-                    <!-- Error message placeholder -->
-                    <div id="no_handphone_error" class="text-danger"></div>
-                    <!--end::Input-->
-                </div>
-                <div class="fv-row mb-7">
-                    <!--begin::Label-->
-                    <label class="required fw-semibold fs-6 mb-2">NIK</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <input type="text" name="nik" id="nik" class="form-control form-control-solid mb-3 mb-lg-0"
-                        placeholder="1111222233334444" />
-                    <!-- Error message placeholder -->
-                    <div id="nik-error" class="text-danger"></div>
-                    <!--end::Input-->
-                </div>
-                <div class="fv-row mb-7">
-                    <!--begin::Label-->
-                    <label class="required fw-semibold fs-6 mb-2">Join Date</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <input type="date" name="join_date" id="join_date" class="form-control form-control-solid mb-3 mb-lg-0"
-                        placeholder="Please Input Join Date" />
-                    <!-- Error message placeholder -->
-                    <div id="join_date_error" class="text-danger"></div>
-                    <!--end::Input-->
-                </div>
-                <div class="fv-row mb-7">
-                    <!--begin::Label-->
-                    <label class="required fw-semibold fs-6 mb-2">Address</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <textarea name="address" id="address" class="form-control form-control-solid mb-3 mb-lg-0"
-                        placeholder="Enter your address"></textarea>
-                    <!-- Error message placeholder -->
-                    <div id="address-error" class="text-danger"></div>
-                    <!--end::Input-->
-                </div>
+                <!-- Column 2 -->
+                <div class="col-md-6">
+                    <div class="fv-row mb-7">
+                        <!--begin::Label-->
+                        <label class="required fw-semibold fs-6 mb-2">NIK</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <input type="text" name="nik" id="nik" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="1111222233334444" />
+                        <!-- Error message placeholder -->
+                        <div id="nik-error" class="text-danger"></div>
+                        <!--end::Input-->
+                    </div>
 
-                <div class="fv-row mb-7">
-                    <!--begin::Label-->
-                    <label class="required fw-semibold fs-6 mb-2">About Us</label>
-                    <!--end::Label-->
-                    <!--begin::Input-->
-                    <textarea name="about_us" id="about_us" class="form-control form-control-solid mb-3 mb-lg-0"
-                        placeholder="Tell us about yourself"></textarea>
-                    <!-- Error message placeholder -->
-                    <div id="about_us-error" class="text-danger"></div>
-                    <!--end::Input-->
-                </div>
-                 <!--end::Input group-->
+                    <div class="fv-row mb-7">
+                        <!--begin::Label-->
+                        <label class="required fw-semibold fs-6 mb-2">Join Date</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <input type="date" name="join_date" id="join_date" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Please Input Join Date" />
+                        <!-- Error message placeholder -->
+                        <div id="join_date_error" class="text-danger"></div>
+                        <!--end::Input-->
+                    </div>
 
-             <div class="fv-row mb-7">
+                    <div class="fv-row mb-7">
+                        <!--begin::Label-->
+                        <label class="required fw-semibold fs-6 mb-2">Address</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <textarea name="address" id="address" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Enter your address"></textarea>
+                        <!-- Error message placeholder -->
+                        <div id="address-error" class="text-danger"></div>
+                        <!--end::Input-->
+                    </div>
+
+                    <div class="fv-row mb-7">
+                        <!--begin::Label-->
+                        <label class="required fw-semibold fs-6 mb-2">About Us</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <textarea name="about_us" id="about_us" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Tell us about yourself"></textarea>
+                        <!-- Error message placeholder -->
+                        <div id="about_us-error" class="text-danger"></div>
+                        <!--end::Input-->
+                    </div>
+
+                    <div class="fv-row mb-7">
                         <label class="required fw-semibold fs-6 mb-2">Provinsi</label>
                         <select id="provinsi" name="provinsi" class="form-control form-control-solid mb-3 mb-lg-0 provinsiSelect"></select>
                         <div id="provinsi-error" class="text-danger"></div>
                     </div>
 
-                <div class="fv-row mb-7">
-                    <!-- Kabupaten -->
-                    <label class="required fw-semibold fs-6 mb-2">Kabupaten</label>
-                    <div class="input-group">
-                        <select id="kabupaten" name="kabupaten" class="form-control form-control-solid mb-3 mb-lg-0"></select>
+                    <div class="fv-row mb-7">
+                        <!-- Kabupaten -->
+                        <label class="required fw-semibold fs-6 mb-2">Kabupaten</label>
+                        <div class="input-group">
+                            <select id="kabupaten" name="kabupaten" class="form-control form-control-solid mb-3 mb-lg-0"></select>
+                        </div>
+                        <div id="kabupaten-error" class="text-danger"></div>
                     </div>
-                    <div id="kabupaten-error" class="text-danger"></div>
-                </div>
 
-                <div class="fv-row mb-7">
-                    <!-- Kecamatan -->
-                    <label class="required fw-semibold fs-6 mb-2">Kecamatan</label>
-                    <div class="input-group">
-                        <select id="kecamatan" name="kecamatan" class="form-control form-control-solid mb-3 mb-lg-0"></select>
+                    <div class="fv-row mb-7">
+                        <!-- Kecamatan -->
+                        <label class="required fw-semibold fs-6 mb-2">Kecamatan</label>
+                        <div class="input-group">
+                            <select id="kecamatan" name="kecamatan" class="form-control form-control-solid mb-3 mb-lg-0"></select>
+                        </div>
+                        <div id="kecamatan-error" class="text-danger"></div>
                     </div>
-                    <div id="kecamatan-error" class="text-danger"></div>
-                </div>
 
-                <div class="fv-row mb-7">
-                    <!-- Kelurahan -->
-                    <label class="required fw-semibold fs-6 mb-2">Kelurahan</label>
-                    <div class="input-group">
-                        <select id="kelurahan" name="kelurahan" class="form-control form-control-solid mb-3 mb-lg-0"></select>
+                    <div class="fv-row mb-7">
+                        <!-- Kelurahan -->
+                        <label class="required fw-semibold fs-6 mb-2">Kelurahan</label>
+                        <div class="input-group">
+                            <select id="kelurahan" name="kelurahan" class="form-control form-control-solid mb-3 mb-lg-0"></select>
+                        </div>
+                        <div id="kelurahan-error" class="text-danger"></div>
                     </div>
-                    <div id="kelurahan-error" class="text-danger"></div>
                 </div>
+            </div>
 
-                 <!--begin::Input group-->
-                 <div class="mb-5">
-                     <!--begin::Label-->
-                     <label class="required fw-semibold fs-6 mb-5">Role</label>
-                     <!--end::Label-->
-                     <!--begin::Roles-->
-                     <!--begin::Input row-->
-                     <div class="d-flex fv-row">
-                         <!--begin::Radio-->
-                         <div class="form-check form-check-custom form-check-solid">
-                             <!--begin::Input-->
-                             <input class="form-check-input me-3" name="user_role" type="radio" value="0" id="kt_modal_update_role_option_0" checked='checked' />
-                             <!--end::Input-->
-                             <!--begin::Label-->
-                             <label class="form-check-label" for="kt_modal_update_role_option_0">
-                                 <div class="fw-bold text-gray-800">Administrator</div>
-                                 <div class="text-gray-600">Best for business owners and company administrators</div>
-                             </label>
-                             <!--end::Label-->
-                         </div>
-                         <!--end::Radio-->
-                     </div>
-                     <!--end::Input row-->
-                     <div class='separator separator-dashed my-5'></div>
-                     <!--begin::Input row-->
-                     <div class="d-flex fv-row">
-                         <!--begin::Radio-->
-                         <div class="form-check form-check-custom form-check-solid">
-                             <!--begin::Input-->
-                             <input class="form-check-input me-3" name="user_role" type="radio" value="1" id="kt_modal_update_role_option_1" />
-                             <!--end::Input-->
-                             <!--begin::Label-->
-                             <label class="form-check-label" for="kt_modal_update_role_option_1">
-                                 <div class="fw-bold text-gray-800">Developer</div>
-                                 <div class="text-gray-600">Best for developers or people primarily using the API</div>
-                             </label>
-                             <!--end::Label-->
-                         </div>
-                         <!--end::Radio-->
-                     </div>
-                     <!--end::Input row-->
-                     <div class='separator separator-dashed my-5'></div>
-                     <!--begin::Input row-->
-                     <div class="d-flex fv-row">
-                         <!--begin::Radio-->
-                         <div class="form-check form-check-custom form-check-solid">
-                             <!--begin::Input-->
-                             <input class="form-check-input me-3" name="user_role" type="radio" value="2" id="kt_modal_update_role_option_2" />
-                             <!--end::Input-->
-                             <!--begin::Label-->
-                             <label class="form-check-label" for="kt_modal_update_role_option_2">
-                                 <div class="fw-bold text-gray-800">Analyst</div>
-                                 <div class="text-gray-600">Best for people who need full access to analytics data, but don't need to update business settings</div>
-                             </label>
-                             <!--end::Label-->
-                         </div>
-                         <!--end::Radio-->
-                     </div>
-                     <!--end::Input row-->
-                     <div class='separator separator-dashed my-5'></div>
-                     <!--begin::Input row-->
-                     <div class="d-flex fv-row">
-                         <!--begin::Radio-->
-                         <div class="form-check form-check-custom form-check-solid">
-                             <!--begin::Input-->
-                             <input class="form-check-input me-3" name="user_role" type="radio" value="3" id="kt_modal_update_role_option_3" />
-                             <!--end::Input-->
-                             <!--begin::Label-->
-                             <label class="form-check-label" for="kt_modal_update_role_option_3">
-                                 <div class="fw-bold text-gray-800">Support</div>
-                                 <div class="text-gray-600">Best for employees who regularly refund payments and respond to disputes</div>
-                             </label>
-                             <!--end::Label-->
-                         </div>
-                         <!--end::Radio-->
-                     </div>
-                     <!--end::Input row-->
-                     <div class='separator separator-dashed my-5'></div>
-                     <!--begin::Input row-->
-                     <div class="d-flex fv-row">
-                         <!--begin::Radio-->
-                         <div class="form-check form-check-custom form-check-solid">
-                             <!--begin::Input-->
-                             <input class="form-check-input me-3" name="user_role" type="radio" value="4" id="kt_modal_update_role_option_4" />
-                             <!--end::Input-->
-                             <!--begin::Label-->
-                             <label class="form-check-label" for="kt_modal_update_role_option_4">
-                                 <div class="fw-bold text-gray-800">Trial</div>
-                                 <div class="text-gray-600">Best for people who need to preview content data, but don't need to make any updates</div>
-                             </label>
-                             <!--end::Label-->
-                         </div>
-                         <!--end::Radio-->
-                     </div>
-                     <!--end::Input row-->
-                     <!--end::Roles-->
-                 </div>
-                 <!--end::Input group-->
-             </div>
-             <!--end::Scroll-->
-             <!--begin::Actions-->
-             <div class="text-center pt-10">
-                 <button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">Discard</button>
-                 <button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
-                     <span class="indicator-label">Submit</span>
-                     <span class="indicator-progress">Please wait...
-                         <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-                 </button>
-             </div>
-             <!--end::Actions-->
-         </form>
-     `;
+            <!--begin::Input group-->
+            <div class="mb-5">
+                <!--begin::Label-->
+                <label class="required fw-semibold fs-6 mb-5">Role</label>
+                <!--end::Label-->
+                <!--begin::Roles-->
+                <!--begin::Input row-->
+                <div class="d-flex fv-row">
+                    <!--begin::Radio-->
+                    <div class="form-check form-check-custom form-check-solid">
+                        <!--begin::Input-->
+                        <input class="form-check-input me-3" name="user_role" type="radio" value="0" id="kt_modal_update_role_option_0" checked='checked' />
+                        <!--end::Input-->
+                        <!--begin::Label-->
+                        <label class="form-check-label" for="kt_modal_update_role_option_0">
+                            <div class="fw-bold text-gray-800">Administrator</div>
+                            <div class="text-gray-600">Best for business owners and company administrators</div>
+                        </label>
+                        <!--end::Label-->
+                    </div>
+                    <!--end::Radio-->
+                </div>
+                <!--end::Input row-->
+                <div class='separator separator-dashed my-5'></div>
+                <!--begin::Input row-->
+                <div class="d-flex fv-row">
+                    <!--begin::Radio-->
+                    <div class="form-check form-check-custom form-check-solid">
+                        <!--begin::Input-->
+                        <input class="form-check-input me-3" name="user_role" type="radio" value="1" id="kt_modal_update_role_option_1" />
+                        <!--end::Input-->
+                        <!--begin::Label-->
+                        <label class="form-check-label" for="kt_modal_update_role_option_1">
+                            <div class="fw-bold text-gray-800">Developer</div>
+                            <div class="text-gray-600">Best for developers or people primarily using the API</div>
+                        </label>
+                        <!--end::Label-->
+                    </div>
+                    <!--end::Radio-->
+                </div>
+                <!--end::Input row-->
+                <div class='separator separator-dashed my-5'></div>
+                <!--begin::Input row-->
+                <div class="d-flex fv-row">
+                    <!--begin::Radio-->
+                    <div class="form-check form-check-custom form-check-solid">
+                        <!--begin::Input-->
+                        <input class="form-check-input me-3" name="user_role" type="radio" value="2" id="kt_modal_update_role_option_2" />
+                        <!--end::Input-->
+                        <!--begin::Label-->
+                        <label class="form-check-label" for="kt_modal_update_role_option_2">
+                            <div class="fw-bold text-gray-800">Analyst</div>
+                            <div class="text-gray-600">Best for people who need full access to analytics data, but don't need to update business settings</div>
+                        </label>
+                        <!--end::Label-->
+                    </div>
+                    <!--end::Radio-->
+                </div>
+                <!--end::Input row-->
+                <div class='separator separator-dashed my-5'></div>
+                <!--begin::Input row-->
+                <div class="d-flex fv-row">
+                    <!--begin::Radio-->
+                    <div class="form-check form-check-custom form-check-solid">
+                        <!--begin::Input-->
+                        <input class="form-check-input me-3" name="user_role" type="radio" value="3" id="kt_modal_update_role_option_3" />
+                        <!--end::Input-->
+                        <!--begin::Label-->
+                        <label class="form-check-label" for="kt_modal_update_role_option_3">
+                            <div class="fw-bold text-gray-800">Support</div>
+                            <div class="text-gray-600">Best for employees who regularly refund payments and respond to disputes</div>
+                        </label>
+                        <!--end::Label-->
+                    </div>
+                    <!--end::Radio-->
+                </div>
+                <!--end::Input row-->
+                <div class='separator separator-dashed my-5'></div>
+                <!--begin::Input row-->
+                <div class="d-flex fv-row">
+                    <!--begin::Radio-->
+                    <div class="form-check form-check-custom form-check-solid">
+                        <!--begin::Input-->
+                        <input class="form-check-input me-3" name="user_role" type="radio" value="4" id="kt_modal_update_role_option_4" />
+                        <!--end::Input-->
+                        <!--begin::Label-->
+                        <label class="form-check-label" for="kt_modal_update_role_option_4">
+                            <div class="fw-bold text-gray-800">Trial</div>
+                            <div class="text-gray-600">Best for people who need to preview content data, but don't need to make any updates</div>
+                        </label>
+                        <!--end::Label-->
+                    </div>
+                    <!--end::Radio-->
+                </div>
+                <!--end::Input row-->
+                <!--end::Roles-->
+            </div>
+            <!--end::Input group-->
+        </div>
+        <!--end::Scroll-->
+        <!--begin::Actions-->
+        <div class="text-center pt-10">
+            <button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">Discard</button>
+            <button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
+                <span class="indicator-label">Submit</span>
+                <span class="indicator-progress">Please wait...
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                </span>
+            </button>
+        </div>
+        <!--end::Actions-->
+    </form>
+`;
+
 
 
 
@@ -350,6 +374,11 @@ $(document).ready(function() {
 
     $("#formUser").validate({
         rules: {
+            username: {
+                required: true,
+                minlength: 7,
+                maxlength: 10,
+            },
             name: {
                 required: true,
                 minlength: 8,
@@ -390,7 +419,8 @@ $(document).ready(function() {
             },
             no_handphone: {
                 required: true,
-                minlength: 14,
+                minlength: 12,
+                maxlength:14,
                 digits: true
             },
             nik: {
@@ -405,6 +435,11 @@ $(document).ready(function() {
             }
         },
         messages: {
+            username: {
+                required: "Please enter a username name",
+                minlength: "username must be at least 7 characters long",
+                maxlength: "username must be exactly 10 digits long",
+            },
             name: {
                 required: "Please enter a full name",
                 minlength: "Full name must be at least 8 characters long",
@@ -445,7 +480,7 @@ $(document).ready(function() {
             },
             no_handphone: {
                 required: "Please enter your phone number",
-                minlength: "Phone number must be at least 10 digits long",
+                minlength: "Phone number must be at least 14 digits long",
                 digits: "Phone number must contain only digits"
             },
             nik: {
@@ -489,6 +524,8 @@ $(document).ready(function() {
                 error.appendTo("#nik_error");
             }else if (element.attr("name") === "join_date") {
                 error.appendTo("#join_date_error");
+            }else if (element.attr("name") === "username") {
+                error.appendTo("#username-error");
             }
 
             else {
@@ -499,15 +536,49 @@ $(document).ready(function() {
             error.appendTo($("#" + name + "-error"));
         },
         submitHandler: function (form) {
-            // Form is valid, display a success toast
-            Toastify({
-                text: "Form submitted successfully!",
-                backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
-                duration: 3000,
-            }).showToast();
+            // Display SweetAlert confirmation dialog
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to submit the form?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, submit it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Form is valid, display a success toast
+                    Toastify({
+                        text: "Form submitted successfully!",
+                        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                        duration: 3000,
+                    }).showToast();
 
-            // Submit the form
-            form.submit();
+                    // Prepare form data
+                    var formData = $(form).serialize();
+
+                    // Perform AJAX POST request
+                    $.ajax({
+                        type: 'POST',
+                        url: '/users/store', // Update with your Laravel route
+                        data: formData,
+                        success: function (response) {
+                            // Handle success response
+                            console.log('Success:', response);
+                            // Optionally, display another success toast or redirect
+                        },
+                        error: function (error) {
+                            // Handle error response
+                            // Optionally, display an error toast
+                            Toastify({
+                                text: "An error occurred while submitting the form.",
+                                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                                duration: 3000,
+                            }).showToast();
+                        }
+                    });
+                }
+            });
         },
         invalidHandler: function (event, validator) {
             console.log(event, validator);
