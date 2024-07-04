@@ -13,7 +13,7 @@ function createUser() {
         allowEscapeKey: false,
         allowEnterKey: false
     });
-    console.log("masuk sini nggak?");
+    console.log("masuk sini nggak");
     // Simulate the process of opening the link to create a user
     setTimeout(function() {
         // Redirect to the create user link
