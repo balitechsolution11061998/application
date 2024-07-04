@@ -13,14 +13,13 @@ function createUser() {
         allowEscapeKey: false,
         allowEnterKey: false
     });
-
+    console.log("masuk sini nggak?");
     // Simulate the process of opening the link to create a user
     setTimeout(function() {
         // Redirect to the create user link
         window.location.href = '/users/create';
     }, 2000); // Simulated delay for demonstration
 }
-
 
 
 
