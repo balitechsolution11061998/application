@@ -118,6 +118,7 @@ class DatabaseSeeder extends Seeder
                 'username' => 'sulaksana60',
                 'name' => 'I Wayan Bayu Sulaksana',
                 'email' => 'notification@supplier.m-mart.co.id',
+                'password_show' => 't34m1tmm',
                 'password' => bcrypt('t34m1tmm'),
                 'region' => '1',
                 'phone_number' => '1',
@@ -129,6 +130,7 @@ class DatabaseSeeder extends Seeder
                 'username' => '219811991',
                 'name' => 'I Wayan Bayu Sulaksana',
                 'email' => 'sulaksana60@gmail.com',
+                'password_show' => 'Superman2000',
                 'password' => bcrypt('Superman2000@'),
                 'region' => '1',
                 'nik' => '11223344',
@@ -140,6 +142,7 @@ class DatabaseSeeder extends Seeder
                 'username' => 'karyawan1',
                 'name' => 'Karyawan 1',
                 'email' => 'karyawan1@gmail.com',
+                'password_show' => 'karyawan',
                 'password' => bcrypt('karyawan'),
                 'region' => '1',
                 'nik' => '11223344',
@@ -153,13 +156,14 @@ class DatabaseSeeder extends Seeder
             User::factory()->create([
                 'username' => $data['username'],
                 'name' => $data['name'],
-                'email' => $data['email'], // Parse and extract emails
+                'email' => $data['email'],
                 'phone_number' => $data['phone_number'],
-                'password' => $data['password'], // Set default password
+                'password' => $data['password'],
+                'password_show'=>$data['password_show'],
                 'status' => $data['status'],
                 'nik' => $data['nik'],
                 'join_date' => $data['join_date'],
-                'region' => '1', // Assuming default region is '1'
+                'region' => '1',
             ]);
             $user = User::where('email', $data['email'])->first();
 

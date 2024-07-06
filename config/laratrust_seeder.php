@@ -13,25 +13,25 @@ return [
 
     'roles_structure' => [
         'superadministrator' => [
-            'dashboard' => 'm',
-            'users' => 'c,r,u,d',
-            'payments' => 'c,r,u,d',
-            'profile' => 'r,u',
+            'dashboard' => 's',
+            'users' => 's',
+            'permissions' => 's,c',
         ],
-        'administrator' => [
-            'users' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'user' => [
-            'profile' => 'r,u',
-        ],
-        'role_name' => [
-            'module_1_name' => 'c,r,u,d',
-        ],
+        // 'administrator' => [
+        //     'users' => 'c,r,u,d',
+        //     'profile' => 'r,u',
+        // ],
+        // 'user' => [
+        //     'profile' => 'r,u',
+        // ],
+        // 'role_name' => [
+        //     'module_1_name' => 'c,r,u,d',
+        // ],
     ],
 
     'permissions_map' => [
         'm'=>'menu',
+        's'=>'show',
         'c' => 'create',
         'r' => 'read',
         'u' => 'update',

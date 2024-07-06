@@ -41,8 +41,8 @@ return [
     # Theme Assets
 
     'KT_THEME_ASSETS' => [
-        'favicon' => 'assets/media/logos/m-mart.ico',
-        'logo' => 'assets/media/logos/m-mart.svg',
+        'favicon' => 'image/logo.png',
+        'logo' => 'image/logo.png',
         'fonts' => [
             'https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700',
             'https://fonts.googleapis.com/css?family=Rubik:300,400,500,600,700',

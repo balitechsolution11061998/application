@@ -12,6 +12,10 @@ Breadcrumbs::for('order', function (BreadcrumbTrail $trail) {
     $trail->push('Order', route('po.index'));
 });
 
+Breadcrumbs::for('permissions', function (BreadcrumbTrail $trail) {
+    $trail->push('Permissions', route('permissions.index'));
+});
+
 // Dashboard > Default
 Breadcrumbs::for('dashboard.default', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');

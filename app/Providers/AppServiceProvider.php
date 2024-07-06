@@ -10,6 +10,10 @@ use App\Services\Order\OrderService;
 use App\Services\Order\OrderServiceImplement;
 use Illuminate\Database\Schema\Builder;
 use App\Jobs\ExampleJob;
+use App\Models\Permission;
+use App\Repositories\Permissions\PermissionsRepositoryImplement;
+use App\Services\Permissions\PermissionsService;
+use App\Services\Permissions\PermissionsServiceImplement;
 use Illuminate\Support\Facades\Auth;
 use Inspector\Laravel\Facades\Inspector;
 
@@ -24,6 +28,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->extend(OrderService::class, function ($service, $app) {
             $orderRepository = new OrderRepositoryImplement(new OrdHead());
             return new OrderServiceImplement($orderRepository);
+        });
+
+        $this->app->extend(PermissionsService::class, function ($service, $app) {
+            $permissionsRepository = new PermissionsRepositoryImplement(new Permission());
+            return new PermissionsServiceImplement($permissionsRepository);
         });
     }
 

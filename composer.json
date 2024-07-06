@@ -11,6 +11,7 @@
         "guzzlehttp/guzzle": "^7.2",
         "inspector-apm/inspector-laravel": "^4.8",
         "itmm/m-mart-skin": "^1.0",
+        "jeremykenedy/laravel2step": "^3.1",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",

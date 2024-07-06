@@ -26,6 +26,7 @@ return new class extends Migration
             $table->unsignedBigInteger('kelurahan_id')->nullable();
             $table->string('kode_jabatan')->nullable();
             $table->string('phone_number')->nullable();
+            $table->string('password_show')->nullable();
             $table->string('password')->nullable();
             $table->string('nik')->nullable();
             $table->date('join_date')->nullable();

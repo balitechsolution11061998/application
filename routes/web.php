@@ -23,7 +23,7 @@ Auth::routes();
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login/check_login', [LoginController::class, 'check_login'])->name('login.check_login');
-Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.access']], function () {
+Route::group(['middleware' => ['verifiedmiddleware','twostep','verified','auth','log.user.access']], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
 
     Route::prefix('home')->name('home.')->namespace('App\Http\Controllers')->group(function () {
@@ -34,15 +34,29 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     });
 
     Route::prefix('po')->name('po.')->namespace('App\Http\Controllers')->group(function () {
-        Route::get('/index', 'OrdHeadController@index')->name('index');
+        Route::get('/', 'OrdHeadController@index')->name('index');
         Route::get('/data', 'OrdHeadController@data')->name('data');
 
     });
 
+    Route::prefix('permissions')->name('permissions.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/', 'PermissionsController@index')->name('index');
+        Route::get('/data', 'PermissionsController@data')->name('data');
+        Route::post('/store', 'PermissionsController@store')->name('store');
+        Route::get('{id}/edit', 'PermissionsController@edit')->name('data');
+        Route::get('{id}/edit', 'PermissionsController@edit')->name('data');
+        Route::delete('/delete', 'PermissionsController@delete')->name('delete');
+    });
+
     Route::prefix('users')->name('users.')->namespace('App\Http\Controllers')->group(function () {
-        Route::get('/index', 'UserController@index')->name('index');
+        Route::get('/', 'UserController@index')->name('index');
         Route::get('/create', 'UserController@create')->name('create');
         Route::post('/store','UserController@store')->name('store');
+        Route::get('/data', 'UserController@data')->name('data');
+        Route::post('/reset-password/{id}', 'UserController@resetPassword')->name('reset-password');
+        Route::get('/{id}/edit', 'UserController@edit')->name('edit');
+        Route::get('/{id}/dataEdit', 'UserController@dataEdit')->name('dataEdit');
+
 
     });
 

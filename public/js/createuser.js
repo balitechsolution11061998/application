@@ -5,12 +5,25 @@ $(document).ready(function() {
         }
     });
 
+    // Get the current URL path
+    var urlPath = window.location.pathname;
+
+    // Split the URL path by '/'
+    var urlParts = urlPath.split('/');
+
+    // Extract the user ID (assuming it's the third segment in the URL)
+    var userId = urlParts[2];
+
+    // Now you have the userId, you can use it in your AJAX request or any other logic
+    console.log('User ID:', userId);
+
+
     var formContent = document.createElement("div");
     formContent.innerHTML = `
     <form id="formUser" class="form">
         <!--begin::Scroll-->
         <div class="d-flex flex-column scroll-y px-5 px-lg-10" id="kt_modal_add_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header" data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
-
+            <input type="hidden" name="id" id="id" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Input ID" />
             <div class="row">
                 <!-- Column 1 -->
                 <div class="col-md-6">
@@ -107,7 +120,7 @@ $(document).ready(function() {
                         <!--end::Label-->
                         <!--begin::Input-->
                         <div class="input-group">
-                            <select id="jabatan" name="jabatan" class="form-control form-control-solid mb-3 mb-lg-0">
+                            <select id="selectJabatan" name="jabatan" class="form-control form-control-solid mb-3 mb-lg-0">
                                 <option value="">Select a jabatan</option>
                             </select>
                         </div>
@@ -125,6 +138,18 @@ $(document).ready(function() {
                         <input type="text" name="no_handphone" id="no_handphone" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="0812345678" />
                         <!-- Error message placeholder -->
                         <div id="no_handphone_error" class="text-danger"></div>
+                        <!--end::Input-->
+                    </div>
+                     <div class="fv-row mb-7">
+                        <label class="required fw-semibold fs-6 mb-2">Status</label>
+                        <div class="form-group mt-3">
+                            <div class="pretty-checkbox">
+                                <input type="checkbox" id="toggleActive" name="status" />
+                                <label for="toggleActive">Active</label>
+                            </div>
+                        </div>
+                        <!-- Error message placeholder -->
+                        <div id="status_error" class="text-danger"></div>
                         <!--end::Input-->
                     </div>
                 </div>
@@ -210,109 +235,12 @@ $(document).ready(function() {
                 </div>
             </div>
 
-            <!--begin::Input group-->
-            <div class="mb-5">
-                <!--begin::Label-->
-                <label class="required fw-semibold fs-6 mb-5">Role</label>
-                <!--end::Label-->
-                <!--begin::Roles-->
-                <!--begin::Input row-->
-                <div class="d-flex fv-row">
-                    <!--begin::Radio-->
-                    <div class="form-check form-check-custom form-check-solid">
-                        <!--begin::Input-->
-                        <input class="form-check-input me-3" name="user_role" type="radio" value="0" id="kt_modal_update_role_option_0" checked='checked' />
-                        <!--end::Input-->
-                        <!--begin::Label-->
-                        <label class="form-check-label" for="kt_modal_update_role_option_0">
-                            <div class="fw-bold text-gray-800">Administrator</div>
-                            <div class="text-gray-600">Best for business owners and company administrators</div>
-                        </label>
-                        <!--end::Label-->
-                    </div>
-                    <!--end::Radio-->
-                </div>
-                <!--end::Input row-->
-                <div class='separator separator-dashed my-5'></div>
-                <!--begin::Input row-->
-                <div class="d-flex fv-row">
-                    <!--begin::Radio-->
-                    <div class="form-check form-check-custom form-check-solid">
-                        <!--begin::Input-->
-                        <input class="form-check-input me-3" name="user_role" type="radio" value="1" id="kt_modal_update_role_option_1" />
-                        <!--end::Input-->
-                        <!--begin::Label-->
-                        <label class="form-check-label" for="kt_modal_update_role_option_1">
-                            <div class="fw-bold text-gray-800">Developer</div>
-                            <div class="text-gray-600">Best for developers or people primarily using the API</div>
-                        </label>
-                        <!--end::Label-->
-                    </div>
-                    <!--end::Radio-->
-                </div>
-                <!--end::Input row-->
-                <div class='separator separator-dashed my-5'></div>
-                <!--begin::Input row-->
-                <div class="d-flex fv-row">
-                    <!--begin::Radio-->
-                    <div class="form-check form-check-custom form-check-solid">
-                        <!--begin::Input-->
-                        <input class="form-check-input me-3" name="user_role" type="radio" value="2" id="kt_modal_update_role_option_2" />
-                        <!--end::Input-->
-                        <!--begin::Label-->
-                        <label class="form-check-label" for="kt_modal_update_role_option_2">
-                            <div class="fw-bold text-gray-800">Analyst</div>
-                            <div class="text-gray-600">Best for people who need full access to analytics data, but don't need to update business settings</div>
-                        </label>
-                        <!--end::Label-->
-                    </div>
-                    <!--end::Radio-->
-                </div>
-                <!--end::Input row-->
-                <div class='separator separator-dashed my-5'></div>
-                <!--begin::Input row-->
-                <div class="d-flex fv-row">
-                    <!--begin::Radio-->
-                    <div class="form-check form-check-custom form-check-solid">
-                        <!--begin::Input-->
-                        <input class="form-check-input me-3" name="user_role" type="radio" value="3" id="kt_modal_update_role_option_3" />
-                        <!--end::Input-->
-                        <!--begin::Label-->
-                        <label class="form-check-label" for="kt_modal_update_role_option_3">
-                            <div class="fw-bold text-gray-800">Support</div>
-                            <div class="text-gray-600">Best for employees who regularly refund payments and respond to disputes</div>
-                        </label>
-                        <!--end::Label-->
-                    </div>
-                    <!--end::Radio-->
-                </div>
-                <!--end::Input row-->
-                <div class='separator separator-dashed my-5'></div>
-                <!--begin::Input row-->
-                <div class="d-flex fv-row">
-                    <!--begin::Radio-->
-                    <div class="form-check form-check-custom form-check-solid">
-                        <!--begin::Input-->
-                        <input class="form-check-input me-3" name="user_role" type="radio" value="4" id="kt_modal_update_role_option_4" />
-                        <!--end::Input-->
-                        <!--begin::Label-->
-                        <label class="form-check-label" for="kt_modal_update_role_option_4">
-                            <div class="fw-bold text-gray-800">Trial</div>
-                            <div class="text-gray-600">Best for people who need to preview content data, but don't need to make any updates</div>
-                        </label>
-                        <!--end::Label-->
-                    </div>
-                    <!--end::Radio-->
-                </div>
-                <!--end::Input row-->
-                <!--end::Roles-->
-            </div>
-            <!--end::Input group-->
+
         </div>
         <!--end::Scroll-->
         <!--begin::Actions-->
         <div class="text-center pt-10">
-            <button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">Discard</button>
+            <button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel" onclick="kembali()">Kembali</button>
             <button type="submit" class="btn btn-primary" data-kt-users-modal-action="submit">
                 <span class="indicator-label">Submit</span>
                 <span class="indicator-progress">Please wait...
@@ -332,44 +260,8 @@ $(document).ready(function() {
     fetchDepartments();
     fetchJabatan();
 
-           // Initialize select2 on the provinsi field with multiple selection enabled
-           $('#provinsi').select2({
-            placeholder: 'Select a provinsi',
-            allowClear: true,
-            ajax: {
-                url: '/provinsi/data', // Replace with your actual API endpoint
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        q: params.term,
-                        page: params.page
-                    };
-                },
-                processResults: function (data, params) {
-                    params.page = params.page || 1;
-                    return {
-                        results: $.map(data.items, function (item) {
-                            return {
-                                id: item.id,
-                                text: item.name
-                            };
-                        }),
-                        pagination: {
-                            more: (params.page * 10) < data.total_count
-                        }
-                    };
-                },
-                cache: true
-            }
-        }).on('select2:select', function (e) {
-            console.log('Select2 event triggered'); // Debug log
-            var provinsiId = e.params.data.id; // Get the selected option's ID
-            fetchDataKabupaten(provinsiId);
+    fetchDataProvinsi();
 
-            // Example of other actions based on selection
-            console.log('Selected provinsi ID:', provinsiId);
-        });
 
 
     $("#formUser").validate({
@@ -560,23 +452,50 @@ $(document).ready(function() {
                     // Perform AJAX POST request
                     $.ajax({
                         type: 'POST',
-                        url: '/users/store', // Update with your Laravel route
+                        url: '/users/store', // Replace with your Laravel route
                         data: formData,
                         success: function (response) {
                             // Handle success response
                             console.log('Success:', response);
-                            // Optionally, display another success toast or redirect
+
+                            // Show a success toast with Toastify
+                            Toastify({
+                                text: "Form submitted successfully.",
+                                backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                                duration: 3000,
+                                close: true,
+                                gravity: "bottom", // Optional, aligns the toast to 'top', 'bottom', 'left', 'right'
+                                position: "right", // Optional, aligns the toast to 'left', 'center', 'right'
+                            }).showToast();
+
+                            // Optionally, redirect to another page after success
+                            setTimeout(function() {
+                                window.location.href = '/users/index'; // Replace with your desired URL
+                            }, 3000); // Redirect after 3 seconds (3000 milliseconds)
                         },
                         error: function (error) {
                             // Handle error response
-                            // Optionally, display an error toast
+                            console.error('Error:', error);
+
+                            // Display an error toast with Toastify
                             Toastify({
                                 text: "An error occurred while submitting the form.",
                                 backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
                                 duration: 3000,
+                                close: true,
+                                gravity: "bottom", // Optional
+                                position: "right", // Optional
                             }).showToast();
+
+                            // Optionally, show a Swal.fire error notification
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'An error occurred while submitting the form.',
+                            });
                         }
                     });
+
                 }
             });
         },
@@ -643,8 +562,93 @@ $(document).ready(function() {
         }).showToast();
     });
 
+    if(userId != "create"){
+        setTimeout(() => {
+            fetchUserData(userId);
+        }, 3000);
+    }
+
+    $('#toggleActive').change(function() {
+        var isActive = $(this).is(':checked');
+    });
+
 });
 
+
+function kembali() {
+    window.location.href = "/users/index"; // Replace with your target URL
+}
+
+function fetchDataProvinsi(selectedProvinsiIds) {
+    $('#provinsi').select2({
+        placeholder: 'Select a provinsi',
+        allowClear: true,
+        ajax: {
+            url: '/provinsi/data', // Replace with your actual API endpoint
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    q: params.term,
+                    page: params.page
+                };
+            },
+            processResults: function (data, params) {
+                params.page = params.page || 1;
+                return {
+                    results: $.map(data.items, function (item) {
+                        return {
+                            id: item.id,
+                            text: item.name
+                        };
+                    }),
+                    pagination: {
+                        more: (params.page * 10) < data.total_count
+                    }
+                };
+            },
+            cache: true
+        }
+    }).on('select2:select', function (e) {
+        var provinsiId = e.params.data.id; // Get the selected option's ID
+        fetchDataKabupaten(provinsiId); // Fetch kabupaten based on the selected provinsi
+
+        // Example of other actions based on selection
+        console.log('Selected provinsi ID:', provinsiId);
+    });
+
+
+}
+
+
+function fetchUserData(userId) {
+    $.ajax({
+        url: '/users/' + userId + '/dataEdit',
+        method: 'GET',
+        success: function(response) {
+            $('#id').val(response.id);
+            $('#username').val(response.username);
+            $('#nik').val(response.nik);
+            $('#join_date').val(response.join_date);
+            $('#address').val(response.alamat);
+            $('#about_us').val(response.about_us);
+
+            $('#name').val(response.name);
+            $('#email').val(response.email);
+            $('#no_handphone').val(response.phone_number);
+            $('#password').val(response.password_show);
+            $('#confirm_password').val(response.password_show);
+
+            $('#departments').val(response.kode_dept).trigger('change');
+            $('#selectJabatan').val(response.kode_jabatan).trigger('change');
+
+            fetchDataProvinsi(response.provinsi_id);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching user data:', error);
+        }
+    });
+}
 
 
 function showError(message) {
@@ -696,7 +700,7 @@ function fetchDepartments() {
 }
 
 function populateJabatan(jabatan) {
-    const jabatanDropdown = document.getElementById('jabatan');
+    const jabatanDropdown = document.getElementById('selectJabatan');
     jabatan.forEach(jabatan => {
         const option = document.createElement('option');
         option.value = jabatan.kode_jabatan;  // Assuming each department has an 'id' field

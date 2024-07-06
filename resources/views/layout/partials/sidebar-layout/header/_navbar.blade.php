@@ -1,12 +1,12 @@
 <!--begin::Navbar-->
 <div class="app-navbar flex-shrink-0">
     <!--begin::Search-->
-    <div class="app-navbar-item align-items-stretch ms-1 ms-md-3">
+    {{-- <div class="app-navbar-item align-items-stretch ms-1 ms-md-3">
         @include(config('settings.KT_THEME_LAYOUT_DIR').'/partials/sidebar-layout/search/_dropdown')
-    </div>
+    </div> --}}
     <!--end::Search-->
     <!--begin::Activities-->
-    <div class="app-navbar-item ms-1 ms-md-4">
+    {{-- <div class="app-navbar-item ms-1 ms-md-4">
         <!--begin::Drawer toggle-->
         <div class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px" id="kt_activities_toggle">
             <i class="ki-duotone ki-messages fs-2">
@@ -18,10 +18,10 @@
             </i>
         </div>
         <!--end::Drawer toggle-->
-    </div>
+    </div> --}}
     <!--end::Activities-->
     <!--begin::Notifications-->
-    <div class="app-navbar-item ms-1 ms-md-4">
+    {{-- <div class="app-navbar-item ms-1 ms-md-4">
         <!--begin::Menu- wrapper-->
         <div class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px" data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end" id="kt_menu_item_wow">
             <i class="ki-duotone ki-notification-status fs-2">
@@ -33,10 +33,10 @@
         </div>
         @include('partials/menus/_notifications-menu')
         <!--end::Menu wrapper-->
-    </div>
+    </div> --}}
     <!--end::Notifications-->
     <!--begin::Chat-->
-    <div class="app-navbar-item ms-1 ms-md-4">
+    {{-- <div class="app-navbar-item ms-1 ms-md-4">
         <!--begin::Menu wrapper-->
         <div class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px position-relative" id="kt_drawer_chat_toggle">
             <i class="ki-duotone ki-message-text-2 fs-2">
@@ -46,10 +46,10 @@
             </i>
             <span class="bullet bullet-dot bg-primary h-6px w-6px position-absolute translate-middle top-0 start-50 animation-blink"></span></div>
         <!--end::Menu wrapper-->
-    </div>
+    </div> --}}
     <!--end::Chat-->
     <!--begin::My apps links-->
-    <div class="app-navbar-item ms-1 ms-md-4">
+    {{-- <div class="app-navbar-item ms-1 ms-md-4">
         <!--begin::Menu wrapper-->
         <div class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px" data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
             <i class="ki-duotone ki-element-11 fs-2">
@@ -61,14 +61,14 @@
         </div>
         @include('partials/menus/_my-apps-menu')
         <!--end::Menu wrapper-->
-    </div>
+    </div> --}}
     <!--end::My apps links-->
     <!--begin::User menu-->
     <div class="app-navbar-item ms-1 ms-md-4" id="kt_header_user_menu_toggle">
         <!--begin::Menu wrapper-->
         <div class="cursor-pointer symbol symbol-35px" data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
             <div class="symbol-label fs-3 {{ app(\App\Actions\GetThemeType::class)->handle('bg-light-? text-?', "Administrator") }}">
-                A
+                {{ substr(Auth::user()->username, 0, 1) }}
             </div>
         </div>
         @include('partials/menus/_user-account-menu')

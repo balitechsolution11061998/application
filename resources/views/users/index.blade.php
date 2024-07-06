@@ -184,7 +184,7 @@
             <!--begin::Card body-->
             <div class="card-body py-4">
                 <!--begin::Table-->
-                <table class="table align-middle table-row-dashed fs-6 gy-5" id="po_table">
+                <table class="table align-middle table-row-dashed fs-6 gy-5" id="users_table">
                     <thead>
                         <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                             <th class="w-10px pe-2">
@@ -192,12 +192,11 @@
                                     <input class="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#po_table .form-check-input" value="1" />
                                 </div>
                             </th>
-                            <th class="min-w-125px">ORDER NO</th>
-                            <th class="min-w-125px">RECEIVE NO</th>
-                            <th class="min-w-125px">SUPPLIER</th>
-                            <th class="min-w-125px">STORE</th>
+                            <th class="min-w-125px">USERNAME</th>
+                            <th class="min-w-125px">NAME</th>
+                            <th class="min-w-125px">EMAIL</th>
+                            <th class="min-w-125px">PASSWORD</th>
                             <th class="min-w-125px">STATUS</th>
-                            <th class="min-w-125px">EXPIRED DATE</th>
 
                             <th class="text-end min-w-100px">Actions</th>
                         </tr>
