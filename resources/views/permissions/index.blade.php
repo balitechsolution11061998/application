@@ -29,7 +29,7 @@
                     @can('permissions-create')
                     <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
                         <button type="button" class="btn btn-primary" onclick="tambahPermissions()">
-                            <i class="ki-duotone ki-plus fs-2"></i>Add User</button>
+                            <i class="ki-duotone ki-plus fs-2"></i>Add Permissions</button>
                     </div>
                     @endcan
 
