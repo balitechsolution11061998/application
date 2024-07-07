@@ -52,7 +52,7 @@
                         <div class="login-form-slider">
                             <!-- login slide start -->
                             <div class="login-slide slide login-style1">
-                                <form method="POST" action="{{ route('login.check_login') }}" id="sign_in_form">
+                                <form method="POST" action="{{ route('formlogin.check_login') }}" id="sign_in_form">
                                     @csrf
                                     <div class="form-group">
                                         <label class="label">User name</label>
