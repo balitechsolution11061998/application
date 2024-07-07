@@ -195,7 +195,7 @@
                     }).showToast();
                 } else {
                     $.ajax({
-                        url: "{{ route('login.check_login') }}",
+                        url: "{{ route('formlogin.check_login') }}",
                         type: "POST",
                         dataType: "JSON",
                         cache: false,
