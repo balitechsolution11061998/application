@@ -21,8 +21,8 @@ Route::get('/welcome', function(){
 
 Auth::routes();
 
-Route::get('/login', [LoginController::class, 'index'])->name('login');
-Route::post('/login/check_login', [LoginController::class, 'check_login'])->name('login.check_login');
+Route::get('/formlogin', [LoginController::class, 'index'])->name('formlogin');
+Route::post('/formlogin/check_login', [LoginController::class, 'check_login'])->name('formlogin.check_login');
 Route::group(['middleware' => ['verifiedmiddleware','twostep','verified','auth','log.user.access']], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
 
