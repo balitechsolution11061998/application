@@ -179,6 +179,7 @@ class DatabaseSeeder extends Seeder
                 'nik' => '11223344',
                 'join_date' => '2022-12-02',
                 'status' => 'y',
+                'alamat' => $faker->address,
                 'photo' => '/image/logo.png',
             ],
         ];
@@ -222,6 +223,7 @@ class DatabaseSeeder extends Seeder
                 'phone_number' => $faker->phoneNumber,
                 'nik' => $faker->randomNumber(8, true),
                 'join_date' => $faker->date,
+                'alamat'=>$faker->address,
                 'status' => $faker->randomElement(['y', 'n']),
                 'photo' => $faker->imageUrl(640, 480, 'people'),
                 'kode_dept' => $faker->randomElement($departmentIds), // Assign a random department ID
