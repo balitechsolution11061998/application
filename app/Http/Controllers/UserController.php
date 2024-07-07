@@ -28,7 +28,7 @@ class UserController extends Controller
             // Log the activity of accessing the create page using the trait
             $this->logActivity('Accessed create page', 'User accessed the create user page');
             if ($request->ajax()) {
-                $data = User::latest()->get();
+                $data = User::with('jabatan','department')->latest()->get();
 
                 return DataTables::of($data)
                     ->addIndexColumn()
@@ -112,7 +112,6 @@ class UserController extends Controller
             'kabupaten' => 'required|integer',
             'kecamatan' => 'required|integer',
             'kelurahan' => 'required|integer',
-            'user_role' => 'required|integer',
         ]);
 
         // If validation fails, return errors
@@ -132,6 +131,8 @@ class UserController extends Controller
             $user->kode_jabatan = $request->input('jabatan');
             $user->phone_number = $request->input('no_handphone');
             $user->nik = $request->input('nik');
+            $user->alamat = $request->input('address');
+            $user->about_us = $request->input('about_us');
             $user->join_date = $request->input('join_date');
             $user->provinsi_id = $request->input('provinsi');
             $user->kabupaten_id = $request->input('kabupaten');

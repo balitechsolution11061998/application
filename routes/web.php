@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Gate;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/welcome', function(){
+Route::get('/', function(){
 	return view('welcome');
 });
 
@@ -24,7 +24,7 @@ Auth::routes();
 Route::get('/formlogin', [LoginController::class, 'index'])->name('formlogin');
 Route::post('/formlogin/check_login', [LoginController::class, 'check_login'])->name('formlogin.check_login');
 Route::group(['middleware' => ['verifiedmiddleware','twostep','verified','auth','log.user.access']], function () {
-    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     Route::prefix('home')->name('home.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/countDataPo', 'HomeController@countDataPo')->name('countDataPo');

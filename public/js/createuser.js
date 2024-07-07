@@ -279,9 +279,7 @@ $(document).ready(function() {
                 required: true,
                 email: true,
             },
-            user_role: {
-                required: true,
-            },
+
             password: {
                 required: true,
                 minlength: 8,
@@ -340,9 +338,7 @@ $(document).ready(function() {
                 required: "Please enter an email address",
                 email: "Please enter a valid email address",
             },
-            user_role: {
-                required: "Please select a role",
-            },
+
             password: {
                 required: "Please enter a password",
                 minlength: "Password must be at least 8 characters long",
@@ -392,8 +388,6 @@ $(document).ready(function() {
                 error.appendTo("#name-error");
             } else if (element.attr("name") === "email") {
                 error.appendTo("#email-error");
-            } else if (element.attr("name") === "user_role") {
-                error.appendTo("#user_role-error");
             } else if (element.attr("name") === "password") {
                 error.appendTo("#password-error");
             }else if (element.attr("name") === "confirm_password") {
@@ -456,7 +450,6 @@ $(document).ready(function() {
                         data: formData,
                         success: function (response) {
                             // Handle success response
-                            console.log('Success:', response);
 
                             // Show a success toast with Toastify
                             Toastify({
@@ -470,7 +463,7 @@ $(document).ready(function() {
 
                             // Optionally, redirect to another page after success
                             setTimeout(function() {
-                                window.location.href = '/users/index'; // Replace with your desired URL
+                                window.location.href = '/users'; // Replace with your desired URL
                             }, 3000); // Redirect after 3 seconds (3000 milliseconds)
                         },
                         error: function (error) {

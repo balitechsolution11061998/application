@@ -46,7 +46,7 @@
         <section class="cd-section index visible ">
             <div class="cd-content style1">
                 <div class="login-box d-md-flex align-items-center">
-                    <h1 class="title">Good Morning</h1>
+                    <h1 class="title" id="greeting">Good Morning</h1>
                     <h3 class="subtitle">Have a great journey ahead!</h3>
                     <div class="login-form-box fadeIn">
                         <div class="login-form-slider">
@@ -163,6 +163,20 @@
         @if (session('toast'))
             toastr.{{ session('toast.type') }}("{{ session('toast.message') }}", "{{ session('toast.title') }}");
         @endif
+    </script>
+       <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    var greetingElement = document.getElementById('greeting');
+    var hour = new Date().getHours();
+
+    if (hour >= 5 && hour < 12) {
+        greetingElement.textContent = 'Good Morning';
+    } else if (hour >= 12 && hour < 18) {
+        greetingElement.textContent = 'Good Afternoon';
+    } else {
+        greetingElement.textContent = 'Good Evening';
+    }
+});
     </script>
     <script>
         $(document).ready(function() {

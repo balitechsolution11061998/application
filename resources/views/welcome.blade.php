@@ -79,6 +79,7 @@
               </div>
             </div>
             <a href="contact.html" class="nav-item nav-link">Contact</a>
+            <a href="/formlogin" class="nav-item nav-link">Login</a>
           </div>
           <a href="" class="btn btn-primary px-4">Join Class</a>
         </div>
@@ -977,5 +978,6 @@
 
     <!-- Template Javascript -->
     <script src="{{ asset('assetsfrontend/js/main.js')}}"></script>
+
   </body>
 </html>

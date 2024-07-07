@@ -68,6 +68,62 @@ function fetchDataUser() {
                 },
             },
             {
+                data: "kode_jabatan",
+                name: "kode_jabatan",
+                render: function (data, type, row) {
+                    if (data === null || data === undefined) {
+                        return "Belum memiliki jabatan";
+                    } else {
+                        return row.kode_jabatan;
+                    }
+                },
+            },
+            {
+                data: "phone_number",
+                name: "phone_number",
+                render: function (data, type, row) {
+                    if (data === null || data === undefined) {
+                        return "Belum memiliki No Handphone";
+                    } else {
+                        return row.phone_number;
+                    }
+                },
+            },
+
+            {
+                data: "photo",
+                name: "photo",
+                render: function (data, type, row) {
+                    if (data === null || data === undefined || data.trim() === '') {
+                        return '<img src="/image/logo.png" alt="Default Image" class="img-fluid" style="height: 100px;">';
+                    } else {
+                        return '<img src="' + data + '" alt="User Photo" class="img-fluid" style="height: 100px;">';
+                    }
+                },
+            },
+            {
+                data: "department",
+                name: "department",
+                render: function (data, type, row) {
+                    if (row.department === null || row.department === undefined) {
+                        return "Belum memiliki department";
+                    } else {
+                        return row.department.kode_department;
+                    }
+                },
+            },
+            {
+                data: "cabang",
+                name: "cabang",
+                render: function (data, type, row) {
+                    if (row.cabang === null || row.cabang === undefined) {
+                        return "Belum memiliki cabang";
+                    } else {
+                        return row.department.kode_department;
+                    }
+                },
+            },
+            {
                 data: "status",
                 name: "status",
                 render: function (data, type, row) {
