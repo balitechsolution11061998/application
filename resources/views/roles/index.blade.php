@@ -18,7 +18,7 @@
                             <span class="path1"></span>
                             <span class="path2"></span>
                         </i>
-                        <input type="text" data-kt-user-table-filter="search" id="frmSearchRoles" class="form-control form-control-solid w-250px ps-13" placeholder="Search Roles" />
+                        <input type="text" data-kt-user-table-filter="search" id="frmSearchRoles" class="form-control form-control-solid form-control-sm w-250px ps-13" placeholder="Search Roles" />
                     </div>
                     <!--end::Search-->
                 </div>
@@ -26,7 +26,7 @@
                 <!--begin::Card toolbar-->
                 <div class="card-toolbar">
                     <!--begin::Toolbar-->
-                    @can('permissions-create')
+                    @can('roles-create')
                     <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
                         <button type="button" class="btn btn-primary btn-sm" onclick="tambahRoles()">
                             <i class="ki-duotone ki-plus fs-2"></i>Add Roles</button>
