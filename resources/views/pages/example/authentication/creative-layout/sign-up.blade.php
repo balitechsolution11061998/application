@@ -18,7 +18,7 @@
                         <!--begin::Logo-->
                         <a href="index.html" class="mb-7">
                             <div class="d-flex align-items-center">
-                                <img alt="Logo" src="{{ asset('assets/media/logos/m-mart.svg') }}" class="h-70px" />
+                                <img alt="Logo" src="{{ asset('image/logo.png') }}" class="h-70px" />
                                 <h1 class="ms-4 page-heading text-white fw-medium" style="font-family: Rubik; margin-bottom: -6px; font-size: 40px">
                                     M Mart
                                 </h1>

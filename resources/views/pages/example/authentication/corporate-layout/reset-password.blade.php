@@ -138,7 +138,7 @@
                 <div class="d-flex flex-column flex-center py-7 py-lg-15 px-5 px-md-15 w-100">
                     <!--begin::Logo-->
                     <a href="index.html" class="mb-0 mb-lg-12">
-                        <img alt="Logo" src="{{ asset('assets/media/logos/m-mart.svg') }}" class="h-60px h-lg-75px" />
+                        <img alt="Logo" src="{{ asset('image/logo.png') }}" class="h-60px h-lg-75px" />
                     </a>
                     <!--end::Logo-->
                     <!--begin::Image-->

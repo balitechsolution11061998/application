@@ -28,7 +28,7 @@
                         <!--begin::Logo-->
                         <div class="mb-14">
                             <a href="index.html" class="">
-                                <img alt="Logo" src="{{ asset('assets/media/logos/m-mart.svg') }}" class="h-40px" />
+                                <img alt="Logo" src="{{ asset('image/logo.png') }}" class="h-40px" />
 								</a>
 							</div>
 							<!--end::Logo-->

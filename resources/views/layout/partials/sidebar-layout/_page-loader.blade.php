@@ -1,6 +1,6 @@
 <!--begin::loader-->
 <div class="page-loader flex-column">
-    {{-- <img alt="Logo" class="h-50px" src="{{ asset('assets/media/logos/m-mart.svg') }}" /> --}}
+    {{-- <img alt="Logo" class="h-50px" src="{{ asset('image/logo.png') }}" /> --}}
     {{-- <img alt="Logo" class="theme-light-show max-h-50px" src="{{ asset('assets/media/logos/keenthemes.svg') }}" />
     <img alt="Logo" class="theme-dark-show max-h-50px" src="{{ asset('assets/media/logos/keenthemes-dark.svg') }}" /> --}}
     <div class="d-flex align-items-center mt-5">

@@ -15,7 +15,7 @@
                     <div class="d-flex flex-center py-10 py-lg-20 mt-lg-20">
                         <!--begin::Logo-->
                         <a href="index.html">
-                            <img alt="Logo" src="{{ asset('assets/media/logos/m-mart.svg') }}" class="h-70px" />
+                            <img alt="Logo" src="{{ asset('image/logo.png') }}" class="h-70px" />
                         </a>
                         <!--end::Logo-->
                     </div>
