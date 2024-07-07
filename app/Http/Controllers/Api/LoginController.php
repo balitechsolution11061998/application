@@ -37,7 +37,7 @@ class LoginController extends Controller
         }
 
         // If auth success
-        $user = Auth::guard('api')->user();
+    $user = Auth::guard('api')->user(); // Eager load relationships
 
         // Get user's roles' display names using Laratrust
         $roles = $user->roles->pluck('display_name')->first(); // Get role display names
@@ -45,6 +45,9 @@ class LoginController extends Controller
         // Prepare user data
         $userData = $user->toArray();
         $userData['roles'] = $roles;
+        $userData['jabatan_name'] = $user->position ? $user->position->name : null;
+        $userData['department_name'] = $user->department ? $user->department->name : null;
+        $userData['cabang_name'] = $user->cabang ? $user->cabang->name : null;
 
         return response()->json([
             'success' => true,
