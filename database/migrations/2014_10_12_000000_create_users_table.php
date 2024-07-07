@@ -19,12 +19,9 @@ return new class extends Migration
             $table->char('status')->nullable();
             $table->string('photo')->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('kode_dept')->nullable();
-            $table->unsignedBigInteger('provinsi_id')->nullable();
-            $table->unsignedBigInteger('kabupaten_id')->nullable();
-            $table->unsignedBigInteger('kecamatan_id')->nullable();
-            $table->unsignedBigInteger('kelurahan_id')->nullable();
-            $table->string('kode_jabatan')->nullable();
+            $table->unsignedBigInteger('kode_dept')->nullable();
+            $table->unsignedBigInteger('kode_cabang')->nullable();
+            $table->unsignedBigInteger('kode_jabatan')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('password_show')->nullable();
             $table->string('password')->nullable();

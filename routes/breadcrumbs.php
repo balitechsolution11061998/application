@@ -20,6 +20,10 @@ Breadcrumbs::for('roles', function (BreadcrumbTrail $trail) {
     $trail->push('Roles', route('roles.index'));
 });
 
+Breadcrumbs::for('users', function (BreadcrumbTrail $trail) {
+    $trail->push('User', route('users.index'));
+});
+
 // Dashboard > Default
 Breadcrumbs::for('dashboard.default', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');

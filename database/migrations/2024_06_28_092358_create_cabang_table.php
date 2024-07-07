@@ -14,6 +14,11 @@ return new class extends Migration
         Schema::create('cabang', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('kode_cabang');
+            $table->unsignedBigInteger('provinsi_id')->nullable();
+            $table->unsignedBigInteger('kabupaten_id')->nullable();
+            $table->unsignedBigInteger('kecamatan_id')->nullable();
+            $table->unsignedBigInteger('kelurahan_id')->nullable();
             $table->timestamps();
         });
     }

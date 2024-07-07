@@ -31,7 +31,15 @@ function fetchDataUser() {
         responsive: true, // Enable responsive extension
         processing: true,
         serverSide: true,
-        ajax: "/users/data",
+        ajax: {
+            url:"/users/data",
+            beforeSend: function() {
+                $('.spinner').show();
+            },
+            complete: function() {
+                $('.spinner').hide();
+            }
+        },
         columns: [
             { data: "id", name: "id" },
             {
@@ -61,7 +69,7 @@ function fetchDataUser() {
                 render: function (data, type, row) {
                     return `
                         <div class="password-container">
-                            <input type="password" class="form-control" value="${data}" readonly />
+                            <input type="password" class="form-control form-control-sm" value="${data}" readonly />
                             <i class="fas fa-eye toggle-password"></i>
                         </div>
                     `;
@@ -71,10 +79,10 @@ function fetchDataUser() {
                 data: "kode_jabatan",
                 name: "kode_jabatan",
                 render: function (data, type, row) {
-                    if (data === null || data === undefined) {
+                    if (row.jabatan === null || row.jabatan === undefined) {
                         return "Belum memiliki jabatan";
                     } else {
-                        return row.kode_jabatan;
+                        return row.jabatan.kode_jabatan;
                     }
                 },
             },
@@ -95,9 +103,9 @@ function fetchDataUser() {
                 name: "photo",
                 render: function (data, type, row) {
                     if (data === null || data === undefined || data.trim() === '') {
-                        return '<img src="/image/logo.png" alt="Default Image" class="img-fluid" style="height: 100px;">';
+                        return '<a href="/image/logo.png" data-fancybox="gallery"><img src="/image/logo.png" alt="Default Image" class="img-fluid" style="height: 100px;"></a>';
                     } else {
-                        return '<img src="' + data + '" alt="User Photo" class="img-fluid" style="height: 100px;">';
+                        return '<a href="' + data + '" data-fancybox="gallery"><img src="' + data + '" alt="User Photo" class="img-fluid" style="height: 100px;"></a>';
                     }
                 },
             },
@@ -113,13 +121,13 @@ function fetchDataUser() {
                 },
             },
             {
-                data: "cabang",
-                name: "cabang",
+                data:'department',
+                name: "department",
                 render: function (data, type, row) {
                     if (row.cabang === null || row.cabang === undefined) {
                         return "Belum memiliki cabang";
                     } else {
-                        return row.department.kode_department;
+                        return row.cabang.name;
                     }
                 },
             },
@@ -128,9 +136,9 @@ function fetchDataUser() {
                 name: "status",
                 render: function (data, type, row) {
                     if (data === "y") {
-                        return '<span class="badge badge-success"><i class="fas fa-check"></i> Active</span>';
+                        return '<span class="badge badge-success badge-sm" style="color: white;"><i class="fas fa-check" style="color: white;"></i> Active</span>';
                     } else {
-                        return '<span class="badge badge-secondary"><i class="fas fa-times"></i> Non-active</span>';
+                        return '<span class="badge badge-secondary badge-sm" style="color: white;"><i class="fas fa-times" style="color: white;"></i> Non-active</span>';
                     }
                 },
             },
@@ -145,7 +153,7 @@ function fetchDataUser() {
                         <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit" onclick="editUser(${row.id})">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Trash">
+                        <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Trash" onclick="deleteUser(${row.id})">
                             <i class="fas fa-trash"></i>
                         </a>
                         <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Reset Password" onclick="resetPassword(${row.id})">
@@ -159,6 +167,17 @@ function fetchDataUser() {
         ],
     });
 
+    $('[data-fancybox="gallery"]').fancybox({
+        // Options if needed
+    });
+
+    // Re-initialize Fancybox after DataTable redraw (if using AJAX or other redraw methods)
+    $('#users_table').on('draw.dt', function() {
+        $('[data-fancybox="gallery"]').fancybox({
+            // Options if needed
+        });
+    });
+
     // Toggle password visibility
     $(document).on("click", ".toggle-password", function () {
         const input = $(this).siblings("input");
@@ -170,7 +189,47 @@ function fetchDataUser() {
         // Swal confirmation and link opening for Edit button
 
 }
+function deleteUser(userId) {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Make an AJAX request to delete the user
+            $.ajax({
+                url: '/users/delete/' + userId,
+                type: 'DELETE',
+                success: function(result) {
+                    Swal.fire(
+                        'Deleted!',
+                        'User has been deleted.',
+                        'success'
+                    );
+                    // Refresh the DataTable
+                    fetchDataUser();
+                },
+                error: function(xhr) {
+                    Swal.fire(
+                        'Error!',
+                        'There was an error deleting the user.',
+                        'error'
+                    );
+                }
+            });
+        }
+    });
+}
 
 function editUser(value){
     Swal.fire({

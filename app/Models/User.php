@@ -80,14 +80,14 @@ class User extends Authenticatable implements LaratrustUser,JWTSubject
     }
 
     public function jabatan(){
-        return $this->hasOne(Jabatan::class,'kode_jabatan','kode_jabatan');
+        return $this->hasOne(Jabatan::class,'id','kode_jabatan');
     }
 
     public function department(){
         return $this->hasOne(Department::class,'id','kode_dept');
     }
     public function cabang(){
-        return $this->hasOne(Department::class,'id','kode_dept');
+        return $this->hasOne(Province::class,'id','kode_cabang');
     }
     public function getActivitylogOptions(): LogOptions
     {

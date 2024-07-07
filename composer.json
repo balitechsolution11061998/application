@@ -10,6 +10,7 @@
         "giggsey/libphonenumber-for-php": "^8.13",
         "guzzlehttp/guzzle": "^7.2",
         "inspector-apm/inspector-laravel": "^4.8",
+        "intervention/image": "^3.7",
         "itmm/m-mart-skin": "^1.0",
         "jeremykenedy/laravel2step": "^3.1",
         "laravel/framework": "^10.0",

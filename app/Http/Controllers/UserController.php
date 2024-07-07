@@ -8,10 +8,12 @@ use Illuminate\Http\Request;
 use App\Traits\LogsActivity;
 use Illuminate\Support\Facades\Validator;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Response;
 
 class UserController extends Controller
 {
@@ -28,7 +30,7 @@ class UserController extends Controller
             // Log the activity of accessing the create page using the trait
             $this->logActivity('Accessed create page', 'User accessed the create user page');
             if ($request->ajax()) {
-                $data = User::with('jabatan','department')->latest()->get();
+                $data = User::with('jabatan','department','cabang')->latest()->get();
 
                 return DataTables::of($data)
                     ->addIndexColumn()
@@ -97,57 +99,99 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+
+        // Determine if this is a create or update operation
+        $isUpdate = $request->has('id');
+        $user = $isUpdate ? User::findOrFail($request->input('id')) : new User();
         // Validate the incoming request data
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:users',
+            'username' => [
+                'required',
+                'string',
+                'max:10',
+                $isUpdate ? Rule::unique('users')->ignore($user->id) : 'unique:users',
+            ],
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                $isUpdate ? Rule::unique('users')->ignore($user->id) : 'unique:users',
+            ],
+            'password' => $isUpdate ? 'sometimes|string|min:8' : 'required|string|min:8',
             'departments' => 'required|integer',
             'jabatan' => 'required|string|max:255',
+            'cabang' => 'required|string|max:255',
             'no_handphone' => 'required|string|max:15',
             'nik' => 'required|string|max:16',
             'join_date' => 'required|date',
-            'provinsi' => 'required|integer',
-            'kabupaten' => 'required|integer',
-            'kecamatan' => 'required|integer',
-            'kelurahan' => 'required|integer',
+            'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'address' => 'nullable|string',
+            'about_us' => 'nullable|string',
+            'status' => 'sometimes|string',
         ]);
 
-        // If validation fails, return errors
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
+        // Handle the photo upload
+        if ($request->hasFile('photo')) {
+            $imageName = time().'.'.$request->photo->extension();
+            $uploadedImage = $request->photo->storeAs('images', $imageName, 'public');
+            $photoPath = 'storage/images/' . $imageName; // Store the path in the database
+            $user->photo = $photoPath;
+        }
+
         try {
-            // Create a new user
-            $user = new User();
+            // Set user attributes
             $user->username = $request->input('username');
             $user->name = $request->input('name');
             $user->email = $request->input('email');
-            $user->password_show = $request->input('password');
-            $user->password = bcrypt($request->input('password'));
+            if ($request->filled('password')) {
+                $user->password_show = $request->input('password');
+                $user->password = bcrypt($request->input('password'));
+            }
             $user->kode_dept = $request->input('departments');
             $user->kode_jabatan = $request->input('jabatan');
+            $user->kode_cabang = $request->input('cabang');
             $user->phone_number = $request->input('no_handphone');
             $user->nik = $request->input('nik');
             $user->alamat = $request->input('address');
             $user->about_us = $request->input('about_us');
             $user->join_date = $request->input('join_date');
-            $user->provinsi_id = $request->input('provinsi');
-            $user->kabupaten_id = $request->input('kabupaten');
-            $user->kecamatan_id = $request->input('kecamatan');
-            $user->kelurahan_id = $request->input('kelurahan');
             $user->status = $request->input('status') === 'on' ? 'y' : 'n';
+
             $user->save();
 
-            return response()->json(['message' => 'User created successfully'], 201);
-        } catch (Exception $e) {
+            $message = $isUpdate ? 'User updated successfully' : 'User created successfully';
+            return response()->json(['message' => $message], $isUpdate ? 200 : 201);
+        } catch (\Exception $e) {
             // Log the error using the LogsErrors trait
-            $this->logError('An error occurred while accessing the create page', $e);
+            $this->logError('An error occurred while accessing the save page', $e);
 
             // Return a JSON response with the error message
-            return response()->json(['error' => 'Failed to create user', 'message' => $e->getMessage()], 500);
+            return response()->json(['error' => 'Failed to save user', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $user = User::findOrFail($id);
+            $user->delete();
+
+            DB::commit();
+
+            return Response::json(['message' => 'User deleted successfully'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error deleting user: ' . $e->getMessage());
+
+            return Response::json(['error' => 'Failed to delete user', 'message' => $e->getMessage()], 500);
         }
     }
 

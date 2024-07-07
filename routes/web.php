@@ -23,7 +23,8 @@ Auth::routes();
 
 Route::get('/formlogin', [LoginController::class, 'index'])->name('formlogin');
 Route::post('/formlogin/check_login', [LoginController::class, 'check_login'])->name('formlogin.check_login');
-Route::group(['middleware' => ['verifiedmiddleware','twostep','verified','auth','log.user.access']], function () {
+Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.access']], function () {
+// Route::group(['middleware' => ['verifiedmiddleware','twostep','verified','auth','log.user.access']], function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     Route::prefix('home')->name('home.')->namespace('App\Http\Controllers')->group(function () {
@@ -70,6 +71,7 @@ Route::group(['middleware' => ['verifiedmiddleware','twostep','verified','auth',
         Route::post('/reset-password/{id}', 'UserController@resetPassword')->name('reset-password');
         Route::get('/{id}/edit', 'UserController@edit')->name('edit');
         Route::get('/{id}/dataEdit', 'UserController@dataEdit')->name('dataEdit');
+        Route::delete('/delete/{id}','UserController@delete')->name('delete');
 
 
     });
@@ -96,6 +98,10 @@ Route::group(['middleware' => ['verifiedmiddleware','twostep','verified','auth',
 
     Route::prefix('jabatan')->name('jabatan.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/data', 'JabatanController@data')->name('data');
+    });
+
+    Route::prefix('cabang')->name('cabang.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/data', 'CabangController@data')->name('data');
     });
 });
 

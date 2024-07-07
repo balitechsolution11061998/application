@@ -200,38 +200,22 @@ $(document).ready(function() {
                         <!--end::Input-->
                     </div>
 
-                    <div class="fv-row mb-7">
-                        <label class="required fw-semibold fs-6 mb-2">Provinsi</label>
-                        <select id="provinsi" name="provinsi" class="form-control form-control-solid mb-3 mb-lg-0 provinsiSelect"></select>
-                        <div id="provinsi-error" class="text-danger"></div>
+                     <div class="fv-row mb-7">
+                        <label class="required fw-semibold fs-6 mb-2">Cabang</label>
+                        <select id="cabang" name="cabang" class="form-control form-control-solid mb-3 mb-lg-0 "></select>
+                        <div id="cabang-error" class="text-danger"></div>
                     </div>
 
-                    <div class="fv-row mb-7">
-                        <!-- Kabupaten -->
-                        <label class="required fw-semibold fs-6 mb-2">Kabupaten</label>
-                        <div class="input-group">
-                            <select id="kabupaten" name="kabupaten" class="form-control form-control-solid mb-3 mb-lg-0"></select>
+                    <div class="col-md-6 mb-7">
+                        <label class="required fw-semibold fs-6 mb-2">Upload Photo</label>
+                        <div class="drop-zone">
+                            <span class="drop-zone__prompt">Drag & Drop your photo here or click to upload</span>
+                            <input type="file" name="photo" id="photo" class="drop-zone__input" accept="image/*">
                         </div>
-                        <div id="kabupaten-error" class="text-danger"></div>
+                        <!-- Error message placeholder -->
+                        <div id="photo-error" class="text-danger"></div>
                     </div>
 
-                    <div class="fv-row mb-7">
-                        <!-- Kecamatan -->
-                        <label class="required fw-semibold fs-6 mb-2">Kecamatan</label>
-                        <div class="input-group">
-                            <select id="kecamatan" name="kecamatan" class="form-control form-control-solid mb-3 mb-lg-0"></select>
-                        </div>
-                        <div id="kecamatan-error" class="text-danger"></div>
-                    </div>
-
-                    <div class="fv-row mb-7">
-                        <!-- Kelurahan -->
-                        <label class="required fw-semibold fs-6 mb-2">Kelurahan</label>
-                        <div class="input-group">
-                            <select id="kelurahan" name="kelurahan" class="form-control form-control-solid mb-3 mb-lg-0"></select>
-                        </div>
-                        <div id="kelurahan-error" class="text-danger"></div>
-                    </div>
                 </div>
             </div>
 
@@ -259,9 +243,43 @@ $(document).ready(function() {
     document.getElementById("formUsers").appendChild(formContent);
     fetchDepartments();
     fetchJabatan();
+    fetchCabang();
 
-    fetchDataProvinsi();
+    document.querySelectorAll('.drop-zone__input').forEach(inputElement => {
+        const dropZoneElement = inputElement.closest('.drop-zone');
 
+        dropZoneElement.addEventListener('click', () => {
+            inputElement.click();
+        });
+
+        inputElement.addEventListener('change', () => {
+            if (inputElement.files.length) {
+                updateThumbnail(dropZoneElement, inputElement.files[0]);
+            }
+        });
+
+        dropZoneElement.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZoneElement.classList.add('drop-zone--over');
+        });
+
+        ['dragleave', 'dragend'].forEach(type => {
+            dropZoneElement.addEventListener(type, () => {
+                dropZoneElement.classList.remove('drop-zone--over');
+            });
+        });
+
+        dropZoneElement.addEventListener('drop', (e) => {
+            e.preventDefault();
+
+            if (e.dataTransfer.files.length) {
+                inputElement.files = e.dataTransfer.files;
+                updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+            }
+
+            dropZoneElement.classList.remove('drop-zone--over');
+        });
+    });
 
 
     $("#formUser").validate({
@@ -279,7 +297,6 @@ $(document).ready(function() {
                 required: true,
                 email: true,
             },
-
             password: {
                 required: true,
                 minlength: 8,
@@ -289,34 +306,25 @@ $(document).ready(function() {
                 required: true,
                 equalTo: "#password", // Validation to match password and confirm password
             },
-            departments:{
+            departments: {
                 required: true,
             },
-            provinsi:{
+            jabatan: {
                 required: true,
             },
-            kabupaten:{
-                required: true,
-            },
-            kecamatan:{
-                required: true,
-            },
-            kelurahan:{
-                required: true,
-            },
-            jabatan:{
+            cabang: {
                 required: true,
             },
             no_handphone: {
                 required: true,
                 minlength: 12,
-                maxlength:14,
+                maxlength: 14,
                 digits: true
             },
             nik: {
                 required: true,
-                minlength: 16,
-                maxlength: 16,
+                minlength: 7,
+                maxlength: 10,
                 digits: true
             },
             join_date: {
@@ -327,8 +335,8 @@ $(document).ready(function() {
         messages: {
             username: {
                 required: "Please enter a username name",
-                minlength: "username must be at least 7 characters long",
-                maxlength: "username must be exactly 10 digits long",
+                minlength: "Username must be at least 7 characters long",
+                maxlength: "Username must be exactly 10 digits long",
             },
             name: {
                 required: "Please enter a full name",
@@ -338,7 +346,6 @@ $(document).ready(function() {
                 required: "Please enter an email address",
                 email: "Please enter a valid email address",
             },
-
             password: {
                 required: "Please enter a password",
                 minlength: "Password must be at least 8 characters long",
@@ -354,17 +361,8 @@ $(document).ready(function() {
             jabatan: {
                 required: "Please select jabatan",
             },
-            provinsi: {
-                required: "Please select provinsi",
-            },
-            kabupaten: {
-                required: "Please select kabupaten",
-            },
-            kecamatan: {
-                required: "Please select kecamatan",
-            },
-            kelurahan: {
-                required: "Please select kelurahan",
+            cabang: {
+                required: "Please select cabang",
             },
             no_handphone: {
                 required: "Please enter your phone number",
@@ -373,8 +371,8 @@ $(document).ready(function() {
             },
             nik: {
                 required: "Please enter your NIK",
-                minlength: "NIK must be exactly 16 digits long",
-                maxlength: "NIK must be exactly 16 digits long",
+                minlength: "NIK must be exactly 7 digits long",
+                maxlength: "NIK must be exactly 10 digits long",
                 digits: "NIK must contain only digits"
             },
             join_date: {
@@ -383,46 +381,10 @@ $(document).ready(function() {
             }
         },
         errorPlacement: function (error, element) {
-            // Custom error placement below the input group
-            if (element.attr("name") === "name") {
-                error.appendTo("#name-error");
-            } else if (element.attr("name") === "email") {
-                error.appendTo("#email-error");
-            } else if (element.attr("name") === "password") {
-                error.appendTo("#password-error");
-            }else if (element.attr("name") === "confirm_password") {
-                error.appendTo("#confirm-password-error");
-            }else if (element.attr("name") === "departments") {
-                error.appendTo("#departments-error");
-            }else if (element.attr("name") === "jabatan") {
-                error.appendTo("#jabatan-error");
-            }else if (element.attr("name") === "provinsi") {
-                error.appendTo("#provinsi-error");
-            }else if (element.attr("name") === "kabupaten") {
-                error.appendTo("#kabupaten-error");
-            }else if (element.attr("name") === "kecamatan") {
-                error.appendTo("#kecamatan-error");
-            }else if (element.attr("name") === "kelurahan") {
-                error.appendTo("#kelurahan-error");
-            }else if (element.attr("name") === "no_handphone") {
-                error.appendTo("#no_handphone_error");
-            }else if (element.attr("name") === "nik") {
-                error.appendTo("#nik_error");
-            }else if (element.attr("name") === "join_date") {
-                error.appendTo("#join_date_error");
-            }else if (element.attr("name") === "username") {
-                error.appendTo("#username-error");
-            }
-
-            else {
-                error.insertAfter(element); // Fallback to default placement
-            }
-
             var name = element.attr("name");
             error.appendTo($("#" + name + "-error"));
         },
         submitHandler: function (form) {
-            // Display SweetAlert confirmation dialog
             Swal.fire({
                 title: 'Are you sure?',
                 text: "Do you want to submit the form?",
@@ -433,7 +395,6 @@ $(document).ready(function() {
                 confirmButtonText: 'Yes, submit it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Form is valid, display a success toast
                     Toastify({
                         text: "Form submitted successfully!",
                         backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
@@ -441,46 +402,40 @@ $(document).ready(function() {
                     }).showToast();
 
                     // Prepare form data
-                    var formData = $(form).serialize();
+                    var formData = new FormData(form);
 
                     // Perform AJAX POST request
                     $.ajax({
                         type: 'POST',
                         url: '/users/store', // Replace with your Laravel route
                         data: formData,
+                        processData: false, // Prevent jQuery from converting the data
+                        contentType: false, // Set content type to false
                         success: function (response) {
-                            // Handle success response
-
-                            // Show a success toast with Toastify
                             Toastify({
                                 text: "Form submitted successfully.",
                                 backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
                                 duration: 3000,
                                 close: true,
-                                gravity: "bottom", // Optional, aligns the toast to 'top', 'bottom', 'left', 'right'
-                                position: "right", // Optional, aligns the toast to 'left', 'center', 'right'
+                                gravity: "bottom",
+                                position: "right",
                             }).showToast();
 
-                            // Optionally, redirect to another page after success
                             setTimeout(function() {
                                 window.location.href = '/users'; // Replace with your desired URL
-                            }, 3000); // Redirect after 3 seconds (3000 milliseconds)
+                            }, 3000);
                         },
                         error: function (error) {
-                            // Handle error response
                             console.error('Error:', error);
-
-                            // Display an error toast with Toastify
                             Toastify({
                                 text: "An error occurred while submitting the form.",
                                 backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
                                 duration: 3000,
                                 close: true,
-                                gravity: "bottom", // Optional
-                                position: "right", // Optional
+                                gravity: "bottom",
+                                position: "right",
                             }).showToast();
 
-                            // Optionally, show a Swal.fire error notification
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Oops...',
@@ -488,30 +443,24 @@ $(document).ready(function() {
                             });
                         }
                     });
-
                 }
             });
         },
         invalidHandler: function (event, validator) {
             console.log(event, validator);
-
-            // Iterate over the invalid fields to find empty inputs
             let emptyFields = [];
             $.each(validator.errorList, function (index, error) {
                 if (!$(error.element).val()) {
                     emptyFields.push(error.element);
                 }
             });
-
             if (emptyFields.length > 0) {
-                // Display a specific error message for empty inputs
                 Toastify({
                     text: "Please fill out all required fields.",
                     backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
                     duration: 3000,
                 }).showToast();
             } else {
-                // Display a generic error message
                 Toastify({
                     text: "Please correct the errors in the form.",
                     backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
@@ -520,6 +469,7 @@ $(document).ready(function() {
             }
         },
     });
+
 
     // Add custom method for strong password validation
     $.validator.addMethod("strongPassword", function (value, element) {
@@ -566,6 +516,36 @@ $(document).ready(function() {
     });
 
 });
+
+function updateThumbnail(dropZoneElement, file) {
+    let thumbnailElement = dropZoneElement.querySelector('.drop-zone__thumb');
+
+    // Remove prompt
+    if (dropZoneElement.querySelector('.drop-zone__prompt')) {
+        dropZoneElement.querySelector('.drop-zone__prompt').remove();
+    }
+
+    // First time - there is no thumbnail element, so lets create it
+    if (!thumbnailElement) {
+        thumbnailElement = document.createElement('div');
+        thumbnailElement.classList.add('drop-zone__thumb');
+        dropZoneElement.appendChild(thumbnailElement);
+    }
+
+    thumbnailElement.dataset.label = file.name;
+
+    // Show thumbnail for image files
+    if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+        };
+    } else {
+        thumbnailElement.style.backgroundImage = null;
+    }
+}
 
 
 function kembali() {
@@ -634,8 +614,13 @@ function fetchUserData(userId) {
 
             $('#departments').val(response.kode_dept).trigger('change');
             $('#selectJabatan').val(response.kode_jabatan).trigger('change');
+            if (response.status === 'y') {
+                $('input[name="status"]').prop('checked', true);
+            } else {
+                $('input[name="status"]').prop('checked', false);
+            }
+            $('#cabang').val(response.kode_cabang).trigger('change');
 
-            fetchDataProvinsi(response.provinsi_id);
         },
         error: function(xhr, status, error) {
             console.error('Error fetching user data:', error);
@@ -659,6 +644,21 @@ function generatePassword() {
         password += charset.charAt(Math.floor(Math.random() * n));
     }
     return password;
+}
+
+function fetchCabang() {
+    fetch('/cabang/data')  // Replace with your actual API endpoint
+        .then(response => response.json())
+        .then(data => {
+            if (data.items) {
+                populateCabang(data.items);
+            } else {
+                showError('No cabang found.');
+            }
+        })
+        .catch(error => {
+            showError('Error fetching cabang.');
+        });
 }
 
 function fetchJabatan() {
@@ -696,11 +696,27 @@ function populateJabatan(jabatan) {
     const jabatanDropdown = document.getElementById('selectJabatan');
     jabatan.forEach(jabatan => {
         const option = document.createElement('option');
-        option.value = jabatan.kode_jabatan;  // Assuming each department has an 'id' field
+        option.value = jabatan.id;  // Assuming each department has an 'id' field
         option.textContent = jabatan.name;  // Assuming each department has a 'name' field
         jabatanDropdown.appendChild(option);
     });
 }
+
+function populateCabang(cabang) {
+    const cabangDropdown = document.getElementById('cabang');
+    const namesSet = new Set();
+
+    cabang.forEach(cabang => {
+        if (!namesSet.has(cabang.name)) {  // Check if the name is already added
+            const option = document.createElement('option');
+            option.value = cabang.id;  // Assuming each cabang has an 'id' field
+            option.textContent = cabang.name;  // Assuming each cabang has a 'name' field
+            cabangDropdown.appendChild(option);
+            namesSet.add(cabang.name);  // Add the name to the set
+        }
+    });
+}
+
 
 // Function to populate departments dropdown
 function populateDepartments(departments) {

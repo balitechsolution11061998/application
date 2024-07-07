@@ -2,6 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Cabang;
+use App\Models\Department;
+use App\Models\Jabatan;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Role;
@@ -32,6 +35,59 @@ class DatabaseSeeder extends Seeder
         $data_kab = json_decode($json_kab, true);
         $data_kec = json_decode($json_kec, true);
         $data_kel = json_decode($json_kel, true);
+
+
+        foreach ($data_prov as $provinsi) {
+            $provinsi_id = $provinsi['id'];
+            $provinsi_name = $provinsi['name'];
+            $kode_provinsi = $provinsi['code'];
+
+            // Check if the province is Bali
+            if ($provinsi_name == 'Bali') {
+                // Get related kabupaten
+                $kabupaten_list = array_filter($data_kab, function ($kabupaten) use ($provinsi_id) {
+                    return $kabupaten['provinsi_id'] == $provinsi_id;
+                });
+
+                foreach ($kabupaten_list as $kabupaten) {
+                    $kabupaten_id = $kabupaten['id'];
+                    $kabupaten_name = $kabupaten['name'];
+
+                    // Check if the kabupaten is Badung
+                    if ($kabupaten_name == 'Badung') {
+                        // Get related kecamatan
+                        $kecamatan_list = array_filter($data_kec, function ($kecamatan) use ($kabupaten_id) {
+                            return $kecamatan['kabupaten_id'] == $kabupaten_id;
+                        });
+
+                        foreach ($kecamatan_list as $kecamatan) {
+                            $kecamatan_id = $kecamatan['id'];
+
+                            // Get related kelurahan
+                            $kelurahan_list = array_filter($data_kel, function ($kelurahan) use ($kecamatan_id) {
+                                return $kelurahan['kecamatan_id'] == $kecamatan_id;
+                            });
+
+                            foreach ($kelurahan_list as $kelurahan) {
+                                $kelurahan_id = $kelurahan['id'];
+
+                                DB::table('cabang')->insert([
+                                    'name' => $provinsi_name,
+                                    'kode_cabang' => $kode_provinsi,
+                                    'provinsi_id' => $provinsi_id,
+                                    'kabupaten_id' => $kabupaten_id,
+                                    'kecamatan_id' => $kecamatan_id,
+                                    'kelurahan_id' => $kelurahan_id,
+                                    'created_at' => now(),
+                                    'updated_at' => now(),
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 
         echo "Memulai proses seeder data Provinsi...\n";
         DB::table('provinsi')->insert($data_prov);
@@ -82,12 +138,10 @@ class DatabaseSeeder extends Seeder
             echo "Done seeder data Jabatan... batch " . ($key + 1) . "\n";
         }
 
-         $faker = Faker::create('id_ID');
+        $faker = Faker::create('id_ID');
 
-         // Daftar nama departemen dalam bahasa Indonesia
-
-
-         $departments = [
+        // Daftar nama departemen dalam bahasa Indonesia
+        $departments = [
             'Keuangan',
             'Sumber Daya Manusia',
             'Pemasaran',
@@ -111,9 +165,9 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call(LaratrustSeeder::class);
-        // Seed users
-        $dataUser =
-        [
+
+        // Predefined user data
+        $dataUser = [
             [
                 'username' => 'sulaksana60',
                 'name' => 'I Wayan Bayu Sulaksana',
@@ -125,331 +179,327 @@ class DatabaseSeeder extends Seeder
                 'nik' => '11223344',
                 'join_date' => '2022-12-02',
                 'status' => 'y',
+                'photo' => '/image/logo.png',
             ],
-            [
-                'username' => '219811991',
-                'name' => 'I Wayan Bayu Sulaksana',
-                'email' => 'sulaksana60@gmail.com',
-                'password_show' => 'Superman2000',
-                'password' => bcrypt('Superman2000@'),
-                'region' => '1',
-                'nik' => '11223344',
-                'join_date' => '2022-12-02',
-                'phone_number' => '62895343866012',
-                'status' => 'y',
-            ],
-            [
-                'username' => 'karyawan1',
-                'name' => 'Karyawan 1',
-                'email' => 'karyawan1@gmail.com',
-                'password_show' => 'karyawan',
-                'password' => bcrypt('karyawan'),
-                'region' => '1',
-                'nik' => '11223344',
-                'join_date' => '2022-12-02',
-                'phone_number' => '0812345789',
-                'status' => 'y',
-            ]
-
         ];
+
+        // Fetch department IDs
+        $departmentIds = Department::pluck('id')->toArray();
+        $jabatans = Jabatan::pluck('id')->toArray();
+        $cabang = Cabang::pluck('id')->toArray();
+
+        // Add predefined user
         foreach ($dataUser as $data) {
-            User::factory()->create([
-                'username' => $data['username'],
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'phone_number' => $data['phone_number'],
-                'password' => $data['password'],
-                'password_show'=>$data['password_show'],
-                'status' => $data['status'],
-                'nik' => $data['nik'],
-                'join_date' => $data['join_date'],
-                'region' => '1',
-            ]);
+            $data['kode_dept'] = $faker->randomElement($departmentIds); // Assign a random department ID
+            $data['kode_jabatan'] = $faker->randomElement($jabatans); // Assign a random department ID
+            $data['kode_cabang'] = $faker->randomElement($cabang); // Assign a random department ID
+
+            User::factory()->create($data);
+
             $user = User::where('email', $data['email'])->first();
 
             if ($user) {
-                $role = Role::whereIn('name', ['superadministrator'])->get()->toArray(); // Specify roles in an array
+                $role = Role::whereIn('name', ['superadministrator'])->get()->toArray();
                 if ($role) {
                     $user->syncRoles($role);
                 } else {
-                    // Handle if the role doesn't exist
                     echo "Role not found!";
                 }
             } else {
-                // Handle if the user doesn't exist
                 echo "User not found!";
             }
         }
 
-           // // Insert data into suppliers table
-           $faker = Faker::create('id_ID'); // Set locale to Indonesia
+        // Generate fake users
+        for ($i = 0; $i < 100; $i++) {
+            $fakeUser = [
+                'username' => $faker->userName,
+                'name' => $faker->name,
+                'email' => $faker->unique()->safeEmail,
+                'password_show' => 'password', // Placeholder password
+                'password' => bcrypt('password'), // Placeholder password
+                'region' => $faker->randomDigitNotNull,
+                'phone_number' => $faker->phoneNumber,
+                'nik' => $faker->randomNumber(8, true),
+                'join_date' => $faker->date,
+                'status' => $faker->randomElement(['y', 'n']),
+                'photo' => $faker->imageUrl(640, 480, 'people'),
+                'kode_dept' => $faker->randomElement($departmentIds), // Assign a random department ID
+                'kode_jabatan' => $faker->randomElement($jabatans), // Assign a random department ID
+                'kode_cabang' => $faker->randomElement($cabang), // Assign a random department ID
+            ];
 
-           for ($i = 0; $i < 5000; $i++) {
-                Supplier::create([
-                    'supp_code' => $faker->unique()->numberBetween(1, 5000),
-                    'supp_name' => $faker->company,
-                    'terms' => $faker->numberBetween(1, 60),
-                    'contact_name' => $faker->name,
-                    'contact_phone' => $faker->phoneNumber,
-                    'contact_fax' => $faker->phoneNumber,
-                    'email' => $faker->unique()->safeEmail,
-                    'address_1' => $faker->streetAddress,
-                    'address_2' => $faker->address, // Changed to a general address format
-                    'city' => $faker->city,
-                    'post_code' => $faker->postcode,
-                    'tax_ind' => $faker->randomElement(['Y', 'N']),
-                    'tax_no' => $faker->randomNumber(9, true),
-                    'retur_ind' => $faker->randomElement(['Y', 'N']),
-                    'consig_ind' => $faker->randomElement(['Y', 'N']),
-                    'status' => $faker->randomElement(['A', 'I']),
-                ]);
-            }
-
-
-
-
-
-
-
-        // Set roles
-
-
-        $suppliers = [
-            [
-                'username' => '900484',
-                'name' => 'SUKANDA DJAYA, DIAMOND',
-                'phone_number' => '08991903768',
-                'email' => 'RPA.Dev@diamond.co.id',
-            ],
-            [
-                'username' => '111095',
-                'name' => 'SUKANDA DJAYA,PT',
-                'phone_number' => '08991903768',
-                'email' => 'dpssmspv@diamond.co.id',
-            ],
-            [
-                'username' => '111077',
-                'name' => 'PURI PANGAN UTAMA,PT',
-                'phone_number' => '081999566316',
-                'email' => 'pangan_utama@yahoo.co.id',
-            ],
-            [
-                'username' => '111254',
-                'name' => 'BAHTERA WIRANIAGA INTERNUSA PT',
-                'phone_number' => '081999528836',
-                'email' => 'finance2bali@pt-bahtera.co.id',
-            ],
-            [
-                'username' => '111188',
-                'name' => 'SO GOOD FOOD, PT',
-                'phone_number' => '081239361022',
-                'email' => 'gita.puspitasari@japfa.com',
-            ],
-            [
-                'username' => '151034',
-                'name' => 'GAMBINO ARTISAN PRIMA PT. - KO',
-                'phone_number' => '081310324456',
-                'email' => 'gambinocoffee@gmail.com',
-            ],
-            [
-                'username' => '112151',
-                'name' => 'JARI PERKASA PPN',
-                'phone_number' => '082341205800',
-                'email' => 'jariperkasa@ymail.com',
-            ],
-            [
-                'username' => '111149',
-                'name' => 'JARI PERKASA, CV',
-                'phone_number' => '08990171704',
-                'email' => 'dirajariperkasa@gmail.com',
-            ],
-            [
-                'username' => '111157',
-                'name' => 'MASUYA PPN',
-                'phone_number' => '081337099026',
-                'email' => 'balirsm@masuya.co.id',
-            ],
-            [
-                'username' => '162082',
-                'name' => 'PANGAN MITRA BALI, CV',
-                'phone_number' => '081393650484',
-                'email' => 'cvpanganmitrabali@gmail.com',
-            ],
-            [
-                'username' => '162077',
-                'name' => 'CHEESE WORKS BALI, PT',
-                'phone_number' => '085103012935',
-                'email' => 'cheeseworksbali@gmail.com',
-            ],
-            [
-                'username' => '111225',
-                'name' => 'Kaifa Indonesia, PT',
-                'phone_number' => '62818263202',
-                'email' => 'yulia@kaifafood.com',
-            ],
-            [
-                'username' => '151089',
-                'name' => 'Kaifa Indonesia - Dairy',
-                'phone_number' => '62818263202',
-                'email' => 'yulia@kaifafood.com',
-            ],
-        ];
-
-        foreach ($suppliers as $supplier) {
-            User::factory()->create([
-                'username' => $supplier['username'],
-                'name' => $supplier['name'],
-                'email' => $supplier['email'], // Parse and extract emails
-                'phone_number' => $supplier['phone_number'],
-                'password' => bcrypt('12345678'), // Set default password
-                'region' => '1', // Assuming default region is '1'
-            ]);
-            $user = User::where('email',  $supplier['email'])->first();
-            if ($user) {
-                $role = Role::whereIn('name', ['supplier'])->get()->toArray(); // Specify roles in an array
-                if ($role) {
-                    $user->syncRoles($role);
-                } else {
-                    // Handle if the role doesn't exist
-                    echo "Role not found!";
-                }
-            } else {
-                // Handle if the user doesn't exist
-                echo "User not found!";
-            }
+            User::factory()->create($fakeUser);
         }
+        //    // // Insert data into suppliers table
+        //    $faker = Faker::create('id_ID'); // Set locale to Indonesia
 
-        User::factory()->create([
-            'username' => '1',
-            'name' => 'Admin MD Region',
-            'email' => 'test2@gmail.com',
-            'password' => bcrypt('12345678'),
-            'region' => '1',
-        ]);
-        // Set roles
-        $user = User::where('email', 'test2@gmail.com')->first();
-        if ($user) {
-            $role = Role::whereIn('name', ['admin-md-region'])->get()->toArray(); // Specify roles in an array
-            if ($role) {
-                $user->syncRoles($role);
-            } else {
-                // Handle if the role doesn't exist
-                echo "Role not found!";
-            }
-        } else {
-            // Handle if the user doesn't exist
-            echo "User not found!";
-        }
+        //    for ($i = 0; $i < 5000; $i++) {
+        //         Supplier::create([
+        //             'supp_code' => $faker->unique()->numberBetween(1, 5000),
+        //             'supp_name' => $faker->company,
+        //             'terms' => $faker->numberBetween(1, 60),
+        //             'contact_name' => $faker->name,
+        //             'contact_phone' => $faker->phoneNumber,
+        //             'contact_fax' => $faker->phoneNumber,
+        //             'email' => $faker->unique()->safeEmail,
+        //             'address_1' => $faker->streetAddress,
+        //             'address_2' => $faker->address, // Changed to a general address format
+        //             'city' => $faker->city,
+        //             'post_code' => $faker->postcode,
+        //             'tax_ind' => $faker->randomElement(['Y', 'N']),
+        //             'tax_no' => $faker->randomNumber(9, true),
+        //             'retur_ind' => $faker->randomElement(['Y', 'N']),
+        //             'consig_ind' => $faker->randomElement(['Y', 'N']),
+        //             'status' => $faker->randomElement(['A', 'I']),
+        //         ]);
+        //     }
 
-        $dc =
-        [
-            [
-                'username' => 'whbali',
-                'name' => 'WH Bali',
-                'email' => 'wh1.mm@rcoid.com',
-                'password' => bcrypt('12345678'),
-                'region' => '1',
-                'phone_number' => '08123456789',
-                'link_sync' => 'https://supplier.m-mart.co.id',
-            ],
-            [
-                'username' => 'whlombok',
-                'name' => 'WH Lombok',
-                'email' => 'wh2.mm@rcoid.com',
-                'password' => bcrypt('12345678'),
-                'region' => '1',
-                'phone_number' => '08123456789',
-                'link_sync' => 'https://supplier.m-mart.co.id',
-            ],
-            [
-                'username' => 'whmakasar',
-                'name' => 'WH Makasar',
-                'email' => 'wh3.mm@rcoid.com',
-                'password' => bcrypt('12345678'),
-                'region' => '1',
-                'phone_number' => '08123456789',
-                'link_sync' => 'https://supplier.m-mart.co.id',
-            ],
-        ];
-        foreach ($dc as $data) {
-            User::factory()->create([
-                'username' => $data['username'],
-                'name' => $data['name'],
-                'email' => $data['email'], // Parse and extract emails
-                'phone_number' => $data['phone_number'],
-                'password' => $data['password'], // Set default password
-                'region' => '1', // Assuming default region is '1'
-            ]);
-            $user = User::where('email', $data['email'])->first();
 
-            if ($user) {
-                $role = Role::whereIn('name', ['wh'])->get()->toArray(); // Specify roles in an array
-                if ($role) {
-                    $user->syncRoles($role);
-                } else {
-                    // Handle if the role doesn't exist
-                    echo "Role not found!";
-                }
-            } else {
-                // Handle if the user doesn't exist
-                echo "User not found!";
-            }
-        }
 
-        $operation =
-        [
-            [
-                'username' => 'oprbali',
-                'name' => 'OPR Bali',
-                'email' => 'oprbali.mm@rcoid.com',
-                'password' => bcrypt('12345678'),
-                'region' => '1',
-                'phone_number' => '08123456789',
-                'link_sync' => 'https://supplier.m-mart.co.id',
-            ],
-            [
-                'username' => 'oprlombok',
-                'name' => 'Operation Lombok',
-                'email' => 'oprlombok.mm@rcoid.com',
-                'password' => bcrypt('12345678'),
-                'region' => '1',
-                'phone_number' => '08123456789',
-                'link_sync' => 'https://supplier.m-mart.co.id',
-            ],
-            [
-                'username' => 'oprmakasar',
-                'name' => 'Operation Makasar',
-                'email' => 'oprmakasar.mm@rcoid.com',
-                'password' => bcrypt('12345678'),
-                'region' => '1',
-                'phone_number' => '08123456789',
-                'link_sync' => 'https://supplier.m-mart.co.id',
-            ],
-        ];
-        foreach ($operation as $data) {
-            User::factory()->create([
-                'username' => $data['username'],
-                'name' => $data['name'],
-                'email' => $data['email'], // Parse and extract emails
-                'phone_number' => $data['phone_number'],
-                'password' => $data['password'], // Set default password
-                'region' => '1', // Assuming default region is '1'
-            ]);
-            $user = User::where('email', $data['email'])->first();
 
-            if ($user) {
-                $role = Role::whereIn('name', ['opr'])->get()->toArray(); // Specify roles in an array
-                if ($role) {
-                    $user->syncRoles($role);
-                } else {
-                    // Handle if the role doesn't exist
-                    echo "Role not found!";
-                }
-            } else {
-                // Handle if the user doesn't exist
-                echo "User not found!";
-            }
-        }
+
+
+
+        // // Set roles
+
+
+        // $suppliers = [
+        //     [
+        //         'username' => '900484',
+        //         'name' => 'SUKANDA DJAYA, DIAMOND',
+        //         'phone_number' => '08991903768',
+        //         'email' => 'RPA.Dev@diamond.co.id',
+        //     ],
+        //     [
+        //         'username' => '111095',
+        //         'name' => 'SUKANDA DJAYA,PT',
+        //         'phone_number' => '08991903768',
+        //         'email' => 'dpssmspv@diamond.co.id',
+        //     ],
+        //     [
+        //         'username' => '111077',
+        //         'name' => 'PURI PANGAN UTAMA,PT',
+        //         'phone_number' => '081999566316',
+        //         'email' => 'pangan_utama@yahoo.co.id',
+        //     ],
+        //     [
+        //         'username' => '111254',
+        //         'name' => 'BAHTERA WIRANIAGA INTERNUSA PT',
+        //         'phone_number' => '081999528836',
+        //         'email' => 'finance2bali@pt-bahtera.co.id',
+        //     ],
+        //     [
+        //         'username' => '111188',
+        //         'name' => 'SO GOOD FOOD, PT',
+        //         'phone_number' => '081239361022',
+        //         'email' => 'gita.puspitasari@japfa.com',
+        //     ],
+        //     [
+        //         'username' => '151034',
+        //         'name' => 'GAMBINO ARTISAN PRIMA PT. - KO',
+        //         'phone_number' => '081310324456',
+        //         'email' => 'gambinocoffee@gmail.com',
+        //     ],
+        //     [
+        //         'username' => '112151',
+        //         'name' => 'JARI PERKASA PPN',
+        //         'phone_number' => '082341205800',
+        //         'email' => 'jariperkasa@ymail.com',
+        //     ],
+        //     [
+        //         'username' => '111149',
+        //         'name' => 'JARI PERKASA, CV',
+        //         'phone_number' => '08990171704',
+        //         'email' => 'dirajariperkasa@gmail.com',
+        //     ],
+        //     [
+        //         'username' => '111157',
+        //         'name' => 'MASUYA PPN',
+        //         'phone_number' => '081337099026',
+        //         'email' => 'balirsm@masuya.co.id',
+        //     ],
+        //     [
+        //         'username' => '162082',
+        //         'name' => 'PANGAN MITRA BALI, CV',
+        //         'phone_number' => '081393650484',
+        //         'email' => 'cvpanganmitrabali@gmail.com',
+        //     ],
+        //     [
+        //         'username' => '162077',
+        //         'name' => 'CHEESE WORKS BALI, PT',
+        //         'phone_number' => '085103012935',
+        //         'email' => 'cheeseworksbali@gmail.com',
+        //     ],
+        //     [
+        //         'username' => '111225',
+        //         'name' => 'Kaifa Indonesia, PT',
+        //         'phone_number' => '62818263202',
+        //         'email' => 'yulia@kaifafood.com',
+        //     ],
+        //     [
+        //         'username' => '151089',
+        //         'name' => 'Kaifa Indonesia - Dairy',
+        //         'phone_number' => '62818263202',
+        //         'email' => 'yulia@kaifafood.com',
+        //     ],
+        // ];
+
+        // foreach ($suppliers as $supplier) {
+        //     User::factory()->create([
+        //         'username' => $supplier['username'],
+        //         'name' => $supplier['name'],
+        //         'email' => $supplier['email'], // Parse and extract emails
+        //         'phone_number' => $supplier['phone_number'],
+        //         'password' => bcrypt('12345678'), // Set default password
+        //         'region' => '1', // Assuming default region is '1'
+        //     ]);
+        //     $user = User::where('email',  $supplier['email'])->first();
+        //     if ($user) {
+        //         $role = Role::whereIn('name', ['supplier'])->get()->toArray(); // Specify roles in an array
+        //         if ($role) {
+        //             $user->syncRoles($role);
+        //         } else {
+        //             // Handle if the role doesn't exist
+        //             echo "Role not found!";
+        //         }
+        //     } else {
+        //         // Handle if the user doesn't exist
+        //         echo "User not found!";
+        //     }
+        // }
+
+        // User::factory()->create([
+        //     'username' => '1',
+        //     'name' => 'Admin MD Region',
+        //     'email' => 'test2@gmail.com',
+        //     'password' => bcrypt('12345678'),
+        //     'region' => '1',
+        // ]);
+        // // Set roles
+        // $user = User::where('email', 'test2@gmail.com')->first();
+        // if ($user) {
+        //     $role = Role::whereIn('name', ['admin-md-region'])->get()->toArray(); // Specify roles in an array
+        //     if ($role) {
+        //         $user->syncRoles($role);
+        //     } else {
+        //         // Handle if the role doesn't exist
+        //         echo "Role not found!";
+        //     }
+        // } else {
+        //     // Handle if the user doesn't exist
+        //     echo "User not found!";
+        // }
+
+        // $dc =
+        // [
+        //     [
+        //         'username' => 'whbali',
+        //         'name' => 'WH Bali',
+        //         'email' => 'wh1.mm@rcoid.com',
+        //         'password' => bcrypt('12345678'),
+        //         'region' => '1',
+        //         'phone_number' => '08123456789',
+        //         'link_sync' => 'https://supplier.m-mart.co.id',
+        //     ],
+        //     [
+        //         'username' => 'whlombok',
+        //         'name' => 'WH Lombok',
+        //         'email' => 'wh2.mm@rcoid.com',
+        //         'password' => bcrypt('12345678'),
+        //         'region' => '1',
+        //         'phone_number' => '08123456789',
+        //         'link_sync' => 'https://supplier.m-mart.co.id',
+        //     ],
+        //     [
+        //         'username' => 'whmakasar',
+        //         'name' => 'WH Makasar',
+        //         'email' => 'wh3.mm@rcoid.com',
+        //         'password' => bcrypt('12345678'),
+        //         'region' => '1',
+        //         'phone_number' => '08123456789',
+        //         'link_sync' => 'https://supplier.m-mart.co.id',
+        //     ],
+        // ];
+        // foreach ($dc as $data) {
+        //     User::factory()->create([
+        //         'username' => $data['username'],
+        //         'name' => $data['name'],
+        //         'email' => $data['email'], // Parse and extract emails
+        //         'phone_number' => $data['phone_number'],
+        //         'password' => $data['password'], // Set default password
+        //         'region' => '1', // Assuming default region is '1'
+        //     ]);
+        //     $user = User::where('email', $data['email'])->first();
+
+        //     if ($user) {
+        //         $role = Role::whereIn('name', ['wh'])->get()->toArray(); // Specify roles in an array
+        //         if ($role) {
+        //             $user->syncRoles($role);
+        //         } else {
+        //             // Handle if the role doesn't exist
+        //             echo "Role not found!";
+        //         }
+        //     } else {
+        //         // Handle if the user doesn't exist
+        //         echo "User not found!";
+        //     }
+        // }
+
+        // $operation =
+        // [
+        //     [
+        //         'username' => 'oprbali',
+        //         'name' => 'OPR Bali',
+        //         'email' => 'oprbali.mm@rcoid.com',
+        //         'password' => bcrypt('12345678'),
+        //         'region' => '1',
+        //         'phone_number' => '08123456789',
+        //         'link_sync' => 'https://supplier.m-mart.co.id',
+        //     ],
+        //     [
+        //         'username' => 'oprlombok',
+        //         'name' => 'Operation Lombok',
+        //         'email' => 'oprlombok.mm@rcoid.com',
+        //         'password' => bcrypt('12345678'),
+        //         'region' => '1',
+        //         'phone_number' => '08123456789',
+        //         'link_sync' => 'https://supplier.m-mart.co.id',
+        //     ],
+        //     [
+        //         'username' => 'oprmakasar',
+        //         'name' => 'Operation Makasar',
+        //         'email' => 'oprmakasar.mm@rcoid.com',
+        //         'password' => bcrypt('12345678'),
+        //         'region' => '1',
+        //         'phone_number' => '08123456789',
+        //         'link_sync' => 'https://supplier.m-mart.co.id',
+        //     ],
+        // ];
+        // foreach ($operation as $data) {
+        //     User::factory()->create([
+        //         'username' => $data['username'],
+        //         'name' => $data['name'],
+        //         'email' => $data['email'], // Parse and extract emails
+        //         'phone_number' => $data['phone_number'],
+        //         'password' => $data['password'], // Set default password
+        //         'region' => '1', // Assuming default region is '1'
+        //     ]);
+        //     $user = User::where('email', $data['email'])->first();
+
+        //     if ($user) {
+        //         $role = Role::whereIn('name', ['opr'])->get()->toArray(); // Specify roles in an array
+        //         if ($role) {
+        //             $user->syncRoles($role);
+        //         } else {
+        //             // Handle if the role doesn't exist
+        //             echo "Role not found!";
+        //         }
+        //     } else {
+        //         // Handle if the user doesn't exist
+        //         echo "User not found!";
+        //     }
+        // }
     }
 
 }

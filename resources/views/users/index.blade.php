@@ -1,10 +1,10 @@
 <x-default-layout>
     @section('title')
-        Order
+        User
     @endsection
 
     @section('breadcrumbs')
-        {{ Breadcrumbs::render('order') }}
+        {{ Breadcrumbs::render('users') }}
     @endsection
         <!--begin::Card-->
         <div class="card">
