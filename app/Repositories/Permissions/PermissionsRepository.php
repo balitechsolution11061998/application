@@ -12,4 +12,6 @@ interface PermissionsRepository extends Repository{
     public function edit($id);
     public function update($id,$data);
     public function delete($id);
+    public function getAllPermissions();
+    public function getByRoleId($id);
 }

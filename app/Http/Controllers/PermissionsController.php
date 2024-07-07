@@ -46,6 +46,37 @@ class PermissionsController extends Controller
         }
     }
 
+    public function getAllPermissions(){
+        try {
+            $result = $this->permissionsService->getAllPermissions();
+            return ResponseJson::response("Load data permissions success", 'Success', $result, 200);
+        } catch (\Exception $e) {
+            return ResponseJson::response($e->getMessage(), 'Error', [], 500);
+        }
+    }
+
+    public function getPermissionsByRole(Request $request)
+    {
+        try {
+            $roleId = $request->input('role_id');
+            $permissions = $this->permissionsService->getByRoleId($roleId);
+            return ResponseJson::response('Success load permissions in this role', 'Success', $permissions, 200);
+        } catch (\Exception $e) {
+            return ResponseJson::response($e->getMessage(), 'Error', [], 500);
+        }
+    }
+
+    public function submitToRole(Request $request){
+        try {
+            $roleId = $request->input('role_id');
+            $permissions = $request->input('permissions');
+            $role = $this->permissionsService->assignPermissionsToRole($roleId, $permissions);
+            return ResponseJson::response('Permissions assigned successfully', 'Success', [], 200);
+        } catch (\Exception $e) {
+            return ResponseJson::response($e->getMessage(), 'Error', [], 500);
+        }
+    }
+
     public function edit($id){
         return $this->permissionsService->edit($id);
     }

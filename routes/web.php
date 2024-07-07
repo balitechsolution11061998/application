@@ -46,6 +46,20 @@ Route::group(['middleware' => ['verifiedmiddleware','twostep','verified','auth',
         Route::get('{id}/edit', 'PermissionsController@edit')->name('data');
         Route::get('{id}/edit', 'PermissionsController@edit')->name('data');
         Route::delete('/delete', 'PermissionsController@delete')->name('delete');
+        Route::get('/getAllPermissions', 'PermissionsController@getAllPermissions')->name('getAllPermissions');
+        Route::post('/submitToRole', 'PermissionsController@submitToRole')->name('submitToRole');
+        Route::get('/getPermissionsByRole', 'PermissionsController@getPermissionsByRole')->name('getPermissionsByRole');
+    });
+
+    Route::prefix('roles')->name('roles.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/', 'RoleController@index')->name('index');
+        Route::get('/data', 'RoleController@data')->name('data');
+        Route::post('/store', 'RoleController@store')->name('store');
+        Route::get('/{id}/edit', 'RoleController@edit')->name('edit');
+        Route::delete('/delete', 'RoleController@delete')->name('delete');
+        Route::get('/getAllRoles', 'RoleController@getAllRoles')->name('getAllRoles');
+        Route::post('/submitRolesToUser', 'RoleController@submitRolesToUser')->name('submitRolesToUser');
+        Route::get('/getRolesByUser', 'RoleController@getRolesByUser')->name('getRolesByUser');
     });
 
     Route::prefix('users')->name('users.')->namespace('App\Http\Controllers')->group(function () {

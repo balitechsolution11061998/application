@@ -32,6 +32,11 @@ class PermissionsRepositoryImplement extends Eloquent implements PermissionsRepo
         return $query->get();
     }
 
+    public function getAllPermissions()
+    {
+        return $this->model->all()->toArray();
+    }
+
     public function edit($id)
     {
         return $this->model->where('id',$id)->first();
@@ -53,6 +58,13 @@ class PermissionsRepositoryImplement extends Eloquent implements PermissionsRepo
     {
         $permission = $this->model->findOrFail($id);
         return $permission->delete();
+    }
+
+    public function getByRoleId($roleId)
+    {
+        return $this->model->whereHas('roles', function ($query) use ($roleId) {
+            $query->where('id', $roleId);
+        })->get()->toArray();
     }
 
 

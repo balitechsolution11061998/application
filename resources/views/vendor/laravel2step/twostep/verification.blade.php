@@ -214,7 +214,7 @@ switch ($remainingAttempts) {
 
                                 setTimeout(function(){
                                     $('body').fadeOut(100, function() {
-                                        location.reload();
+                                        window.location.href = '/home';
                                     });
                                 }, 2000);
                             });

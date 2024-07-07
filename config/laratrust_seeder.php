@@ -16,6 +16,7 @@ return [
             'dashboard' => 's',
             'users' => 's',
             'permissions' => 's,c',
+            'roles' => 's,c',
         ],
         // 'administrator' => [
         //     'users' => 'c,r,u,d',

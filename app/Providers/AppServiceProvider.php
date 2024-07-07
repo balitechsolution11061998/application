@@ -34,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
             $permissionsRepository = new PermissionsRepositoryImplement(new Permission());
             return new PermissionsServiceImplement($permissionsRepository);
         });
+
     }
 
     /**

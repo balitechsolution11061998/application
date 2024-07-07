@@ -2,8 +2,10 @@
 
 namespace App\Services\Permissions;
 
+use App\Models\Role;
 use LaravelEasyRepository\ServiceApi;
 use App\Repositories\Permissions\PermissionsRepository;
+use App\Repositories\Role\RoleRepository;
 use Exception;
 
 class PermissionsServiceImplement extends ServiceApi implements PermissionsService{
@@ -75,6 +77,26 @@ class PermissionsServiceImplement extends ServiceApi implements PermissionsServi
         } catch (\Exception $e) {
             throw new \Exception('Error: ' . $e->getMessage());
         }
+    }
+
+    public function getAllPermissions()
+    {
+        return $this->mainRepository->getAllPermissions();
+    }
+
+    public function getByRoleId($roleId)
+    {
+        return $this->mainRepository->getByRoleId($roleId);
+    }
+
+
+    public function assignPermissionsToRole($roleId, $permissions)
+    {
+
+        $role = Role::find($roleId);
+        $role->syncPermissions($permissions);
+
+        return $role;
     }
 
     public function delete($id)

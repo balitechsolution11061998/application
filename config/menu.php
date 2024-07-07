@@ -57,6 +57,16 @@ return [
                     'icon'           => 'dot',
                 ],
                 [
+                    'label'          => 'Roles',
+                    'type'           => 'item',
+                    'route'          => 'roles.index',
+                    'active'         => ['roles-show'],
+                    'permission'     => ['roles-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'dot',
+                ],
+
+                [
                     'label'          => 'User',
                     'type'           => 'item',
                     'route'          => 'users.index',

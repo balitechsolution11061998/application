@@ -11,4 +11,7 @@ interface PermissionsService extends BaseService{
     public function edit($id);
     public function createOrUpdatePermission($data);
     public function delete($id);
+    public function getAllPermissions();
+    public function getByRoleId($id);
+    public function assignPermissionsToRole($roleId,$permissions);
 }
