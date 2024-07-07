@@ -31,6 +31,7 @@ function tablePermissions() {
     table.DataTable({
         "processing": true,
         "serverSide": true,
+        "responsive": true, // Add this line for responsiveness
         "ajax": {
             "url": "/permissions/data",
             "type": "GET",
@@ -52,13 +53,14 @@ function tablePermissions() {
                 }
             }
         ],
-
         "language": {
             // Alternatively, you can display an image
             "emptyTable": "<img src='/img/no-data.jpg' class='img-fluid' alt='No data available' style='height:75%;'>"
         }
     });
 }
+
+
 function deletePermission(data) {
     // Display Swal confirmation dialog
     Swal.fire({
