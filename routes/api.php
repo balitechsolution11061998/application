@@ -25,6 +25,6 @@ Route::get('/users', [UserController::class, 'index']);
 Route::post('/po/store', [PoController::class, 'store']);
 Route::post('/rcv/store', [RcvController::class, 'store']);
 
-Route::post('/login', App\Http\Controllers\Api\LoginController::class)->name('login');
+Route::post('/check_login', App\Http\Controllers\Api\LoginController::class)->name('check_login');
 
 
