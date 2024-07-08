@@ -80,6 +80,11 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/data', 'DepartmentController@data')->name('data');
     });
 
+    Route::prefix('items')->name('items.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'ItemsController@index')->name('index');
+        Route::get('/data', 'ItemsController@data')->name('data');
+    });
+
     Route::prefix('provinsi')->name('provinsi.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/data', 'ProvinsiController@data')->name('data');
     });

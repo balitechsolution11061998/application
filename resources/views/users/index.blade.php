@@ -30,6 +30,9 @@
 
 
                         <!--begin::Add user-->
+                        <button type="button" class="btn btn-success btn-sm" onclick="filterUser()">
+                            <i class="ki-duotone ki-plus fs-2"></i>Filter User</button>
+                        &nbsp;
                         <button type="button" class="btn btn-primary btn-sm" onclick="createUser()">
                             <i class="ki-duotone ki-plus fs-2"></i>Add User</button>
                         <!--end::Add user-->

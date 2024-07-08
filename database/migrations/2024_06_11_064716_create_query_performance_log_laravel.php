@@ -16,7 +16,10 @@ return new class extends Migration
             $table->string('function_name');
             $table->string('parameters')->nullable();
             $table->float('execution_time');
-            $table->integer('memory_usage');
+            $table->string('memory_usage');
+            $table->float('ping')->nullable(); // Add ping field
+            $table->float('download_speed')->nullable(); // Add download speed field
+            $table->float('upload_speed')->nullable(); // Add upload speed field
             $table->timestamps();
         });
     }

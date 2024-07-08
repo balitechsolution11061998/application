@@ -909,3 +909,15 @@ nav ul li a.active {
     transform: translate(-50%, -50%);
     font-size: 2rem;
 }
+.truncated-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px; /* Adjust as needed */
+    display: inline-block;
+    vertical-align: middle;
+}
+.read-more {
+    color: #007bff;
+    cursor: pointer;
+}

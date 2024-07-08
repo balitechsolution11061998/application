@@ -24,6 +24,11 @@ Breadcrumbs::for('users', function (BreadcrumbTrail $trail) {
     $trail->push('User', route('users.index'));
 });
 
+
+Breadcrumbs::for('items', function (BreadcrumbTrail $trail) {
+    $trail->push('Items', route('items.index'));
+});
+
 // Dashboard > Default
 Breadcrumbs::for('dashboard.default', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
