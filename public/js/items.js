@@ -41,12 +41,6 @@ function fetchDataItem(search) {
             data:{
                 search:search,
             },
-            beforeSend: function() {
-                $('.spinner').show();
-            },
-            complete: function() {
-                $('.spinner').hide();
-            },
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 404) {
                     Toastify({
@@ -70,14 +64,14 @@ function fetchDataItem(search) {
                     const maxLength = 50; // Adjust as needed
                     const truncatedText = combinedText.length > maxLength ? combinedText.substr(0, maxLength) + '...' : combinedText;
                     const readMoreLink = combinedText.length > maxLength ? '<span class="read-more">Read more</span>' : '';
-                    return '<i class="fas fa-user"></i> <span class="truncated-text">' + truncatedText + '</span>' + readMoreLink;
+                    return '<span class="truncated-text">' + truncatedText + '</span>' + readMoreLink;
                 },
             },
             {
                 data: "sku",
                 name: "sku",
                 render: function (data, type, row) {
-                    return '<a href="#" class="sku-link" data-toggle="tooltip" title="Click to show description">' + data + '</a>';
+                    return '<a href="#" class="sku-link number-font" data-toggle="tooltip" title="Click to show description">' + data + '</a>';
                 },
             },
             {
@@ -90,7 +84,8 @@ function fetchDataItem(search) {
                 data: "upc",
                 name: "upc",
                 render: function (data, type, row) {
-                    return data;
+                    return '<span class="number-font">'+data+'</span>'
+
                 },
             },
             {
@@ -98,7 +93,7 @@ function fetchDataItem(search) {
                 name: "unit_cost",
                 render: function (data, type, row) {
                     if (type === 'display' || type === 'filter') {
-                        return 'Rp ' + formatRupiah(data);
+                        return '<span class="number-font">Rp ' + formatRupiah(data) + '</span>';
                     }
                     return data;
                 },
@@ -182,6 +177,8 @@ function fetchDataItem(search) {
         // Swal confirmation and link opening for Edit button
 
 }
+
+
 function deleteUser(userId) {
     $.ajaxSetup({
         headers: {

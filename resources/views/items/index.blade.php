@@ -45,7 +45,7 @@
                             <th class="text-end min-w-100px">UPDATED BY</th>
                         </tr>
                     </thead>
-                    <tbody class="text-gray-600 fw-semibold">
+                    <tbody class="text-black fw-semibold">
 
                     </tbody>
 

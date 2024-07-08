@@ -921,3 +921,9 @@ nav ul li a.active {
     color: #007bff;
     cursor: pointer;
 }
+
+.number-font {
+    font-family: 'Courier New', Courier, monospace; /* Example: Monospaced font */
+    font-weight: bold; /* Example: Bold font */
+    color: black; /* Example: Blue color */
+}

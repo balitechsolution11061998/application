@@ -26,9 +26,6 @@ class ItemsController extends Controller
             $this->logActivity('Accessed item supplier data', 'User accessed the item page');
 
             if ($request->ajax()) {
-
-
-
                 // Start measuring query execution time
                 $startTime = microtime(true);
                 $startMemory = memory_get_usage();
@@ -40,11 +37,17 @@ class ItemsController extends Controller
                     $searchTerm = $request->search;
                     $data->where(function($query) use ($searchTerm) {
                         $query->where('supplier', 'like', '%'.$searchTerm.'%')
-                            ->orWhere('sku', 'like', '%'.$searchTerm.'%');
+                              ->orWhere('sku', 'like', '%'.$searchTerm.'%');
                     });
                 }
 
-                $data = $data->get();
+                // Use chunk to process data in chunks
+                $results = [];
+                $data->chunk(100, function($items) use (&$results) {
+                    foreach ($items as $item) {
+                        $results[] = $item;
+                    }
+                });
 
                 // Calculate query execution time
                 $endTime = microtime(true);
@@ -53,10 +56,9 @@ class ItemsController extends Controller
                 $executionTime = $endTime - $startTime;
                 $memoryUsage = $endMemory - $startMemory;
 
-
                 $this->logQueryPerformance('items_data', $request->search, $executionTime, $this->convertMemoryUsage($memoryUsage));
 
-                return DataTables::of($data)
+                return DataTables::of($results)
                     ->addIndexColumn()
                     ->addColumn('action', function ($row) {
                         $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm">Edit</a>';
@@ -73,6 +75,7 @@ class ItemsController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
 
     public function convertMemoryUsage($bytes)
     {
