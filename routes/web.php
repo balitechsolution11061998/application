@@ -37,6 +37,19 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     Route::prefix('po')->name('po.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/', 'OrdHeadController@index')->name('index');
         Route::get('/data', 'OrdHeadController@data')->name('data');
+        Route::get('/download', 'OrdHeadController@download')->name('download');
+
+    });
+
+
+    Route::prefix('price-change')->name('price-change.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/', 'PriceChangeController@index')->name('index');
+        Route::get('/data', 'PriceChangeController@data')->name('data');
+        Route::get('/download', 'PriceChangeController@download')->name('download');
+        Route::post('/upload', 'PriceChangeController@upload')->name('upload');
+        Route::get('/{id}/show', 'PriceChangeController@show')->name('show');
+        Route::post('/store', 'PriceChangeController@store')->name('store');
+
 
     });
 
@@ -83,6 +96,9 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     Route::prefix('items')->name('items.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/index', 'ItemsController@index')->name('index');
         Route::get('/data', 'ItemsController@data')->name('data');
+        Route::get('/getDataItemSupplierBySupplier', 'ItemsController@getDataItemSupplierBySupplier')->name('getDataItemSupplierBySupplier');
+
+
     });
 
     Route::prefix('provinsi')->name('provinsi.')->namespace('App\Http\Controllers')->group(function () {

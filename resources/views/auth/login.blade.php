@@ -158,6 +158,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('js/toastr.min.js') }}"></script>
     <script src="{{ asset('js/toastify-js.js') }}"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render={{ env('GOOGLE_RECAPTCHA_KEY') }}"></script>
 
     <script>
         @if (session('toast'))
@@ -181,8 +182,14 @@
     <script>
         $(document).ready(function() {
             $("#sign_in_form").submit(function(event) {
+                alert("masuk sini");
                 event.preventDefault(); // Prevent the default form submission
-
+                grecaptcha.ready(function() {
+                    grecaptcha.execute("{{ env('GOOGLE_RECAPTCHA_KEY') }}", {action: 'subscribe_newsletter'}).then(function(token) {
+                        $('#contactUSForm').prepend('<input type="hidden" name="g-recaptcha-response" value="' + token + '">');
+                        $('#contactUSForm').unbind('submit').submit();
+                    });;
+                });
                 var username = $("#username").val();
                 var password = $("#password").val();
                 var remember_me = $("#remember_me").val();

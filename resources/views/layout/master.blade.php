@@ -87,6 +87,7 @@
 <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
 <script src="{{ asset('js/jquery.fancybox.min.js') }}"></script>
 
+<script async src="https://www.google.com/recaptcha/api.js">
 
 
 <!--end::Custom Javascript-->

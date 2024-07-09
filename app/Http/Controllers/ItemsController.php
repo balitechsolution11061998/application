@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Traits\LogsActivity;
 use App\Traits\QueryPerformanceLoggingTrait;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class ItemsController extends Controller
@@ -54,9 +54,10 @@ class ItemsController extends Controller
                 $endMemory = memory_get_usage();
 
                 $executionTime = $endTime - $startTime;
+                $executionTimeInSeconds = round($executionTime, 4);
                 $memoryUsage = $endMemory - $startMemory;
 
-                $this->logQueryPerformance('items_data', $request->search, $executionTime, $this->convertMemoryUsage($memoryUsage));
+                $this->logQueryPerformance('items_data', $request->search, $executionTimeInSeconds, $this->convertMemoryUsage($memoryUsage));
 
                 return DataTables::of($results)
                     ->addIndexColumn()
@@ -75,6 +76,18 @@ class ItemsController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    public function getDataItemSupplierBySupplier(Request $request){
+        if(Auth::user()->hasRole('superadministrator')){
+            $data = Items::where('supplier', '111095')->get()->toArray();
+        }else{
+            $data = Items::where('supplier', Auth::user()->username)->get()->toArray();
+        }
+        return response()->json(['data' => $data]);
+    }
+
+
+
 
 
     public function convertMemoryUsage($bytes)

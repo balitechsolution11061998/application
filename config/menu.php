@@ -21,6 +21,26 @@ return [
             'type' => 'heading'
         ],
         [
+            'label'          => 'Items',
+            'type'           => 'item',
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'ki',
+            'iconName'       => 'ki-element-11',
+            'iconPath'       => 7,
+            'route'          => 'items.index',
+        ],
+        [
+            'label'          => 'Price Change',
+            'type'           => 'item',
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'ki',
+            'iconName'       => 'ki-element-11',
+            'iconPath'       => 6,
+            'route'          => 'price-change.index',
+        ],
+        [
             'label'          => 'PO',
             'type'           => 'item',
             'permission'     => [],
@@ -30,16 +50,7 @@ return [
             'iconPath'       => 5,
             'route'          => 'po.index',
         ],
-        [
-            'label'          => 'Items',
-            'type'           => 'item',
-            'permission'     => [],
-            'permissionType' => 'gate',
-            'icon'           => 'ki',
-            'iconName'       => 'ki-element-11',
-            'iconPath'       => 6,
-            'route'          => 'items.index',
-        ],
+
 
         [
             'label' => 'Pages',

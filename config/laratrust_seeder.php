@@ -17,6 +17,7 @@ return [
             'users' => 's',
             'permissions' => 's,c',
             'roles' => 's,c',
+            'items' => 's',
         ],
         // 'administrator' => [
         //     'users' => 'c,r,u,d',

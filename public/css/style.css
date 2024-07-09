@@ -927,3 +927,53 @@ nav ul li a.active {
     font-weight: bold; /* Example: Bold font */
     color: black; /* Example: Blue color */
 }
+
+.card-footer {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    border-radius: 0 0 0.25rem 0.25rem;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+.card-footer p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+.card-footer a {
+    text-decoration: none;
+    color: #3c8dbc;
+}
+.card-footer a:hover {
+    text-decoration: underline;
+}
+.card-footer b {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.badge-pretty {
+    display: inline-block;
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+}
+.bg-pretty-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+.bg-pretty-success {
+    background-color: #28a745;
+    color: #fff;
+}
+.bg-pretty-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+
