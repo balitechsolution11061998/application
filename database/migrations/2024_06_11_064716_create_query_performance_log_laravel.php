@@ -20,6 +20,7 @@ return new class extends Migration
             $table->float('ping')->nullable(); // Add ping field
             $table->float('download_speed')->nullable(); // Add download speed field
             $table->float('upload_speed')->nullable(); // Add upload speed field
+            $table->string('ip_user')->nullable();
             $table->timestamps();
         });
     }

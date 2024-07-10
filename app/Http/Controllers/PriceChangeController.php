@@ -26,9 +26,8 @@ class PriceChangeController extends Controller
     //
     public function index()
     {
-        $permissions = Auth::user()->allPermissions;
-        dd($permissions);
-        return view('price-change.index',compact('permissions'));
+
+        return view('price-change.index');
     }
 
     public function data(Request $request)

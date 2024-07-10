@@ -87,7 +87,9 @@
 <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
 <script src="{{ asset('js/jquery.fancybox.min.js') }}"></script>
 
-<script async src="https://www.google.com/recaptcha/api.js">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.11.3/echo.js"></script>
 
 
 <!--end::Custom Javascript-->

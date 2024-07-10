@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PerformanceDataUpdated;
 use App\Models\Items;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -22,8 +23,11 @@ class ItemsController extends Controller
     public function data(Request $request)
     {
         try {
+            // Get the user's IP address
+            $userIp = $request->ip();
+
             // Log the activity of accessing the create page using the trait
-            $this->logActivity('Accessed item supplier data', 'User accessed the item page');
+            $this->logActivity('Accessed item supplier data', 'User accessed the item page', $userIp);
 
             if ($request->ajax()) {
                 // Start measuring query execution time
@@ -57,7 +61,16 @@ class ItemsController extends Controller
                 $executionTimeInSeconds = round($executionTime, 4);
                 $memoryUsage = $endMemory - $startMemory;
 
-                $this->logQueryPerformance('items_data', $request->search, $executionTimeInSeconds, $this->convertMemoryUsage($memoryUsage));
+                $this->logQueryPerformance('items_data', $request->search, $executionTimeInSeconds, $memoryUsage, $userIp);
+                $performanceData = [
+                    'function_name' => 'items_data',
+                    'search_term' => $request->search,
+                    'execution_time' => $executionTimeInSeconds,
+                    'memory_usage' => $this->convertMemoryUsage($memoryUsage),
+                    'user_ip' => $userIp,
+                    'created_at' => now(),
+                ];
+                event(new PerformanceDataUpdated($performanceData));
 
                 return DataTables::of($results)
                     ->addIndexColumn()
@@ -71,7 +84,7 @@ class ItemsController extends Controller
             }
         } catch (\Exception $e) {
             // Log the error
-            $this->logError('An error occurred while accessing the create page', $e);
+            $this->logError('An error occurred while accessing the create page', $e, $userIp);
 
             return response()->json(['error' => $e->getMessage()], 500);
         }

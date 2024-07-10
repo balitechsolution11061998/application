@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PerformanceController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Gate;
 
@@ -26,6 +27,7 @@ Route::post('/formlogin/check_login', [LoginController::class, 'check_login'])->
 Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.access']], function () {
 // Route::group(['middleware' => ['verifiedmiddleware','twostep','verified','auth','log.user.access']], function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/performance-data', [PerformanceController::class, 'getPerformanceData']);
 
     Route::prefix('home')->name('home.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/countDataPo', 'HomeController@countDataPo')->name('countDataPo');

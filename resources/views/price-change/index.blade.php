@@ -74,8 +74,12 @@
     <!--end::Row-->
     @push('scripts')
         <script>
-                var permissions_user = {!! json_encode($permissions) !!};
-            console.log(permissions_user,'permissions_user');
+                 @if(isset($permissions))
+                    var approvalPriceChange = {!! json_encode($permissions->contains('approval-price-change')) !!};
+                    console.log(approvalPriceChange, 'approvalPriceChange');
+                @else
+                    console.log('Permissions not set');
+                @endif
         </script>
         <script src="{{ asset('js/pricelist.js') }}"></script>
         <script src="{{ asset('js/formatRupiah.js') }}"></script>
