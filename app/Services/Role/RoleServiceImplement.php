@@ -5,6 +5,7 @@ namespace App\Services\Role;
 use App\Helpers\ResponseJson;
 use LaravelEasyRepository\ServiceApi;
 use App\Repositories\Role\RoleRepository;
+use App\Repositories\User\UserRepository;
 
 class RoleServiceImplement extends ServiceApi implements RoleService{
 
@@ -27,10 +28,10 @@ class RoleServiceImplement extends ServiceApi implements RoleService{
      protected $mainRepository;
      protected $userRepository;
 
-    public function __construct(RoleRepository $mainRepository)
+    public function __construct(RoleRepository $mainRepository,UserRepository $userRepository)
     {
       $this->mainRepository = $mainRepository;
-      $this->userRepository = $mainRepository;
+      $this->userRepository = $userRepository;
     }
 
     public function getAllRoles()

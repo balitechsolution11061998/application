@@ -159,6 +159,9 @@ function fetchDataUser() {
                         <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Reset Password" onclick="resetPassword(${row.id})">
                             <i class="fas fa-key"></i>
                         </a>
+                           <a href="#" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Tambah Roles" onclick="setRolesToUser(${row.id})">
+                            <i class="fas fa-plus-circle"></i>
+                        </a>
                         `
                     );
                 },
@@ -189,6 +192,214 @@ function fetchDataUser() {
         // Swal confirmation and link opening for Edit button
 
 }
+
+function setRolesToUser(user_id) {
+    $("#mdlForm").modal('show');
+
+    // Clear the modal content
+    $('#mdlFormContent').html("");
+
+    // Append the form HTML to the modal content
+    $('#mdlFormContent').append(`
+        <form id="chooseRoles" class="form" action="#">
+            <!-- Note for the user -->
+            <div class="alert alert-info" role="alert">
+                Please add roles first before proceeding.
+            </div>
+            <div class="fv-row mb-7">
+                <label class="fs-6 fw-semibold form-label mb-2">
+                    <span class="required">Roles</span>
+                    <span class="ms-2" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-html="true" data-bs-content="Descriptions is required to be unique.">
+                        <i class="ki-duotone ki-information fs-7">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                        </i>
+                    </span>
+                </label>
+                <div id="checkboxContainer"></div> <!-- Container to hold checkboxes -->
+            </div>
+            <div class="text-center pt-15">
+                <button type="reset" class="btn btn-light me-3" data-kt-permissions-modal-action="cancel">Discard</button>
+                <button type="submit" class="btn btn-primary" data-kt-permissions-modal-action="submit">
+                    <span class="indicator-label">Submit</span>
+                    <span class="indicator-progress d-none">Please wait...
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                </button>
+            </div>
+        </form>
+    `);
+
+    // Set the modal title
+    $("#mdlFormTitle").html("Form Add roles");
+
+    // Fetch permissions via AJAX
+    $.ajax({
+        url: "/roles/getAllRoles",
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            // Populate checkboxes with fetched permissions
+            if (response.data) {
+                var checkboxContainer = $('#checkboxContainer');
+                var groupedRoles = {}; // Object to store permissions grouped by common part of name
+
+                // Group permissions by common part of name
+                response.data.forEach(function(roles) {
+                    var commonName = roles.name.split('-')[0]; // Extract common part of name
+                    if (!groupedRoles[commonName]) {
+                        groupedRoles[commonName] = []; // Initialize array for the group if not exists
+                    }
+                    groupedRoles[commonName].push(roles); // Add roles to the group
+                });
+
+                // Iterate through grouped roless
+                Object.keys(groupedRoles).forEach(function(name) {
+                    var groupName = capitalizeFirstLetter(name); // Capitalize the first letter of each word in the group name
+
+                    // Append group label
+                    checkboxContainer.append(`
+                        <div class="mb-3">
+                            <h5>${groupName}</h5>
+                        </div>
+                    `);
+
+                    // Append checkboxes for each roles in the group
+                    groupedRoles[name].forEach(function(roles) {
+                        checkboxContainer.append(`
+                            <div class="form-check mb-2"> <!-- Add margin bottom -->
+                                <input class="form-check-input" type="checkbox" value="${roles.id}" id="checkbox${roles.id}">
+                                <label class="form-check-label ms-2" for="checkbox${roles.id}"> <!-- Add margin left -->
+                                    ${roles.display_name}
+                                </label>
+                            </div>
+                        `);
+                    });
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            // Optionally handle error here
+            Swal.fire({
+                title: xhr.responseJSON.message,
+                text: xhr.responseJSON.message,
+                icon: status,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    });
+
+    $.ajax({
+        url: "/roles/getRolesByUser", // Replace with your actual endpoint
+        type: "GET",
+        dataType: "json",
+        data: { user_id: user_id },
+        success: function(response) {
+            // Populate checkboxes with fetched permissions
+            if (response.data) {
+                response.data.forEach(function(roles) {
+                    $("#checkbox" + roles.id).prop("checked", true);
+                })
+            }
+        },
+        error: function(xhr, status, error) {
+            // Optionally handle error here
+            Swal.fire({
+                title: xhr.responseJSON.message,
+                text: xhr.responseJSON.message,
+                icon: status,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    });
+
+
+    $('#chooseRoles').submit(function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Check if at least one checkbox is checked
+        var atLeastOneChecked = $('#checkboxContainer').find('input[type="checkbox"]:checked').length > 0;
+
+        // If no checkbox is checked, show an alert
+        if (!atLeastOneChecked) {
+            Swal.fire({
+                title: 'Validation Error',
+                text: 'Please select at least one roles.',
+                icon: 'error',
+                showConfirmButton: false,
+                timer: 1500
+            });
+            return; // Exit the function
+        }
+
+        // Display SweetAlert confirmation
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You are about to submit roles to this user ? ',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, submit it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Get selected permission IDs
+                var selectedPermissions = $('#checkboxContainer').find('input[type="checkbox"]:checked').map(function() {
+                    return $(this).val();
+                }).get();
+
+                // Submit permissions via AJAX
+                $.ajax({
+                    url: '/roles/submitRolesToUser', // Replace with your actual endpoint
+                    type: 'POST',
+                    dataType: 'json',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Include CSRF token in the request headers
+                    },
+                    data: {
+                        user_id: user_id, // Provide the role ID if needed
+                        roles: selectedPermissions
+                    },
+                    success: function(response) {
+                        // Handle success response
+                        Swal.fire({
+                            title: 'Submitted!',
+                            text: 'Your roles have been submitted to the user.',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        $("#mdlForm").modal('hide');
+                        tableUser();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error submitting roles:", error);
+                        // Optionally handle error here
+                        Swal.fire({
+                            title: 'Error',
+                            text: xhr.responseJSON.message,
+                            icon: status,
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        tableUser();
+                    }
+                })
+            }
+
+        });
+    });
+}
+
+function capitalizeFirstLetter(string) {
+    return string.replace(/\b\w/g, function(match) {
+        return match.toUpperCase();
+    });
+}
+
 function deleteUser(userId) {
     $.ajaxSetup({
         headers: {

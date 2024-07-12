@@ -1065,3 +1065,18 @@ nav ul li a.active {
 }
 
 
+/* Styles for checkbox animation */
+.form-check-input {
+    transition: all 0.3s ease;
+}
+
+.form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.form-check-input:checked + .form-check-label {
+    color: #007bff;
+    font-weight: bold;
+    transition: color 0.3s ease, font-weight 0.3s ease;
+}

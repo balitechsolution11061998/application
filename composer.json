@@ -23,6 +23,7 @@
         "pusher/pusher-php-server": "^7.2",
         "santigarcor/laratrust": "^8.3",
         "spatie/laravel-activitylog": "^4.8",
+        "torann/geoip": "^3.0",
         "tymon/jwt-auth": "2.1.1",
         "yadahan/laravel-authentication-log": "^1.7",
         "yajra/laravel-datatables-oracle": "^10.11",
