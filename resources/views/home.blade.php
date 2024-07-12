@@ -209,14 +209,15 @@
                             <!--begin::Title-->
                             <div class="card-title d-flex flex-column">
                                 <!--begin::Amount-->
-                                <span class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2">604</span>
+                                <span class="fs-2hx fw-bold text-black me-2 lh-1 ls-n2" id="countPriceChange"><i class="fas faspinner"></i></span>
                                 <!--end::Amount-->
                                 <!--begin::Subtitle-->
-                                <span class="text-gray-500 pt-1 fw-semibold fs-6">New Customers This Month</span>
+                                <span class="text-gray-500 pt-1 fw-semibold fs-6">Price Change</span>
                                 <!--end::Subtitle-->
                             </div>
                             <!--end::Title-->
                         </div>
+
                         <!--end::Header-->
                         <!--begin::Card body-->
                         <div class="card-body d-flex flex-column justify-content-end pe-0">
@@ -2230,10 +2231,12 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js">
         </script>
-        {{-- <script src="{{ asset('js/home.js') }}"></script> --}}
+        <script src="{{ asset('js/home.js') }}"></script>
         <script src="{{ asset('js/formatRupiah.js') }}"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                fetchPriceChangeData();
+
                 fetchPerformanceData();
                 // Initialize Pusher
                 // Enable pusher logging - don't include this in production

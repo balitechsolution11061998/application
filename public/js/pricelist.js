@@ -352,6 +352,9 @@ function tambahPriceList(data){
                             <option value=""> ...</option>
                         </select>
                     </td>
+                    <td style="width: 30%;" id="item-desc">
+                        <input class="form-control rupiah item-desc" type="text" name="item_desc[]" style="background: white;" readonly>
+                    </td>
                     <td style="width: 30%;"> <!-- Adjust width as needed -->
                         <input class="form-control rupiah old-cost" type="text" name="old_cost[]" style="background: white;" readonly>
                     </td>
@@ -363,6 +366,7 @@ function tambahPriceList(data){
                     </td>
                 </tr>`;
             $("#pricelist tbody").append(newRow);
+            $("#item-desc").hide();
             $('.select').select2();
 
             // Fetch data for select element
@@ -394,19 +398,21 @@ function tambahPriceList(data){
                 }
             });
 
+
         // Event listener for changing select
         $("#pricelist tbody").on("change", 'select[name="barcode[]"]', function() {
             var selectedOption = $(this).find(':selected');
+            var item_descInput = $(this).closest('tr').find('.item-desc');
             var oldCostInput = $(this).closest('tr').find('.old-cost');
             var barcode = selectedOption.val();
 
             const priceslist = dataItemPriceChange;
-            console.log(priceslist);
 
             const price = priceslist.find(function(list) {
                 return list.upc == barcode;
             });
             oldCostInput.val(price.unit_cost);
+            item_descInput.val(price.sku_desc);
         });
 
 
@@ -454,14 +460,14 @@ function tambahPriceList(data){
                     showConfirmButton: false
                 });
 
-                $('#id').val(response.data.data.id);
-                $('#active_date').val(response.data.data.active_date);
-                $('#pricelist_desc').val(response.data.data.pricelist_desc);
+                $('#id').val(response.data.price_change.id);
+                $('#active_date').val(response.data.price_change.active_date);
+                $('#pricelist_desc').val(response.data.price_change.pricelist_desc);
                 var tableBody = $('#pricelist tbody');
                 $("#item_desc_clmn").show();
                 $("#action_clmn").hide();
                 tableBody.empty(); // Clear existing rows
-                response.data.data.price_list_details.forEach(function(detail, index) {
+                response.data.price_change.price_list_details.forEach(function(detail, index) {
                     var newRow = `
                         <tr id="R${rowIdx+1}">
                             <td>
@@ -483,15 +489,10 @@ function tambahPriceList(data){
                 $("#btnPriceList").hide();
                 $("#btnPlusPriceChange").hide();
 
-                for (var i = 0; i < JSON.parse(permissions_user).length; i++) {
-                    if (JSON.parse(permissions_user)[i].name == 'pricelist-approve' && response.data.data.role_last_app != role_user[0].id) {
+                for (var i = 0; i < response.data.permissions.length; i++) {
+                    if (response.data.permissions[i] == 'cost_change-approval' && response.data.price_change.status != "approve" && response.data.price_change.status != "reject") {
                             $("#btnApprovePriceList").show();
                             $("#checkboxReject").show();
-
-                    }else if(response.data.data.role_last_app!=role_user[0].id && response.data.data.role_next_app==role_user[0].id){
-                        $("#btnApprovePriceList").show();
-                        $("#checkboxReject").show();
-
                     }
                     else{
                         $("#btnApprovePriceList").hide();
@@ -500,37 +501,39 @@ function tambahPriceList(data){
                     }
 
                 }
-                if (response.data.data.history.length > 0) {
-                    $("#mdlFormContent").append(`
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title">History</h6>
-                                    <div id="content">
-                                        <ul class="timeline">
-                                            ${
-                                                response.data.data.history.map(event => `
-                                                    <li class="event" data-date="${formatDate(response.data.data.created_at)}">
+                if (response.data.price_change.history.length > 0) {
+                // Append the timeline template
+                $("#mdlFormContent").append(`
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h2 class="card-title">History</h2>
+                                <div id="content">
+                                    <ul class="timeline">
+                                        ${
+                                            response.data.price_change.history.map(event => `
+                                                <li class="event" data-date="${formatDate(event.created_at)}">
+                                                    <div class="event-icon"><i class="fas fa-clock"></i></div>
+                                                    <div class="event-content">
                                                         <h3>${capitalizeFirstLetter(event.status)}</h3>
-                                                        <p>'Pengajuan Price change anda telah di ${capitalizeFirstLetter(event.status)} pada tanggal.
-                                                        '${formatDate(response.data.data.created_at)}${event.status === 'reject' ? ` dengan alasan: '${event.reason}'` : ''}</p>
-                                                    </li>
-                                                `).join('')
-                                            }
-                                        </ul>
-                                    </div>
+                                                        <p>Pengajuan Price change anda telah di ${capitalizeFirstLetter(event.status)} pada tanggal ${formatDate(event.created_at)}${event.status === 'reject' ? ` dengan alasan: ${event.reason}` : ''}</p>
+                                                    </div>
+                                                </li>
+                                            `).join('')
+                                        }
+                                    </ul>
                                 </div>
                             </div>
                         </div>
-                    `);
+                    </div>
+                `);
                 } else {
                     // Add image or other content when there is no data
                     $("#mdlFormContent").append(`
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-body">
-                                History Approval
-                                <img src="/img/no-data.jpg" alt="No Data" class="img-fluid">
+                                <h2 class="card-title">History Approval</h2>
                                 <p>No data available</p>
                                 </div>
                             </div>
@@ -579,7 +582,7 @@ function tambahPriceList(data){
             // If user confirms, proceed with the action
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "/pricelist/approve", // Assuming you have a named route for storing permissions
+                    url: "/price-change/approve", // Assuming you have a named route for storing permissions
                     type: 'POST',
                     data: $("#inputPriceChange").serialize(), // Serialize form data
                     headers: {
@@ -648,7 +651,7 @@ function tambahPriceList(data){
             // If user confirms, proceed with the action
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "/pricelist/reject", // Assuming you have a named route for storing permissions
+                    url: "/price-change/reject", // Assuming you have a named route for storing permissions
                     type: 'POST',
                     data: $("#inputPriceChange").serialize(), // Serialize form data
                     headers: {
@@ -841,6 +844,18 @@ function tambahPriceList(data){
 }
 
 
+function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', options);
+}
+
+// Helper function to capitalize the first letter of a string
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+
 function tablePriceChange() {
     var table = $('#tablePriceChange');
 
@@ -904,10 +919,12 @@ function tablePriceChange() {
             {
                 "data": "user",
                 "render": function(data, type, row) {
-                    if (row.users !== null) {
-                        return '<span class="badge badge-info badge-pill rounded-pill progress">' + data.name + '</span>';
+                    if (row.users !== null && row.users.name !== null) {
+                        return '<span class="badge badge-pretty custom-info-badge">' +
+                               '<i class="fas fa-user mr-1"></i>' + row.users.name + '</span>';
                     } else {
-                        return '<div class="spinner-border text" role="status"><span class="sr-only">Loading...</span></div>';
+                        return '<div class="spinner-border text-info" role="status">' +
+                               '<span class="sr-only">Loading...</span></div>';
                     }
                 }
             },
@@ -915,13 +932,13 @@ function tablePriceChange() {
                 "data": "status",
                 "render": function(data) {
                     if (data === 'progress') {
-                        return '<span class="badge badge-pretty bg-pretty-warning">Progress</span>';
+                        return '<span class="badge badge-pretty custom-badge custom-progress"><i class="fas fa-spinner fa-spin mr-1"></i>Progress</span>';
                     } else if (data === 'approve') {
-                        return '<span class="badge badge-pretty bg-pretty-success">Approve</span>';
+                        return '<span class="badge badge-pretty custom-approve"><i class="fas fa-check mr-1"></i>Approve</span>';
                     } else if (data === 'reject') {
-                        return '<span class="badge badge-pretty bg-pretty-danger">Reject</span>';
+                        return '<span class="badge badge-pretty custom-reject"><i class="fas fa-times mr-1"></i>Reject</span>';
                     } else {
-                        return '<span class="badge badge-pretty bg-pretty-warning">Progress</span>';
+                        return '<span class="badge badge-pretty custom-progress"><i class="fas fa-spinner fa-spin mr-1"></i>Progress</span>';
                     }
                 }
             },

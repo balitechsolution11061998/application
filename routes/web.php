@@ -51,6 +51,9 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::post('/upload', 'PriceChangeController@upload')->name('upload');
         Route::get('/{id}/show', 'PriceChangeController@show')->name('show');
         Route::post('/store', 'PriceChangeController@store')->name('store');
+        Route::get('/count', 'PriceChangeController@count')->name('count');
+        Route::post('/approve', 'PriceChangeController@approve')->name('approve');
+        Route::post('/reject', 'PriceChangeController@reject')->name('reject');
 
 
     });
@@ -126,6 +129,15 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     Route::prefix('cabang')->name('cabang.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/data', 'CabangController@data')->name('data');
     });
+
+    Route::prefix('settings')->name('settings.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/price-change/index', 'SettingsController@priceChange')->name('priceChange.index');
+        Route::get('/price-change/data', 'SettingsController@approvalPriceChangeData')->name('priceChange.data');
+        Route::post('/price-change/store', 'SettingsController@priceChangeStore')->name('priceChangeStore');
+
+    });
+
+
 });
 
 

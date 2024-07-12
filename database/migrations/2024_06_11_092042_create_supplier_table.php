@@ -15,22 +15,22 @@ return new class extends Migration
 
         Schema::create('supplier', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('supp_code');
-            $table->string('supp_name', 191);
-            $table->integer('terms');
-            $table->string('contact_name', 191);
-            $table->string('contact_phone', 191);
-            $table->string('contact_fax', 191);
-            $table->string('email', 191);
-            $table->string('address_1', 191);
-            $table->string('address_2', 191);
-            $table->string('city', 191);
-            $table->string('post_code', 255);
-            $table->char('tax_ind', 191);
-            $table->string('tax_no', 191);
-            $table->char('retur_ind', 191);
-            $table->char('consig_ind', 191);
-            $table->char('status', 191);
+            $table->bigInteger('supp_code')->nullable();
+            $table->string('supp_name', 191)->nullable();
+            $table->integer('terms')->nullable();
+            $table->string('contact_name', 191)->nullable();
+            $table->string('contact_phone', 191)->nullable();
+            $table->string('contact_fax', 191)->nullable();
+            $table->string('email', 191)->nullable();
+            $table->string('address_1', 191)->nullable();
+            $table->string('address_2', 191)->nullable();
+            $table->string('city', 191)->nullable();
+            $table->string('post_code', 255)->nullable();
+            $table->char('tax_ind', 191)->nullable();
+            $table->string('tax_no', 191)->nullable();
+            $table->char('retur_ind', 191)->nullable();
+            $table->char('consig_ind', 191)->nullable();
+            $table->char('status', 191)->nullable();
             $table->timestamps();
         });
     }

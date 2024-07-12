@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseJson;
+use App\Models\HistoryApprovalCostChange;
 use App\Models\Items;
 use App\Models\PriceChange;
 use App\Models\PriceChangeDetail;
@@ -30,9 +31,59 @@ class PriceChangeController extends Controller
         return view('price-change.index');
     }
 
+    public function count(Request $request)
+    {
+        try {
+            $userIp = $request->ip();
+
+            // Log the activity of accessing the create page using the trait
+            $this->logActivity('Accessed item supplier data', 'User accessed the item page');
+
+            if ($request->ajax()) {
+                // Start measuring query execution time
+                $startTime = microtime(true);
+                $startMemory = memory_get_usage();
+
+                $query = PriceChange::with('suppliers', 'users');
+
+                // Check if search parameter is provided
+                if ($request->search != null) {
+                    $searchTerm = $request->search;
+                    $query->where(function ($query) use ($searchTerm) {
+                        $query->where('supplier', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('sku', 'like', '%' . $searchTerm . '%');
+                    });
+                }
+
+                // Get the count of records
+                $count = $query->count();
+
+                // Calculate query execution time
+                $endTime = microtime(true);
+                $endMemory = memory_get_usage();
+
+                $executionTime = $endTime - $startTime;
+                $executionTimeInSeconds = round($executionTime, 4);
+                $memoryUsage = $endMemory - $startMemory;
+
+                $this->logQueryPerformance('count_data_price_change', $request->search, $executionTimeInSeconds, $memoryUsage, $userIp);
+
+                return response()->json(['count' => $count], 200);
+            }
+        } catch (\Exception $e) {
+            // Log the error
+            $this->logError('An error occurred while accessing the create page', $e);
+
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+
     public function data(Request $request)
     {
         try {
+            $userIp = $request->ip();
+
             // Log the activity of accessing the create page using the trait
             $this->logActivity('Accessed item supplier data', 'User accessed the item page');
 
@@ -68,7 +119,7 @@ class PriceChangeController extends Controller
                 $executionTimeInSeconds = round($executionTime, 4);
                 $memoryUsage = $endMemory - $startMemory;
 
-                $this->logQueryPerformance('items_data', $request->search, $executionTimeInSeconds, $this->convertMemoryUsage($memoryUsage));
+                $this->logQueryPerformance('price_change_data', $request->search, $executionTimeInSeconds, $memoryUsage, $userIp);
 
                 return DataTables::of($results)
                     ->addIndexColumn()
@@ -95,10 +146,43 @@ class PriceChangeController extends Controller
         return number_format($bytes / pow(1024, $power), 2, '.', ',') . ' ' . $units[$power];
     }
 
-    public function show($id){
-        $data = PriceChange::with('priceListDetails')->where('id',$id)->first();
-        return ResponseJson::response('Found Data Price Change', 'success', array('data' => $data), 200);
+    public function show($id)
+    {
+        try {
+            // Fetch the PriceChange data along with its details
+            $data = PriceChange::with('priceListDetails','history')->where('id', $id)->firstOrFail();
+
+            // Get all permissions of the authenticated user
+            $permissions = Auth::user()->allPermissions()->pluck('name');
+
+            // Return the data along with permissions
+            return response()->json([
+                'message' => 'Found Data Price Change',
+                'status' => 'success',
+                'data' => [
+                    'price_change' => $data,
+                    'permissions' => $permissions
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            // Log the error
+            Log::error('Error fetching price change data', [
+                'error' => $e->getMessage(),
+                'user_id' => Auth::id(),
+                'price_change_id' => $id,
+                'exception' => $e
+            ]);
+
+            // Return an error response
+            return response()->json([
+                'message' => 'An error occurred while fetching the data.',
+                'status' => 'error',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
+
 
 
     public function download()
@@ -149,7 +233,7 @@ class PriceChangeController extends Controller
 
         foreach ($data as $row) {
             // Format current date as "Example : 30/04/2023"
-            $futureDate = date('d/m/Y', strtotime('+2 weeks'));
+            $futureDate = date('d/m/Y');
 
             $csvRow = [
                 "isikan dengan descriptions",
@@ -168,17 +252,85 @@ class PriceChangeController extends Controller
         return ob_get_clean();
     }
 
-    public function store(Request $request){
+    public function approve(Request $request){
+        $priceListHead = PriceChange::find($request->id);
+
+        // Update the fields
+        $priceListHead->role_last_app = Auth::user()->roles[0]->id;
+        // Make sure you are using the correct variable name here ^^^^^^^^^^^^
+        $priceListHead->status = 'approve';
+        // $roleNextApp = DB::table('mapping_app_pricelist')
+        //     ->where('role_id', Auth::user()->roles[0]->id)
+        //     ->where('region_id', Auth::user()->region)
+        //     ->first()->position + 1;
+
+        // $priceListHead->role_next_app = DB::table('mapping_app_pricelist')
+        //     ->where('position', $roleNextApp)
+        //     ->first()->role_id;
+
+        $priceListHead->approval_id = Auth::user()->username;
+
+        // Save the changes
+        $priceListHead->save();
+
+        $data = HistoryApprovalCostChange::create([
+            'pricelist_id' => $request->id,
+            'user_id' => Auth::user()->username,
+            'role_id' => Auth::user()->roles[0]->id,
+            'status' => 'approve'
+        ]);
+
+        $dataPengirim = User::where('username',Auth::user()->username)->first();
+        $supplier = Supplier::where('supp_code',$priceListHead->supplier_id)->first();
+        // event(new PriceChangeApprove($priceListHead,$dataPengirim,$supplier));
+
+
+        return ResponseJson::response('Success approved data price change', 'success', array('data' => $data), 200);
+
+    }
+
+    public function reject(Request $request){
+        $priceListHead = PriceChange::find($request->id);
+
+        // Update the fields
+        $priceListHead->role_last_app = Auth::user()->roles[0]->id;
+        // Make sure you are using the correct variable name here ^^^^^^^^^^^^
+        $priceListHead->role_next_app = Auth::user()->roles[0]->id;
+
+        $priceListHead->approval_id = Auth::user()->username;
+        $priceListHead->status = 'reject';
+        // Save the changes
+        $priceListHead->save();
+
+
+
+        $data = HistoryApprovalCostChange::create([
+            'pricelist_id' => $request->id,
+            'user_id' => Auth::user()->username,
+            'role_id' => Auth::user()->roles[0]->id,
+            'status' => 'reject',
+            'reason' => $request->reason,
+        ]);
+        $dataPengirim = User::where('username',Auth::user()->username)->first();
+        $supplier = Supplier::where('supp_code',$priceListHead->supplier_id)->first();
+        // event(new PriceChangeApprove($priceListHead,$dataPengirim,$supplier));
+
+        return ResponseJson::response('Success rejected data price change', 'success', array('data' => $data), 200);
+
+    }
+
+
+    public function store(Request $request)
+    {
         try {
             $activeDate = $request->input('active_date');
             $pricelistDesc = $request->input('pricelist_desc');
 
             $barcode = $request->input('barcode');
+            $item_desc = $request->input('item_desc');
             $oldCost = $request->input('old_cost');
             $newCost = $request->input('new_cost');
 
-            // Assuming you have a relationship between pricelist_head and pricelist_detail
-            // Create a new pricelist_head entry
             $pricelistHead = new PriceChange();
             $pricelistHead->active_date = $activeDate;
             $pricelistHead->pricelist_desc = $pricelistDesc;
@@ -188,42 +340,27 @@ class PriceChangeController extends Controller
 
             if (Auth::user()->hasRole('superadministrator')) {
                 $roleNextApp = DB::table('mapping_app_pricelist')
-                    ->where('role_id', 7)
-                    ->where('region_id', 1)
-                    ->first()->position + 1;
-
+                    ->where('role_id', Auth::user()->roles[0]->id)
+                    ->where('region_id', Auth::user()->region)
+                    ->first()->position;
 
             } else {
-                // Retrieve role_next_app from mapping_app_pricelist
                 $roleNextApp = DB::table('mapping_app_pricelist')
                     ->where('role_id', Auth::user()->roles[0]->id)
                     ->where('region_id', Auth::user()->region)
                     ->first()->position + 1;
             }
 
+            $pricelistHead->role_next_app = $roleNextApp;
 
-            // $roleNextApp = DB::table('mapping_app_pricelist')
-            // ->where('role_id',Auth::user()->roles[0]->id)
-            // ->where('region_id',Auth::user()->region)
-            // ->first()->position+1;
-
-
-            $pricelistHead->role_next_app = DB::table('mapping_app_pricelist')
-            ->where('position',$roleNextApp)->first()->role_id;
+            // Save pricelistHead to generate an ID if it's a new record
             $pricelistHead->save();
 
-
-
-            // Now you can access the ID
-            $pricelistHead->pricelist_no = 'PL00' . $pricelistHead->id; // Set pricelist_no to 'PL00'+id
-            $pricelistHead->save();
-
-            // Assuming you have a relationship between pricelist_head and pricelist_detail
-            // Iterate over the barcode, old_cost, and new_cost arrays to create pricelist_detail entries
             foreach ($barcode as $key => $code) {
                 PriceChangeDetail::create([
                     'pricelist_head_id' => $pricelistHead->id,
                     'barcode' => $code,
+                    'item_desc' => $item_desc[$key],
                     'old_cost' => $oldCost[$key],
                     'new_cost' => str_replace('.', '', $newCost[$key]),
                     // Assuming you have other fields in pricelist_detail table
@@ -231,20 +368,17 @@ class PriceChangeController extends Controller
             }
 
             $usersWithRole = User::whereHas('roles', function ($query) use ($pricelistHead) {
-                $query->where('id',$pricelistHead->role_next_app);
+                $query->where('id', $pricelistHead->role_next_app);
             })->get();
 
-
-            $supplier = Supplier::where('supp_code',Auth::user()->username)->first();
-            // event(new PriceChangeStore($pricelistHead,$usersWithRole,$supplier));
+            $supplier = Supplier::where('supp_code', Auth::user()->username)->first();
 
             return ResponseJson::response('Price change update successfully', 'success', [], 200);
         } catch (\Throwable $th) {
-            //throw $th;
             return ResponseJson::response($th->getMessage(), 'error', [], 500);
         }
-
     }
+
 
     public function upload(Request $request)
     {
@@ -327,31 +461,21 @@ class PriceChangeController extends Controller
 
                         if (Auth::user()->hasRole('superadministrator')) {
                             $roleNextApp = DB::table('mapping_app_pricelist')
-                                ->where('role_id', 7)
-                                ->where('region_id', 1)
-                                ->first()->position + 1;
+                                ->where('role_id', Auth::user()->roles[0]->id)
+                                ->where('region_id', Auth::user()->region)
+                                ->first()->position;
 
-                            $pricelistHead->role_next_app = DB::table('mapping_app_pricelist')
-                                ->where('position', $roleNextApp)
-                                ->first()->role_id;
                         } else {
-                            // Retrieve role_next_app from mapping_app_pricelist
                             $roleNextApp = DB::table('mapping_app_pricelist')
                                 ->where('role_id', Auth::user()->roles[0]->id)
                                 ->where('region_id', Auth::user()->region)
                                 ->first()->position + 1;
-
-                            $pricelistHead->role_next_app = DB::table('mapping_app_pricelist')
-                                ->where('position', $roleNextApp)
-                                ->first()->role_id;
                         }
 
+                        $pricelistHead->role_next_app = $roleNextApp;
 
                         $pricelistHead->save();
 
-                        // Set pricelist_no
-                        $pricelistHead->pricelist_no = 'PL00' . $pricelistHead->id;
-                        $pricelistHead->save();
                         if(isset($column[2])){
                             PriceChangeDetail::create([
                                 'pricelist_head_id' => $pricelistHead->id,

@@ -1,13 +1,14 @@
 <x-default-layout>
     @section('title')
-        Price change
+        Settings
     @endsection
 
     @section('breadcrumbs')
-        {{ Breadcrumbs::render('price-change') }}
+        {{ Breadcrumbs::render('settings') }}
     @endsection
         <!--begin::Card-->
         <div class="card">
+            <h1 style="color:black;font-weight:bold;">Approval Price Change</h1>
             <!--begin::Card header-->
             <div class="card-header border-0 pt-6">
                 <!--begin::Card title-->
@@ -18,7 +19,7 @@
                             <span class="path1"></span>
                             <span class="path2"></span>
                         </i>
-                        <input type="text" data-kt-user-table-filter="search" id="frmSearchRoles" class="form-control form-control-solid form-control-sm w-250px ps-13" placeholder="Search Roles" />
+                        <input type="text" data-kt-user-table-filter="search" id="frmSearchRoles" class="form-control form-control-solid form-control-sm w-250px ps-13" placeholder="Search Settings" />
                     </div>
                     <!--end::Search-->
                 </div>
@@ -26,15 +27,12 @@
                 <!--begin::Card toolbar-->
                 <div class="card-toolbar">
                     <!--begin::Toolbar-->
+                    @can('roles-create')
                     <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-                        <button type="button" class="btn btn-success btn-sm" onclick="uploadPriceChange()">
-                            <i class="fas fa-upload me-2"></i>Upload Price Change
-                        </button>
-                    </div> &nbsp;
-                    <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-                        <button type="button" class="btn btn-primary btn-sm" onclick="tambahPriceList()">
-                            <i class="ki-duotone ki-plus fs-2"></i>Add Cost Change</button>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="tambahMappingPriceList()">
+                            <i class="ki-duotone ki-plus fs-2"></i>Add Approval</button>
                     </div>
+                    @endcan
                 </div>
                 <!--end::Card toolbar-->
             </div>
@@ -45,13 +43,9 @@
                 <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0" id="tablePriceChange">
                     <thead>
                         <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                        <th>Price List No</th>
-                        <th>Display Name</th>
-                        <th>Active Date</th>
-                        <th>Supplier</th>
-                        <th>Supplier Name</th>
-                        <th>Last Approval</th>
-                        <th>Status</th>
+                        <th>Role</th>
+                        <th>Position</th>
+                        <th>Region</th>
                         <th>Actions</th>
                         </tr>
                     </thead>
@@ -61,20 +55,13 @@
 
                 <!--end::Table-->
             </div>
-            <div class="card-footer">
-                <b>Note Pricelist :</b>
-                <p>1. Harga pricelist adalah harga diluar PPN</p>
-                <p>2. Harga pricelist adalah harga per pcs</p>
-                <p>3. Download format import dari excel atau csv, <a href="#" class="text-olive" onclick="showDownloadModal()"><b>klik disini</b></a></p>
-            </div>
             <!--end::Card body-->
         </div>
         <!--end::Card-->
     @include('modals.modal')
     <!--end::Row-->
     @push('scripts')
-
-        <script src="{{ asset('js/pricelist.js') }}"></script>
+        <script src="{{ asset('js/priceChange.js') }}"></script>
         <script src="{{ asset('js/formatRupiah.js') }}"></script>
 
     @endpush

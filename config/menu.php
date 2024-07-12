@@ -30,6 +30,7 @@ return [
             'iconPath'       => 7,
             'route'          => 'items.index',
         ],
+
         [
             'label'          => 'Price Change',
             'type'           => 'item',
@@ -53,7 +54,7 @@ return [
 
 
         [
-            'label' => 'Pages',
+            'label' => 'User',
             'type' => 'heading'
         ],
         [
@@ -95,6 +96,20 @@ return [
                     'icon'           => 'dot',
                 ],
             ]
+        ],
+        [
+            'label' => 'Master Data',
+            'type' => 'heading'
+        ],
+        [
+            'label'          => 'Settings',
+            'type'           => 'item',
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'ki',
+            'iconName'       => 'ki-element-11',
+            'iconPath'       => 7,
+            'route'          => 'settings.priceChange.index',
         ],
 
         // [

@@ -169,7 +169,7 @@ class DatabaseSeeder extends Seeder
         // Predefined user data
         $dataUser = [
             [
-                'username' => 'sulaksana60',
+                'username' => '111095',
                 'name' => 'I Wayan Bayu Sulaksana',
                 'email' => 'notification@supplier.m-mart.co.id',
                 'password_show' => 't34m1tmm',

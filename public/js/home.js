@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
+
+
     document
         .getElementById("quickGuideButton")
         .addEventListener("click", function () {
@@ -258,6 +260,19 @@ async function fetchCountPoDays(status,filterDate) {
 
 }
 
+
+function fetchPriceChangeData(id) {
+    $.ajax({
+        url: '/price-change/count', // Adjust the URL to match your route
+        type: 'GET',
+        success: function(response) {
+                $('#countPriceChange').html(response.count); // Assuming you have price_change_value in the response
+        },
+        error: function(xhr) {
+            alert('Error: ' + xhr.responseText);
+        }
+    });
+}
 
 async function fetchCountPo(status,filterDate) {
     try {

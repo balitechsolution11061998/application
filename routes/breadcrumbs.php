@@ -33,6 +33,10 @@ Breadcrumbs::for('price-change', function (BreadcrumbTrail $trail) {
     $trail->push('PriceChange', route('price-change.index'));
 });
 
+Breadcrumbs::for('settings', function (BreadcrumbTrail $trail) {
+    $trail->push('Settings', route('settings.priceChange.index'));
+});
+
 // Dashboard > Default
 Breadcrumbs::for('dashboard.default', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');

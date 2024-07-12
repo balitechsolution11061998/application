@@ -13,11 +13,10 @@ class PerformanceDataUpdated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $data;
 
-    public function __construct($data)
+    public function __construct()
     {
-        $this->data = $data;
+
     }
 
 
@@ -30,8 +29,5 @@ class PerformanceDataUpdated implements ShouldBroadcast
     {
         return 'performance-data-updated';
     }
-    public function broadcastWith()
-    {
-        return ['data' => $this->data];
-    }
+
 }

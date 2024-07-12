@@ -980,3 +980,88 @@ nav ul li a.active {
     width: 100% !important;
     height: auto !important;
 }
+
+/* Common styles for all custom badges */
+.badge-pretty {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 50px;
+    font-weight: bold;
+    color: #fff;
+    font-size: 14px;
+}
+
+/* Specific styles for each status */
+.custom-progress {
+    background-color: #ffc107; /* Matches bg-pretty-warning color */
+}
+
+.custom-approve {
+    background-color: #28a745; /* Matches bg-pretty-success color */
+}
+
+.custom-info-badge {
+    display: inline-block;
+    padding: 5px 10px; /* Custom padding */
+    background-color: #87CEEB; /* Sky blue color */
+    color: #fff; /* White text color */
+    border-radius: 20px; /* Rounded corners */
+    font-weight: bold; /* Bold text */
+}
+
+.custom-reject {
+    background-color: #dc3545; /* Matches bg-pretty-danger color */
+}
+
+/* Margin for icons */
+.badge-pretty .fas {
+    margin-right: 5px;
+}
+
+/* Timeline styles */
+.timeline {
+    list-style: none;
+    padding: 0;
+}
+
+.timeline .event {
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline .event::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    background-color: #000; /* Black color for the dot */
+    border-radius: 50%;
+}
+
+.timeline .event::after {
+    content: attr(data-date);
+    position: absolute;
+    left: -150px;
+    top: 0;
+    white-space: nowrap;
+    color: #000; /* Black color for the date */
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.timeline .event h3 {
+    color: #000; /* Black color for the event title */
+    font-size: 18px;
+    margin: 0 0 5px;
+}
+
+.timeline .event p {
+    color: #000; /* Black color for the event description */
+    font-size: 14px;
+    margin: 0;
+}
+
+

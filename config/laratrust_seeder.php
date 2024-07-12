@@ -18,6 +18,7 @@ return [
             'permissions' => 's,c',
             'roles' => 's,c',
             'items' => 's',
+            'cost_change' => 'a',
         ],
         // 'administrator' => [
         //     'users' => 'c,r,u,d',
@@ -32,6 +33,7 @@ return [
     ],
 
     'permissions_map' => [
+        'a'=>'approval',
         'm'=>'menu',
         's'=>'show',
         'c' => 'create',
