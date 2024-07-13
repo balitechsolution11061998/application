@@ -32,7 +32,12 @@ function fetchDataUser() {
         processing: true,
         serverSide: true,
         ajax: {
-            url:"/users/data",
+            url: "/users/data",
+            data: {
+                name: $("#name").val(),
+                department: $("#department").val(),
+                cabang: $("#cabang").val(),
+            },
             beforeSend: function() {
                 $('.spinner').show();
             },
@@ -60,7 +65,8 @@ function fetchDataUser() {
                 data: "email",
                 name: "email",
                 render: function (data, type, row) {
-                    return '<i class="fas fa-envelope"></i> ' + data;
+                    return '<i class="fas fa-envelope"></i> ' + data +
+                           ' <button class="btn btn-primary btn-sm kirim-email" onclick="sendAccountDetails(\'' + data + '\', \'email\')"><i class="fas fa-paper-plane"></i> Kirim Email</button>';
                 },
             },
             {
@@ -97,7 +103,6 @@ function fetchDataUser() {
                     }
                 },
             },
-
             {
                 data: "photo",
                 name: "photo",
@@ -121,8 +126,8 @@ function fetchDataUser() {
                 },
             },
             {
-                data:'department',
-                name: "department",
+                data:'cabang',
+                name: "cabang",
                 render: function (data, type, row) {
                     if (row.cabang === null || row.cabang === undefined) {
                         return "Belum memiliki cabang";
@@ -148,26 +153,50 @@ function fetchDataUser() {
                 orderable: false,
                 searchable: false,
                 render: function (data, type, row) {
-                    return (
-                        `
-                        <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Edit" onclick="editUser(${row.id})">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Trash" onclick="deleteUser(${row.id})">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                        <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Reset Password" onclick="resetPassword(${row.id})">
-                            <i class="fas fa-key"></i>
-                        </a>
-                           <a href="#" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Tambah Roles" onclick="setRolesToUser(${row.id})">
-                            <i class="fas fa-plus-circle"></i>
-                        </a>
-                        `
-                    );
+                    return `
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Actions
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" onclick="editUser(${row.id})"><i class="fas fa-edit"></i> Edit</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="deleteUser(${row.id})"><i class="fas fa-trash"></i> Delete</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="resetPassword(${row.id})"><i class="fas fa-key"></i> Reset Password</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="setRolesToUser(${row.id})"><i class="fas fa-plus-circle"></i> Tambah Roles</a></li>
+                            </ul>
+                        </div>
+                    `;
                 },
             },
 
         ],
+        drawCallback: function() {
+            var table = this.api();
+            var body = $(table.table().body());
+
+            // Create a new instance of mark.js
+            var instance = new Mark(body[0]);
+
+
+            if($("#name").val() != undefined || $("#department").val() != undefined || $("#cabang").val() != undefined) {
+                // Remove previous highlights
+                instance.unmark({
+                    done: function() {
+                        // Highlight the search terms
+                        instance.mark($("#name").val());
+                        instance.mark($("#department").val());
+                        instance.mark($("#cabang").val());
+                    }
+                });
+            }
+        },
+        initComplete: function () {
+            var rows = this.api().rows({ page: 'current' }).nodes();
+            $(rows).css('opacity', '0').slideDown('slow').animate(
+                { opacity: 1 },
+                { duration: 'slow' }
+            );
+        }
     });
 
     $('[data-fancybox="gallery"]').fancybox({
@@ -188,9 +217,105 @@ function fetchDataUser() {
         input.attr("type", type);
         $(this).toggleClass("fa-eye fa-eye-slash");
     });
+}
 
-        // Swal confirmation and link opening for Edit button
+function sendAccountDetails(receiver, contactMethod) {
+    // Show confirmation dialog using SweetAlert
+    Swal.fire({
+        title: 'Send Account Details?',
+        text: `Are you sure you want to send account details to ${receiver}?`,
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, send it!',
+        cancelButtonText: 'No, cancel',
+        showLoaderOnConfirm: true, // Display a loading spinner during confirm
+        preConfirm: () => {
+            return new Promise((resolve, reject) => {
+                // AJAX request to send account details
+                $.ajax({
+                    url: '/users/send-account-details',
+                    method: 'POST',
+                    data: {
+                        receiver: receiver,
+                        contact_method: contactMethod,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        resolve(response);
+                    },
+                    error: function(xhr, status, error) {
+                        reject(error);
+                    }
+                });
 
+            });
+        },
+        allowOutsideClick: () => !Swal.isLoading() // Prevent closing modal while sending
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Sent!',
+                text: 'Account details have been sent successfully.',
+                icon: 'success'
+            });
+            // Optionally update UI or show success message to user
+        }
+    }).catch((error) => {
+        Swal.fire({
+            title: 'Error!',
+            text: 'Failed to send account details.',
+            icon: 'error'
+        });
+        console.error(error); // Log the error for debugging
+        // Optionally handle specific errors or show error message to user
+    });
+}
+
+async function fetchOptions(url) {
+    const response = await fetch(url);
+    return response.json();
+}
+
+async function filterUser() {
+    $("#mdlForm").modal('show');
+    $("#mdlFormTitle").html("Filter User");
+    $('#mdlFormContent').html("");
+
+    const departments = await fetchOptions('/departments/data');
+
+    const departmentOptions = departments.map(dept => `<option value="${dept.id}">${dept.name}</option>`).join('');
+
+    $('#mdlFormContent').append(`
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col">
+                    <input type="text" class="form-control"  name="name" id="name" placeholder="Nama Karyawan">
+                </div>
+                <div class="col">
+                    <select class="form-control" name="department" id="department">
+                        <option value="">Departemen</option>
+                        ${departmentOptions}
+                    </select>
+                </div>
+                <div class="col">
+                    <select class="form-control" name="cabang" id="cabang">
+                        <option value="">Semua Cabang</option>
+                        <option value="bali">Bali</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" onclick="searchUser()">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
+                </div>
+            </div>
+        </div>
+    `);
+}
+
+function searchUser(){
+    fetchDataUser();
+    $("#mdlForm").modal('hide');
 }
 
 function setRolesToUser(user_id) {

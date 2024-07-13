@@ -90,6 +90,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/{id}/edit', 'UserController@edit')->name('edit');
         Route::get('/{id}/dataEdit', 'UserController@dataEdit')->name('dataEdit');
         Route::delete('/delete/{id}','UserController@delete')->name('delete');
+        Route::post('/send-account-details', 'UserController@sendAccountDetails');
 
 
     });
@@ -134,6 +135,14 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/price-change/index', 'SettingsController@priceChange')->name('priceChange.index');
         Route::get('/price-change/data', 'SettingsController@approvalPriceChangeData')->name('priceChange.data');
         Route::post('/price-change/store', 'SettingsController@priceChangeStore')->name('priceChangeStore');
+
+    });
+
+
+    Route::prefix('jam_kerja')->name('jam_kerja.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'JamKerjaController@index')->name('index');
+        Route::get('/data', 'JamKerjaController@data')->name('data');
+        Route::post('/store', 'JamKerjaController@store')->name('store');
 
     });
 

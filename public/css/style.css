@@ -1080,3 +1080,13 @@ nav ul li a.active {
     font-weight: bold;
     transition: color 0.3s ease, font-weight 0.3s ease;
 }
+
+.error {
+    color: red;
+}
+.valid {
+    border-color: green;
+}
+.error-input {
+    border-color: red;
+}

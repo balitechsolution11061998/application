@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AccountDetailsMail;
 use App\Mail\ResetPasswordEmail;
 use App\Models\User;
+use App\Services\User\UserService;
 use Illuminate\Http\Request;
 use App\Traits\LogsActivity;
 use Illuminate\Support\Facades\Validator;
@@ -20,17 +22,25 @@ class UserController extends Controller
     //
     use LogsActivity;
 
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     public function index()
     {
         return view('users.index');
     }
 
-    public function data(Request $request){
+    public function data(Request $request)
+    {
         try {
-            // Log the activity of accessing the create page using the trait
             $this->logActivity('Accessed create page', 'User accessed the create user page');
+
             if ($request->ajax()) {
-                $data = User::with('jabatan','department','cabang')->latest()->get();
+                $data = $this->userService->getData($request);
 
                 return DataTables::of($data)
                     ->addIndexColumn()
@@ -43,13 +53,12 @@ class UserController extends Controller
                     ->make(true);
             }
         } catch (\Exception $e) {
-            // Log the error
             $this->logError('An error occurred while accessing the create page', $e);
 
             return $e->getMessage();
-
         }
     }
+
 
     public function resetPassword($id)
     {
@@ -193,6 +202,33 @@ class UserController extends Controller
 
             return Response::json(['error' => 'Failed to delete user', 'message' => $e->getMessage()], 500);
         }
+    }
+
+    public function sendAccountDetails(Request $request)
+    {
+        $request->validate([
+            'receiver' => 'required|email',
+            'contact_method' => 'required|string',
+        ]);
+
+        // Fetch user details from the database
+        $user = User::where('email', $request->receiver)->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+
+        $details = [
+            'name' => $user->name,
+            'username' => $user->username,
+            'password' => $user->password_show,
+            'login_url' => env('APP_URL'),
+        ];
+
+        // Send email with account details
+        Mail::to($request->receiver)->send(new AccountDetailsMail($details));
+
+        return response()->json(['message' => 'Account details have been sent successfully.'], 200);
     }
 
 

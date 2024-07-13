@@ -11,10 +11,12 @@ use App\Services\Order\OrderServiceImplement;
 use Illuminate\Database\Schema\Builder;
 use App\Jobs\ExampleJob;
 use App\Models\Permission;
+use App\Models\QueryLog;
 use App\Repositories\Permissions\PermissionsRepositoryImplement;
 use App\Services\Permissions\PermissionsService;
 use App\Services\Permissions\PermissionsServiceImplement;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inspector\Laravel\Facades\Inspector;
 
 class AppServiceProvider extends ServiceProvider
@@ -46,12 +48,7 @@ class AppServiceProvider extends ServiceProvider
         Builder::defaultStringLength(191);
         KTBootstrap::init();
 
-        Inspector::beforeFlush(function ($inspector) {
-            if ($inspector->transaction()->name === ExampleJob::class) {
-                $prob = mt_rand(0, mt_getrandmax() - 1) / mt_getrandmax();
 
-                return $prob < 0.7; // Report 70% of the executions
-            }
-        });
+
     }
 }

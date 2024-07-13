@@ -37,6 +37,10 @@ Breadcrumbs::for('settings', function (BreadcrumbTrail $trail) {
     $trail->push('Settings', route('settings.priceChange.index'));
 });
 
+Breadcrumbs::for('jam-kerja', function (BreadcrumbTrail $trail) {
+    $trail->push('Jam Kerja', route('jam_kerja.index'));
+});
+
 // Dashboard > Default
 Breadcrumbs::for('dashboard.default', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');

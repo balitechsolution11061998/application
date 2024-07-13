@@ -31,7 +31,8 @@
 
                         <!--begin::Add user-->
                         <button type="button" class="btn btn-success btn-sm" onclick="filterUser()">
-                            <i class="ki-duotone ki-plus fs-2"></i>Filter User</button>
+                            <i class="fas fa-filter"></i> Filter User
+                        </button>
                         &nbsp;
                         <button type="button" class="btn btn-primary btn-sm" onclick="createUser()">
                             <i class="ki-duotone ki-plus fs-2"></i>Add User</button>
@@ -86,6 +87,7 @@
     @push('scripts')
         <script src="{{ asset('js/user.js') }}"></script>
         <script src="{{ asset('js/formatRupiah.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js"></script>
 
     @endpush
 </x-default-layout>

@@ -51,4 +51,9 @@ class UserRepositoryImplement extends Eloquent implements UserRepository{
         $user = User::findOrFail($id);
         return $user->delete();
     }
+
+    public function getUserWithRelationships()
+    {
+        return User::with('jabatan', 'department', 'cabang')->latest();
+    }
 }

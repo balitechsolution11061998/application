@@ -157,6 +157,7 @@ function editRoles(data) {
 
 // Function to initialize the modal and form
 function initializeModalAndForm() {
+    console.log("masuk sini");
     // Show modal
     $("#mdlForm").modal('show');
 
@@ -241,7 +242,6 @@ function fetchAndPopulatePermissions() {
 
 // Function to fetch and populate permissions by role via AJAX
 function fetchAndPopulatePermissionsByRole(roleId) {
-    console.log(roleId);
     $.ajax({
         url: "/permissions/getPermissionsByRole",
         type: "GET",

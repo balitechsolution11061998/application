@@ -10,4 +10,5 @@ interface UserRepository extends Repository{
     // public function create(array $data);
     public function findUserById($id);
     public function deleteById($id);
+    public function getUserWithRelationships();
 }

@@ -111,6 +111,16 @@ return [
             'iconPath'       => 7,
             'route'          => 'settings.priceChange.index',
         ],
+        [
+            'label'          => 'Jam Kerja',
+            'type'           => 'item',
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'ki',
+            'iconName'       => 'ki-element-11',
+            'iconPath'       => 7,
+            'route'          => 'jam_kerja.index',
+        ],
 
         // [
 
