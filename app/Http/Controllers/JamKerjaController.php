@@ -21,8 +21,8 @@ class JamKerjaController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function($row) {
-                    $editBtn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>';
-                    $deleteBtn = ' <a href="javascript:void(0)" class="delete btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>';
+                    $editBtn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm" onclick="editJamKerja('.$row->id.')"><i class="fas fa-edit"></i></a>';
+                    $deleteBtn = ' <a href="javascript:void(0)" class="delete btn btn-danger btn-sm" onclick="deleteJamKerja('.$row->id.')"><i class="fas fa-trash-alt"></i></a>';
                     return $editBtn . $deleteBtn;
                 })
                 ->editColumn('lintas_hari', function($row) {
@@ -32,53 +32,79 @@ class JamKerjaController extends Controller
                 ->make(true);
         }
 
+
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'kodeJamKerja' => 'required|string|max:255',
-            'namaJamKerja' => 'required|string|max:255',
-            'awalJamMasuk' => 'required|date_format:H:i',
-            'jamMasuk' => 'required|date_format:H:i|after:awalJamMasuk',
-            'akhirJamMasuk' => 'required|date_format:H:i|after:jamMasuk',
-            'jamPulang' => 'required|date_format:H:i',
-            'lintasHari' => 'required|boolean'
-        ]);
-
-        DB::beginTransaction();
-
         try {
-            $startTime = microtime(true);
+            $data = [
+                'kode_jk' => $request->kodeJamKerja,
+                'nama_jk' => $request->namaJamKerja,
+                'awal_jam_masuk' => $request->awalJamMasuk,
+                'jam_masuk' => $request->jamMasuk,
+                'akhir_jam_masuk' => $request->akhirJamMasuk,
+                'jam_pulang' => $request->jamPulang,
+                'lintas_hari' => $request->lintasHari,
+            ];
 
-            $jamKerja = new JamKerja();
-            $jamKerja->kode_jk = $request->kodeJamKerja;
-            $jamKerja->nama_jk = $request->namaJamKerja;
-            $jamKerja->awal_jam_masuk = $request->awalJamMasuk;
-            $jamKerja->jam_masuk = $request->jamMasuk;
-            $jamKerja->akhir_jam_masuk = $request->akhirJamMasuk;
-            $jamKerja->jam_pulang = $request->jamPulang;
-            $jamKerja->lintas_hari = $request->lintasHari;
-            $jamKerja->save();
+            if ($request->id) {
+                // Update
+                $jamKerja = JamKerja::findOrFail($request->id);
+                $jamKerja->fill($data);
+                $jamKerja->save();
 
-            $executionTime = microtime(true) - $startTime;
+                return response()->json([
+                    'success' => 'Jam Kerja successfully updated!',
+                    'data' => $jamKerja
+                ]);
+            } else {
+                // Create
+                $jamKerja = JamKerja::create($data);
 
-            // Log query and execution time to the database
-            foreach (DB::getQueryLog() as $query) {
-                QueryLog::create([
-                    'sql' => $query['query'],
-                    'bindings' => json_encode($query['bindings']),
-                    'time' => $query['time'],
+                return response()->json([
+                    'success' => 'Jam Kerja successfully created!',
+                    'data' => $jamKerja
                 ]);
             }
-
-            DB::commit();
-
-            return response()->json(['success' => 'Data has been successfully submitted!']);
-
-        } catch (Exception $e) {
-            DB::rollback();
-            return response()->json(['error' => 'Something went wrong!'], 500);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to save Jam Kerja: ' . $e->getMessage()
+            ], 500);
         }
     }
+    public function edit($id)
+    {
+        try {
+            // Assuming JamKerja is your model
+            $jamKerja = JamKerja::findOrFail($id);
+
+            // Return the data in JSON format (or you can render a view if needed)
+            return response()->json($jamKerja);
+
+        } catch (\Exception $e) {
+            // Handle the exception
+            return response()->json([
+                'error' => 'An error occurred while fetching the record.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $jamKerja = JamKerja::findOrFail($id);
+            $jamKerja->delete();
+
+            return response()->json([
+                'success' => 'Jam Kerja successfully deleted!',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to delete Jam Kerja: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

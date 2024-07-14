@@ -143,6 +143,8 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/index', 'JamKerjaController@index')->name('index');
         Route::get('/data', 'JamKerjaController@data')->name('data');
         Route::post('/store', 'JamKerjaController@store')->name('store');
+        Route::get('/edit/{id}', 'JamKerjaController@edit')->name('edit');
+        Route::delete('/delete/{id}', 'JamKerjaController@delete')->name('edit');
 
     });
 
