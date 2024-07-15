@@ -1090,3 +1090,69 @@ nav ul li a.active {
 .error-input {
     border-color: red;
 }
+.form-group {
+    margin-bottom: 15px;
+}
+.form-control {
+    border-radius: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    border-radius: 5px;
+}
+.modal-header {
+    border-bottom: 1px solid black !important;
+}
+.modal-footer {
+    background-color: #f7f7f7;
+    border-top: 1px solid black !important;
+}
+.modal-content {
+    border-radius: 10px;
+}
+.introjs-tooltip {
+    max-width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    background-color: #fff;
+    color: #333;
+    padding: 20px;
+    line-height: 1.6;
+    font-family: 'Roboto', sans-serif; /* Use a modern, clean font */
+}
+.introjs-button {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.introjs-button:hover {
+    background-color: #45a049;
+}
+.introjs-nextpage-button {
+    background-color: #007BFF;
+}
+.introjs-nextpage-button:hover {
+    background-color: #0056b3;
+}
+.introjs-tooltip h2 {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 10px;
+    text-align: center; /* Center the title */
+}
+.introjs-tooltip p {
+    margin-bottom: 15px;
+}
+.introjs-tooltip img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}

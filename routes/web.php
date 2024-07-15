@@ -96,11 +96,17 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     });
 
     Route::prefix('departments')->name('departments.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'DepartmentController@index')->name('index');
         Route::get('/data', 'DepartmentController@data')->name('data');
+        Route::get('/getData', 'DepartmentController@getData')->name('getData');
+        Route::post('/store', 'DepartmentController@store')->name('store');
+        Route::get('/{id}/edit', 'DepartmentController@edit')->name('edit');
+        Route::delete('/{id}/delete', 'DepartmentController@delete')->name('delete');
+
     });
 
     Route::prefix('items')->name('items.')->namespace('App\Http\Controllers')->group(function () {
-        Route::get('/index', 'ItemsController@index')->name('index');
+        Route::get('/', 'ItemsController@index')->name('index');
         Route::get('/data', 'ItemsController@data')->name('data');
         Route::get('/getDataItemSupplierBySupplier', 'ItemsController@getDataItemSupplierBySupplier')->name('getDataItemSupplierBySupplier');
 

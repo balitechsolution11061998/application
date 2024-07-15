@@ -86,6 +86,7 @@
 <script src="{{ asset('js/leaflet.js') }}"></script>
 <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
 <script src="{{ asset('js/jquery.fancybox.min.js') }}"></script>
+<script src="{{ asset('js/tourguide.js') }}"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
@@ -95,6 +96,7 @@
 <!--end::Custom Javascript-->
 @stack('scripts')
 <!--end::Javascript-->
+
 
 <script>
     document.addEventListener('livewire:load', () => {

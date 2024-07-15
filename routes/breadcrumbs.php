@@ -41,6 +41,10 @@ Breadcrumbs::for('jam-kerja', function (BreadcrumbTrail $trail) {
     $trail->push('Jam Kerja', route('jam_kerja.index'));
 });
 
+Breadcrumbs::for('departments', function (BreadcrumbTrail $trail) {
+    $trail->push('Department', route('departments.index'));
+});
+
 // Dashboard > Default
 Breadcrumbs::for('dashboard.default', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');

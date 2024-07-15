@@ -6,8 +6,8 @@
     @section('breadcrumbs')
         {{ Breadcrumbs::render('dashboard') }}
     @endsection
-
-    <!--begin::Row-->
+    <div  id="dashboard-steps">
+         <!--begin::Row-->
     <div class="row gy-5 g-xl-10">
         <!--begin::Col-->
         <div class="col-xl-4 mb-xl-10">
@@ -41,7 +41,7 @@
                         <button id="filter" class="btn btn-primary btn-sm rounded-pill">
                             <i class="fas fa-filter"></i> Filter
                         </button>
-                        <button id="quickGuideButton" class="btn btn-primary btn-sm rounded-pill">Quick Guide</button>
+                        <button id="start-tour" class="btn btn-primary btn-sm rounded-pill">Quick Guide</button>
                         <!--end::Link-->
                     </div>
                     <!--end::Links-->
@@ -60,11 +60,11 @@
                     <!--begin::Card widget 12-->
                     <div class="card overflow-hidden h-md-50 mb-5 mb-xl-10" id="cardCountPo">
                         <!-- Loader overlay -->
-                        <div class="loader-overlay">
+                        {{-- <div class="loader-overlay">
                             <div class="spinner-border text-primary" role="status">
                                 <span class="visually-hidden">Loading...</span>
                             </div>
-                        </div>
+                        </div> --}}
                         <!--begin::Card body-->
                         <div class="card-body d-flex justify-content-between flex-column px-0 pb-0">
                             <!--begin::Statistics-->
@@ -2224,6 +2224,8 @@
             </div>
         </div>
     </div>
+    </div>
+
 
     @include('modals.modal')
     <!--end::Row-->
