@@ -20,7 +20,7 @@ use App\Models\OrdHead;
 use App\Models\OrdSku;
 use App\Models\DiffCostPo;
 use App\Models\User;
-use App\Services\OrderService;
+use App\Services\Order\OrderService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,34 +31,34 @@ class PoController extends Controller
     {
         $this->orderService = $orderService;
     }
-    public function getData(Request $request)
-    {
-        try {
-            $user = Auth::user();
-            if (!$user->hasPermission('po-show')) {
-                return response()->json([
-                    'title' => 'Unauthorized',
-                    'message' => 'You do not have permission to view orders.',
-                    'success' => false
-                ], 403);
-            }
-            $data = $this->orderService->getAllOrder($request->approval_date);
+    // public function getData(Request $request)
+    // {
+    //     try {
+    //         $user = Auth::user();
+    //         if (!$user->hasPermission('po-show')) {
+    //             return response()->json([
+    //                 'title' => 'Unauthorized',
+    //                 'message' => 'You do not have permission to view orders.',
+    //                 'success' => false
+    //             ], 403);
+    //         }
+    //         $data = $this->orderService->getAllOrder($request->approval_date);
 
-            return response()->json([
-                'title' => 'Sync PO Successfully',
-                'message' => 'Data Order Found',
-                'data' => $data,
-                'success' => true
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'title' => 'Error',
-                'message' => 'Failed to load data order',
-                'error' => $e->getMessage(),
-                'success' => false
-            ], 500); // Use appropriate HTTP status code, e.g., 500 for internal server error
-        }
-    }
+    //         return response()->json([
+    //             'title' => 'Sync PO Successfully',
+    //             'message' => 'Data Order Found',
+    //             'data' => $data,
+    //             'success' => true
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'title' => 'Error',
+    //             'message' => 'Failed to load data order',
+    //             'error' => $e->getMessage(),
+    //             'success' => false
+    //         ], 500); // Use appropriate HTTP status code, e.g., 500 for internal server error
+    //     }
+    // }
     public function store(Request $request)
     {
         $successCount = 0;
