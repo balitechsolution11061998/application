@@ -126,11 +126,32 @@ return [
             'type'           => 'item',
             'permission'     => [],
             'permissionType' => 'gate',
-            'icon'           => 'ki',
-            'iconName'       => 'ki-duotone ki-courier',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-warehouse',
             'iconPath'       => 7,
             'route'          => 'departments.index',
         ],
+        [
+            'label'          => 'Kantor Cabang',
+            'type'           => 'item',
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-building',
+            'iconPath'       => 7,
+            'route'          => 'kantor_cabang.index',
+        ],
+        [
+            'label'          => 'Cuti',
+            'type'           => 'item',
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-clipboard-check',
+            'iconPath'       => 7,
+            'route'          => 'cuti.index',
+        ],
+
 
         // [
 

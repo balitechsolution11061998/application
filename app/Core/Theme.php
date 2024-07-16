@@ -561,6 +561,17 @@ class Theme
                                 <span class='menu-bullet'>
                                     <span class='bullet bullet-dot'></span>
                                 </span>";
+                    }else if($menu['icon'] == 'fas'){
+                        $master_render .= "
+                        <span class='menu-icon'>
+                            <i class='fas " . $menu['iconName'] . "'>";
+                        for ($i = 1; $i <= $menu['iconPath']; $i++) {
+                            $master_render .= "<span class='path" . $i . "'></span>";
+                        }
+                        $master_render .= "
+                                    </i>
+                                </span>
+                        ";
                     }
 
                     $master_render .= "

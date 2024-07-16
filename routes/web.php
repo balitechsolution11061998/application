@@ -105,11 +105,27 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
 
     });
 
+    Route::prefix('kantor_cabang')->name('kantor_cabang.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'KantorCabangController@index')->name('index');
+        Route::get('/data', 'KantorCabangController@data')->name('data');
+        Route::get('/getData', 'DepartmentController@getData')->name('getData');
+        Route::post('/store', 'KantorCabangController@store')->name('store');
+        Route::get('/{id}/edit', 'KantorCabangController@edit')->name('edit');
+        Route::delete('/{id}/delete', 'KantorCabangController@delete')->name('delete');
+    });
+
+    Route::prefix('cuti')->name('cuti.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'CutiController@index')->name('index');
+        Route::get('/data', 'CutiController@data')->name('data');
+        Route::post('/store', 'CutiController@store')->name('store');
+        Route::get('/{id}/edit', 'CutiController@edit')->name('edit');
+        Route::delete('/{id}/delete', 'CutiController@delete')->name('delete');
+    });
+
     Route::prefix('items')->name('items.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/', 'ItemsController@index')->name('index');
         Route::get('/data', 'ItemsController@data')->name('data');
         Route::get('/getDataItemSupplierBySupplier', 'ItemsController@getDataItemSupplierBySupplier')->name('getDataItemSupplierBySupplier');
-
 
     });
 
