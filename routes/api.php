@@ -31,6 +31,6 @@ Route::post('/check_login', App\Http\Controllers\Api\LoginController::class)->na
 // Route::post('/supplier/store', [SupplierController::class, 'store']);
 // Route::post('/stores/store', [StoreController::class, 'store']);
 Route::post('/po/store', [PoController::class, 'store']);
-// Route::post('/itemsupplier/store', [ItemSupplierController::class, 'store']);
+Route::post('/itemsupplier/store', [ItemSupplierController::class, 'store']);
 Route::post('/rcv/store', [RcvController::class, 'store']);
 
