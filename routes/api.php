@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ItemSupplierController;
 use App\Http\Controllers\Api\PoController;
 use App\Http\Controllers\Api\RcvController;
 use App\Http\Controllers\Api\UserController;
