@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('kabupaten_id')->nullable();
             $table->unsignedBigInteger('kecamatan_id')->nullable();
             $table->unsignedBigInteger('kelurahan_id')->nullable();
-            $table->double('radius');
+            $table->double('radius')->nullable();
             $table->timestamps();
         });
     }
