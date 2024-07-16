@@ -114,42 +114,18 @@ function tambahCuti(value) {
     $("#mdlForm").modal("show");
     $("#mdlFormTitle").html("Form Cuti");
     $("#mdlFormContent").html(`
-        <form id="frmTambahJamKerja">
-            <input type="hidden" class="form-control" id="id" placeholder="Kode Jam Kerja" name="id">
+        <form id="frmTambahCuti">
             <div class="mb-3">
-                <label for="kodeJamKerja" class="form-label">Kode Jam Kerja</label>
-                <input type="text" class="form-control" id="kodeJamKerja" placeholder="Kode Jam Kerja" name="kodeJamKerja">
-            </div>
-            <div class="mb-3">
-                <label for="namaJamKerja" class="form-label">Nama Jam Kerja</label>
-                <input type="text" class="form-control" id="namaJamKerja" placeholder="Nama Jam Kerja" name="namaJamKerja">
-            </div>
-            <div class="row mb-3">
-                <div class="col">
-                    <label for="awalJamMasuk" class="form-label">Awal Jam Masuk</label>
-                    <input type="time" class="form-control" id="awalJamMasuk" name="awalJamMasuk">
-                </div>
-                <div class="col">
-                    <label for="jamMasuk" class="form-label">Jam Masuk</label>
-                    <input type="time" class="form-control" id="jamMasuk" name="jamMasuk">
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col">
-                    <label for="akhirJamMasuk" class="form-label">Akhir Jam Masuk</label>
-                    <input type="time" class="form-control" id="akhirJamMasuk" name="akhirJamMasuk" readonly>
-                </div>
-                <div class="col">
-                    <label for="jamPulang" class="form-label">Jam Pulang</label>
-                    <input type="time" class="form-control" id="jamPulang" name="jamPulang">
-                </div>
+                <label for="kodeCuti" class="form-label">Kode Cuti</label>
+                <input type="text" class="form-control" id="kodeCuti" placeholder="Kode Cuti" name="kodeCuti">
             </div>
             <div class="mb-3">
-                <label for="lintasHari" class="form-label">Lintas Hari</label>
-                <select class="form-select" id="lintasHari" name="lintasHari">
-                    <option value="1">Ya</option>
-                    <option value="0">Tidak</option>
-                </select>
+                <label for="namaCuti" class="form-label">Nama Cuti</label>
+                <input type="text" class="form-control" id="namaCuti" placeholder="Nama Cuti" name="namaCuti">
+            </div>
+            <div class="mb-3">
+                <label for="jumlahHari" class="form-label">Jumlah Hari</label>
+                <input type="number" class="form-control" id="jumlahHari" placeholder="Jumlah Hari" name="jumlahHari">
             </div>
             <div class="text-end">
                 <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Batal</button>
