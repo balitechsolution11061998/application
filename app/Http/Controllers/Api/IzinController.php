@@ -16,16 +16,29 @@ class IzinController extends Controller
     {
         try {
             $nik = $request->input('nik');
+
             if ($nik) {
+                // Get the izin records for the given nik
                 $izins = Izin::where('nik', $nik)->get();
+                // Calculate the jumlah_izin
+                $jumlah_izin = $izins->count();
             } else {
+                // Get all izin records
                 $izins = Izin::all();
+                // Calculate the jumlah_izin
+                $jumlah_izin = $izins->count();
             }
-            return response()->json($izins);
+
+            // Return response with jumlah_izin
+            return response()->json([
+                'jumlah_izin' => $jumlah_izin,
+                'data' => $izins
+            ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error retrieving izin data: ' . $e->getMessage()], 500);
         }
     }
+
 
     /**
      * Store a newly created resource in storage.
