@@ -31,11 +31,10 @@ class IzinController extends Controller
         $izin->nik = $request->input('nik');
         $izin->tgl_izin_dari = $request->input('tgl_izin_dari');
         $izin->tgl_izin_sampai = $request->input('tgl_izin_sampai');
-        $izin->status = $request->input('status');
-        $izin->kode_cuti = $request->input('kode_cuti');
+        $izin->status = "Progress";
         $izin->keterangan = $request->input('keterangan');
         $izin->doc_sid = $request->input('doc_sid');
-        $izin->status_approved = $request->input('status_approved');
+        $izin->status_approved = "Progress";
         $izin->save();
         return response()->json($izin, 201);
     }
