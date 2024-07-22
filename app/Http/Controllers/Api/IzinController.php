@@ -14,9 +14,17 @@ class IzinController extends Controller
      */
     public function index(Request $request)
     {
-        dd($request->all());
-        $izins = Izin::all();
-        return response()->json($izins);
+        try {
+            $nik = $request->input('nik');
+            if ($nik) {
+                $izins = Izin::where('nik', $nik)->get();
+            } else {
+                $izins = Izin::all();
+            }
+            return response()->json($izins);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error retrieving izin data: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
