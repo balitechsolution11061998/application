@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AbsensiController;
 use App\Http\Controllers\Api\ItemSupplierController;
 use App\Http\Controllers\Api\IzinController;
 use App\Http\Controllers\Api\PoController;
@@ -40,5 +41,6 @@ Route::post('/izin/store', [IzinController::class, 'store']);
 Route::get('/izin/history', [IzinController::class, 'index']);
 Route::post('/cuti/store', [IzinController::class, 'storeCuti']);
 Route::get('/cuti/history', [IzinController::class, 'indexCuti']);
-
+Route::post('/absensi/store', [AbsensiController::class, 'store']);
+Route::get('/absensi/history', [AbsensiController::class, 'index']);
 
