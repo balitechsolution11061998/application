@@ -19,7 +19,7 @@ class AbsensiController extends Controller
             if (!$niks) {
                 throw new \Exception('Nik values are required');
             }
-            $absensi = Absensi::whereIn('nik', $niks)->get();
+            $absensi = Absensi::where('nik', $niks)->get();
             return response()->json($absensi);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
