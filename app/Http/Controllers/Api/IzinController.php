@@ -24,7 +24,7 @@ class IzinController extends Controller
                 $jumlah_izin = $izins->count();
             } else {
                 // Get all izin records
-                $izins = Izin::all();
+                $izins = Izin::where('kode_izin','!=',null)->get();
                 // Calculate the jumlah_izin
                 $jumlah_izin = $izins->count();
             }
@@ -51,7 +51,7 @@ class IzinController extends Controller
                 $jumlah_cuti = $cuti->count();
             } else {
                 // Get all izin records
-                $cuti = Izin::all();
+                $cuti = Izin::where('kode_cuti','!=',null)->get();
                 // Calculate the jumlah_izin
                 $jumlah_cuti = $cuti->count();
             }
