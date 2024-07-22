@@ -38,5 +38,6 @@ Route::post('/rcv/store', [RcvController::class, 'store']);
 
 Route::post('/izin/store', [IzinController::class, 'store']);
 Route::get('/izin/history', [IzinController::class, 'index']);
+Route::post('/cuti/store', [IzinController::class, 'storeCuti']);
 
 

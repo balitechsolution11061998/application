@@ -61,6 +61,21 @@ class IzinController extends Controller
         return response()->json($izin, 201);
     }
 
+    public function storeCuti(Request $request)
+    {
+        $izin = new Izin();
+        $izin->kode_cuti = $request->input('kode_cuti');
+        $izin->nik = $request->input('nik');
+        $izin->tgl_izin_dari = $request->input('tgl_izin_dari');
+        $izin->tgl_izin_sampai = $request->input('tgl_izin_sampai');
+        $izin->status = "Progress";
+        $izin->keterangan = $request->input('keterangan');
+        $izin->doc_sid = $request->input('doc_sid');
+        $izin->status_approved = "Progress";
+        $izin->save();
+        return response()->json($izin, 201);
+    }
+
     /**
      * Display the specified resource.
      *
