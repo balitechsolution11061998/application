@@ -492,7 +492,20 @@ class Theme
                                     </i>
                                 </span>
                         ";
-                    } else if ( $menu['icon'] == 'dot' ) {
+                    } else if ( $menu['icon'] == 'fas' ) {
+                        # Jika menggunakan icon Keen Icon
+                        $master_render .= "
+                                <span class='menu-icon'>
+                                    <i class='fas " . $menu['iconName'] . " fs-2'>";
+                        for ($i = 1; $i <= $menu['iconPath']; $i++) {
+                            $master_render .= "<span class='path" . $i . "'></span>";
+                        }
+                        $master_render .= "
+                                    </i>
+                                </span>
+                        ";
+                    }
+                    else if ( $menu['icon'] == 'dot' ) {
                         # Jika menggunakan icon Dot
                         $master_render .= "
                                 <span class='menu-bullet'>

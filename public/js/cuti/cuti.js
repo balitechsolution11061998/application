@@ -3,14 +3,14 @@ $(document).ready(function () {
 });
 
 function fetchData() {
-    if ($.fn.DataTable.isDataTable("#tableJamKerja")) {
-        $("#tableJamKerja").DataTable().destroy();
+    if ($.fn.DataTable.isDataTable("#tableCuti")) {
+        $("#tableCuti").DataTable().destroy();
     }
-    var table = $("#tableJamKerja").DataTable({
+    var table = $("#tableCuti").DataTable({
         processing: true,
         serverSide: true,
         responsive: true,
-        ajax: "/jam_kerja/data",
+        ajax: "/cuti/data",
         columns: [
             {
                 data: "DT_RowIndex",
@@ -18,19 +18,9 @@ function fetchData() {
                 searchable: false,
                 orderable: false,
             },
-            { data: "kode_jk", name: "kode_jk" },
-            { data: "nama_jk", name: "nama_jk" },
-            { data: "awal_jam_masuk", name: "awal_jam_masuk" },
-            { data: "jam_masuk", name: "jam_masuk" },
-            { data: "akhir_jam_masuk", name: "akhir_jam_masuk" },
-            { data: "jam_pulang", name: "jam_pulang" },
-            {
-                data: "lintas_hari",
-                name: "lintas_hari",
-                render: function (data, type, row) {
-                    return data == 1 ? "Yes" : "No";
-                },
-            },
+            { data: "kode_cuti", name: "kode_cuti" },
+            { data: "nama_cuti", name: "nama_cuti" },
+            { data: "jumlah_hari", name: "jumlah_hari" },
             {
                 data: "action",
                 name: "action",
@@ -82,39 +72,47 @@ function deleteJamKerja(val){
     });
 }
 
-function editJamKerja(val){
-    console.log(val);
+
+
+
+function editCuti(id) {
     Swal.fire({
-        title: "Edit Jam Kerja",
-        text: "Edit jam kerja with ID: " + val,
-        icon: "info",
+        title: 'Are you sure?',
+        text: "You want to edit this cuti?",
+        icon: 'question',
         showCancelButton: true,
-        confirmButtonText: "Edit",
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, edit it!'
     }).then((result) => {
         if (result.isConfirmed) {
+            // Fetch data and show the edit form
             $.ajax({
-                url: "/jam_kerja/edit/" + val,
-                type: "GET",
-                success: function (response) {
-                    tambahJamKerja(response);
+                url: '/cuti/' + id + '/edit',
+                method: 'GET',
+                success: function(response) {
+                    // Assuming you have a modal to show the edit form
+                    tambahCuti(response)
                 },
-                error: function (xhr) {
-                    Swal.fire(
-                        "Error!",
-                        "An error occurred while fetching the record data.",
-                        "error"
-                    );
-                },
+                error: function(response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Failed to fetch the data!'
+                    });
+                }
             });
         }
     });
 }
+
 
 function tambahCuti(value) {
     $("#mdlForm").modal("show");
     $("#mdlFormTitle").html("Form Cuti");
     $("#mdlFormContent").html(`
         <form id="frmTambahCuti">
+            <input type="hidden" class="form-control" id="id" placeholder="Id" name="id">
             <div class="mb-3">
                 <label for="kodeCuti" class="form-label">Kode Cuti</label>
                 <input type="text" class="form-control" id="kodeCuti" placeholder="Kode Cuti" name="kodeCuti">
@@ -133,38 +131,12 @@ function tambahCuti(value) {
             </div>
         </form>
     `);
-
+    console.log(value,'value');
     if (value !== undefined) {
-        $("#id").val(value.id);
-        $("#kodeJamKerja").val(value.kode_jk);
-        $("#namaJamKerja").val(value.nama_jk);
-        $("#awalJamMasuk").val(value.awal_jam_masuk);
-        $("#jamMasuk").val(value.jam_masuk);
-        $("#akhirJamMasuk").val(value.akhir_jam_masuk);
-        $("#jamPulang").val(value.jam_pulang);
-        $("#lintasHari").val(value.lintas_hari);
-    }
-
-    $("#jamMasuk").on("change", function () {
-        var jamMasuk = $(this).val();
-        var akhirJamMasuk = addMinutes(jamMasuk, 15);
-        $("#akhirJamMasuk").val(akhirJamMasuk);
-    });
-
-    function addMinutes(time, minutes) {
-        var parts = time.split(":");
-        var hours = parseInt(parts[0]);
-        var mins = parseInt(parts[1]);
-        mins += minutes;
-        if (mins >= 60) {
-            hours += Math.floor(mins / 60);
-            mins %= 60;
-        }
-        return pad(hours) + ":" + pad(mins);
-    }
-
-    function pad(number) {
-        return (number < 10 ? "0" : "") + number;
+        $("#id").val(value.cuti.id);
+        $("#kodeCuti").val(value.cuti.kode_cuti);
+        $("#namaCuti").val(value.cuti.nama_cuti);
+        $("#jumlahHari").val(value.cuti.jumlah_hari);
     }
 
     $.ajaxSetup({
@@ -173,64 +145,24 @@ function tambahCuti(value) {
         },
     });
 
-    $.validator.addMethod(
-        "greaterThan",
-        function (value, element, param) {
-            return this.optional(element) || value > $(param).val();
-        },
-        "Must be greater than {0}"
-    );
-
-    $.validator.addMethod(
-        "lessThan",
-        function (value, element, param) {
-            return this.optional(element) || value < $(param).val();
-        },
-        "Must be less than {0}"
-    );
-
-    $("#frmTambahJamKerja").validate({
+    $("#frmTambahCuti").validate({
         rules: {
-            kodeJamKerja: "required",
-            namaJamKerja: "required",
-            awalJamMasuk: {
+            kodeCuti: "required",
+            namaCuti: "required",
+            jumlahHari: {
                 required: true,
-                lessThan: "#jamMasuk",
+                number: true,
+                min: 1,
             },
-            jamMasuk: {
-                required: true,
-                greaterThan: "#awalJamMasuk",
-                lessThan: "#akhirJamMasuk",
-            },
-            akhirJamMasuk: {
-                required: true,
-                greaterThan: "#jamMasuk",
-            },
-            jamPulang: {
-                required: true,
-            },
-            lintasHari: "required",
         },
         messages: {
-            kodeJamKerja: "Kode Jam Kerja harus diisi",
-            namaJamKerja: "Nama Jam Kerja harus diisi",
-            awalJamMasuk: {
-                required: "Awal Jam Masuk harus diisi",
-                lessThan: "Awal Jam Masuk harus kurang dari Jam Masuk",
+            kodeCuti: "Kode Cuti harus diisi",
+            namaCuti: "Nama Cuti harus diisi",
+            jumlahHari: {
+                required: "Jumlah Hari harus diisi",
+                number: "Jumlah Hari harus berupa angka",
+                min: "Jumlah Hari minimal adalah 1",
             },
-            jamMasuk: {
-                required: "Jam Masuk harus diisi",
-                greaterThan: "Jam Masuk harus lebih dari Awal Jam Masuk",
-                lessThan: "Jam Masuk harus kurang dari Akhir Jam Masuk",
-            },
-            akhirJamMasuk: {
-                required: "Akhir Jam Masuk harus diisi",
-                greaterThan: "Akhir Jam Masuk harus lebih dari Jam Masuk",
-            },
-            jamPulang: {
-                required: "Jam Pulang harus diisi",
-            },
-            lintasHari: "Lintas Hari harus diisi",
         },
         errorClass: "error",
         validClass: "valid",
@@ -258,7 +190,7 @@ function tambahCuti(value) {
                 if (result.isConfirmed) {
                     // AJAX request to submit the form data to the server
                     $.ajax({
-                        url: "/jam_kerja/store",
+                        url: "/cuti/store",
                         method: "POST",
                         data: $(form).serialize(),
                         success: function (response) {
@@ -294,27 +226,46 @@ function tambahCuti(value) {
         },
     });
 
-    function calculateDuration(startTime, addHours) {
-        var startParts = startTime.split(":");
-        var startHours = parseInt(startParts[0]);
-        var startMins = parseInt(startParts[1]);
-        var endHours = startHours + addHours;
-        var endMins = startMins;
-        if (endMins >= 60) {
-            endHours += Math.floor(endMins / 60);
-            endMins %= 60;
+}
+
+function deleteCuti(id) {
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+    });
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/cuti/' + id + '/delete',
+                method: 'DELETE',
+                success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: 'Data cuti has been deleted.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        $('#tableCuti').DataTable().ajax.reload();
+                    });
+                },
+                error: function(response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Failed to delete data!'
+                    });
+                }
+            });
         }
-        return pad(endHours) + ":" + pad(endMins);
-    }
-
-    function pad(number) {
-        return (number < 10 ? "0" : "") + number;
-    }
-
-    // Set the jam pulang 9 hours from jam masuk
-    $("#jamMasuk").on("change", function () {
-        var jamMasuk = $(this).val();
-        var jamPulang = calculateDuration(jamMasuk, 9);
-        $("#jamPulang").val(jamPulang);
     });
 }

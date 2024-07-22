@@ -2240,8 +2240,7 @@
                 fetchPriceChangeData();
 
                 fetchPerformanceData();
-                // Initialize Pusher
-                // Enable pusher logging - don't include this in production
+
                 Pusher.logToConsole = true;
                 var chartInstance = null;
                 var pusher = new Pusher('200a3ba86105ed6ce25f', {

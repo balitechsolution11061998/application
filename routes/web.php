@@ -91,6 +91,9 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/{id}/dataEdit', 'UserController@dataEdit')->name('dataEdit');
         Route::delete('/delete/{id}','UserController@delete')->name('delete');
         Route::post('/send-account-details', 'UserController@sendAccountDetails');
+        Route::get('/konfigurasi/{nik}/setjamkerja', 'UserController@setjamkerja');
+        Route::post('/konfigurasi/store', 'UserController@konfigurasiStore');
+        Route::post('/konfigurasi/storeByDate', 'UserController@storeByDate');
 
 
     });

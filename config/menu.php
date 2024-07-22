@@ -51,6 +51,16 @@ return [
             'iconPath'       => 5,
             'route'          => 'po.index',
         ],
+        [
+            'label'          => 'Monitoring Presensi',
+            'type'           => 'item',
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'ki',
+            'iconName'       => 'ki-element-11',
+            'iconPath'       => 5,
+            'route'          => 'po.index',
+        ],
 
 
         [
@@ -63,8 +73,8 @@ return [
             'type'           => 'item',
             'permission'     => [],
             'permissionType' => 'gate',
-            'icon'           => 'ki',
-            'iconName'       => 'ki-address-book',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-users',
             'iconPath'       => 3,
             'children'       => [
                 [

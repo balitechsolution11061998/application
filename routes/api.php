@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ItemSupplierController;
+use App\Http\Controllers\Api\IzinController;
 use App\Http\Controllers\Api\PoController;
 use App\Http\Controllers\Api\RcvController;
 use App\Http\Controllers\Api\UserController;
@@ -34,4 +35,5 @@ Route::post('/check_login', App\Http\Controllers\Api\LoginController::class)->na
 Route::post('/po/store', [PoController::class, 'store']);
 Route::post('/itemsupplier/store', [ItemSupplierController::class, 'store']);
 Route::post('/rcv/store', [RcvController::class, 'store']);
+Route::apiResource('izin',  [IzinController::class]);
 
