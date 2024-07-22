@@ -37,6 +37,6 @@ Route::post('/itemsupplier/store', [ItemSupplierController::class, 'store']);
 Route::post('/rcv/store', [RcvController::class, 'store']);
 
 Route::post('/izin/store', [IzinController::class, 'store']);
-Route::get('/izin', [IzinController::class, 'index']);
+Route::get('/izin/history', [IzinController::class, 'index']);
 
 

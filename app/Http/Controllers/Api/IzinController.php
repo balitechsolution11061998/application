@@ -12,8 +12,9 @@ class IzinController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        dd($request->all());
         $izins = Izin::all();
         return response()->json($izins);
     }
