@@ -19,7 +19,7 @@ class IzinController extends Controller
 
             if ($nik) {
                 // Get the izin records for the given nik
-                $izins = Izin::where('nik', $nik)->get();
+                $izins = Izin::where('nik', $nik)->where('kode_izin','!=',null)->get();
                 // Calculate the jumlah_izin
                 $jumlah_izin = $izins->count();
             } else {
@@ -38,6 +38,34 @@ class IzinController extends Controller
             return response()->json(['error' => 'Error retrieving izin data: ' . $e->getMessage()], 500);
         }
     }
+
+    public function indexCuti(Request $request)
+    {
+        try {
+            $nik = $request->input('nik');
+
+            if ($nik) {
+                // Get the izin records for the given nik
+                $cuti = Izin::where('nik', $nik)->where('kode_cuti','!=',null)->get();
+                // Calculate the jumlah_izin
+                $jumlah_cuti = $cuti->count();
+            } else {
+                // Get all izin records
+                $cuti = Izin::all();
+                // Calculate the jumlah_izin
+                $jumlah_cuti = $cuti->count();
+            }
+
+            // Return response with jumlah_izin
+            return response()->json([
+                'jumlah_cuti' => $jumlah_cuti,
+                'data' => $cuti
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error retrieving izin data: ' . $e->getMessage()], 500);
+        }
+    }
+
 
 
     /**
