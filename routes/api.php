@@ -35,5 +35,7 @@ Route::post('/check_login', App\Http\Controllers\Api\LoginController::class)->na
 Route::post('/po/store', [PoController::class, 'store']);
 Route::post('/itemsupplier/store', [ItemSupplierController::class, 'store']);
 Route::post('/rcv/store', [RcvController::class, 'store']);
-Route::apiResource('izin',  [IzinController::class]);
+
+Route::post('/izin/store', [IzinController::class, 'store']);
+
 
