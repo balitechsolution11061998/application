@@ -48,13 +48,24 @@
                 </div>
             </div>
         </div>
-        <div class="jam-kerja-container">
-            <h2 class="section-title"><i class="fas fa-clock"></i> Jam Kerja</h2>
-            <div id="spinner" style="display: none; text-align: center;">
-                <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+        <div class="grid-container">
+            <div class="jam-kerja-container">
+                <h2 class="section-title"><i class="fas fa-clock"></i> Jam Kerja</h2>
+                <div id="spinner" style="display: none; text-align: center;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+                </div>
+                <div class="jam-kerja-content" id="jam-kerja-content">
+                    <!-- Content will be populated by AJAX -->
+                </div>
             </div>
-            <div class="jam-kerja-content" id="jam-kerja-content">
-                <!-- Content will be populated by AJAX -->
+            <div class="jam-kerja-container">
+                <h2 class="section-title"><i class="fas fa-calendar-day"></i> Jumlah Cuti</h2>
+                <div id="spinner-leave" style="display: none;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+                </div>
+                <div class="jam-kerja-content" id="listleave-content">
+                    <!-- Content will be populated by AJAX -->
+                </div>
             </div>
         </div>
 

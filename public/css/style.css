@@ -1211,14 +1211,24 @@ nav ul li a.active {
     margin: 20px;
 }
 
+
+
 .card {
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
     text-align: center;
     position: relative;
 }
+
+.card {
+    flex: 1 1 calc(33.333% - 20px);
+    min-width: 300px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+
 
 .section-title {
     font-size: 1.5rem;
@@ -1255,10 +1265,26 @@ svg {
 
 @media (max-width: 768px) {
     .dashboard-container {
-        grid-template-columns: 1fr; /* Stack cards in a single column on small screens */
+        grid-template-columns: 1fr;
+        flex-direction: column;
+    }
+    .card {
+        flex: 1 1 100%;
+    }
+
+
+    .grid-container {
+        grid-template-columns: 1fr;
     }
 }
-.jam-kerja-container {
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.jam-kerja-container, .leave-container {
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -1288,7 +1314,7 @@ svg {
     gap: 10px;
 }
 
-.jam-kerja-item {
+.jam-kerja-item, .leave-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1299,11 +1325,11 @@ svg {
     color: #000; /* Set text color to black */
 }
 
-.jam-kerja-item:hover {
+.jam-kerja-item:hover,.leave-item:hover {
     transform: scale(1.05);
 }
 
-.jam-kerja-item .day {
+.jam-kerja-item .day,.leave-item .day {
     font-size: 18px;
     font-weight: 500;
     color: #000; /* Set text color to black */

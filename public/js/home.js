@@ -3,6 +3,7 @@ $(document).ready(function() {
  fetchDepartmentCount();
  fetchCabangCount();
  fetchJumlahCuti();
+ fetchListCuti();
 });
 
 function fetchJumlahCuti() {
@@ -101,6 +102,59 @@ function fetchDepartmentCount() {
             console.log('Error fetching data', error);
             Toastify({
                 text: "Error loading department count",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#FF0000",
+                stopOnFocus: true,
+            }).showToast();
+        }
+    });
+}
+
+function fetchListCuti() {
+    $('#spinner-leave').show(); // Show spinner
+
+    $.ajax({
+        url: "/cuti/data",
+        method: 'GET',
+        success: function(response) {
+            $('#spinner-leave').hide(); // Hide spinner
+            var content = '';
+            response.data.forEach(function(item) {
+                content += '<div class="leave-item">' +
+                    '<h3 class="day">' + item.nama_cuti + ' (' + item.kode_cuti + ')</h3>' +
+                    '<p class="days">Jumlah Hari: ' + item.jumlah_hari + '</p>' +
+                    '</div>';
+            });
+            $('#listleave-content').html(content);
+            if (response.data.length > 0) {
+                Toastify({
+                    text: "Data cuti loaded successfully",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#4CAF50",
+                    stopOnFocus: true,
+                }).showToast();
+            } else {
+                Toastify({
+                    text: "No data available",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#FFAA00",
+                    stopOnFocus: true,
+                }).showToast();
+            }
+        },
+        error: function(error) {
+            $('#spinner-leave').hide(); // Hide spinner
+            Toastify({
+                text: "Error loading data",
                 duration: 3000,
                 close: true,
                 gravity: "top",
