@@ -71,7 +71,7 @@ return [
 
             'label'          => 'User',
             'type'           => 'item',
-            'permission'     => ['users.show'],
+            'permission'     => ['users-show'],
             'permissionType' => 'gate',
             'icon'           => 'fas',
             'iconName'       => 'fa-users',
