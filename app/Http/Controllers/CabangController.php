@@ -10,7 +10,10 @@ use Illuminate\Support\Facades\Cache;
 class CabangController extends Controller
 {
     use LogsQueryPerformance;
-
+    public function count() {
+        $count = Cabang::count();
+        return response()->json(['count' => $count]);
+    }
     public function data(Request $request)
     {
         try {

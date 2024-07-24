@@ -103,6 +103,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/index', 'DepartmentController@index')->name('index');
         Route::get('/data', 'DepartmentController@data')->name('data');
         Route::get('/getData', 'DepartmentController@getData')->name('getData');
+        Route::get('/count', 'DepartmentController@count');
         Route::post('/store', 'DepartmentController@store')->name('store');
         Route::get('/{id}/edit', 'DepartmentController@edit')->name('edit');
         Route::delete('/{id}/delete', 'DepartmentController@delete')->name('delete');
@@ -155,6 +156,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
 
     Route::prefix('cabang')->name('cabang.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/data', 'CabangController@data')->name('data');
+        Route::get('/count', 'CabangController@count')->name('count');
     });
 
     Route::prefix('settings')->name('settings.')->namespace('App\Http\Controllers')->group(function () {

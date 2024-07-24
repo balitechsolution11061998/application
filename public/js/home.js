@@ -1,6 +1,79 @@
 $(document).ready(function() {
  fetchJamKerja();
+ fetchDepartmentCount();
+ fetchCabangCount();
+
 });
+
+function fetchCabangCount() {
+    $('#spinner-cabang').show(); // Show spinner
+    $.ajax({
+        url: "/cabang/count",
+        method: 'GET',
+        success: function(response) {
+            $('#spinner-cabang').hide(); // Hide spinner
+            var content = '<div class="cabang-count animated fadeIn">' + response.count + '</div>';
+            $('#cabang-content').html(content);
+            Toastify({
+                text: "Cabang count loaded successfully",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#4CAF50",
+                stopOnFocus: true,
+            }).showToast();
+        },
+        error: function(error) {
+            $('#spinner-cabang').hide(); // Hide spinner
+            console.log('Error fetching data', error);
+            Toastify({
+                text: "Error loading cabang count",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#FF0000",
+                stopOnFocus: true,
+            }).showToast();
+        }
+    });
+}
+
+function fetchDepartmentCount() {
+    $('#spinner-department').show(); // Show spinner
+    $.ajax({
+        url: "/departments/count",
+        method: 'GET',
+        success: function(response) {
+            $('#spinner-department').hide(); // Hide spinner
+            var content = '<div class="department-count animated fadeIn">' + response.count + '</div>';
+            $('#department-content').html(content);
+            Toastify({
+                text: "Department count loaded successfully",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#4CAF50",
+                stopOnFocus: true,
+            }).showToast();
+        },
+        error: function(error) {
+            $('#spinner-department').hide(); // Hide spinner
+            console.log('Error fetching data', error);
+            Toastify({
+                text: "Error loading department count",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#FF0000",
+                stopOnFocus: true,
+            }).showToast();
+        }
+    });
+}
 
 function fetchJamKerja(){
     $('#spinner').show(); // Show spinner

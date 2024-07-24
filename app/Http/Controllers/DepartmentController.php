@@ -48,6 +48,11 @@ class DepartmentController extends Controller
         }
     }
 
+    public function count() {
+        $count = Department::count();
+        return response()->json(['count' => $count]);
+    }
+
     public function store(Request $request)
     {
         $uniqueRule = $request->id ? 'unique:departments,kode_department,' . $request->id : 'unique:departments,kode_department';
