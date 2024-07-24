@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Gate;
 
 Auth::routes();
 Route::get('/', function(){
-    return view('welcome');
+    return view('auth.login');
 });
 Route::get('/formlogin', [LoginController::class, 'index'])->name('formlogin');
 Route::post('/formlogin/check_login', [LoginController::class, 'check_login'])->name('formlogin.check_login');
