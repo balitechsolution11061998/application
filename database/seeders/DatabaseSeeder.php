@@ -185,7 +185,7 @@ class DatabaseSeeder extends Seeder
             [
                 'username' => 'karyawan1',
                 'name' => 'Karyawan 1',
-                'email' => 'karyawan1',
+                'email' => 'karyawan1@gmail.com',
                 'password_show' => '12345678',
                 'password' => bcrypt('12345678'),
                 'region' => '1',
@@ -193,7 +193,7 @@ class DatabaseSeeder extends Seeder
                 'nik' => '219092349',
                 'join_date' => '2022-12-02',
                 'status' => 'y',
-                'alamat' => $faker->address,
+                'alamat' => 'Sumenep',
                 'photo' => '/image/logo.png',
             ],
         ];
