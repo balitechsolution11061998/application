@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\Auth\AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
@@ -25,6 +26,26 @@ class LoginController extends Controller
     {
         $this->authService = $authService;
     }
+
+    public function loginWithQrCode(Request $request)
+    {
+        try {
+            $qrCodeData = $request->input('qr_code_data');
+            $user = User::where('qr_code_token', $qrCodeData)->first();
+
+            if ($user) {
+                Auth::login($user);
+                return response()->json(['success' => true]);
+            } else {
+                return response()->json(['success' => false, 'message' => 'Invalid QR code.']);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred.']);
+        }
+    }
+
+
+
 
     public function check_login(Request $request)
     {

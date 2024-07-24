@@ -4,100 +4,151 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Scanner</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
             margin: 0;
+            background-color: #f4f4f9;
         }
-
-        .scanner-container {
-            text-align: center;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            width: 90%;
-            max-width: 500px;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .scanner {
-            border: 3px solid #3498db;
-            border-radius: 10px;
-            width: 100%;
+        #scanner {
+            width: 300px;
             height: 300px;
-            margin: 0 auto;
-            position: relative;
+            border: 4px solid #3498db;
+            border-radius: 10px;
             background: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
-
-        .result {
+        #result {
             margin-top: 20px;
-        }
-
-        #result-text {
             font-size: 18px;
             color: #555;
-            margin-top: 10px;
+        }
+        input[type="file"] {
+            margin-top: 20px;
+            padding: 10px;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        input[type="file"]:hover {
+            background-color: #2980b9;
         }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <body>
-    <div class="scanner-container">
-        <h1>QR Code Scanner</h1>
-        <div id="scanner" class="scanner">
-            <!-- QR Code Scanner will be initialized here -->
-        </div>
-        <div id="result" class="result">
-            <p id="result-text">Scan a QR code to see the result here.</p>
-        </div>
-    </div>
+    <div id="scanner"></div>
+    <div id="result">Upload a QR code image to scan.</div>
+    <input type="file" id="file-input" accept="image/*">
 
-    <!-- Use alternative script URL if needed -->
     <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize the QR code scanner
+            function showToast(message, type = 'info') {
+                Toastify({
+                    text: message,
+                    duration: 3000, // 3 seconds
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: type === 'success' ? "#4caf50" : "#f44336",
+                }).showToast();
+            }
+
+            function scanQRCodeFromFile(file) {
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    var img = new Image();
+                    img.onload = function() {
+                        var canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        var ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, img.width, img.height);
+
+                        var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        var decoded = jsQR(imageData.data, canvas.width, canvas.height);
+
+                        if (decoded) {
+                            var qrCodeData = decoded.data;
+                            document.getElementById('result').innerText = `Scanned QR Code: ${qrCodeData}`;
+
+                            // Get CSRF token
+                            var csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+                            var csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
+
+                            // AJAX request to login the user
+                            fetch('/login-with-qr', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken
+                                },
+                                body: JSON.stringify({
+                                    qr_code_data: qrCodeData
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    showToast('Login successful!', 'success');
+                                    setTimeout(() => {
+                                        window.location.href = '/dashboard';
+                                    }, 3000); // 3 seconds delay
+                                } else {
+                                    showToast(data.message, 'error');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                showToast('An error occurred. Please try again.', 'error');
+                            });
+                        } else {
+                            showToast('No QR code found.', 'error');
+                        }
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            document.getElementById('file-input').addEventListener('change', function(event) {
+                var file = event.target.files[0];
+                if (file) {
+                    scanQRCodeFromFile(file);
+                }
+            });
+
+            // Optionally start the camera QR code scanner
             var html5QrCode = new Html5Qrcode("scanner");
 
-            // Success callback
             function onScanSuccess(decodedText, decodedResult) {
-                // Handle the result here
-                document.getElementById('result-text').innerText = `Scanned QR Code: ${decodedText}`;
-                // Optionally, stop the scanner
-                html5QrCode.stop().then(() => {
-                    console.log("QR Code scanning stopped.");
-                }).catch((err) => {
-                    console.log("Failed to stop scanning:", err);
-                });
+                document.getElementById('result').innerText = `Scanned QR Code: ${decodedText}`;
             }
 
-            // Error callback
             function onScanError(error) {
-                // Handle scanning error here
                 console.warn(`QR Code scan error: ${error}`);
+                document.getElementById('result').innerText = `Error scanning QR Code: ${error}`;
             }
 
-            // Start scanning
             html5QrCode.start(
-                { facingMode: "environment" }, // Choose the camera facing mode
-                {
-                    fps: 10,    // Frame rate
-                    qrbox: 250  // Size of the scanning box
-                },
+                { facingMode: "environment" },
+                { fps: 10, qrbox: 250 },
                 onScanSuccess,
                 onScanError
             ).catch((err) => {

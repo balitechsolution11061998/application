@@ -9,6 +9,7 @@
         "fakerphp/faker": "^1.23",
         "giggsey/libphonenumber-for-php": "^8.13",
         "guzzlehttp/guzzle": "^7.2",
+        "hashids/hashids": "^5.0",
         "inspector-apm/inspector-laravel": "^4.8",
         "intervention/image": "^3.7",
         "itmm/m-mart-skin": "^1.0",
