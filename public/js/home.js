@@ -21,7 +21,7 @@ function fetchJamKerja(){
             $('#jam-kerja-content').html(content);
             if (response.data.length > 0) {
                 Toastify({
-                    text: "Data loaded successfully",
+                    text: "Data jam kerja loaded successfully",
                     duration: 3000,
                     close: true,
                     gravity: "top",
@@ -29,14 +29,34 @@ function fetchJamKerja(){
                     backgroundColor: "#4CAF50",
                     stopOnFocus: true,
                 }).showToast();
+            } else {
+                Toastify({
+                    text: "No data available",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#FFAA00",
+                    stopOnFocus: true,
+                }).showToast();
             }
         },
         error: function(error) {
             $('#spinner').hide(); // Hide spinner
             console.log('Error fetching data', error);
+            Toastify({
+                text: "Error loading data",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#FF0000",
+                stopOnFocus: true,
+            }).showToast();
         }
     });
 }
+
 document.addEventListener("DOMContentLoaded", function () {
 
 
