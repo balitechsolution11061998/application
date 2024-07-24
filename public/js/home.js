@@ -1,3 +1,42 @@
+$(document).ready(function() {
+ fetchJamKerja();
+});
+
+function fetchJamKerja(){
+    $('#spinner').show(); // Show spinner
+    $.ajax({
+        url: "/jam_kerja/data",
+        method: 'GET',
+        success: function(response) {
+            $('#spinner').hide(); // Hide spinner
+            var content = '';
+            response.data.forEach(function(item) {
+                content += '<div class="jam-kerja-item">' +
+                    '<h3 class="day">' + item.nama_jk + ' (' + item.kode_jk + ')</h3>' +
+                    '<p class="time">Jam Masuk: ' + item.jam_masuk + ' (' + item.awal_jam_masuk + ' - ' + item.akhir_jam_masuk + ')</p>' +
+                    '<p class="time">Jam Pulang: ' + item.jam_pulang + '</p>' +
+                    '<p class="time">Lintas Hari: ' + item.lintas_hari + '</p>' +
+                    '</div>';
+            });
+            $('#jam-kerja-content').html(content);
+            if (response.data.length > 0) {
+                Toastify({
+                    text: "Data loaded successfully",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#4CAF50",
+                    stopOnFocus: true,
+                }).showToast();
+            }
+        },
+        error: function(error) {
+            $('#spinner').hide(); // Hide spinner
+            console.log('Error fetching data', error);
+        }
+    });
+}
 document.addEventListener("DOMContentLoaded", function () {
 
 

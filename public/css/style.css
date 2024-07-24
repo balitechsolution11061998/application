@@ -1203,3 +1203,71 @@ nav ul li a.active {
     align-items: center;
     min-height: calc(100% - 1rem);
 }
+
+.jam-kerja-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px 0;
+    animation: fadeIn 1s ease-in-out;
+    color: #000; /* Set text color to black */
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    color: #000; /* Set text color to black */
+}
+
+.section-title i {
+    margin-right: 10px;
+    color: #007bff; /* Icon color remains blue */
+}
+
+.jam-kerja-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.jam-kerja-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    transition: transform 0.3s ease;
+    color: #000; /* Set text color to black */
+}
+
+.jam-kerja-item:hover {
+    transform: scale(1.05);
+}
+
+.jam-kerja-item .day {
+    font-size: 18px;
+    font-weight: 500;
+    color: #000; /* Set text color to black */
+}
+
+.jam-kerja-item .time {
+    font-size: 16px;
+    color: #000; /* Set text color to black */
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+

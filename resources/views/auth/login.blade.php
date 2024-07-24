@@ -182,7 +182,6 @@
     <script>
         $(document).ready(function() {
             $("#sign_in_form").submit(function(event) {
-                alert("masuk sini");
                 event.preventDefault(); // Prevent the default form submission
                 grecaptcha.ready(function() {
                     grecaptcha.execute("{{ env('GOOGLE_RECAPTCHA_KEY') }}", {action: 'subscribe_newsletter'}).then(function(token) {

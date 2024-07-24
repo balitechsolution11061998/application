@@ -34,7 +34,7 @@ return [
         [
             'label'          => 'Price Change',
             'type'           => 'item',
-            'permission'     => ['price-change-show'],
+            'permission'     => ['cost_change-show'],
             'permissionType' => 'gate',
             'icon'           => 'ki',
             'iconName'       => 'ki-element-11',
@@ -126,8 +126,8 @@ return [
             'type'           => 'item',
             'permission'     => ['jamkerja-show'],
             'permissionType' => 'gate',
-            'icon'           => 'ki',
-            'iconName'       => 'ki-duotone ki-electronic-clock',
+            'icon'           => 'fas', // Combine icon type and name
+            'iconName'       => 'fa-clock', // Just the icon name
             'iconPath'       => 7,
             'route'          => 'jam_kerja.index',
         ],
