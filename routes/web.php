@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Gate;
 
 Auth::routes();
 Route::get('/', function(){
-    return view('auth.login');
+    return view('auth.scanbarcode');
 });
 Route::get('/formlogin', [LoginController::class, 'index'])->name('formlogin');
 Route::post('/formlogin/check_login', [LoginController::class, 'check_login'])->name('formlogin.check_login');
@@ -95,6 +95,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/konfigurasi/{nik}/setjamkerja', 'UserController@setjamkerja');
         Route::post('/konfigurasi/store', 'UserController@konfigurasiStore');
         Route::post('/konfigurasi/storeByDate', 'UserController@storeByDate');
+        Route::get('/{userId}/generate-qr-code', 'UserController@generateQRCode');
 
 
     });

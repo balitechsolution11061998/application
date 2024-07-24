@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\AccountDetailsMail;
+use App\Mail\QRCodeEmail;
 use App\Mail\ResetPasswordEmail;
 use App\Models\User;
 use App\Services\User\UserService;
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Response;
+use QrCode;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -322,6 +325,53 @@ class UserController extends Controller
             return response()->json(['success' => false, 'message' => 'An error occurred while processing your request.'], 500);
         }
     }
+
+
+
+
+    public function generateQRCode($userId)
+    {
+        try {
+            $user = User::find($userId);
+            $token = Str::random(60);
+            $baseUrl = config('app.url');
+
+            // Ensure the URL is UTF-8 encoded
+            $loginUrl = $baseUrl . '/login/' . $userId;
+            $encodedUrl = mb_convert_encoding($loginUrl, 'UTF-8');
+
+            $qrCode = QrCode::format('png')->size(300)->generate($encodedUrl);
+
+            $base64QrCode = base64_encode($qrCode);
+            $qrCodeUrl = 'data:image/png;base64,' . $base64QrCode;
+
+            \Mail::to($user->email)->send(new \App\Mail\QRCodeEmail($qrCodeUrl, $loginUrl));
+
+            return response()->json(['qr_code_url' => $qrCodeUrl, 'login_url' => $loginUrl]);
+        } catch (\Exception $e) {
+            // Handle exceptions and log error details
+            Log::error('Failed to generate QR code: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to generate QR code.'], 500);
+        }
+    }
+
+    public function scanQRCode($token)
+    {
+        // Find user by token
+        $user = User::where('qr_token', $token)
+                    ->where('qr_token_expires_at', '>', now())
+                    ->first();
+
+        if ($user) {
+            Auth::login($user); // Log in the user
+            $user->update(['qr_token' => null, 'qr_token_expires_at' => null]); // Invalidate the token
+            return redirect('/home'); // Redirect to your desired page
+        } else {
+            return redirect('/login')->withErrors(['QR code has expired or is invalid.']);
+        }
+    }
+
+
 
 
 

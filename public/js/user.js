@@ -181,12 +181,14 @@ function fetchDataUser() {
                                 <li><a class="dropdown-item" href="#" onclick="deleteUser(${row.id})"><i class="fas fa-trash"></i> Delete</a></li>
                                 <li><a class="dropdown-item" href="#" onclick="resetPassword(${row.id})"><i class="fas fa-key"></i> Reset Password</a></li>
                                 <li><a class="dropdown-item" href="#" onclick="setRolesToUser(${row.id})"><i class="fas fa-plus-circle"></i> Tambah Roles</a></li>
-                                <li><a class="dropdown-item" href="#" onclick="setJamKerja(${row.nik})"><i class="fas fa-plus-circle"></i> Set Jam Kerja</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="setJamKerja(${row.nik})"><i class="fas fa-clock"></i> Set Jam Kerja</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="createQRCode(${row.id})"><i class="fas fa-qrcode"></i> Create QR Code</a></li>
                             </ul>
                         </div>
                     `;
                 },
-            },
+            }
+
         ],
         drawCallback: function () {
             var table = this.api();
@@ -239,6 +241,54 @@ function fetchDataUser() {
         $(this).toggleClass("fa-eye fa-eye-slash");
     });
 }
+
+function createQRCode(userId) {
+    Swal.fire({
+        title: 'Generating QR Code...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    $.ajax({
+        url: `/users/${userId}/generate-qr-code`,
+        method: 'GET',
+        success: function(response) {
+            Swal.close(); // Close the SweetAlert2 loading modal
+
+            // Show the QR code in a custom modal with full height and black title
+            Swal.fire({
+                title: 'Login QR Code',
+                html: `<img src="${response.qr_code_url}" alt="QR Code" class="qr-code-image">`,
+                showCloseButton: true,
+                confirmButtonText: 'Close',
+                customClass: {
+                    popup: 'swal2-custom-modal',
+                    title: 'swal2-custom-title'
+                },
+                didOpen: () => {
+                    // Set the height of the modal container
+                    document.querySelector('.swal2-popup').style.height = '100vh';
+                }
+            });
+
+        },
+        error: function(error) {
+            Swal.close(); // Close the SweetAlert2 loading modal
+
+            Swal.fire({
+                title: 'Error',
+                text: 'Failed to generate QR code.',
+                icon: 'error',
+                confirmButtonText: 'Okay'
+            });
+        }
+    });
+}
+
+
+
 
 function setJamKerja(nik) {
     var csrfToken = $('meta[name="csrf-token"]').attr('content');
