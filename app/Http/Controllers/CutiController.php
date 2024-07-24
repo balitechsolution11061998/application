@@ -101,6 +101,15 @@ class CutiController extends Controller
         }
     }
 
+    public function count()
+    {
+        // Count the total number of leave records
+        $cutiCount = Cuti::count(); // Replace Cuti with your actual model
+
+        // Return the count as JSON
+        return response()->json(['count' => $cutiCount]);
+    }
+
     public function delete($id)
     {
         try {
@@ -112,5 +121,4 @@ class CutiController extends Controller
             return response()->json(['error' => 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage()], 500);
         }
     }
-
 }

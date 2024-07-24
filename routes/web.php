@@ -122,6 +122,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     Route::prefix('cuti')->name('cuti.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/index', 'CutiController@index')->name('index');
         Route::get('/data', 'CutiController@data')->name('data');
+        Route::get('/count', 'CutiController@count')->name('count');
         Route::post('/store', 'CutiController@store')->name('store');
         Route::get('/{id}/edit', 'CutiController@edit')->name('edit');
         Route::delete('/{id}/delete', 'CutiController@delete')->name('delete');

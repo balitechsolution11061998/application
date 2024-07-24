@@ -2,8 +2,45 @@ $(document).ready(function() {
  fetchJamKerja();
  fetchDepartmentCount();
  fetchCabangCount();
-
+ fetchJumlahCuti();
 });
+
+function fetchJumlahCuti() {
+    $('#spinner-leave').show(); // Show spinner
+    $.ajax({
+        url: "/cuti/count",
+        method: 'GET',
+        success: function(response) {
+            $('#spinner-leave').hide(); // Hide spinner
+            var content = '<div class="cuti-count animated fadeIn">' + response.count + '</div>';
+            $('#leave-content').html(content);
+            Toastify({
+                text: "Cuti count loaded successfully",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#4CAF50",
+                stopOnFocus: true,
+            }).showToast();
+        },
+        error: function(error) {
+            $('#spinner-leave').hide(); // Hide spinner
+            console.log('Error fetching data', error);
+            Toastify({
+                text: "Error loading cuti count",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#FF0000",
+                stopOnFocus: true,
+            }).showToast();
+        }
+    });
+}
+
+
 
 function fetchCabangCount() {
     $('#spinner-cabang').show(); // Show spinner
