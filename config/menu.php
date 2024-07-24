@@ -23,7 +23,7 @@ return [
         [
             'label'          => 'Items',
             'type'           => 'item',
-            'permission'     => [],
+            'permission'     => ['items-show'],
             'permissionType' => 'gate',
             'icon'           => 'ki',
             'iconName'       => 'ki-element-11',
@@ -34,7 +34,7 @@ return [
         [
             'label'          => 'Price Change',
             'type'           => 'item',
-            'permission'     => [],
+            'permission'     => ['price-change-show'],
             'permissionType' => 'gate',
             'icon'           => 'ki',
             'iconName'       => 'ki-element-11',
@@ -44,7 +44,7 @@ return [
         [
             'label'          => 'PO',
             'type'           => 'item',
-            'permission'     => [],
+            'permission'     => ['po-show'],
             'permissionType' => 'gate',
             'icon'           => 'ki',
             'iconName'       => 'ki-element-11',
@@ -54,7 +54,7 @@ return [
         [
             'label'          => 'Monitoring Presensi',
             'type'           => 'item',
-            'permission'     => [],
+            'permission'     => ['monitoring-show'],
             'permissionType' => 'gate',
             'icon'           => 'ki',
             'iconName'       => 'ki-element-11',
@@ -71,7 +71,7 @@ return [
 
             'label'          => 'User',
             'type'           => 'item',
-            'permission'     => [],
+            'permission'     => ['users.show'],
             'permissionType' => 'gate',
             'icon'           => 'fas',
             'iconName'       => 'fa-users',
@@ -114,7 +114,7 @@ return [
         [
             'label'          => 'Settings',
             'type'           => 'item',
-            'permission'     => [],
+            'permission'     => ['settings-show'],
             'permissionType' => 'gate',
             'icon'           => 'ki',
             'iconName'       => 'ki-wrench',
@@ -124,7 +124,7 @@ return [
         [
             'label'          => 'Jam Kerja',
             'type'           => 'item',
-            'permission'     => [],
+            'permission'     => ['jamkerja-show'],
             'permissionType' => 'gate',
             'icon'           => 'ki',
             'iconName'       => 'ki-duotone ki-electronic-clock',
@@ -134,7 +134,7 @@ return [
         [
             'label'          => 'Department',
             'type'           => 'item',
-            'permission'     => [],
+            'permission'     => ['department-show'],
             'permissionType' => 'gate',
             'icon'           => 'fas',
             'iconName'       => 'fa-warehouse',
@@ -144,7 +144,7 @@ return [
         [
             'label'          => 'Kantor Cabang',
             'type'           => 'item',
-            'permission'     => [],
+            'permission'     => ['kantorcabang-show'],
             'permissionType' => 'gate',
             'icon'           => 'fas',
             'iconName'       => 'fa-building',
@@ -154,7 +154,7 @@ return [
         [
             'label'          => 'Cuti',
             'type'           => 'item',
-            'permission'     => [],
+            'permission'     => ['cuti-show'],
             'permissionType' => 'gate',
             'icon'           => 'fas',
             'iconName'       => 'fa-clipboard-check',
