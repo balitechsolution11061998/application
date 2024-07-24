@@ -19,13 +19,13 @@ use Illuminate\Support\Facades\Gate;
 
 
 Auth::routes();
-
+Route::get('/', function(){
+    return view('welcome');
+});
 Route::get('/formlogin', [LoginController::class, 'index'])->name('formlogin');
 Route::post('/formlogin/check_login', [LoginController::class, 'check_login'])->name('formlogin.check_login');
 Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.access']], function () {
-    Route::get('/', function(){
-        return view('welcome');
-    });
+
 // Route::group(['middleware' => ['verifiedmiddleware','twostep','verified','auth','log.user.access']], function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/performance-data', [PerformanceController::class, 'getPerformanceData']);
