@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Gate;
 
 
 Auth::routes();
-Route::get('/', function(){
+Route::get('/scanbarcode', function(){
     return view('auth.scanbarcode');
 });
 Route::get('/formlogin', [LoginController::class, 'index'])->name('formlogin');
