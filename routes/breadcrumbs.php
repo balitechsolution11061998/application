@@ -53,3 +53,20 @@ Breadcrumbs::for('cuti', function (BreadcrumbTrail $trail) {
     $trail->push('Cuti', route('cuti.index'));
 });
 
+Breadcrumbs::for('paketsoal', function (BreadcrumbTrail $trail) {
+    $trail->push('Paket Soal', route('paketsoal.index'));
+});
+
+Breadcrumbs::for('kelas', function (BreadcrumbTrail $trail) {
+    $trail->push('Kelas', route('kelas.index'));
+});
+
+Breadcrumbs::for('rombel', function (BreadcrumbTrail $trail) {
+    $trail->push('Rombongan Belajar', route('rombel.index'));
+});
+
+Breadcrumbs::for('siswa', function (BreadcrumbTrail $trail) {
+    $trail->push('Siswa', route('siswa.index'));
+});
+
+

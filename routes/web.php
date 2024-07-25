@@ -171,9 +171,9 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     });
 
 
-    Route::prefix('soal')->name('soal.')->namespace('App\Http\Controllers')->group(function () {
-        Route::get('/index', 'SoalController@index')->name('index');
-        Route::get('/data', 'SoalController@data')->name('data');
+    Route::prefix('paketsoal')->name('paketsoal.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'PaketSoalController@index')->name('index');
+        Route::get('/data', 'PaketSoalController@data')->name('data');
 
     });
 
@@ -187,6 +187,31 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
 
     });
 
+    Route::prefix('kelas')->name('kelas.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'KelasController@index')->name('index');
+        Route::get('/data', 'KelasController@data')->name('data');
+        Route::post('/store', 'KelasController@store')->name('store');
+        Route::get('{id}/edit', 'KelasController@edit')->name('edit');
+        Route::delete('/delete/{id}', 'KelasController@destroy')->name('destroy');
+        Route::get('/options', 'KelasController@dataoptions')->name('options');
+    });
+
+    Route::prefix('rombel')->name('rombel.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'RombelController@index')->name('index');
+        Route::get('/data', 'RombelController@data')->name('data');
+        Route::post('/store', 'RombelController@store')->name('store');
+        Route::get('{id}/edit', 'RombelController@edit')->name('edit');
+        Route::delete('/delete/{id}', 'RombelController@destroy')->name('destroy');
+        Route::get('/options', 'RombelController@getRombelOptions')->name('getRombelOptions');
+    });
+
+    Route::prefix('siswa')->name('siswa.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'SiswaController@index')->name('index');
+        Route::get('/data', 'SiswaController@data')->name('data');
+        Route::post('/store', 'SiswaController@store')->name('store');
+        Route::get('{id}/edit', 'SiswaController@edit')->name('edit');
+        Route::delete('/delete/{id}', 'SiswaController@destroy')->name('destroy');
+    });
 
 });
 

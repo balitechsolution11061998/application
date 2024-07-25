@@ -62,18 +62,15 @@ return [
             'route'          => 'po.index',
         ],
         [
-            'label'          => 'Soal',
+            'label'          => 'Paket Soal',
             'type'           => 'item',
-            'permission'     => ['soal-show'],
+            'permission'     => ['paketsoal-show'],
             'permissionType' => 'gate',
             'icon'           => 'fas',
-            'iconName'       => 'fa-question',
+            'iconName'       => 'fa-book',
             'iconPath'       => '',
-            'route'          => 'soal.index',
+            'route'          => 'paketsoal.index',
         ],
-
-
-
         [
             'label' => 'User',
             'type' => 'heading'
@@ -113,6 +110,15 @@ return [
                     'route'          => 'users.index',
                     'active'         => ['users-show'],
                     'permission'     => ['users-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'dot',
+                ],
+                [
+                    'label'          => 'Siswa',
+                    'type'           => 'item',
+                    'route'          => 'siswa.index',
+                    'active'         => ['siswa-show'],
+                    'permission'     => ['siswa-show'],
                     'permissionType' => 'gate',
                     'icon'           => 'dot',
                 ],
@@ -171,6 +177,26 @@ return [
             'iconName'       => 'fa-clipboard-check',
             'iconPath'       => 7,
             'route'          => 'cuti.index',
+        ],
+        [
+            'label'          => 'Kelas',
+            'type'           => 'item',
+            'permission'     => ['kelas-show'],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-chalkboard-teacher',
+            'iconPath'       => 7,
+            'route'          => 'kelas.index',
+        ],
+        [
+            'label'          => 'Rombongan Belajar',
+            'type'           => 'item',
+            'permission'     => ['rombel-show'],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-users',
+            'iconPath'       => 7,
+            'route'          => 'rombel.index',
         ],
 
 

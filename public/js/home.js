@@ -143,7 +143,7 @@ function fetchListCuti() {
             } else {
                 $('#listleave-content').html('<div class="not-found-message">' +
                     '<div class="icon-container">' +
-                        '<i class="fas fa-search" style="font-size: 64px; color: #FFAA00;"></i>' +
+                        '<i class="fas fa-search" style="font-size: 25px; color: #FFAA00;"></i>' +
                     '</div>' +
                     '<p class="message-text">No data available</p>' +
                     '</div>');
@@ -207,7 +207,7 @@ function fetchJamKerja() {
             } else {
                 $('#jam-kerja-content').html('<div class="not-found-message">' +
                     '<div class="icon-container">' +
-                        '<i class="fas fa-search" style="font-size: 64px; color: #FFAA00;"></i>' +
+                        '<i class="fas fa-search" style="font-size: 25px; color: #FFAA00;"></i>' +
                     '</div>' +
                     '<p class="message-text">No data available</p>' +
                     '</div>');
