@@ -171,6 +171,13 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     });
 
 
+    Route::prefix('soal')->name('soal.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'SoalController@index')->name('index');
+        Route::get('/data', 'SoalController@data')->name('data');
+
+    });
+
+
     Route::prefix('jam_kerja')->name('jam_kerja.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/index', 'JamKerjaController@index')->name('index');
         Route::get('/data', 'JamKerjaController@data')->name('data');

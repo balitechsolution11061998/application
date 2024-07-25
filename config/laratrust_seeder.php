@@ -27,6 +27,7 @@ return [
             'department' => 's',
             'kantorcabang' => 's',
             'cuti' => 's',
+            'soal' => 's',
         ],
         'karyawan' => [
             'dashboard' => 's',

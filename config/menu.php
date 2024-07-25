@@ -61,6 +61,17 @@ return [
             'iconPath'       => 5,
             'route'          => 'po.index',
         ],
+        [
+            'label'          => 'Soal',
+            'type'           => 'item',
+            'permission'     => ['soal-show'],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-question',
+            'iconPath'       => '',
+            'route'          => 'soal.index',
+        ],
+
 
 
         [

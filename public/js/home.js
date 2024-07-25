@@ -122,14 +122,15 @@ function fetchListCuti() {
         success: function(response) {
             $('#spinner-leave').hide(); // Hide spinner
             var content = '';
-            response.data.forEach(function(item) {
-                content += '<div class="leave-item">' +
-                    '<h3 class="day">' + item.nama_cuti + ' (' + item.kode_cuti + ')</h3>' +
-                    '<p class="days">Jumlah Hari: ' + item.jumlah_hari + '</p>' +
-                    '</div>';
-            });
-            $('#listleave-content').html(content);
+
             if (response.data.length > 0) {
+                response.data.forEach(function(item) {
+                    content += '<div class="leave-item">' +
+                        '<h3 class="day">' + item.nama_cuti + ' (' + item.kode_cuti + ')</h3>' +
+                        '<p class="days">Jumlah Hari: ' + item.jumlah_hari + '</p>' +
+                        '</div>';
+                });
+                $('#listleave-content').html(content);
                 Toastify({
                     text: "Data cuti loaded successfully",
                     duration: 3000,
@@ -140,6 +141,12 @@ function fetchListCuti() {
                     stopOnFocus: true,
                 }).showToast();
             } else {
+                $('#listleave-content').html('<div class="not-found-message">' +
+                    '<div class="icon-container">' +
+                        '<i class="fas fa-search" style="font-size: 64px; color: #FFAA00;"></i>' +
+                    '</div>' +
+                    '<p class="message-text">No data available</p>' +
+                    '</div>');
                 Toastify({
                     text: "No data available",
                     duration: 3000,
@@ -166,24 +173,28 @@ function fetchListCuti() {
     });
 }
 
-function fetchJamKerja(){
+
+
+function fetchJamKerja() {
     $('#spinner').show(); // Show spinner
+
     $.ajax({
         url: "/jam_kerja/data",
         method: 'GET',
         success: function(response) {
             $('#spinner').hide(); // Hide spinner
             var content = '';
-            response.data.forEach(function(item) {
-                content += '<div class="jam-kerja-item">' +
-                    '<h3 class="day">' + item.nama_jk + ' (' + item.kode_jk + ')</h3>' +
-                    '<p class="time">Jam Masuk: ' + item.jam_masuk + ' (' + item.awal_jam_masuk + ' - ' + item.akhir_jam_masuk + ')</p>' +
-                    '<p class="time">Jam Pulang: ' + item.jam_pulang + '</p>' +
-                    '<p class="time">Lintas Hari: ' + item.lintas_hari + '</p>' +
-                    '</div>';
-            });
-            $('#jam-kerja-content').html(content);
+
             if (response.data.length > 0) {
+                response.data.forEach(function(item) {
+                    content += '<div class="jam-kerja-item">' +
+                        '<h3 class="day">' + item.nama_jk + ' (' + item.kode_jk + ')</h3>' +
+                        '<p class="time">Jam Masuk: ' + item.jam_masuk + ' (' + item.awal_jam_masuk + ' - ' + item.akhir_jam_masuk + ')</p>' +
+                        '<p class="time">Jam Pulang: ' + item.jam_pulang + '</p>' +
+                        '<p class="time">Lintas Hari: ' + item.lintas_hari + '</p>' +
+                        '</div>';
+                });
+                $('#jam-kerja-content').html(content);
                 Toastify({
                     text: "Data jam kerja loaded successfully",
                     duration: 3000,
@@ -194,6 +205,12 @@ function fetchJamKerja(){
                     stopOnFocus: true,
                 }).showToast();
             } else {
+                $('#jam-kerja-content').html('<div class="not-found-message">' +
+                    '<div class="icon-container">' +
+                        '<i class="fas fa-search" style="font-size: 64px; color: #FFAA00;"></i>' +
+                    '</div>' +
+                    '<p class="message-text">No data available</p>' +
+                    '</div>');
                 Toastify({
                     text: "No data available",
                     duration: 3000,
@@ -220,6 +237,7 @@ function fetchJamKerja(){
         }
     });
 }
+
 
 document.addEventListener("DOMContentLoaded", function () {
 

@@ -1351,3 +1351,24 @@ svg {
     }
 }
 
+.not-found-message {
+    text-align: center;
+    padding: 30px;
+    border: 2px solid #FFAA00;
+    border-radius: 10px;
+    background-color: #fff5e6;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 80%;
+}
+
+.icon-container {
+    margin-bottom: 15px;
+}
+
+.message-text {
+    font-size: 12px;
+    font-weight: bold;
+    color: #FFAA00;
+}
