@@ -71,11 +71,18 @@
                 </div>
             </div>
         </div>
+        <div class="card card-bordered">
+            <div class="card-body">
+                <h5 class="card-title">My ApexChart</h5>
+                <div id="kt_apexcharts_1"></div>
+            </div>
+        </div>
         <div class="notification-button-container" style="margin: 20px;">
             <button id="notify-btn" class="btn btn-primary">
                 <i class="fas fa-bell"></i> Show Notification
             </button>
         </div>
+
 
         @push('scripts')
             <script src="{{ asset('js/home.js') }}"></script>

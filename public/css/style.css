@@ -60,6 +60,12 @@
     position: relative;
 }
 
+.card-title {
+    color: #000; /* Black color */
+    font-size: 1.25rem; /* Adjust font size if needed */
+    font-weight: 700; /* Optional: Bold font weight */
+}
+
 .card-loading::after {
     content: "";
     position: absolute;
@@ -1394,3 +1400,37 @@ nav ul li a.active {
     font-weight: bold;
     color: #FFAA00;
 }
+      /* Card styling */
+      .card-bordered {
+        border: 2px solid #007bff; /* Blue border color */
+        border-radius: 0.375rem; /* Adjust border radius if needed */
+    }
+    .card-body {
+        padding: 1.25rem; /* Adjust padding as needed */
+    }
+    /* Responsive chart container */
+    #kt_apexcharts_1 {
+        height: 350px; /* Default height */
+    }
+    /* Media queries for responsiveness */
+    @media (max-width: 1200px) {
+        #kt_apexcharts_1 {
+            height: 300px; /* Height for tablets and smaller screens */
+        }
+    }
+    @media (max-width: 992px) {
+        #kt_apexcharts_1 {
+            height: 250px; /* Height for tablets in portrait mode */
+        }
+    }
+    @media (max-width: 768px) {
+        #kt_apexcharts_1 {
+            height: 200px; /* Height for mobile devices */
+        }
+    }
+    /* Card title styling */
+    .card-title {
+        color: #000; /* Black color */
+        font-size: 1.25rem; /* Adjust font size if needed */
+        font-weight: 700; /* Optional: Bold font weight */
+    }

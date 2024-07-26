@@ -91,6 +91,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.11.3/echo.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
 
 
 <!--end::Custom Javascript-->
