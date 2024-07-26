@@ -199,6 +199,18 @@ return [
             'route'          => 'rombel.index',
         ],
 
+        [
+            'label'          => 'Mata Pelajaran',
+            'type'           => 'item',
+            'permission'     => ['matapelajaran-show'],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-book',
+            'iconPath'       => 7,
+            'route'          => 'mata-pelajaran.index',
+        ],
+
+
 
         // [
 

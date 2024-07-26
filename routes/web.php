@@ -43,6 +43,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/', 'OrdHeadController@index')->name('index');
         Route::get('/data', 'OrdHeadController@data')->name('data');
         Route::get('/download', 'OrdHeadController@download')->name('download');
+        Route::get('/count', 'OrdHeadController@count')->name('count');
 
     });
 
@@ -211,6 +212,15 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::post('/store', 'SiswaController@store')->name('store');
         Route::get('{id}/edit', 'SiswaController@edit')->name('edit');
         Route::delete('/delete/{id}', 'SiswaController@destroy')->name('destroy');
+    });
+
+    Route::prefix('mata-pelajaran')->name('mata-pelajaran.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'MataPelajaranController@index')->name('index');
+        Route::get('/data', 'MataPelajaranController@data')->name('data');
+        Route::post('/store', 'MataPelajaranController@store')->name('store');
+        Route::get('{id}/edit', 'MataPelajaranController@edit')->name('edit');
+        Route::post('/update/{id}', 'MataPelajaranController@update')->name('update');
+        Route::delete('/delete/{id}', 'MataPelajaranController@destroy')->name('destroy');
     });
 
 });

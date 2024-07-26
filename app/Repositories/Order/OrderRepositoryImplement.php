@@ -4,6 +4,7 @@ namespace App\Repositories\Order;
 
 use LaravelEasyRepository\Implementations\Eloquent;
 use App\Models\OrdHead;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -23,19 +24,26 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
     }
     public function countDataPo($filterDate, $filterSupplier)
     {
-
-        // If filterDate is null, set it to the current date
-        if ($filterDate == "null") {
-            $filterDate = date('Y-m');
-            $filterYear = date('Y', strtotime($filterDate));
-            $filterMonth = date('m', strtotime($filterDate));
+        // If filterDate is null or an empty string, set it to the current year and month
+        if (is_null($filterDate) || $filterDate == "null" || empty($filterDate)) {
+            $currentDate = Carbon::now();
+            $filterYear = $currentDate->year;
+            $filterMonth = $currentDate->month;
         } else {
-            $filterYear = date('Y', strtotime($filterDate));
-            $filterMonth = date('m', strtotime($filterDate));
+            // Extract year and month from the provided filterDate
+            $filterYear = Carbon::parse($filterDate)->year;
+            $filterMonth = Carbon::parse($filterDate)->month;
         }
 
+        // Calculate the start and end date of the given month
+        $startDate = Carbon::create($filterYear, $filterMonth, 1)->startOfMonth()->toDateString();
+        $endDate = Carbon::create($filterYear, $filterMonth, 1)->endOfMonth()->toDateString();
 
-        $supplierUser = Auth::user();
+        // Debug: Log the dates being used
+
+        // Assuming $supplierUser and $filterSupplier are defined in your context
+        $supplierUser = auth()->user(); // Example, replace with your actual supplier user retrieval logic
+        $filterSupplier = request()->input('filterSupplier'); // Example, replace with your actual filter supplier logic
 
         $dailyCountsQuery = OrdHead::with('suppliers')
             ->select([
@@ -44,17 +52,22 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
                 DB::raw('SUM(ordsku.unit_cost * ordsku.qty_ordered + ordsku.vat_cost * ordsku.qty_ordered) as total_cost'),
             ])
             ->leftJoin('ordsku', 'ordhead.id', '=', 'ordsku.ordhead_id')
-            ->where('approval_date', '>=', $filterYear . '-' . $filterMonth . '-01')
-            ->where('approval_date', '<=', $filterYear . '-' . $filterMonth . '-31')
-            ->groupBy('tanggal');
-        // ->when(optional($supplierUser)->hasRole('supplier'), function ($query) use ($supplierUser) {
-        //     $query->where('ordhead.supplier', $supplierUser->username);
-        // })
-        // ->when(!empty($filterSupplier), function ($query) use ($filterSupplier) {
-        //     $query->whereIn('ordhead.supplier', (array) $filterSupplier);
-        // });
+            ->whereBetween('approval_date', [$startDate, $endDate])
+            ->groupBy('tanggal')
+            ->when(optional($supplierUser)->hasRole('supplier'), function ($query) use ($supplierUser) {
+                $query->where('ordhead.supplier', $supplierUser->username);
+            })
+            ->when(!empty($filterSupplier), function ($query) use ($filterSupplier) {
+                $query->whereIn('ordhead.supplier', (array) $filterSupplier);
+            });
 
+        // Debug: Get the raw SQL query
+        $sql = $dailyCountsQuery->toSql();
+
+        // Execute the query and get the results
         $dailyCounts = $dailyCountsQuery->get();
+
+        // Debug: Log the results
 
         $totals = $dailyCounts->reduce(function ($carry, $item) {
             $carry['totalPo'] += $item->jumlah;
@@ -65,6 +78,8 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
         return [
             'totalPo' => $totals['totalPo'],
             'totalCost' => $totals['totalCost'],
+            'month' => str_pad($filterMonth, 2, '0', STR_PAD_LEFT), // Ensure month is two digits
+            'year' => (string)$filterYear, // Convert year to string
         ];
     }
 
@@ -73,13 +88,16 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
     {
         // If filterDate is null, set it to the current date
         if ($filterDate == "null") {
-            $filterDate = date('Y-m');
-            $filterYear = date('Y', strtotime($filterDate));
-            $filterMonth = date('m', strtotime($filterDate));
+
+            $currentDate = Carbon::now();
+            $filterYear = $currentDate->year;
+            $filterMonth = $currentDate->month;
         } else {
+            // Extract year and month from the provided filterDate
             $filterYear = date('Y', strtotime($filterDate));
             $filterMonth = date('m', strtotime($filterDate));
         }
+
         $dailyCountsQuery = OrdHead::with('suppliers')
             ->select([
                 DB::raw('DATE(approval_date) as tanggal'),

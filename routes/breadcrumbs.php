@@ -69,4 +69,8 @@ Breadcrumbs::for('siswa', function (BreadcrumbTrail $trail) {
     $trail->push('Siswa', route('siswa.index'));
 });
 
+Breadcrumbs::for('mata-pelajaran', function (BreadcrumbTrail $trail) {
+    $trail->push('Mata Pelajaran', route('mata-pelajaran.index'));
+});
+
 

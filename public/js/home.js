@@ -4,7 +4,32 @@ $(document).ready(function() {
  fetchCabangCount();
  fetchJumlahCuti();
  fetchListCuti();
+ fetchPOData();
 });
+
+async function fetchPOData() {
+    const spinner = document.getElementById('spinner-po');
+    const poContent = document.getElementById('po-content');
+
+    // Show the spinner while fetching data
+    spinner.style.display = 'block';
+
+    try {
+        const response = await fetch('/po/count'); // Replace with your API endpoint
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log(data,'data');
+        // Update the content with fetched data
+        poContent.textContent = formatRupiah(data.data.totalCost); // Adjust according to your data structure
+    } catch (error) {
+        console.error('Error fetching PO data:', error);
+    } finally {
+        // Hide the spinner after fetching data
+        spinner.style.display = 'none';
+    }
+}
 
 function fetchJumlahCuti() {
     $('#spinner-leave').show(); // Show spinner

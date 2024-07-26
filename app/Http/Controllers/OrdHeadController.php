@@ -26,6 +26,47 @@ class OrdHeadController extends Controller
         return view('order.index');
     }
 
+    public function count(Request $request)
+{
+    $startTime = microtime(true);
+    $startMemory = memory_get_usage();
+
+    try {
+        // Get filter parameters from the request
+        $filterDate = $request->filterDate;
+        $filterSupplier = $request->filterSupplier;
+
+        // Use the orderService to get the query builder with filters applied
+        $query = $this->orderService->countDataPo($filterDate, $filterSupplier);
+
+        // Count total records before pagination
+
+
+        // Calculate execution time and memory usage
+        $executionTime = microtime(true) - $startTime;
+        $memoryUsage = memory_get_usage() - $startMemory;
+
+        // Log performance metrics
+        QueryPerformanceLog::create([
+            'function_name' => 'Show Data PO',
+            'parameters' => json_encode(['filterDate' => $filterDate, 'filterSupplier' => $filterSupplier]),
+            'execution_time' => $executionTime,
+            'memory_usage' => $memoryUsage
+        ]);
+
+        return response()->json([
+            'draw' => $request->input('draw'),
+            'data' => $query,
+        ]);
+    } catch (\Throwable $th) {
+        return response()->json([
+            'success' => false,
+            'error' => $th->getMessage()
+        ], 500);
+    }
+}
+
+
     public function data(Request $request)
     {
         $startTime = microtime(true);
