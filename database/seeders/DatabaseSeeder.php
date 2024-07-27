@@ -139,7 +139,6 @@ class DatabaseSeeder extends Seeder
         }
 
         $faker = Faker::create('id_ID');
-
         // Daftar nama departemen dalam bahasa Indonesia
         $departments = [
             'Keuangan',
