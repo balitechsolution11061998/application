@@ -31,6 +31,49 @@ $(function () {
                 createUjian(data);
             });
         });
+
+        $('#ujian_table').on('click', '.deleteUjian', function() {
+            var id = $(this).data('id');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/ujian/delete/' + id,
+                        type: 'DELETE',
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'The ujian has been deleted.',
+                                    'success'
+                                );
+                                table.ajax.reload();
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    'There was a problem deleting the ujian.',
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function (response) {
+                            Swal.fire(
+                                'Error!',
+                                'There was a problem deleting the ujian.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
     });
 
     // Function to create or edit Ujian

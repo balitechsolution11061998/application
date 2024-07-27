@@ -171,6 +171,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UserSeeder::class);
         $this->call(PaketSoalSeeder::class);
         $this->call(SoalSeeder::class);
+        $this->call(UjianSeeder::class);
 
 
 
