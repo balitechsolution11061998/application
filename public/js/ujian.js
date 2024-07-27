@@ -33,8 +33,6 @@ $(function () {
         });
     });
 
-
-
     // Function to create or edit Ujian
     window.createUjian = function(data = null) {
         $('#mdlFormTitle').text(data ? 'Edit Ujian' : 'Create New Ujian');
@@ -114,7 +112,7 @@ $(function () {
                 },
                 durasi: {
                     required: true,
-                    digits: true // Change to digits for numeric validation
+                    digits: true
                 },
                 poin_benar: {
                     required: true,
@@ -199,6 +197,7 @@ $(function () {
             }
         });
 
+        // Populate Mata Pelajaran options dynamically
         $.get('/mata-pelajaran/options', function(options) {
             var select = $('#mata_pelajaran_id');
             select.empty(); // Clear existing options
@@ -210,6 +209,7 @@ $(function () {
             }
         });
 
+        // Populate Kelas options dynamically
         $.get('/kelas/options', function(options) {
             var select = $('#kelas');
             select.empty(); // Clear existing options
@@ -217,7 +217,7 @@ $(function () {
                 select.append(new Option(option.name, option.id));
             });
             if (data) {
-                select.val(data.kelas); // Correct value for kelas
+                select.val(data.kelas.id); // Correct value for kelas
             }
         });
     }
@@ -275,7 +275,7 @@ $(function () {
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="durasi" class="col-sm-12 control-label">Durasi (minutes)</label>
+                            <label for="durasi" class="col-sm-12 control-label">Durasi</label>
                             <div class="col-sm-12">
                                 <input type="number" class="form-control" id="durasi" name="durasi" placeholder="Enter Durasi" value="${data ? data.durasi : ''}" required>
                             </div>
@@ -297,9 +297,29 @@ $(function () {
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="keterangan" class="col-sm-12 control-label">Keterangan Ujian</label>
+                            <label for="poin_benar" class="col-sm-12 control-label">Poin Benar</label>
                             <div class="col-sm-12">
-                                <textarea class="form-control" id="keterangan" name="keterangan" placeholder="Enter Keterangan Ujian">${data ? data.keterangan : ''}</textarea>
+                                <input type="number" class="form-control" id="poin_benar" name="poin_benar" placeholder="Enter Poin Benar" value="${data ? data.poin_benar : ''}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="poin_salah" class="col-sm-12 control-label">Poin Salah</label>
+                            <div class="col-sm-12">
+                                <input type="number" class="form-control" id="poin_salah" name="poin_salah" placeholder="Enter Poin Salah" value="${data ? data.poin_salah : ''}" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="poin_tidak_jawab" class="col-sm-12 control-label">Poin Tidak Jawab</label>
+                            <div class="col-sm-12">
+                                <input type="number" class="form-control" id="poin_tidak_jawab" name="poin_tidak_jawab" placeholder="Enter Poin Tidak Jawab" value="${data ? data.poin_tidak_jawab : ''}" required>
                             </div>
                         </div>
                     </div>
@@ -308,66 +328,25 @@ $(function () {
                         <div class="form-group">
                             <label for="kelas" class="col-sm-12 control-label">Kelas</label>
                             <div class="col-sm-12">
-                                <select class="form-control" id="kelas" name="kelas" required value=${data ? data.kelas.id : ''}>
+                                <select class="form-control" id="kelas" name="kelas" required>
                                     <!-- Options will be populated dynamically -->
                                 </select>
-                                <div class="pretty-checkbox mt-2">
-                                    <label>
-                                        <input type="checkbox" id="tampilkan_nilai" name="tampilkan_nilai" value="1" ${data && data.tampilkan_nilai ? 'checked' : ''}>
-                                        <span>Tampilkan Nilai</span>
-                                    </label>
-                                </div>
-                                <div class="pretty-checkbox">
-                                    <label>
-                                        <input type="checkbox" id="tampilkan_hasil" name="tampilkan_hasil" value="1" ${data && data.tampilkan_hasil ? 'checked' : ''}>
-                                        <span>Tampilkan Hasil</span>
-                                    </label>
-                                </div>
-                                <div class="pretty-checkbox">
-                                    <label>
-                                        <input type="checkbox" id="gunakan_token" name="gunakan_token" value="1" ${data && data.gunakan_token ? 'checked' : ''}>
-                                        <span>Gunakan Token</span>
-                                    </label>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <hr>
+
                 <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="poin_benar" class="col-sm-12 control-label">Poin Benar</label>
-                            <div class="col-sm-12">
-                                <input type="number" class="form-control" id="poin_benar" name="poin_benar" placeholder="Enter Poin Benar" value="${data ? data.poin_benar : ''}" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="poin_salah" class="col-sm-12 control-label">Poin Salah</label>
-                            <div class="col-sm-12">
-                                <input type="number" class="form-control" id="poin_salah" name="poin_salah" placeholder="Enter Poin Salah" value="${data ? data.poin_salah : ''}" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="poin_tidak_jawab" class="col-sm-12 control-label">Poin Tidak Jawab</label>
-                            <div class="col-sm-12">
-                                <input type="number" class="form-control" id="poin_tidak_jawab" name="poin_tidak_jawab" placeholder="Enter Poin Tidak Jawab" value="${data ? data.poin_tidak_jawab : ''}" required>
-                            </div>
-                        </div>
+                    <div class="col-sm-12">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <div class="col-sm-12 mt-3">
-                        <button type="submit" class="btn btn-primary" id="saveBtn" value="${data ? 'edit' : 'create'}">Save changes</button>
-                    </div>
-                </div>
             </form>
         `;
     }

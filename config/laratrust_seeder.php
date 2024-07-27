@@ -39,6 +39,12 @@ return [
         'karyawan' => [
             'dashboard' => 's',
         ],
+        'guru' => [
+            'dashboard' => 's',
+        ],
+        'siswa' => [
+            'dashboard' => 's',
+        ],
         // 'user' => [
         //     'profile' => 'r,u',
         // ],

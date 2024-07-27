@@ -18,7 +18,7 @@ class PaketSoal extends Model
 
     public function mataPelajaran()
     {
-        return $this->belongsTo(MataPelajaran::class, 'kode_mata_pelajaran', 'kode');
+        return $this->belongsTo(MataPelajaran::class, 'kode_mata_pelajaran', 'id');
     }
 
     public function soals()
