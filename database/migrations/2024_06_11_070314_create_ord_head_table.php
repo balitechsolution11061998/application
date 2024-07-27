@@ -34,6 +34,7 @@ return new class extends Migration
             $table->string('comment_desc', 191)->nullable();
             $table->integer('buyer')->nullable();
             $table->string('status', 255)->nullable();
+            $table->text('reason')->nullable();
             $table->date('estimated_delivery_date')->nullable();
             $table->timestamps();
         });

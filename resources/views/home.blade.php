@@ -17,6 +17,9 @@
                 <i class="fas fa-chart-pie icon-animate" style="font-size: 48px; color: #3498db;"></i>
                 <span class="chart-number custom-font" id="department-content">0</span>
             </div>
+            <a href="/departments" class="btn btn-sm btn-primary">
+                <i class="fas fa-building"></i> View Departments
+            </a>
         </div>
         <div class="card">
             <h2 class="section-title"><i class="fas fa-code-branch"></i> Jumlah Cabang</h2>
@@ -27,6 +30,9 @@
                 <i class="fas fa-chart-bar icon-animate" style="font-size: 48px; color: #e74c3c;"></i>
                 <span class="chart-number custom-font" id="cabang-content">0</span>
             </div>
+            <a href="/branches" class="btn btn-sm btn-primary">
+                <i class="fas fa-code-branch"></i> View Branches
+            </a>
         </div>
         <div class="card">
             <h2 class="section-title"><i class="fas fa-calendar-day"></i> Jumlah Cuti</h2>
@@ -37,6 +43,9 @@
                 <i class="fas fa-calendar-check icon-animate" style="font-size: 48px; color: #2ecc71;"></i>
                 <span class="chart-number custom-font" id="leave-content">0</span>
             </div>
+            <a href="/leaves" class="btn btn-sm btn-primary">
+                <i class="fas fa-calendar-check"></i> View Leaves
+            </a>
         </div>
         <div class="card">
             <h2 class="section-title"><i class="fas fa-file-alt"></i> Jumlah PO</h2>
@@ -47,8 +56,12 @@
                 <i class="fas fa-chart-line icon-animate" style="font-size: 48px; color: #9b59b6;"></i>
                 <span class="chart-number custom-font" id="po-content">0</span>
             </div>
+            <a href="/pos" class="btn btn-sm btn-primary">
+                <i class="fas fa-file-alt"></i> View POs
+            </a>
         </div>
     </div>
+
 
 
         <div class="grid-container">
@@ -71,12 +84,41 @@
                 </div>
             </div>
         </div>
+
         <div class="card card-bordered">
             <div class="card-body">
-                <h5 class="card-title">My ApexChart</h5>
+                <h5 class="card-title">Data PO Per Bulan dan Tahun</h5>
+                <div id="filter-container">
+                    <div class="form-container">
+                        <label for="filter-date" class="filter-label">Tanggal:</label>
+                        <div class="input-wrapper">
+                            <input type="month" id="filter-date" class="form-control">
+                        </div>
+
+                        <label for="filter-select" class="filter-label">Filter:</label>
+                        <select id="filter-select" class="form-select">
+                            <option value="qty">Jumlah</option>
+                            <option value="cost">Total Cost</option>
+                        </select>
+                    </div>
+
+
+                    <div id="checkbox-container" class="border-menu">
+                        <label><input type="checkbox" id="show-expired" checked> Expired</label>
+                        <label><input type="checkbox" id="show-completed" checked> Completed</label>
+                        <label><input type="checkbox" id="show-confirmed" checked> Confirmed</label>
+                        <label><input type="checkbox" id="show-in-progress" checked> In Progress</label>
+                    </div>
+
+                </div>
                 <div id="kt_apexcharts_1"></div>
+                <div id="spinner-po" class="spinner">Loading...</div>
             </div>
         </div>
+
+
+
+
         <div class="notification-button-container" style="margin: 20px;">
             <button id="notify-btn" class="btn btn-primary">
                 <i class="fas fa-bell"></i> Show Notification

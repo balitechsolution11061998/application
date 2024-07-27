@@ -83,54 +83,97 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
         ];
     }
 
-
     public function countDataPoPerDays($filterDate, $filterSupplier)
     {
-        // If filterDate is null, set it to the current date
-        if ($filterDate == "null") {
-
+        // Set the current year and month if filterDate is not provided
+        if (is_null($filterDate) || $filterDate == "null" || empty($filterDate)) {
             $currentDate = Carbon::now();
             $filterYear = $currentDate->year;
             $filterMonth = $currentDate->month;
         } else {
             // Extract year and month from the provided filterDate
-            $filterYear = date('Y', strtotime($filterDate));
-            $filterMonth = date('m', strtotime($filterDate));
+            $filterYear = Carbon::parse($filterDate)->year;
+            $filterMonth = Carbon::parse($filterDate)->month;
         }
 
+        // Calculate the start and end date of the given month
+        $startDate = Carbon::create($filterYear, $filterMonth, 1)->startOfMonth()->toDateString();
+        $endDate = Carbon::create($filterYear, $filterMonth, 1)->endOfMonth()->toDateString();
+
+        // Assuming $supplierUser and $filterSupplier are defined in your context
+        $supplierUser = auth()->user(); // Example, replace with your actual supplier user retrieval logic
+        $filterSupplier = request()->input('filterSupplier'); // Example, replace with your actual filter supplier logic
+
+        // Build the query to get daily counts and total costs
         $dailyCountsQuery = OrdHead::with('suppliers')
             ->select([
                 DB::raw('DATE(approval_date) as tanggal'),
-                DB::raw('COUNT(DISTINCT ordhead.id) as jumlah'),
+                DB::raw('COUNT(CASE WHEN status = "Expired" THEN 1 END) as expired_count'),
+                DB::raw('COUNT(CASE WHEN status = "Completed" THEN 1 END) as completed_count'),
+                DB::raw('COUNT(CASE WHEN status = "Confirmed" THEN 1 END) as confirmed_count'),
+                DB::raw('COUNT(CASE WHEN status = "Progress" THEN 1 END) as in_progress_count'),
                 DB::raw('SUM(ordsku.unit_cost * ordsku.qty_ordered + ordsku.vat_cost * ordsku.qty_ordered) as total_cost'),
             ])
             ->leftJoin('ordsku', 'ordhead.id', '=', 'ordsku.ordhead_id')
-            ->whereYear('approval_date', $filterYear)
-            ->whereMonth('approval_date', $filterMonth)
-            ->groupBy('tanggal');
+            ->whereBetween('approval_date', [$startDate, $endDate])
+            ->groupBy('tanggal')
+            ->when(optional($supplierUser)->hasRole('supplier'), function ($query) use ($supplierUser) {
+                $query->where('ordhead.supplier', $supplierUser->username);
+            })
+            ->when(!empty($filterSupplier), function ($query) use ($filterSupplier) {
+                $query->whereIn('ordhead.supplier', (array) $filterSupplier);
+            });
 
-        // Optionally filter by supplier if provided
-        // if (!empty($filterSupplier)) {
-        //     $dailyCountsQuery->whereIn('ordhead.supplier', (array) $filterSupplier);
-        // }
-
+        // Execute the query and get the results
         $dailyCounts = $dailyCountsQuery->get();
 
-        // Create an associative array to store totalPo and totalCost per tanggal
+        // Calculate the totals
+        $totals = $dailyCounts->reduce(function ($carry, $item) {
+            $carry['totalPo'] += $item->expired_count + $item->completed_count + $item->confirmed_count + $item->in_progress_count;
+            $carry['totalCost'] += $item->total_cost;
+            $carry['expired'] += $item->expired_count;
+            $carry['completed'] += $item->completed_count;
+            $carry['confirmed'] += $item->confirmed_count;
+            $carry['in_progress'] += $item->in_progress_count;
+            return $carry;
+        }, [
+            'totalPo' => 0,
+            'totalCost' => 0,
+            'expired' => 0,
+            'completed' => 0,
+            'confirmed' => 0,
+            'in_progress' => 0,
+        ]);
 
-        // Iterate through dailyCounts and populate dataPerTanggal array
-        $dataPerTanggal = [];
-
-        foreach ($dailyCounts as $dailyCount) {
-            $dataPerTanggal[] = (object)[
-                'tanggal' => $dailyCount->tanggal,
-                'totalPo' => $dailyCount->jumlah,
-                'totalCost' => $dailyCount->total_cost,
+        // Format the daily data
+        $dailyData = $dailyCounts->map(function ($item) {
+            return [
+                'date' => $item->tanggal,
+                'expired' => $item->expired_count,
+                'completed' => $item->completed_count,
+                'confirmed' => $item->confirmed_count,
+                'in_progress' => $item->in_progress_count,
+                'total_cost' => $item->total_cost,
             ];
-        }
+        });
 
-        return $dataPerTanggal;
+        return [
+            'totalPo' => $totals['totalPo'],
+            'totalCost' => $totals['totalCost'],
+            'expired' => $totals['expired'],
+            'completed' => $totals['completed'],
+            'confirmed' => $totals['confirmed'],
+            'in_progress' => $totals['in_progress'],
+            'month' => str_pad($filterMonth, 2, '0', STR_PAD_LEFT), // Ensure month is two digits
+            'year' => (string)$filterYear, // Convert year to string
+            'dailyData' => $dailyData, // Include daily data
+        ];
     }
+
+
+
+
+
 
     public function data($filterDate, $filterSupplier)
     {

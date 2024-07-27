@@ -195,6 +195,17 @@ function createSiswa(data = null) {
             nis: {
                 required: true,
                 maxlength: 100
+            },
+            email: {
+                required: true,
+                email: true,
+                maxlength: 255
+            },
+            password: {
+                required: function() {
+                    return !data; // Only required if creating a new record
+                },
+                minlength: 8
             }
         },
         messages: {
@@ -205,6 +216,15 @@ function createSiswa(data = null) {
             nis: {
                 required: "Please enter a NIS",
                 maxlength: "NIS cannot be more than 100 characters"
+            },
+            email: {
+                required: "Please enter an email",
+                email: "Please enter a valid email",
+                maxlength: "Email cannot be more than 255 characters"
+            },
+            password: {
+                required: "Please enter a password",
+                minlength: "Password must be at least 8 characters"
             }
         },
         errorClass: 'is-invalid',
@@ -222,8 +242,10 @@ function createSiswa(data = null) {
         }
     });
 
+    // Populate Rombel options dynamically
     $.get('/rombel/options', function(options) {
         var select = $('#rombel_id');
+        select.empty(); // Clear existing options
         options.forEach(function(option) {
             select.append(new Option(option.nama_rombel, option.id));
         });
@@ -232,6 +254,7 @@ function createSiswa(data = null) {
         }
     });
 }
+
 
 function getSiswaForm(data) {
     return `
@@ -266,9 +289,22 @@ function getSiswaForm(data) {
                     </select>
                 </div>
             </div>
+            <div class="form-group">
+                <label for="email" class="col-sm-2 control-label">Email</label>
+                <div class="col-sm-12">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email" value="${data ? data.email : ''}" required="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password" class="col-sm-2 control-label">Password</label>
+                <div class="col-sm-12">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" ${data ? '' : 'required'}>
+                </div>
+            </div>
             <div class="col-sm-offset-2 col-sm-10 mt-3">
                 <button type="submit" class="btn btn-primary" id="saveBtn" value="${data ? 'edit' : 'create'}">Save changes</button>
             </div>
         </form>
     `;
 }
+

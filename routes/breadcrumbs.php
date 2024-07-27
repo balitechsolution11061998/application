@@ -54,7 +54,7 @@ Breadcrumbs::for('cuti', function (BreadcrumbTrail $trail) {
 });
 
 Breadcrumbs::for('paketsoal', function (BreadcrumbTrail $trail) {
-    $trail->push('Paket Soal', route('paketsoal.index'));
+    $trail->push('Paket Soal', route('paket-soal.index'));
 });
 
 Breadcrumbs::for('kelas', function (BreadcrumbTrail $trail) {
@@ -71,6 +71,14 @@ Breadcrumbs::for('siswa', function (BreadcrumbTrail $trail) {
 
 Breadcrumbs::for('mata-pelajaran', function (BreadcrumbTrail $trail) {
     $trail->push('Mata Pelajaran', route('mata-pelajaran.index'));
+});
+
+Breadcrumbs::for('manajementsoal', function (BreadcrumbTrail $trail) {
+    $trail->push('Management Soal', route('soal.index'));
+});
+
+Breadcrumbs::for('ujian', function (BreadcrumbTrail $trail) {
+    $trail->push('Ujian', route('ujian.index'));
 });
 
 

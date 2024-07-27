@@ -100,6 +100,7 @@
 
 
 <script>
+    let chart;
     document.addEventListener('livewire:load', () => {
         Livewire.on('success', (message) => {
             toastr.success(message);

@@ -4,129 +4,254 @@ $(document).ready(function() {
  fetchCabangCount();
  fetchJumlahCuti();
  fetchListCuti();
- fetchPOData();
+ fetchPoData();
+ fetchPoDataPerDays();
 
- var element = document.getElementById('kt_apexcharts_1');
 
- // Ensure KTUtil is defined and can access these variables
- var height = parseInt(KTUtil.css(element, 'height'));
- var labelColor = '#6c757d'; // Gray color for labels
- var borderColor = '#e9ecef'; // Light gray border color
- var baseColor = '#007bff'; // Blue color
- var secondaryColor = '#0056b3'; // Darker blue color
-
- if (!element) {
-     return;
- }
-
- var options = {
-     series: [{
-         name: 'Net Profit',
-         data: [44, 55, 57, 56, 61, 58]
-     }, {
-         name: 'Revenue',
-         data: [76, 85, 101, 98, 87, 105]
-     }],
-     chart: {
-         fontFamily: 'inherit',
-         type: 'bar',
-         height: height,
-         toolbar: {
-             show: false
-         }
-     },
-     plotOptions: {
-         bar: {
-             horizontal: false,
-             columnWidth: ['30%'],
-             endingShape: 'rounded'
-         },
-     },
-     legend: {
-         show: false
-     },
-     dataLabels: {
-         enabled: false
-     },
-     stroke: {
-         show: true,
-         width: 2,
-         colors: ['transparent']
-     },
-     xaxis: {
-         categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-         axisBorder: {
-             show: false,
-         },
-         axisTicks: {
-             show: false
-         },
-         labels: {
-             style: {
-                 colors: labelColor,
-                 fontSize: '12px'
-             }
-         }
-     },
-     yaxis: {
-         labels: {
-             style: {
-                 colors: labelColor,
-                 fontSize: '12px'
-             }
-         }
-     },
-     fill: {
-         opacity: 1
-     },
-     states: {
-         normal: {
-             filter: {
-                 type: 'none',
-                 value: 0
-             }
-         },
-         hover: {
-             filter: {
-                 type: 'none',
-                 value: 0
-             }
-         },
-         active: {
-             allowMultipleDataPointsSelection: false,
-             filter: {
-                 type: 'none',
-                 value: 0
-             }
-         }
-     },
-     tooltip: {
-         style: {
-             fontSize: '12px'
-         },
-         y: {
-             formatter: function (val) {
-                 return '$' + val + ' thousands';
-             }
-         }
-     },
-     colors: [baseColor, secondaryColor],
-     grid: {
-         borderColor: borderColor,
-         strokeDashArray: 4,
-         yaxis: {
-             lines: {
-                 show: true
-             }
-         }
-     }
- };
-
- var chart = new ApexCharts(element, options);
- chart.render();
 });
+document.getElementById('filter-date').addEventListener('change', fetchPoDataPerDays);
 
-async function fetchPOData() {
+async function fetchPoDataPerDays() {
+    const spinner = document.getElementById('spinner-po');
+    const filterSelect = document.getElementById('filter-select');
+    const filterDate = document.getElementById('filter-date'); // Get the date filter input
+    const showExpired = document.getElementById('show-expired');
+    const showCompleted = document.getElementById('show-completed');
+    const showConfirmed = document.getElementById('show-confirmed');
+    const showInProgress = document.getElementById('show-in-progress');
+
+    // Show the spinner while fetching data
+    spinner.style.display = 'block';
+
+    // Get the selected month and year from the input
+    const selectedMonth = filterDate.value;
+
+    try {
+        // Construct the API URL with the selected month if available
+        const apiUrl = selectedMonth ? `/home/countDataPoPerDays?filterDate=${selectedMonth}` : '/home/countDataPoPerDays';
+        const response = await fetch(apiUrl); // Fetch data with optional month filter
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+
+        // Process the response and prepare the data for the chart
+        const dates = data.data.dailyData.map(item => item.date);
+        const expired = data.data.dailyData.map(item => item.expired);
+        const completed = data.data.dailyData.map(item => item.completed);
+        const confirmed = data.data.dailyData.map(item => item.confirmed);
+        const inProgress = data.data.dailyData.map(item => item.in_progress);
+        const totalCost = data.data.dailyData.map(item => item.total_cost);
+
+        // Function to format numbers as Rupiah
+        function formatRupiah(value) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(value);
+        }
+
+        // Function to initialize the chart with the fetched data
+        function initializeChart() {
+            const seriesName = [];
+            const seriesData = [];
+
+            if (showExpired.checked) {
+                seriesName.push('Expired');
+                seriesData.push(expired);
+            }
+            if (showCompleted.checked) {
+                seriesName.push('Completed');
+                seriesData.push(completed);
+            }
+            if (showConfirmed.checked) {
+                seriesName.push('Confirmed');
+                seriesData.push(confirmed);
+            }
+            if (showInProgress.checked) {
+                seriesName.push('In Progress');
+                seriesData.push(inProgress);
+            }
+
+            if (chart) {
+                chart.destroy(); // Destroy the existing chart instance
+            }
+
+            const options = {
+                series: seriesData.map((data, index) => ({
+                    name: seriesName[index],
+                    data: data
+                })),
+                chart: {
+                    height: 350,
+                    type: 'bar',
+                    toolbar: {
+                        show: true
+                    },
+                    title: {
+                        text: 'Data Jumlah PO Per Tanggal', // Chart title
+                        align: 'left',
+                        margin: 10,
+                        offsetX: 0,
+                        offsetY: 0,
+                        floating: false,
+                        style: {
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            color: '#263238'
+                        }
+                    }
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded', // Rounded ends for bars
+                        borderRadius: 9 // Adjust border radius to avoid ellipse shape
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: dates
+                },
+                yaxis: {
+                    title: {
+                        text: 'Jumlah'
+                    },
+                    labels: {
+                        formatter: function (value) {
+                            return formatRupiah(value);
+                        }
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return formatRupiah(val);
+                        }
+                    }
+                }
+            };
+
+            chart = new ApexCharts(document.querySelector("#kt_apexcharts_1"), options);
+            chart.render();
+        }
+
+        // Initialize chart with default series (Qty)
+        initializeChart();
+
+        // Add event listener for filter selection and checkboxes
+        filterSelect.addEventListener('change', function() {
+            const selectedValue = filterSelect.value;
+            if (selectedValue === 'qty') {
+                initializeChart();
+            } else if (selectedValue === 'cost') {
+                const seriesName = ['Total Cost'];
+                const seriesData = [totalCost];
+                const options = {
+                    series: seriesData.map((data, index) => ({
+                        name: seriesName[index],
+                        data: data
+                    })),
+                    chart: {
+                        height: 350,
+                        type: 'bar',
+                        toolbar: {
+                            show: true
+                        },
+                        title: {
+                            text: 'Data Total Cost Per Tanggal', // Chart title
+                            align: 'left',
+                            margin: 10,
+                            offsetX: 0,
+                            offsetY: 0,
+                            floating: false,
+                            style: {
+                                fontSize: '16px',
+                                fontWeight: 'bold',
+                                color: '#263238'
+                            }
+                        }
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: false,
+                            columnWidth: '55%',
+                            endingShape: 'rounded', // Rounded ends for bars
+                            borderRadius: 9 // Adjust border radius to avoid ellipse shape
+                        }
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    stroke: {
+                        show: true,
+                        width: 2,
+                        colors: ['transparent']
+                    },
+                    xaxis: {
+                        categories: dates
+                    },
+                    yaxis: {
+                        title: {
+                            text: 'Total Cost'
+                        },
+                        labels: {
+                            formatter: function (value) {
+                                return formatRupiah(value);
+                            }
+                        }
+                    },
+                    fill: {
+                        opacity: 1
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: function (val) {
+                                return formatRupiah(val);
+                            }
+                        }
+                    }
+                };
+
+                if (chart) {
+                    chart.destroy(); // Destroy the existing chart instance
+                }
+
+                chart = new ApexCharts(document.querySelector("#kt_apexcharts_1"), options);
+                chart.render();
+            }
+        });
+
+        // Add event listeners for checkboxes
+        [showExpired, showCompleted, showConfirmed, showInProgress].forEach(checkbox => {
+            checkbox.addEventListener('change', initializeChart);
+        });
+
+    } catch (error) {
+        console.error('Error fetching PO data:', error);
+    } finally {
+        // Hide the spinner after fetching data
+        spinner.style.display = 'none';
+    }
+}
+
+
+
+
+
+async function fetchPoData() {
     const spinner = document.getElementById('spinner-po');
     const poContent = document.getElementById('po-content');
 

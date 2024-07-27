@@ -172,9 +172,14 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     });
 
 
-    Route::prefix('paketsoal')->name('paketsoal.')->namespace('App\Http\Controllers')->group(function () {
+    Route::prefix('paket-soal')->name('paket-soal.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/index', 'PaketSoalController@index')->name('index');
         Route::get('/data', 'PaketSoalController@data')->name('data');
+        Route::post('/store', 'PaketSoalController@store')->name('store');
+        Route::get('{id}/edit', 'PaketSoalController@edit')->name('edit');
+        Route::post('/update/{id}', 'PaketSoalController@update')->name('update');
+        Route::delete('/delete/{id}', 'PaketSoalController@destroy')->name('destroy');
+        Route::get('/options', 'PaketSoalController@dataoptions')->name('options');
 
     });
 
@@ -221,6 +226,27 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('{id}/edit', 'MataPelajaranController@edit')->name('edit');
         Route::post('/update/{id}', 'MataPelajaranController@update')->name('update');
         Route::delete('/delete/{id}', 'MataPelajaranController@destroy')->name('destroy');
+        Route::get('/options', 'MataPelajaranController@dataoptions')->name('options');
+    });
+
+    Route::prefix('soal')->name('soal.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'ManagementSoalController@index')->name('index');
+        Route::get('/data', 'ManagementSoalController@data')->name('data');
+        Route::post('/store', 'ManagementSoalController@store')->name('store');
+        Route::get('{id}/edit', 'ManagementSoalController@edit')->name('edit');
+        Route::post('/update/{id}', 'ManagementSoalController@update')->name('update');
+        Route::delete('/delete/{id}', 'ManagementSoalController@destroy')->name('destroy');
+        Route::get('/options', 'ManagementSoalController@dataoptions')->name('options');
+    });
+
+    Route::prefix('ujian')->name('ujian.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'UjianController@index')->name('index');
+        Route::get('/data', 'UjianController@data')->name('data');
+        Route::post('/store', 'UjianController@store')->name('store');
+        Route::get('{id}/edit', 'UjianController@edit')->name('edit');
+        Route::post('/update/{id}', 'UjianController@update')->name('update');
+        Route::delete('/delete/{id}', 'UjianController@destroy')->name('destroy');
+        Route::get('/options', 'UjianController@dataoptions')->name('options');
     });
 
 });

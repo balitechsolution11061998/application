@@ -69,7 +69,27 @@ return [
             'icon'           => 'fas',
             'iconName'       => 'fa-book',
             'iconPath'       => '',
-            'route'          => 'paketsoal.index',
+            'route'          => 'paket-soal.index',
+        ],
+        [
+            'label'          => 'Manajement Soal',
+            'type'           => 'item',
+            'permission'     => ['manajementsoal-show'],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-book',
+            'iconPath'       => '', // Usually not needed for Font Awesome icons
+            'route'          => 'soal.index', // Ensure this route exists in your web.php routes file
+        ],
+        [
+            'label'          => 'Ujian',
+            'type'           => 'item',
+            'permission'     => ['ujian-show'],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-book',
+            'iconPath'       => '', // Usually not needed for Font Awesome icons
+            'route'          => 'ujian.index', // Ensure this route exists in your web.php routes file
         ],
         [
             'label' => 'User',

@@ -28,6 +28,13 @@ return [
             'kantorcabang' => 's',
             'cuti' => 's',
             'soal' => 's',
+            'paketsoal' => 's',
+            'manajementsoal' => 's',
+            'siswa' => 's',
+            'kelas' => 's',
+            'rombel' => 's',
+            'matapelajaran' => 's',
+            'ujian' => 's',
         ],
         'karyawan' => [
             'dashboard' => 's',

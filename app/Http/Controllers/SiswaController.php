@@ -8,6 +8,7 @@ use App\Models\Rombel;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\SiswaImport;
+use App\Models\User;
 
 class SiswaController extends Controller
 {
@@ -18,17 +19,52 @@ class SiswaController extends Controller
 
     public function store(Request $request)
     {
+        // Validate the request data for Siswa
         $data = $request->validate([
+            'siswa_id' => 'nullable|exists:siswa,id', // Validate ID for update, if provided
             'rombel_id' => 'required|exists:rombels,id',
             'nama' => 'required|string|max:255',
             'nis' => 'required|string|max:255',
             'jenis_kelamin' => 'required|in:L,P',
+
+            // Validation rules for User
+            'user_id' => 'nullable|exists:users,id', // Validate ID for update, if provided
+            'email' => 'required|email|max:255',
+            'password' => 'nullable|string|min:8', // Password can be updated, should be hashed before saving
         ]);
 
-        Siswa::updateOrCreate(['id' => $request->id], $data);
+        \DB::transaction(function () use ($request, $data) {
+            // Create or update the Siswa record
+            $siswa = Siswa::updateOrCreate(
+                ['id' => $request->siswa_id],
+                [
+                    'rombel_id' => $data['rombel_id'],
+                    'nama' => $data['nama'],
+                    'nis' => $data['nis'],
+                    'jenis_kelamin' => $data['jenis_kelamin'],
+                ]
+            );
 
-        return response()->json(['success' => 'Siswa saved successfully.']);
+            // Create or update the User record
+            $userData = [
+                'username' => $data['nis'],
+                'email' => $data['email'],
+                'name' => $data['nama'],
+                'password' => $data['password'] ? bcrypt($data['password']) : null,
+            ];
+
+            $user = User::updateOrCreate(
+                ['id' => $request->user_id],
+                $userData
+            );
+
+            // Optional: Associate User with Siswa if necessary
+            // $siswa->user()->associate($user)->save(); // Example if you have such a relationship
+        });
+
+        return response()->json(['success' => 'Siswa and User saved successfully.']);
     }
+
 
     public function edit($id)
     {

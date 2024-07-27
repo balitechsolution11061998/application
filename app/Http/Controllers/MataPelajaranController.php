@@ -46,6 +46,15 @@ class MataPelajaranController extends Controller
         return response()->json($mataPelajaran);
     }
 
+    public function dataoptions()
+    {
+        // Fetch all classes
+        $kelas = MataPelajaran::select('id', 'nama')->get();
+
+        // Return the classes as JSON
+        return response()->json($kelas);
+    }
+
     public function update(Request $request, $id)
     {
         $request->validate([
