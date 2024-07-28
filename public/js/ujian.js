@@ -274,7 +274,7 @@ $(function () {
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="nama" class="col-sm-12 control-label">Nama Ujian</label>
+                            <label for="nama" class="col-sm-12 control-label form-label">Nama Ujian</label>
                             <div class="col-sm-12">
                                 <input type="text" name="nama" id="nama" class="form-control" placeholder="Enter Nama Ujian" value="${data ? data.nama : ''}" required>
                             </div>
@@ -283,7 +283,7 @@ $(function () {
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="paket_soal_id" class="col-sm-12 control-label">Paket Soal</label>
+                            <label for="paket_soal_id" class="col-sm-12 control-label form-label">Paket Soal</label>
                             <div class="col-sm-12">
                                 <select class="form-control" id="paket_soal_id" name="paket_soal_id" required>
                                     <!-- Options will be populated dynamically -->
@@ -296,7 +296,7 @@ $(function () {
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="waktu_mulai" class="col-sm-12 control-label">Waktu Mulai</label>
+                            <label for="waktu_mulai" class="col-sm-12 control-label form-label">Waktu Mulai</label>
                             <div class="col-sm-12">
                                 <input type="datetime-local" class="form-control" id="waktu_mulai" name="waktu_mulai" placeholder="Enter Waktu Mulai" value="${data ? data.waktu_mulai : ''}" required>
                             </div>
@@ -305,7 +305,7 @@ $(function () {
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="mata_pelajaran_id" class="col-sm-12 control-label">Mata Pelajaran</label>
+                            <label for="mata_pelajaran_id" class="col-sm-12 control-label form-label">Mata Pelajaran</label>
                             <div class="col-sm-12">
                                 <select class="form-control" id="mata_pelajaran_id" name="mata_pelajaran_id" required>
                                     <!-- Options will be populated dynamically -->
@@ -318,7 +318,7 @@ $(function () {
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="durasi" class="col-sm-12 control-label">Durasi</label>
+                            <label for="durasi" class="col-sm-12 control-label form-label">Durasi</label>
                             <div class="col-sm-12">
                                 <input type="number" class="form-control" id="durasi" name="durasi" placeholder="Enter Durasi" value="${data ? data.durasi : ''}" required>
                             </div>
@@ -327,7 +327,7 @@ $(function () {
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="rombel_id" class="col-sm-12 control-label">Rombel</label>
+                            <label for="rombel_id" class="col-sm-12 control-label form-label">Rombel</label>
                             <div class="col-sm-12">
                                 <select class="form-control" id="rombel_id" name="rombel_id" required>
                                     <!-- Options will be populated dynamically -->
@@ -340,7 +340,7 @@ $(function () {
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="poin_benar" class="col-sm-12 control-label">Poin Benar</label>
+                            <label for="poin_benar" class="col-sm-12 control-label form-label">Poin Benar</label>
                             <div class="col-sm-12">
                                 <input type="number" class="form-control" id="poin_benar" name="poin_benar" placeholder="Enter Poin Benar" value="${data ? data.poin_benar : ''}" required>
                             </div>
@@ -349,7 +349,7 @@ $(function () {
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="poin_salah" class="col-sm-12 control-label">Poin Salah</label>
+                            <label for="poin_salah" class="col-sm-12 control-label form-label">Poin Salah</label>
                             <div class="col-sm-12">
                                 <input type="number" class="form-control" id="poin_salah" name="poin_salah" placeholder="Enter Poin Salah" value="${data ? data.poin_salah : ''}" required>
                             </div>
@@ -360,7 +360,7 @@ $(function () {
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="poin_tidak_jawab" class="col-sm-12 control-label">Poin Tidak Jawab</label>
+                            <label for="poin_tidak_jawab" class="col-sm-12 control-label form-label">Poin Tidak Jawab</label>
                             <div class="col-sm-12">
                                 <input type="number" class="form-control" id="poin_tidak_jawab" name="poin_tidak_jawab" placeholder="Enter Poin Tidak Jawab" value="${data ? data.poin_tidak_jawab : ''}" required>
                             </div>
@@ -369,7 +369,7 @@ $(function () {
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="kelas" class="col-sm-12 control-label">Kelas</label>
+                            <label for="kelas" class="col-sm-12 control-label form-label">Kelas</label>
                             <div class="col-sm-12">
                                 <select class="form-control" id="kelas" name="kelas" required>
                                     <!-- Options will be populated dynamically -->
@@ -393,4 +393,5 @@ $(function () {
             </form>
         `;
     }
+
 });

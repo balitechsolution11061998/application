@@ -49,9 +49,37 @@ class UserSeeder extends Seeder
                 'alamat' => 'Sumenep',
                 'photo' => '/image/logo.png',
             ],
+            [
+                'username' => 'guru1',
+                'name' => 'Guru 1',
+                'email' => 'guru1@gmail.com',
+                'password_show' => '12345678',
+                'password' => Hash::make('12345678'),
+                'region' => '1',
+                'phone_number' => '089534386679',
+                'nik' => '319092349',
+                'join_date' => '2022-12-02',
+                'status' => 'y',
+                'alamat' => 'Denpasar',
+                'photo' => '/image/logo.png',
+            ],
+            [
+                'username' => 'admin_cbt1',
+                'name' => 'Admin CBT 1',
+                'email' => 'admin_cbt1@gmail.com',
+                'password_show' => '12345678',
+                'password' => Hash::make('12345678'),
+                'region' => '1',
+                'phone_number' => '089534386680',
+                'nik' => '419092349',
+                'join_date' => '2022-12-02',
+                'status' => 'y',
+                'alamat' => 'Tabanan',
+                'photo' => '/image/logo.png',
+            ],
         ];
 
-        // Fetch department IDs
+        // Fetch department, jabatan, and cabang IDs
         $departmentIds = Department::pluck('id')->toArray();
         $jabatans = Jabatan::pluck('id')->toArray();
         $cabang = Cabang::pluck('id')->toArray();
@@ -71,22 +99,38 @@ class UserSeeder extends Seeder
             // Assign roles separately
             if ($user->username === '219811991') {
                 $role = Role::where('name', 'superadministrator')->first();
-                $user->syncRoles([$role->name]);
+                if ($role) {
+                    $user->syncRoles([$role->name]);
+                }
             } elseif ($user->username === 'karyawan1') {
                 $role = Role::where('name', 'karyawan')->first();
-                $user->syncRoles([$role->name]);
+                if ($role) {
+                    $user->syncRoles([$role->name]);
+                }
+            } elseif ($user->username === 'guru1') {
+                $role = Role::where('name', 'guru')->first();
+                if ($role) {
+                    $user->syncRoles([$role->name]);
+                }
+            } elseif ($user->username === 'admin_cbt1') {
+                $role = Role::where('name', 'admin_cbt')->first();
+                if ($role) {
+                    $user->syncRoles([$role->name]);
+                }
             }
         }
 
-        // Generate 600 random users for Siswa
+        // Generate random users for Siswa
         $roleName = 'siswa';
         $role = Role::where('name', $roleName)->first();
 
         if ($role) {
             $rombels = Rombel::pluck('id')->toArray();
-            for ($i = 1; $i <= 1000; $i++) {
+            for ($i = 1; $i <= 200; $i++) {
+                $username = $faker->unique()->numberBetween(10000000, 99999999);
+
                 $userData = [
-                    'username' => $faker->unique()->userName,
+                    'username' => $username,
                     'name' => $faker->name,
                     'email' => $faker->unique()->safeEmail,
                     'password_show' => '12345678',
@@ -112,7 +156,7 @@ class UserSeeder extends Seeder
                 Siswa::create([
                     'rombel_id' => $faker->randomElement($rombels),
                     'nama' => $user->name,
-                    'nis' => $faker->unique()->numberBetween(10000000, 99999999),
+                    'nis' => $username,  // Set nis same as username
                     'jenis_kelamin' => $faker->randomElement(['L', 'P']),
                 ]);
             }

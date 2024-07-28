@@ -14,11 +14,16 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->job(ProcessAudioFiles::class)->everyFifteenMinutes();
+
     }
 
     /**
      * Register the commands for the application.
      */
+    protected $commands = [
+        Commands\AddUsersCommand::class,
+    ];
+
     protected function commands(): void
     {
         $this->load(__DIR__.'/Commands');

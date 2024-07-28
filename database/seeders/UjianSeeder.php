@@ -22,12 +22,12 @@ class UjianSeeder extends Seeder
 
         $ujianData = [];
 
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 1; $i++) {
             $ujianData[] = [
                 'nama' => 'Ujian ' . $i,
                 'paket_soal_id' => $faker->randomElement($paketSoalIds),
                 'rombel_id' => $faker->randomElement($rombelIds),
-                'waktu_mulai' => $faker->dateTimeBetween('now', '+1 month'),
+                'waktu_mulai' => $faker->dateTimeBetween('now'),
                 'durasi' => $faker->numberBetween(30, 120), // in minutes
                 'poin_benar' => $faker->numberBetween(1, 10),
                 'poin_salah' => $faker->numberBetween(0, 5),

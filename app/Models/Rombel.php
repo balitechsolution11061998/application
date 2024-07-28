@@ -14,4 +14,8 @@ class Rombel extends Model
     {
         return $this->belongsTo(Kelas::class);
     }
+    public function ujian()
+    {
+        return $this->hasMany(Ujian::class);
+    }
 }

@@ -47,4 +47,9 @@ class Ujian extends Model
     {
         return $this->belongsTo(Kelas::class, 'kelas');
     }
+
+    public function hasilUjian()
+    {
+        return $this->hasMany(HasilUjian::class, 'ujian_id');
+    }
 }

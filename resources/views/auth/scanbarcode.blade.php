@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Scanner</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
+
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Roboto', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -16,6 +20,7 @@
             margin: 0;
             background-color: #f4f4f9;
         }
+
         #scanner {
             width: 300px;
             height: 300px;
@@ -28,11 +33,13 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
         }
+
         #result {
             margin-top: 20px;
             font-size: 18px;
             color: #555;
         }
+
         input[type="file"] {
             margin-top: 20px;
             padding: 10px;
@@ -43,13 +50,43 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
+
         input[type="file"]:hover {
             background-color: #2980b9;
         }
+
+        .welcome-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            color: #3498db;
+            animation: fadeIn 3s ease-in-out;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .welcome-text i {
+            margin-right: 10px;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+
 <body>
+    <div class="welcome-text">
+        <i class="fas fa-desktop"></i> Selamat datang di Computer Based Test
+    </div>
     <div id="scanner"></div>
     <div id="result">Upload a QR code image to scan.</div>
     <input type="file" id="file-input" accept="image/*">
@@ -58,7 +95,7 @@
     <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             function showToast(message, type = 'info') {
                 Toastify({
                     text: message,
@@ -70,11 +107,16 @@
                 }).showToast();
             }
 
+            function resetForm() {
+                document.getElementById('file-input').value = '';
+                document.getElementById('result').innerText = 'Upload a QR code image to scan.';
+            }
+
             function scanQRCodeFromFile(file) {
                 var reader = new FileReader();
-                reader.onload = function(event) {
+                reader.onload = function (event) {
                     var img = new Image();
-                    img.onload = function() {
+                    img.onload = function () {
                         var canvas = document.createElement('canvas');
                         canvas.width = img.width;
                         canvas.height = img.height;
@@ -103,23 +145,27 @@
                                     qr_code_data: qrCodeData
                                 })
                             })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    showToast('Login successful!', 'success');
-                                    setTimeout(() => {
-                                        window.location.href = '/dashboard';
-                                    }, 3000); // 3 seconds delay
-                                } else {
-                                    showToast(data.message, 'error');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                showToast('An error occurred. Please try again.', 'error');
-                            });
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        showToast('Login successful!', 'success');
+                                        setTimeout(() => {
+                                            // Redirect to the profile page with the hashed ID
+                                            window.location.href = `/users/profile?id=${encodeURIComponent(data.id)}`;
+                                        }, 3000); // 3 seconds delay
+                                    } else {
+                                        showToast(data.message, 'error');
+                                        resetForm();
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    showToast('An error occurred. Please try again.', 'error');
+                                    resetForm();
+                                });
                         } else {
                             showToast('No QR code found.', 'error');
+                            resetForm();
                         }
                     };
                     img.src = event.target.result;
@@ -127,7 +173,7 @@
                 reader.readAsDataURL(file);
             }
 
-            document.getElementById('file-input').addEventListener('change', function(event) {
+            document.getElementById('file-input').addEventListener('change', function (event) {
                 var file = event.target.files[0];
                 if (file) {
                     scanQRCodeFromFile(file);
@@ -157,4 +203,5 @@
         });
     </script>
 </body>
+
 </html>

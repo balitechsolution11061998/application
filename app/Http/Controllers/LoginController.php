@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\Auth\AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
@@ -35,7 +36,8 @@ class LoginController extends Controller
 
             if ($user) {
                 Auth::login($user);
-                return response()->json(['success' => true]);
+                $hashedId = Hash::make($user->id);
+                return response()->json(['success' => true, 'id' => $hashedId]);
             } else {
                 return response()->json(['success' => false, 'message' => 'Invalid QR code.']);
             }
@@ -43,6 +45,7 @@ class LoginController extends Controller
             return response()->json(['success' => false, 'message' => 'An error occurred.']);
         }
     }
+
 
 
 

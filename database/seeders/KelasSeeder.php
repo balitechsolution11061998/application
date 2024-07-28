@@ -11,8 +11,8 @@ class KelasSeeder extends Seeder
     {
         $classes = [];
 
-        // Kelas 1-12
-        for ($i = 1; $i <= 12; $i++) {
+        // Kelas 10-12
+        for ($i = 10; $i <= 10; $i++) {
             $classes[] = [
                 'name' => "Kelas $i",
                 'description' => "Kelas $i",

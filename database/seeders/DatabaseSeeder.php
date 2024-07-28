@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Jobs\AddUsersJob;
+use App\Jobs\SeedSoalJob;
 use App\Models\Cabang;
 use App\Models\Department;
 use App\Models\Jabatan;
@@ -167,9 +169,12 @@ class DatabaseSeeder extends Seeder
         $this->call(KelasSeeder::class);
         $this->call(RombelSeeder::class);
         $this->call(MataPelajaranSeeder::class);
-        $this->call(UserSeeder::class);
+        // $this->call(UserSeeder::class);
+        AddUsersJob::dispatch();
         $this->call(PaketSoalSeeder::class);
-        $this->call(SoalSeeder::class);
+        // $this->call(SoalSeeder::class);
+        SeedSoalJob::dispatch();
+
         $this->call(UjianSeeder::class);
 
 

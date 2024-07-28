@@ -18,19 +18,19 @@ class RombelSeeder extends Seeder
                 $grade = (int)$matches[1];
 
                 // Add Rombel entries for Bahasa, IPA, and IPS
-                if ($grade >= 1 && $grade <= 12) {
+                if ($grade >= 10 && $grade <= 10) {
                     $rombels[] = [
                         'kelas_id' => $kls->id,
                         'nama_rombel' => "Bahasa $grade"
                     ];
-                    $rombels[] = [
-                        'kelas_id' => $kls->id,
-                        'nama_rombel' => "IPA $grade"
-                    ];
-                    $rombels[] = [
-                        'kelas_id' => $kls->id,
-                        'nama_rombel' => "IPS $grade"
-                    ];
+                    // $rombels[] = [
+                    //     'kelas_id' => $kls->id,
+                    //     'nama_rombel' => "IPA $grade"
+                    // ];
+                    // $rombels[] = [
+                    //     'kelas_id' => $kls->id,
+                    //     'nama_rombel' => "IPS $grade"
+                    // ];
                 }
             }
         }

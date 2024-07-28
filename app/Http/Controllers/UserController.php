@@ -12,6 +12,7 @@ use App\Traits\LogsActivity;
 use Illuminate\Support\Facades\Validator;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -19,6 +20,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Response;
 use QrCode;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\HashHelper;
 
 class UserController extends Controller
 {
@@ -361,6 +363,52 @@ class UserController extends Controller
             return response()->json(['error' => 'Failed to generate QR code.'], 500);
         }
     }
+    public function profile(Request $request)
+    {
+        $hashedId = $request->query('id');
+        $user = User::with(['siswa.rombel.kelas', 'siswa.rombel.ujian.paketSoal'])->get()->first(function($user) use ($hashedId) {
+            return Hash::check($user->id, $hashedId);
+        });
+
+        $currentUjian = null;
+        $now = now(); // Get current datetime
+
+        if ($user && $user->siswa && $user->siswa->rombel) {
+            $currentUjian = $user->siswa->rombel->ujian->filter(function($ujian) use ($now) {
+                $ujianStartTime = \Carbon\Carbon::parse($ujian->waktu_mulai);
+                $ujianEndTime = $ujianStartTime->copy()->addMinutes($ujian->durasi); // Assuming 'durasi' is the exam duration in minutes
+
+                return $now->between($ujianStartTime, $ujianEndTime);
+            });
+
+            if ($currentUjian && $currentUjian->isNotEmpty()) {
+                $ujianIds = $currentUjian->pluck('id');
+                $hasUjianHistory = \App\Models\UjianHistory::whereIn('ujian_id', $ujianIds)
+                    ->where('siswa_id', $user->siswa->id)
+                    ->exists();
+
+                if ($hasUjianHistory) {
+                    $currentUjian = null; // Set currentUjian to null if there's a history
+                }
+            }
+        }
+
+        if ($user) {
+            return view('users.profile', [
+                'user' => $user,
+                'currentUjian' => $currentUjian,
+            ])->with('error', $currentUjian ? null : 'Tidak ada ujian saat ini.');
+        } else {
+            return redirect()->route('login')->with('error', 'Invalid user.');
+        }
+    }
+
+
+
+
+
+
+
 
 
 

@@ -99,6 +99,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::post('/konfigurasi/store', 'UserController@konfigurasiStore');
         Route::post('/konfigurasi/storeByDate', 'UserController@storeByDate');
         Route::get('/{userId}/generate-qr-code', 'UserController@generateQRCode');
+        Route::get('/profile', 'UserController@profile')->name('dataEdit');
 
 
     });
@@ -247,6 +248,10 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::post('/update/{id}', 'UjianController@update')->name('update');
         Route::delete('/delete/{id}', 'UjianController@destroy')->name('destroy');
         Route::get('/options', 'UjianController@dataoptions')->name('options');
+        Route::get('/start/{ujian_id}/{nis}/{paketSoal_id}', 'UjianController@start')->name('start');
+        Route::get('/show', 'UjianController@show')->name('show');
+        Route::post('/end', 'UjianController@end')->name('end');
+        Route::get('/hasil-ujian/{id}', 'UjianController@showHasilUjian')->name('hasil-ujian');
     });
 
 });

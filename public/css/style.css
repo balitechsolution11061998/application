@@ -1717,3 +1717,14 @@ nav ul li a.active {
 .burger-menu.active .bar:nth-child(3) {
     transform: rotate(-45deg) translateY(-8px);
 }
+/* Default styles for light mode */
+.form-label {
+    color: black;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+    .form-label {
+        color: white;
+    }
+}
