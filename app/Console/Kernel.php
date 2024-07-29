@@ -15,6 +15,10 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->job(ProcessAudioFiles::class)->everyFifteenMinutes();
 
+        $schedule->command('queue:work --stop-when-empty')
+             ->everyMinute()
+             ->withoutOverlapping();
+
     }
 
     /**

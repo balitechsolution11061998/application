@@ -23,6 +23,7 @@ Route::get('/scanbarcode', function(){
     return view('auth.scanbarcode');
 });
 Route::get('/formlogin', [LoginController::class, 'index'])->name('formlogin');
+Route::get('/formlogins', [LoginController::class, 'index1'])->name('formlogins');
 Route::post('/formlogin/check_login', [LoginController::class, 'check_login'])->name('formlogin.check_login');
 Route::post('/login-with-qr', [LoginController::class, 'loginWithQrCode']);
 
