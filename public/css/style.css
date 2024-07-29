@@ -1728,3 +1728,17 @@ nav ul li a.active {
         color: white;
     }
 }
+
+.custom-dropdown-menu {
+    background-color: white; /* Set the background color to white */
+    border: 1px solid #dee2e6; /* Optional: Add a border to match Bootstrap's default dropdown */
+    border-radius: .25rem; /* Optional: Round the corners */
+}
+
+.custom-dropdown-menu .dropdown-item {
+    color: #495057; /* Set text color for better visibility on white background */
+}
+
+.custom-dropdown-menu .form-check-input:checked ~ .form-check-label {
+    color: #007bff; /* Change label color when checkbox is checked */
+}

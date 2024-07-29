@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Bali Tech Solution - home</title>
+    <title>Application - home</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="Free HTML Templates" name="keywords" />
     <meta content="Free HTML Templates" name="description" />
@@ -46,7 +46,7 @@
           style="font-size: 50px"
         >
           <i class="flaticon-043-teddy-bear"></i>
-          <span class="text-primary">Bali Tech Solution</span>
+          <span class="text-primary">Application</span>
         </a>
         <button
           type="button"
@@ -827,7 +827,7 @@
             style="font-size: 40px; line-height: 40px"
           >
             <i class="flaticon-043-teddy-bear"></i>
-            <span class="text-white">Bali Tech Solution</span>
+            <span class="text-white">Application</span>
           </a>
           <p>
             Labore dolor amet ipsum ea, erat sit ipsum duo eos. Volup amet ea

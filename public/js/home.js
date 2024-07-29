@@ -8,8 +8,12 @@ $(document).ready(function() {
  fetchPoDataPerDays();
 
 
+
+
 });
 document.getElementById('filter-date').addEventListener('change', fetchPoDataPerDays);
+
+
 
 async function fetchPoDataPerDays() {
     const spinner = document.getElementById('spinner-po');
@@ -56,22 +60,27 @@ async function fetchPoDataPerDays() {
         function initializeChart() {
             const seriesName = [];
             const seriesData = [];
+            const seriesColors = [];
 
             if (showExpired.checked) {
                 seriesName.push('Expired');
                 seriesData.push(expired);
+                seriesColors.push('#dc3545');
             }
             if (showCompleted.checked) {
                 seriesName.push('Completed');
                 seriesData.push(completed);
+                seriesColors.push('#28a745');
             }
             if (showConfirmed.checked) {
                 seriesName.push('Confirmed');
                 seriesData.push(confirmed);
+                seriesColors.push('#007bff');
             }
             if (showInProgress.checked) {
                 seriesName.push('In Progress');
                 seriesData.push(inProgress);
+                seriesColors.push('#ffc107');
             }
 
             if (chart) {
@@ -81,7 +90,8 @@ async function fetchPoDataPerDays() {
             const options = {
                 series: seriesData.map((data, index) => ({
                     name: seriesName[index],
-                    data: data
+                    data: data,
+                    color: seriesColors[index]
                 })),
                 chart: {
                     height: 350,
@@ -128,7 +138,7 @@ async function fetchPoDataPerDays() {
                     },
                     labels: {
                         formatter: function (value) {
-                            return formatRupiah(value);
+                            return value;
                         }
                     }
                 },
@@ -138,7 +148,7 @@ async function fetchPoDataPerDays() {
                 tooltip: {
                     y: {
                         formatter: function (val) {
-                            return formatRupiah(val);
+                            return val;
                         }
                     }
                 }
@@ -157,13 +167,12 @@ async function fetchPoDataPerDays() {
             if (selectedValue === 'qty') {
                 initializeChart();
             } else if (selectedValue === 'cost') {
-                const seriesName = ['Total Cost'];
-                const seriesData = [totalCost];
                 const options = {
-                    series: seriesData.map((data, index) => ({
-                        name: seriesName[index],
-                        data: data
-                    })),
+                    series: [{
+                        name: 'Total Cost',
+                        data: totalCost,
+                        color: '#17a2b8'
+                    }],
                     chart: {
                         height: 350,
                         type: 'bar',
@@ -246,6 +255,7 @@ async function fetchPoDataPerDays() {
         spinner.style.display = 'none';
     }
 }
+
 
 
 
