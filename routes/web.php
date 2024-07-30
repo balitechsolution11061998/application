@@ -45,6 +45,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/data', 'OrdHeadController@data')->name('data');
         Route::get('/download', 'OrdHeadController@download')->name('download');
         Route::get('/count', 'OrdHeadController@count')->name('count');
+        Route::get('/delivery', 'OrdHeadController@delivery')->name('delivery');
 
     });
 

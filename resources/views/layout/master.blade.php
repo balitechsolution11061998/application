@@ -48,6 +48,8 @@
     <link rel="stylesheet" href="{{ asset('css/jquery.fancybox.min.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Evergreen+Memories&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMhXoq9Z2R9rFmgLfu7v5OfmwLf1j5R93Xy5tD" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.css" rel="stylesheet" />
+    <link href="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css') }}" rel="stylesheet" type="text/css" />
 
     <!--end::Javascript-->
 </head>
@@ -93,6 +95,7 @@
 <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.11.3/echo.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
+<script src="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.js') }}"></script>
 
 
 <!--end::Custom Javascript-->
@@ -102,6 +105,8 @@
 
 <script>
     let chart;
+    var calendar;
+
     document.addEventListener('livewire:load', () => {
         Livewire.on('success', (message) => {
             toastr.success(message);

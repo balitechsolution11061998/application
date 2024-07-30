@@ -1742,3 +1742,64 @@ nav ul li a.active {
 .custom-dropdown-menu .form-check-input:checked ~ .form-check-label {
     color: #007bff; /* Change label color when checkbox is checked */
 }
+
+.alert-red {
+    color: red; /* Change to your preferred styling */
+    font-weight: bold;
+}
+.timeline-container {
+    flex: 1; /* Allow the container to grow and fill available space */
+    overflow-y: auto; /* Add scrolling if content overflows */
+}
+/* CSS for tab bullets */
+.bullet-custom {
+    transition: all 0.3s ease-in-out; /* Adjust duration and easing as needed */
+}
+
+/* CSS for the default state of the bullet */
+.nav-pills-custom .nav-link {
+    position: relative;
+}
+
+.nav-pills-custom .nav-link.active .bullet-custom {
+    background-color: #007bff; /* Change color to primary when active */
+    bottom: 0; /* Position at the bottom */
+    height: 4px; /* Adjust height */
+    width: 100%; /* Full width */
+    border-radius: 4px; /* Rounded corners */
+}
+    /* Event badge colors */
+    .bg-purple {
+        background-color: #ffffff !important; /* Purple for events not today */
+    }
+
+    .bg-warning {
+        background-color: #ffc107 !important; /* Yellow for events today */
+    }
+
+    /* Event content styling */
+    .event-content {
+        display: flex;
+        align-items: center;
+        background-color: #f8f9fa; /* Light background for events */
+        border: 1px solid #dee2e6; /* Border color */
+        border-radius: 8px; /* Rounded corners */
+        padding: 10px; /* Padding inside the event box */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+        margin-bottom: 8px; /* Space between events */
+    }
+
+    .event-content i {
+        margin-right: 10px; /* Space between icon and text */
+        color: white; /* White icon color */
+        background-color: #007bff; /* Match the primary badge color */
+        border-radius: 50%; /* Circular icon background */
+        padding: 8px; /* Padding inside the icon circle */
+        font-size: 16px; /* Icon size */
+    }
+
+    .event-content span {
+        font-size: 14px; /* Font size */
+        color: #495057; /* Darker text color */
+        font-weight: bold; /* Bold text */
+    }

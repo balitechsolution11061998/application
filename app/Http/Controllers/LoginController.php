@@ -24,10 +24,7 @@ class LoginController extends Controller
     }
 
 
-    public function index1()
-    {
-        return view('auth.login1');
-    }
+
     public function __construct(AuthService $authService)
     {
         $this->authService = $authService;
@@ -47,6 +44,7 @@ class LoginController extends Controller
                 return response()->json(['success' => false, 'message' => 'Invalid QR code.']);
             }
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return response()->json(['success' => false, 'message' => 'An error occurred.']);
         }
     }
