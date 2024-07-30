@@ -1838,3 +1838,54 @@ nav ul li a.active {
 }
 /* Hide events initially */
 
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.card-header {
+    background-color: #17a2b8;
+    color: white;
+}
+
+#spinner-detail i,
+#spinner-student i,
+#spinner-kelas i {
+    font-size: 2rem;
+    color: #17a2b8;
+}
+
+.table thead {
+    background-color: #343a40;
+    color: white;
+}
+
+.table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.icon-animate {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.equal-height {
+    height: 100%;
+}
+
+.card {
+    width: 100%;
+}

@@ -8,6 +8,7 @@ use App\Models\Rombel;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\SiswaImport;
+use App\Models\Kelas;
 use App\Models\User;
 
 class SiswaController extends Controller
@@ -77,6 +78,30 @@ class SiswaController extends Controller
         Siswa::findOrFail($id)->delete();
         return response()->json(['success' => 'Siswa deleted successfully.']);
     }
+
+    public function getStudentData()
+    {
+        $total = Siswa::count();
+        $male = Siswa::where('jenis_kelamin', 'L')->count();
+        $female = Siswa::where('jenis_kelamin', 'P')->count();
+
+        $students = Siswa::with('rombel.kelas')->get();
+
+        // Group students by rombel and kelas and count the number of students in each group
+        $rombelKelasCounts = $students->groupBy(function($student) {
+            return $student->rombel->nama_rombel . ' - ' . $student->rombel->kelas->name;
+        })->map(function ($group) {
+            return $group->count();
+        });
+
+        return response()->json([
+            'total' => $total,
+            'male' => $male,
+            'female' => $female,
+            'rombelKelasCounts' => $rombelKelasCounts,
+        ]);
+    }
+
 
     public function data()
     {

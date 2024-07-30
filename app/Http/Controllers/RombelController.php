@@ -22,6 +22,15 @@ class RombelController extends Controller
         return response()->json($rombel);
     }
 
+    public function getRombelData()
+{
+    $rombels = Rombel::count();
+
+    return response()->json([
+        'rombelCounts' => $rombels,
+    ]);
+}
+
     public function data()
     {
         return datatables()->of(Rombel::with('kelas')->select('rombels.*'))

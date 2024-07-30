@@ -25,6 +25,15 @@ class KelasController extends Controller
             ->make(true);
     }
 
+    public function getKelasData()
+{
+    $total_kelas = Kelas::count();
+
+    return response()->json([
+        'total_kelas' => $total_kelas,
+    ]);
+}
+
     public function dataoptions()
     {
         // Fetch all classes

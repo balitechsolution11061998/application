@@ -7,6 +7,9 @@ $(document).ready(function () {
     fetchPoData();
     fetchPoDataPerDays();
     fetchTimelineConfirmedData();
+    fetchStudentData();
+    fetchKelasData();
+    fetchRombelData();
 });
 document
     .getElementById("filter-date")
@@ -60,7 +63,39 @@ document
         calendar.render();
     }
 
+    function fetchKelasData() {
+        document.getElementById('spinner-kelas').style.display = 'block';
 
+        fetch('/kelas/getKelasData')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('spinner-kelas').style.display = 'none';
+
+                document.getElementById('kelas-content').textContent = data.total_kelas;
+            })
+            .catch(error => {
+                console.error('Error fetching class data:', error);
+                document.getElementById('spinner-kelas').style.display = 'none';
+            });
+    }
+
+    function fetchRombelData() {
+        document.getElementById('spinner-rombel').style.display = 'block';
+
+        fetch('/rombel/getRombelData')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('spinner-rombel').style.display = 'none';
+
+                document.getElementById('rombel-content').textContent = data.rombelCounts;
+
+
+            })
+            .catch(error => {
+                console.error('Error fetching rombel data:', error);
+                document.getElementById('spinner-rombel').style.display = 'none';
+            });
+    }
 
 
 // Button click to show modal and initialize calendar
@@ -75,6 +110,55 @@ $("#deliveryModalBtn").on("click", function () {
         `);
     fetchTimelineConfirmedData(); // Fetch and display data when modal is shown
 });
+
+const showMoreButton = document.getElementById('show-more-button');
+const additionalDetails = document.getElementById('additional-details');
+
+showMoreButton.addEventListener('click', function() {
+    if (additionalDetails.style.display === 'none' || additionalDetails.style.display === '') {
+        additionalDetails.style.display = 'block';
+        showMoreButton.innerHTML = '<i class="fas fa-minus-circle"></i> Show Less';
+    } else {
+        additionalDetails.style.display = 'none';
+        showMoreButton.innerHTML = '<i class="fas fa-plus-circle"></i> Show More';
+    }
+});
+
+function fetchStudentData() {
+    document.getElementById('spinner-student').style.display = 'block';
+
+    fetch('/siswa/getStudentData')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('spinner-student').style.display = 'none';
+
+            document.getElementById('student-content').textContent = data.total;
+            document.getElementById('male-count').textContent = `Laki-laki: ${data.male}`;
+            document.getElementById('female-count').textContent = `Perempuan: ${data.female}`;
+
+            // Handle the Rombel and Kelas counts
+            let rombelTableBody = document.getElementById('rombel-table-body');
+
+            // Clear existing rows
+            rombelTableBody.innerHTML = '';
+
+            for (let [rombelKelas, count] of Object.entries(data.rombelKelasCounts)) {
+                let row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${rombelKelas}</td>
+                    <td>${count}</td>
+                `;
+                rombelTableBody.appendChild(row);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching student data:', error);
+            document.getElementById('spinner-student').style.display = 'none';
+        });
+}
+
+
+
 
 function fetchTimelineConfirmedData() {
     var apiUrl = "/po/delivery";
@@ -557,28 +641,28 @@ function fetchJumlahCuti() {
                 response.count +
                 "</div>";
             $("#leave-content").html(content);
-            Toastify({
-                text: "Cuti count loaded successfully",
-                duration: 3000,
-                close: true,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#4CAF50",
-                stopOnFocus: true,
-            }).showToast();
+            // Toastify({
+            //     text: "Cuti count loaded successfully",
+            //     duration: 3000,
+            //     close: true,
+            //     gravity: "top",
+            //     position: "right",
+            //     backgroundColor: "#4CAF50",
+            //     stopOnFocus: true,
+            // }).showToast();
         },
         error: function (error) {
             $("#spinner-leave").hide(); // Hide spinner
             console.log("Error fetching data", error);
-            Toastify({
-                text: "Error loading cuti count",
-                duration: 3000,
-                close: true,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#FF0000",
-                stopOnFocus: true,
-            }).showToast();
+            // Toastify({
+            //     text: "Error loading cuti count",
+            //     duration: 3000,
+            //     close: true,
+            //     gravity: "top",
+            //     position: "right",
+            //     backgroundColor: "#FF0000",
+            //     stopOnFocus: true,
+            // }).showToast();
         },
     });
 }
@@ -595,28 +679,28 @@ function fetchCabangCount() {
                 response.count +
                 "</div>";
             $("#cabang-content").html(content);
-            Toastify({
-                text: "Cabang count loaded successfully",
-                duration: 3000,
-                close: true,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#4CAF50",
-                stopOnFocus: true,
-            }).showToast();
+            // Toastify({
+            //     text: "Cabang count loaded successfully",
+            //     duration: 3000,
+            //     close: true,
+            //     gravity: "top",
+            //     position: "right",
+            //     backgroundColor: "#4CAF50",
+            //     stopOnFocus: true,
+            // }).showToast();
         },
         error: function (error) {
             $("#spinner-cabang").hide(); // Hide spinner
             console.log("Error fetching data", error);
-            Toastify({
-                text: "Error loading cabang count",
-                duration: 3000,
-                close: true,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#FF0000",
-                stopOnFocus: true,
-            }).showToast();
+            // Toastify({
+            //     text: "Error loading cabang count",
+            //     duration: 3000,
+            //     close: true,
+            //     gravity: "top",
+            //     position: "right",
+            //     backgroundColor: "#FF0000",
+            //     stopOnFocus: true,
+            // }).showToast();
         },
     });
 }
@@ -633,28 +717,28 @@ function fetchDepartmentCount() {
                 response.count +
                 "</div>";
             $("#department-content").html(content);
-            Toastify({
-                text: "Department count loaded successfully",
-                duration: 3000,
-                close: true,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#4CAF50",
-                stopOnFocus: true,
-            }).showToast();
+            // Toastify({
+            //     text: "Department count loaded successfully",
+            //     duration: 3000,
+            //     close: true,
+            //     gravity: "top",
+            //     position: "right",
+            //     backgroundColor: "#4CAF50",
+            //     stopOnFocus: true,
+            // }).showToast();
         },
         error: function (error) {
             $("#spinner-department").hide(); // Hide spinner
             console.log("Error fetching data", error);
-            Toastify({
-                text: "Error loading department count",
-                duration: 3000,
-                close: true,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#FF0000",
-                stopOnFocus: true,
-            }).showToast();
+            // Toastify({
+            //     text: "Error loading department count",
+            //     duration: 3000,
+            //     close: true,
+            //     gravity: "top",
+            //     position: "right",
+            //     backgroundColor: "#FF0000",
+            //     stopOnFocus: true,
+            // }).showToast();
         },
     });
 }
@@ -684,15 +768,15 @@ function fetchListCuti() {
                         "</div>";
                 });
                 $("#listleave-content").html(content);
-                Toastify({
-                    text: "Data cuti loaded successfully",
-                    duration: 3000,
-                    close: true,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "#4CAF50",
-                    stopOnFocus: true,
-                }).showToast();
+                // Toastify({
+                //     text: "Data cuti loaded successfully",
+                //     duration: 3000,
+                //     close: true,
+                //     gravity: "top",
+                //     position: "right",
+                //     backgroundColor: "#4CAF50",
+                //     stopOnFocus: true,
+                // }).showToast();
             } else {
                 $("#listleave-content").html(
                     '<div class="not-found-message">' +
@@ -763,15 +847,15 @@ function fetchJamKerja() {
                         "</div>";
                 });
                 $("#jam-kerja-content").html(content);
-                Toastify({
-                    text: "Data jam kerja loaded successfully",
-                    duration: 3000,
-                    close: true,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "#4CAF50",
-                    stopOnFocus: true,
-                }).showToast();
+                // Toastify({
+                //     text: "Data jam kerja loaded successfully",
+                //     duration: 3000,
+                //     close: true,
+                //     gravity: "top",
+                //     position: "right",
+                //     backgroundColor: "#4CAF50",
+                //     stopOnFocus: true,
+                // }).showToast();
             } else {
                 $("#jam-kerja-content").html(
                     '<div class="not-found-message">' +

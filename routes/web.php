@@ -203,6 +203,8 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('{id}/edit', 'KelasController@edit')->name('edit');
         Route::delete('/delete/{id}', 'KelasController@destroy')->name('destroy');
         Route::get('/options', 'KelasController@dataoptions')->name('options');
+        Route::get('/getKelasData', 'KelasController@getKelasData');
+
     });
 
     Route::prefix('rombel')->name('rombel.')->namespace('App\Http\Controllers')->group(function () {
@@ -212,11 +214,14 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('{id}/edit', 'RombelController@edit')->name('edit');
         Route::delete('/delete/{id}', 'RombelController@destroy')->name('destroy');
         Route::get('/options', 'RombelController@getRombelOptions')->name('getRombelOptions');
+        Route::get('/getRombelData', 'RombelController@getRombelData')->name('getRombelData');
+
     });
 
     Route::prefix('siswa')->name('siswa.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/index', 'SiswaController@index')->name('index');
         Route::get('/data', 'SiswaController@data')->name('data');
+        Route::get('/getStudentData', 'SiswaController@getStudentData')->name('getStudentData');
         Route::post('/store', 'SiswaController@store')->name('store');
         Route::get('{id}/edit', 'SiswaController@edit')->name('edit');
         Route::delete('/delete/{id}', 'SiswaController@destroy')->name('destroy');
