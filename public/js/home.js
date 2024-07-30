@@ -50,11 +50,17 @@ document
             eventContent: function(info) {
                 // Render HTML content from extendedProps
                 return { html: info.event.extendedProps.htmlContent };
+            },
+            // Optional: Handle animation after rendering
+            eventsSet: function() {
+                // Add any additional logic if needed
             }
         });
 
         calendar.render();
     }
+
+
 
 
 // Button click to show modal and initialize calendar

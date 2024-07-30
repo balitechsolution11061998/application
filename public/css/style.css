@@ -1803,3 +1803,38 @@ nav ul li a.active {
         color: #495057; /* Darker text color */
         font-weight: bold; /* Bold text */
     }
+/* Container for the calendar events */
+.fc-daygrid-day-events {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: 10px; /* Space between columns */
+}
+
+/* Style for each event */
+.fc-event {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    cursor: pointer; /* Show pointer cursor on hover */
+    border-radius: 4px;
+    padding: 5px;
+}
+.fc-event-hidden {
+    display: none !important;
+}
+/* Keyframes for scale-up animation on hover */
+@keyframes scaleUp {
+    from { transform: scale(1); }
+    to { transform: scale(1.1); }
+}
+
+/* Keyframes for color change animation on hover */
+@keyframes colorChange {
+    from { background-color: rgba(255, 255, 0, 0.5); }
+    to { background-color: rgba(255, 165, 0, 0.5); }
+}
+
+/* Hover effect */
+.fc-event:hover {
+    animation: scaleUp 0.3s ease forwards, colorChange 0.3s ease forwards;
+}
+/* Hide events initially */
+
