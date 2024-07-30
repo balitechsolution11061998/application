@@ -235,6 +235,8 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::post('/update/{id}', 'MataPelajaranController@update')->name('update');
         Route::delete('/delete/{id}', 'MataPelajaranController@destroy')->name('destroy');
         Route::get('/options', 'MataPelajaranController@dataoptions')->name('options');
+        Route::get('/getMataPelajaranData', 'MataPelajaranController@getMataPelajaranData')->name('getMataPelajaranData');
+
     });
 
     Route::prefix('soal')->name('soal.')->namespace('App\Http\Controllers')->group(function () {

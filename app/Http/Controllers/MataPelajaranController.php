@@ -26,7 +26,18 @@ class MataPelajaranController extends Controller
             ->rawColumns(['action'])
             ->make(true);
     }
+    public function getMataPelajaranData()
+    {
+        // Fetch total Mata Pelajaran count
+        $totalMataPelajaran = MataPelajaran::count();
 
+        // Fetch detailed breakdown
+
+
+        return response()->json([
+            'total_mata_pelajaran' => $totalMataPelajaran,
+        ]);
+    }
 
     public function store(Request $request)
     {

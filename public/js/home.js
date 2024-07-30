@@ -10,6 +10,7 @@ $(document).ready(function () {
     fetchStudentData();
     fetchKelasData();
     fetchRombelData();
+    fetchMataPelajaranData();
 });
 document
     .getElementById("filter-date")
@@ -62,6 +63,34 @@ document
 
         calendar.render();
     }
+
+    function fetchMataPelajaranData() {
+        document.getElementById('spinner-mata-pelajaran').style.display = 'block';
+
+        fetch('/mata-pelajaran/getMataPelajaranData')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('spinner-mata-pelajaran').style.display = 'none';
+                document.getElementById('mata-pelajaran-content').textContent = data.total_mata_pelajaran;
+
+                let mataPelajaranTableBody = document.getElementById('mata-pelajaran-table-body');
+                mataPelajaranTableBody.innerHTML = '';
+
+                data.mataPelajaranCounts.forEach(item => {
+                    let row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.name}</td>
+                        <td>${item.count}</td>
+                    `;
+                    mataPelajaranTableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching mata pelajaran data:', error);
+                document.getElementById('spinner-mata-pelajaran').style.display = 'none';
+            });
+    }
+
 
     function fetchKelasData() {
         document.getElementById('spinner-kelas').style.display = 'block';
@@ -811,6 +840,7 @@ function fetchListCuti() {
         },
     });
 }
+
 
 function fetchJamKerja() {
     $("#spinner").show(); // Show spinner

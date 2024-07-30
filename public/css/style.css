@@ -1850,7 +1850,9 @@ nav ul li a.active {
 
 #spinner-detail i,
 #spinner-student i,
-#spinner-kelas i {
+#spinner-kelas i,
+#spinner-rombel i,
+#spinner-mata-pelajaran i {
     font-size: 2rem;
     color: #17a2b8;
 }
