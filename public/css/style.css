@@ -1857,14 +1857,7 @@ nav ul li a.active {
     color: #17a2b8;
 }
 
-.table thead {
-    background-color: #343a40;
-    color: white;
-}
 
-.table tbody tr:hover {
-    background-color: #f1f1f1;
-}
 
 .icon-animate {
     animation: pulse 2s infinite;

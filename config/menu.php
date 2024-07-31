@@ -92,6 +92,18 @@ return [
             'route'          => 'ujian.index', // Ensure this route exists in your web.php routes file
         ],
         [
+            'label'          => 'Siswa',
+            'type'           => 'item',
+            'route'          => 'siswa.index',
+            'active'         => ['siswa-show'],
+            'permission'     => ['siswa-show'],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-user',
+            'iconPath'       => '',
+
+        ],
+        [
             'label' => 'User',
             'type' => 'heading'
         ],
@@ -133,15 +145,7 @@ return [
                     'permissionType' => 'gate',
                     'icon'           => 'dot',
                 ],
-                [
-                    'label'          => 'Siswa',
-                    'type'           => 'item',
-                    'route'          => 'siswa.index',
-                    'active'         => ['siswa-show'],
-                    'permission'     => ['siswa-show'],
-                    'permissionType' => 'gate',
-                    'icon'           => 'dot',
-                ],
+
             ]
         ],
         [

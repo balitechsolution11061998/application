@@ -144,6 +144,7 @@ const showMoreButton = document.getElementById('show-more-button');
 const additionalDetails = document.getElementById('additional-details');
 
 showMoreButton.addEventListener('click', function() {
+    console.log("masuk sini");
     if (additionalDetails.style.display === 'none' || additionalDetails.style.display === '') {
         additionalDetails.style.display = 'block';
         showMoreButton.innerHTML = '<i class="fas fa-minus-circle"></i> Show Less';
@@ -638,8 +639,15 @@ async function fetchPoData() {
     const spinner = document.getElementById("spinner-po");
     const poContent = document.getElementById("po-content");
 
+    // Check if elements exist
+    if (!spinner || !poContent) {
+        console.error("Spinner or PO content element not found");
+        return;
+    }
+
     // Show the spinner while fetching data
     spinner.style.display = "block";
+    poContent.style.display = "none"; // Hide the content initially
 
     try {
         const response = await fetch("/po/count"); // Replace with your API endpoint
@@ -650,6 +658,7 @@ async function fetchPoData() {
         console.log(data, "data");
         // Update the content with fetched data
         poContent.textContent = formatRupiah(data.data.totalCost); // Adjust according to your data structure
+        poContent.style.display = "block"; // Show the content if data is fetched successfully
     } catch (error) {
         console.error("Error fetching PO data:", error);
     } finally {
