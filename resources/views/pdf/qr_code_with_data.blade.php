@@ -51,7 +51,7 @@
         <h1>QR Code for {{ $user->name }}</h1>
         <div class="student-info">
             <p><strong>Name:</strong> {{ $user->name }}</p>
-            <p><strong>Class:</strong> {{ $student->rombel->name }}</p>
+            <p><strong>Class:</strong> {{ $student->rombel->nama_rombel }}</p>
             <p><strong>NIS:</strong> {{ $student->nis }}</p>
             <p><strong>Gender:</strong> {{ $student->gender }}</p>
         </div>
