@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Response;
 use QrCode;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\HashHelper;
+use App\Models\Siswa;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class UserController extends Controller
 {
@@ -208,6 +210,33 @@ class UserController extends Controller
             return Response::json(['error' => 'Failed to delete user', 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function downloadQRCodePDF($userId)
+    {
+        // Fetch user and related student data
+        $user = User::with('siswa')->find($userId);
+
+        if (!$user) {
+            return abort(404, 'User not found');
+        }
+
+        $student = $user->siswa;
+
+        // Generate QR code as a base64 image
+        $qrCode = \QrCode::format('png')->size(200)->generate($user->qr_code);
+
+        // Pass data to the PDF view
+        $pdf = Pdf::loadView('pdf.qr_code_with_data', [
+            'user' => $user,
+            'student' => $student,
+            'qrCode' => $qrCode,
+        ]);
+
+        // Return the generated PDF for download
+        return $pdf->download("qr-code-{$userId}.pdf");
+    }
+
+
 
     public function sendAccountDetails(Request $request)
     {

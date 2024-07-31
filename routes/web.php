@@ -102,6 +102,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::post('/konfigurasi/storeByDate', 'UserController@storeByDate');
         Route::get('/{userId}/generate-qr-code', 'UserController@generateQRCode');
         Route::get('/profile', 'UserController@profile')->name('dataEdit');
+        Route::get('/{userId}/download-qr-code-pdf', 'UserController@downloadQRCodePDF');
 
 
     });

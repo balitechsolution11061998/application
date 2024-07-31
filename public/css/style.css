@@ -1884,3 +1884,16 @@ nav ul li a.active {
 .card {
     width: 100%;
 }
+/* Custom SweetAlert2 modal styles */
+.swal2-custom-modal-white {
+    background-color: white !important;
+    color: black !important;
+}
+
+.swal2-custom-title-black {
+    color: black !important;
+}
+
+.swal2-custom-title-black {
+    color: black;
+}
