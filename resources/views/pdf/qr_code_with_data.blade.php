@@ -53,7 +53,7 @@
             <p><strong>Name:</strong> {{ $user->name }}</p>
             <p><strong>Class:</strong> {{ $student->rombel->nama_rombel }}</p>
             <p><strong>NIS:</strong> {{ $student->nis }}</p>
-            <p><strong>Gender:</strong> {{ $student->gender }}</p>
+            <p><strong>Gender:</strong> {{ $student->jenis_kelamin }}</p>
         </div>
         <div class="qr-code">
             <img src="data:image/png;base64,{{ base64_encode($qrCode) }}" alt="QR Code">
