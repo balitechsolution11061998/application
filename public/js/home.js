@@ -75,7 +75,7 @@ document
                 document.getElementById('mata-pelajaran-content').textContent = data.total_mata_pelajaran;
 
                 let mataPelajaranTableBody = document.getElementById('mata-pelajaran-table-body');
-                mataPelajaranTableBody.innerHTML = '';
+                mataPelajaranTableBody.innerHTML = ''; // Ensure element exists
 
                 data.mataPelajaranCounts.forEach(item => {
                     let row = document.createElement('tr');
@@ -91,6 +91,7 @@ document
                 document.getElementById('spinner-mata-pelajaran').style.display = 'none';
             });
     }
+
 
 
     function fetchKelasData() {
@@ -141,24 +142,24 @@ $("#deliveryModalBtn").on("click", function () {
     fetchTimelineConfirmedData(); // Fetch and display data when modal is shown
 });
 
-function fetchHistoryUjian(){
+function fetchHistoryUjian() {
     $.ajax({
         url: '/ujian/fetchHistory',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
-            let tableBody = $('#rombel-table-body');
+            let tableBody = $('#historyUjian-table-body');
             tableBody.empty(); // Clear any existing data
 
             // Iterate over the data and append rows to the table
             data.forEach(function(row) {
                 tableBody.append(`
                     <tr>
+                        <td>${row.siswa_name}</td>
                         <td>${row.rombel_name} - ${row.kelas_name}</td>
-                        <td>${row.jumlah_siswa}</td>
                         <td>${row.jumlah_benar}</td>
                         <td>${row.jumlah_salah}</td>
-                        <td>${row.total_nilai.toFixed(2)}</td>
+                        <td>${row.total_nilai}</td>
                     </tr>
                 `);
             });
@@ -171,6 +172,7 @@ function fetchHistoryUjian(){
         }
     });
 }
+
 
 function fetchStudentData() {
     document.getElementById('spinner-student').style.display = 'block';

@@ -143,20 +143,20 @@ class UjianController extends Controller
         $histories = DB::table('ujian_histories')
             ->join('siswas', 'ujian_histories.siswa_id', '=', 'siswas.id')
             ->join('rombels', 'siswas.rombel_id', '=', 'rombels.id')
-            ->join('kelas', 'rombels.kelas_id', '=', 'kelas.id')  // Corrected join with 'kelas'
+            ->join('kelas', 'rombels.kelas_id', '=', 'kelas.id')
             ->select(
+                'siswas.nama as siswa_name', // Add student's name
                 'rombels.nama_rombel as rombel_name',
                 'kelas.name as kelas_name',
-                DB::raw('count(ujian_histories.siswa_id) as jumlah_siswa'),
-                DB::raw('SUM(ujian_histories.jumlah_benar) as jumlah_benar'),
-                DB::raw('SUM(ujian_histories.jumlah_salah) as jumlah_salah'),
-                DB::raw('AVG(ujian_histories.total_nilai) as total_nilai')
+                'ujian_histories.jumlah_benar',
+                'ujian_histories.jumlah_salah',
+                'ujian_histories.total_nilai'
             )
-            ->groupBy('rombels.nama_rombel', 'kelas.name')  // Group by correct columns
             ->get();
-        // dd($histories);
+
         return response()->json($histories);
     }
+
 
 
 

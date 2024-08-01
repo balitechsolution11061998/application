@@ -200,14 +200,14 @@
                             <table class="table align-middle table-row-dashed fs-6 gy-5">
                                 <thead class="thead-dark">
                                     <tr>
+                                        <th>Siswa Name</th>
                                         <th>Rombel - Kelas</th>
-                                        <th>Jumlah Siswa</th>
                                         <th>Jumlah Benar</th>
                                         <th>Jumlah Salah</th>
                                         <th>Total Nilai</th>
                                     </tr>
                                 </thead>
-                                <tbody id="rombel-table-body">
+                                <tbody id="historyUjian-table-body">
                                     <!-- Data will be populated here -->
                                 </tbody>
                             </table>
