@@ -11,6 +11,7 @@ $(document).ready(function () {
     fetchKelasData();
     fetchRombelData();
     fetchMataPelajaranData();
+    fetchHistoryUjian();
 });
 document
     .getElementById("filter-date")
@@ -140,19 +141,36 @@ $("#deliveryModalBtn").on("click", function () {
     fetchTimelineConfirmedData(); // Fetch and display data when modal is shown
 });
 
-const showMoreButton = document.getElementById('show-more-button');
-const additionalDetails = document.getElementById('additional-details');
+function fetchHistoryUjian(){
+    $.ajax({
+        url: '/ujian/fetchHistory',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            let tableBody = $('#rombel-table-body');
+            tableBody.empty(); // Clear any existing data
 
-showMoreButton.addEventListener('click', function() {
-    console.log("masuk sini");
-    if (additionalDetails.style.display === 'none' || additionalDetails.style.display === '') {
-        additionalDetails.style.display = 'block';
-        showMoreButton.innerHTML = '<i class="fas fa-minus-circle"></i> Show Less';
-    } else {
-        additionalDetails.style.display = 'none';
-        showMoreButton.innerHTML = '<i class="fas fa-plus-circle"></i> Show More';
-    }
-});
+            // Iterate over the data and append rows to the table
+            data.forEach(function(row) {
+                tableBody.append(`
+                    <tr>
+                        <td>${row.rombel_name} - ${row.kelas_name}</td>
+                        <td>${row.jumlah_siswa}</td>
+                        <td>${row.jumlah_benar}</td>
+                        <td>${row.jumlah_salah}</td>
+                        <td>${row.total_nilai.toFixed(2)}</td>
+                    </tr>
+                `);
+            });
+
+            $('#spinner-detail').hide(); // Hide spinner after data is loaded
+        },
+        error: function() {
+            $('#spinner-detail').hide();
+            alert('Failed to load data');
+        }
+    });
+}
 
 function fetchStudentData() {
     document.getElementById('spinner-student').style.display = 'block';

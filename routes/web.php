@@ -262,6 +262,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/show', 'UjianController@show')->name('show');
         Route::post('/end', 'UjianController@end')->name('end');
         Route::get('/hasil-ujian/{id}', 'UjianController@showHasilUjian')->name('hasil-ujian');
+        Route::get('/fetchHistory', 'UjianController@fetchHistory')->name('fetchHistory');
     });
 
 });

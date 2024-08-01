@@ -100,9 +100,7 @@
                                 <a href="/students" class="btn btn-sm btn-primary mt-3">
                                     <i class="fas fa-user-graduate"></i> View Students
                                 </a>
-                                <button id="show-more-button" class="btn btn-sm btn-secondary mt-2">
-                                    <i class="fas fa-plus-circle"></i> Show More
-                                </button>
+
                             </div>
                         </div>
 
@@ -155,31 +153,7 @@
                     </div>
 
                     <!-- Additional Details Section -->
-                    <div id="additional-details" class="col-md-12 mt-4" style="display: none;">
-                        <div class="card shadow-sm border-light">
-                            <div class="card-header">
-                                <h2 class="section-title mb-0"><i class="fas fa-info-circle"></i> Detail Per Rombel</h2>
-                            </div>
-                            <div class="card-body">
-                                <div id="spinner-detail" class="text-center mb-3" style="display: none;">
-                                    <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
-                                </div>
-                                <div class="chart-container table-responsive">
-                                    <table class="table align-middle table-row-dashed fs-6 gy-5">
-                                        <thead class="thead-dark">
-                                            <tr>
-                                                <th>Rombel - Kelas</th>
-                                                <th>Jumlah Siswa</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="rombel-table-body">
-                                            <!-- Data will be populated here -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
                 @endcan
             </div>
@@ -187,6 +161,63 @@
 
         <!-- Rombel and Kelas Detail Card -->
 
+        <div class="row">
+            <div id="additional-details" class="col-md-6 mt-4">
+                <div class="card shadow-sm border-light">
+                    <div class="card-header">
+                        <h2 class="section-title mb-0"><i class="fas fa-info-circle"></i> Detail Per Rombel</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="spinner-detail" class="text-center mb-3" style="display: none;">
+                            <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+                        </div>
+                        <div class="chart-container table-responsive">
+                            <table class="table align-middle table-row-dashed fs-6 gy-5">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Rombel - Kelas</th>
+                                        <th>Jumlah Siswa</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rombel-table-body">
+                                    <!-- Data will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm border-light">
+                    <div class="card-header">
+                        <h2 class="section-title mb-0"><i class="fas fa-info-circle"></i>History Ujian</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="spinner-detail" class="text-center mb-3" style="display: none;">
+                            <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+                        </div>
+                        <div class="chart-container table-responsive">
+                            <table class="table align-middle table-row-dashed fs-6 gy-5">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Rombel - Kelas</th>
+                                        <th>Jumlah Siswa</th>
+                                        <th>Jumlah Benar</th>
+                                        <th>Jumlah Salah</th>
+                                        <th>Total Nilai</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rombel-table-body">
+                                    <!-- Data will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
 
 
 
