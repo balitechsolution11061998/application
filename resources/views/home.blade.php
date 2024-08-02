@@ -423,70 +423,92 @@
                 </div>
 
                 <div class="col-xl-8">
-                    <div class="card card-bordered">
+                    <div class="card card-bordered" data-intro="This section displays Purchase Order data filtered by month and year.">
                         <div class="card-body">
-                            <h5 class="card-title">PO Data by Month and Year</h5>
-                            <div id="filter-container" class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title" data-intro="This is the title indicating the data type being displayed.">PO Data by Month and Year</h5>
+                                <button id="help-btn" class="btn btn-info ms-auto" data-intro="Click here for help with using this section.">
+                                    <i class="fas fa-info-circle me-1"></i> Help
+                                </button>
+                            </div>
+                            <div id="filter-container" class="mb-3" data-intro="Use these filters to adjust the data displayed.">
                                 <div class="form-container mb-3">
-                                    <label for="filter-date" class="filter-label">Date:</label>
+                                    <label for="filter-date" class="filter-label" data-intro="Select a month to filter the Purchase Order data.">Date:</label>
                                     <div class="input-wrapper mb-3">
                                         <input type="month" id="filter-date" class="form-control">
                                     </div>
 
-                                    <label for="filter-select" class="filter-label">Filter:</label>
+                                    <label for="filter-select" class="filter-label" data-intro="Choose to view data by Quantity or Total Cost.">Filter:</label>
                                     <select id="filter-select" class="form-select">
                                         <option value="qty">Quantity</option>
                                         <option value="cost">Total Cost</option>
                                     </select>
                                 </div>
 
-                                <div id="dropdown-container" class="dropdown mb-3">
+                                <div id="dropdown-container" class="dropdown mb-3" data-intro="Select the status of the Purchase Orders you wish to display.">
                                     <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdown"
                                         data-bs-toggle="dropdown" aria-expanded="false">
                                         Status
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="statusDropdown">
-                                        <li class="dropdown-item">
+                                        <li class="dropdown-item" data-intro="Expired: Purchase Orders that have passed their valid date.">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="show-expired"
-                                                    checked>
+                                                <input class="form-check-input" type="checkbox" id="show-expired" checked>
                                                 <label class="form-check-label" for="show-expired">Expired</label>
                                             </div>
                                         </li>
-                                        <li class="dropdown-item">
+                                        <li class="dropdown-item" data-intro="Completed: Purchase Orders that have been fulfilled.">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="show-completed"
-                                                    checked>
+                                                <input class="form-check-input" type="checkbox" id="show-completed" checked>
                                                 <label class="form-check-label" for="show-completed">Completed</label>
                                             </div>
                                         </li>
-                                        <li class="dropdown-item">
+                                        <li class="dropdown-item" data-intro="Confirmed: Purchase Orders that have been confirmed.">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="show-confirmed"
-                                                    checked>
+                                                <input class="form-check-input" type="checkbox" id="show-confirmed" checked>
                                                 <label class="form-check-label" for="show-confirmed">Confirmed</label>
                                             </div>
                                         </li>
-                                        <li class="dropdown-item">
+                                        <li class="dropdown-item" data-intro="In Progress: Purchase Orders currently being processed.">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="show-in-progress"
-                                                    checked>
+                                                <input class="form-check-input" type="checkbox" id="show-in-progress" checked>
                                                 <label class="form-check-label" for="show-in-progress">In Progress</label>
                                             </div>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
-                            <div id="kt_apexcharts_1"></div>
-                            <div id="spinner-po" class="spinner">Loading...</div>
+                            <div id="kt_apexcharts_1" data-intro="This chart visualizes the filtered Purchase Order data."></div>
+                            <div id="spinner-po" class="spinner" data-intro="This spinner shows while data is being loaded.">Loading...</div>
                         </div>
                     </div>
                 </div>
+
+
+
             </div>
             <!-- PO Data Card -->
         @endcan
     </div>
 
+<!-- Modal Structure -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Content will be dynamically injected here -->
+                <p id="modalBody">Loading content...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 

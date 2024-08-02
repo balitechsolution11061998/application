@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OrdHead;
 use App\Models\QueryPerformanceLog;
+use App\Models\RcvHead;
 use App\Services\Order\OrderService;
 use App\Services\Rcv\RcvService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -64,6 +67,71 @@ class HomeController extends Controller
             ], 500);
         }
     }
+
+    public function countDataPoPerDate(Request $request)
+    {
+        $date = $request->query('date'); // Get the date parameter from the request
+        $status = $request->query('status'); // Get the status parameter from the request
+
+        try {
+            // Fetch and process data for the specified date and status
+            $query = OrdHead::whereDate('approval_date', $date);
+
+            if ($status) {
+                // Check if the status is 'In Progress', and if so, set it to 'progress'
+                if ($status === 'In Progress') {
+                    $status = 'progress';
+                    // Filter for status 'progress' where estimated_delivery_date is null
+                    $query->where(function ($q) {
+                        $q->whereNull('estimated_delivery_date')
+                          ->where('status', 'progress');
+                    });
+                } else {
+                    // Filter by status if provided
+                    $query->where('status', $status);
+                }
+            }
+
+            // Fetch the data
+            $data = $query->get();
+
+            // Check and update statuses based on conditions
+            foreach ($data as $record) {
+                // Check if there is a related record in the receiving process
+                $existsInReceiving = RcvHead::where('order_no', $record->order_no)->exists();
+
+                if ($existsInReceiving) {
+                    // Update the status to 'completed'
+                    $record->status = 'completed';
+                    $record->save();
+                } elseif ($record->estimated_delivery_date !== null) {
+                    // Update the status to 'confirmed' if estimated_delivery_date is not null
+                    $record->status = 'confirmed';
+                    $record->save();
+                } elseif (!$existsInReceiving && $record->not_after_date && Carbon::parse($record->not_after_date)->isPast()) {
+                    // Update the status to 'expired' if not_after_date is past and no receiving records
+                    $record->status = 'expired';
+                    $record->save();
+                }
+            }
+
+            // Fetch the updated data after status updates
+            $data = $query->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
 
     public function countDataPo(Request $request) {
         $startTime = microtime(true);

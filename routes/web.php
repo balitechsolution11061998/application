@@ -38,6 +38,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/countDataPoPerDays', 'HomeController@countDataPoPerDays')->name('countDataPoPerDays');
         Route::get('/countDataRcv', 'HomeController@countDataRcv')->name('countDataRcv');
         Route::get('/countDataRcvPerDays', 'HomeController@countDataRcvPerDays')->name('countDataRcvPerDays');
+        Route::get('/countDataPoPerDate', 'HomeController@countDataPoPerDate')->name('countDataPoPerDate');
     });
 
     Route::prefix('po')->name('po.')->namespace('App\Http\Controllers')->group(function () {

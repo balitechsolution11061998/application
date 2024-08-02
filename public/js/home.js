@@ -371,7 +371,6 @@ function fetchTimelineConfirmedData() {
 
 
 
-
 async function fetchPoDataPerDays() {
     const spinner = document.getElementById("spinner-po");
     const filterSelect = document.getElementById("filter-select");
@@ -459,7 +458,8 @@ async function fetchPoDataPerDays() {
                             config
                         ) {
                             const selectedDate = dates[config.dataPointIndex];
-                            openModal(selectedDate);
+                            const selectedStatus = seriesName[config.seriesIndex];
+                            openModal(selectedDate,selectedStatus);
                         },
                     },
                     title: {
@@ -523,26 +523,118 @@ async function fetchPoDataPerDays() {
             );
             chart.render();
         }
+        function openModal(date, status) {
+            const modal = new bootstrap.Modal(document.getElementById("detailModal"));
+            document.getElementById("modalTitle").textContent = `Details for ${date} - ${status}`;
 
-        function openModal(date) {
-            const modal = new bootstrap.Modal(
-                document.getElementById("detailModal")
-            );
-            document.getElementById(
-                "modalTitle"
-            ).textContent = `Details for ${date}`;
-            // Fetch and display additional details for the selected date
-            fetch(`/home/details?date=${date}`)
+            // Clear any existing content in the modal body
+            const modalBody = document.getElementById("modalBody");
+            modalBody.innerHTML = `
+                <form id="searchForm" class="mb-3">
+                    <div class="d-flex align-items-center">
+                        <input type="text" id="searchInput" class="form-control form-control-sm me-2" placeholder="Search...">
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                        <span id="searchSpinner" class="d-none ms-2">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </span>
+                    </div>
+                </form>
+                <div id="tableContainer"></div>
+            `;
+
+            // Fetch and display additional details for the selected date and status
+            fetch(`/home/countDataPoPerDate?date=${date}&status=${status}`)
                 .then((response) => response.json())
                 .then((data) => {
-                    document.getElementById("modalBody").textContent =
-                        JSON.stringify(data, null, 2);
+                    if (data.data.length > 0) {
+                        // Create a table element
+                        const table = document.createElement("table");
+                        table.id = "detailsTable";
+                        table.classList.add("table", "table-striped", "table-bordered");
+
+                        // Create the table header
+                        const thead = document.createElement("thead");
+                        let estimatedDeliveryDateHeader = 'Estimated Delivery Date';
+
+                        // Change the header text if status is 'In Progress'
+                        if (status === 'In Progress') {
+                            estimatedDeliveryDateHeader = 'Expired Date';
+                        }
+
+                        thead.innerHTML = `
+                            <tr>
+                                <th>PO Number</th>
+                                <th>Status</th>
+                                <th>${estimatedDeliveryDateHeader}</th>
+                            </tr>
+                        `;
+                        table.appendChild(thead);
+
+                        // Create the table body
+                        const tbody = document.createElement("tbody");
+
+                        data.data.forEach((item) => {
+                            const tr = document.createElement("tr");
+
+                            // Determine the text for the 'Estimated Delivery Date' based on the status
+                            let estimatedDeliveryDate;
+                            if (status === 'In Progress') {
+                                estimatedDeliveryDate = item.not_after_date;
+                            } else {
+                                estimatedDeliveryDate = item.estimated_delivery_date;
+                            }
+
+                            tr.innerHTML = `
+                                <td>${item.order_no}</td>
+                                <td>${item.status}</td>
+                                <td>${estimatedDeliveryDate}</td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+
+                        table.appendChild(tbody);
+
+                        // Append the table to the container
+                        document.getElementById("tableContainer").appendChild(table);
+
+                        // Initialize DataTables on the created table
+                        $(document).ready(function () {
+                            const dataTable = $('#detailsTable').DataTable({
+                                paging: true,
+                                searching: true,
+                                ordering: true,
+                                responsive: true
+                            });
+
+                            // Add a search marker to indicate the search input
+                            $('#detailsTable_filter input').attr('placeholder', 'Search...').addClass('search-marker');
+
+                            // Handle form submission for searching
+                            document.getElementById("searchForm").addEventListener("submit", function (event) {
+                                event.preventDefault();
+                                const searchValue = document.getElementById("searchInput").value;
+                                document.getElementById("searchSpinner").classList.remove("d-none");
+                                dataTable.search(searchValue).draw();
+                                document.getElementById("searchSpinner").classList.add("d-none");
+                            });
+                        });
+
+                    } else {
+                        document.getElementById("tableContainer").textContent = "No data available for this date and status.";
+                    }
+
                     modal.show();
                 })
-                .catch((error) =>
-                    console.error("Error fetching details:", error)
-                );
+                .catch((error) => {
+                    console.error("Error fetching details:", error);
+                    document.getElementById("tableContainer").textContent = "An error occurred while fetching data.";
+                });
         }
+
+
+
 
         initializeChart();
 

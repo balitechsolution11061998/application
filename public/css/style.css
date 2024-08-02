@@ -1897,3 +1897,9 @@ nav ul li a.active {
 .swal2-custom-title-black {
     color: black;
 }
+/* Style for the search input placeholder */
+.search-marker {
+    border: 1px solid #ced4da; /* Custom border style */
+    border-radius: .25rem; /* Rounded corners */
+    padding: .375rem .75rem; /* Padding */
+}

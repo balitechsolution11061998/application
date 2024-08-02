@@ -4,6 +4,7 @@ namespace App\Repositories\Order;
 
 use LaravelEasyRepository\Implementations\Eloquent;
 use App\Models\OrdHead;
+use App\Models\RcvHead;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -83,94 +84,47 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
         ];
     }
 
-    public function countDataPoPerDays($filterDate, $filterSupplier)
+    public function updateStatus()
     {
-        // Set the current year and month if filterDate is not provided
-        if (is_null($filterDate) || $filterDate == "null" || empty($filterDate)) {
-            $currentDate = Carbon::now();
-            $filterYear = $currentDate->year;
-            $filterMonth = $currentDate->month;
-        } else {
-            // Extract year and month from the provided filterDate
-            $filterYear = Carbon::parse($filterDate)->year;
-            $filterMonth = Carbon::parse($filterDate)->month;
-        }
+        $now = Carbon::now()->toDateString();
 
-        // Calculate the start and end date of the given month
-        $startDate = Carbon::create($filterYear, $filterMonth, 1)->startOfMonth()->toDateString();
-        $endDate = Carbon::create($filterYear, $filterMonth, 1)->endOfMonth()->toDateString();
+        DB::transaction(function() use ($now) {
+            // Update 'Confirmed' status
+            Ordhead::whereHas('rcvhead', function($query) {
+                $query->whereNull('order_no');
+            })
+            ->where('estimated_delivery_date', '>', $now)
+            ->update(['status' => 'Confirmed']);
 
-        // Assuming $supplierUser and $filterSupplier are defined in your context
-        $supplierUser = auth()->user(); // Example, replace with your actual supplier user retrieval logic
-        $filterSupplier = request()->input('filterSupplier'); // Example, replace with your actual filter supplier logic
+            // Update 'Rejected' status
+            Ordhead::whereDoesntHave('rcvhead')
+                ->where('estimated_delivery_date', '<', $now)
+                ->update(['status' => 'Rejected']);
+        });
+    }
 
-        // Build the query to get daily counts and total costs
-        $dailyCountsQuery = OrdHead::with('suppliers')
+    public function getDailyCounts($startDate, $endDate, $filterSupplier, $supplierUser)
+    {
+        // Use aggregate functions and efficient joins
+        return DB::table('ordhead')
             ->select([
                 DB::raw('DATE(approval_date) as tanggal'),
                 DB::raw('COUNT(CASE WHEN status = "Expired" THEN 1 END) as expired_count'),
                 DB::raw('COUNT(CASE WHEN status = "Completed" THEN 1 END) as completed_count'),
-                DB::raw('COUNT(CASE WHEN status = "Confirmed" THEN 1 END) as confirmed_count'),
-                DB::raw('COUNT(CASE WHEN status = "Progress" THEN 1 END) as in_progress_count'),
-                DB::raw('SUM(ordsku.unit_cost * ordsku.qty_ordered + ordsku.vat_cost * ordsku.qty_ordered) as total_cost'),
+                DB::raw('COUNT(CASE WHEN status = "Progress" AND estimated_delivery_date IS NULL THEN 1 END) as in_progress_count'),
+                DB::raw('COUNT(CASE WHEN status = "Confirmed" AND estimated_delivery_date IS NOT NULL THEN 1 END) as confirmed_count'),
+                DB::raw('SUM(total_cost) as total_cost')
             ])
-            ->leftJoin('ordsku', 'ordhead.id', '=', 'ordsku.ordhead_id')
             ->whereBetween('approval_date', [$startDate, $endDate])
             ->groupBy('tanggal')
             ->when(optional($supplierUser)->hasRole('supplier'), function ($query) use ($supplierUser) {
-                $query->where('ordhead.supplier', $supplierUser->username);
+                $query->where('supplier', $supplierUser->username);
             })
             ->when(!empty($filterSupplier), function ($query) use ($filterSupplier) {
-                $query->whereIn('ordhead.supplier', (array) $filterSupplier);
-            });
-
-        // Execute the query and get the results
-        $dailyCounts = $dailyCountsQuery->get();
-
-        // Calculate the totals
-        $totals = $dailyCounts->reduce(function ($carry, $item) {
-            $carry['totalPo'] += $item->expired_count + $item->completed_count + $item->confirmed_count + $item->in_progress_count;
-            $carry['totalCost'] += $item->total_cost;
-            $carry['expired'] += $item->expired_count;
-            $carry['completed'] += $item->completed_count;
-            $carry['confirmed'] += $item->confirmed_count;
-            $carry['in_progress'] += $item->in_progress_count;
-            return $carry;
-        }, [
-            'totalPo' => 0,
-            'totalCost' => 0,
-            'expired' => 0,
-            'completed' => 0,
-            'confirmed' => 0,
-            'in_progress' => 0,
-        ]);
-
-        // Format the daily data
-        $dailyData = $dailyCounts->map(function ($item) {
-            return [
-                'date' => $item->tanggal,
-                'expired' => $item->expired_count,
-                'completed' => $item->completed_count,
-                'confirmed' => $item->confirmed_count,
-                'in_progress' => $item->in_progress_count,
-                'total_cost' => $item->total_cost,
-            ];
-        });
-
-        return [
-            'totalPo' => $totals['totalPo'],
-            'totalCost' => $totals['totalCost'],
-            'expired' => $totals['expired'],
-            'completed' => $totals['completed'],
-            'confirmed' => $totals['confirmed'],
-            'in_progress' => $totals['in_progress'],
-            'month' => str_pad($filterMonth, 2, '0', STR_PAD_LEFT), // Ensure month is two digits
-            'year' => (string)$filterYear, // Convert year to string
-            'dailyData' => $dailyData, // Include daily data
-        ];
+                $query->whereIn('supplier', (array) $filterSupplier);
+            })
+            ->get();
     }
-
-
 
 
 
