@@ -215,7 +215,35 @@
                     </div>
                 </div>
             </div>
-
+            <div class="col-md-6">
+                <div class="card shadow-sm border-light">
+                    <div class="card-header">
+                        <h2 class="section-title mb-0"><i class="fas fa-info-circle"></i> Query Performance Logs</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="spinner-detail" class="text-center mb-3" style="display: none;">
+                            <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+                        </div>
+                        <div class="chart-container table-responsive">
+                            <table id="queryPerformance-table" class="table align-middle table-row-dashed fs-6 gy-5">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Function Name</th>
+                                        <th>Average Execution Time</th>
+                                        <th>Average Ping</th>
+                                        <th>Average Download Speed</th>
+                                        <th>Average Upload Speed</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Data will be populated here by DataTables -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
 
@@ -236,7 +264,7 @@
             @endcan
             @can('cuti-show')
                 <div class="jam-kerja-container">
-                    <h2 class="section-title"><i class="fas fa-calendar-day"></i> Jumlah Cuti</h2>
+                    <h2 class="section-title"><i class="fas fa-calendar-day"></i> List Cuti</h2>
                     <div id="spinner-leave" style="display: none;">
                         <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
                     </div>

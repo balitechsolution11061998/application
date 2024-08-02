@@ -3,6 +3,7 @@
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PerformanceController;
+use App\Http\Controllers\QueryPerformanceLogController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Gate;
 
@@ -265,6 +266,9 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/hasil-ujian/{id}', 'UjianController@showHasilUjian')->name('hasil-ujian');
         Route::get('/fetchHistory', 'UjianController@fetchHistory')->name('fetchHistory');
     });
+
+    Route::get('/query-performance-logs', [QueryPerformanceLogController::class, 'getLogs']);
+
 
 });
 

@@ -12,6 +12,7 @@ $(document).ready(function () {
     fetchRombelData();
     fetchMataPelajaranData();
     fetchHistoryUjian();
+    fetchQueryPerformanceLogs();
 });
 document
     .getElementById("filter-date")
@@ -369,7 +370,27 @@ function fetchTimelineConfirmedData() {
     });
 }
 
-
+async function fetchQueryPerformanceLogs() {
+    $('#queryPerformance-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '/query-performance-logs',
+            type: 'GET'
+        },
+        columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+            { data: 'function_name', name: 'function_name' },
+            { data: 'avg_execution_time', name: 'avg_execution_time' },
+            { data: 'avg_ping', name: 'avg_ping' },
+            { data: 'avg_download_speed', name: 'avg_download_speed' },
+            { data: 'avg_upload_speed', name: 'avg_upload_speed' }
+        ],
+        columnDefs: [
+            { targets: [0], orderable: false } // Disable ordering for the index column
+        ]
+    });
+}
 
 async function fetchPoDataPerDays() {
     const spinner = document.getElementById("spinner-po");
