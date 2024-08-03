@@ -48,7 +48,7 @@ $(document).ready(function() {
         columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
             { data: 'nik', name: 'nik' },
-            { data: 'nama_karyawan', name: 'nama_karyawan' },
+            { data: 'user.name', name: 'user.name' },
             { data: 'cabang', name: 'cabang' },
             { data: 'department', name: 'department' },
             { data: 'jadwal', name: 'jadwal' },
