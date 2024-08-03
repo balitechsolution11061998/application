@@ -19,7 +19,7 @@ $(document).ready(function() {
             { data: 'tgl_izin_dari', name: 'tgl_izin_dari' },
             { data: 'tgl_izin_sampai', name: 'tgl_izin_sampai' },
             { data: 'nik', name: 'nik' },
-            { data: 'nama_karyawan', name: 'nama_karyawan' },
+            { data: 'user.name', name: 'user.name' },
             { data: 'jabatan', name: 'jabatan' },
             { data: 'departemen', name: 'departemen' },
             { data: 'cabang', name: 'cabang' },

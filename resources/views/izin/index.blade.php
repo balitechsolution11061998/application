@@ -57,9 +57,33 @@
         <!--begin::Card body-->
         <div class="card-body py-4">
             <!--begin::Table-->
-            <table class="table align-middle table-row-dashed fs-6 gy-5" id="izin_table">
-                <!-- Table headers and body -->
-            </table>
+            <div class="table-responsive">
+                <h3 class="table-title">Izin Data</h3> <!-- Table title -->
+                <table class="table align-middle table-row-dashed fs-6 gy-5" id="izin_table">
+                    <thead>
+                        <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                            <th>No.</th>
+                            <th>Kode Izin</th>
+                            <th>Tanggal Mulai</th>
+                            <th>Tanggal Selesai</th>
+                            <th>Nik</th>
+                            <th>Nama Karyawan</th>
+                            <th>Jabatan</th>
+                            <th>Departemen</th>
+                            <th>Cabang</th>
+                            <th>Status</th>
+                            <th>File</th>
+                            <th>Keterangan</th>
+                            <th>Status Approve</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-600 fw-semibold">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+
 
 
             <!--end::Table-->
