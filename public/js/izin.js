@@ -14,21 +14,78 @@ $(document).ready(function() {
             }
         },
         columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-            { data: 'kode_izin', name: 'kode_izin' },
-            { data: 'tanggal', name: 'tanggal' },
-            { data: 'nik', name: 'nik' },
-            { data: 'nama_karyawan', name: 'nama_karyawan' },
-            { data: 'jabatan', name: 'jabatan' },
-            { data: 'departemen', name: 'departemen' },
-            { data: 'cabang', name: 'cabang' },
-            { data: 'status', name: 'status' },
-            { data: 'file', name: 'file', render: function(data, type, row) {
-                return `<a href="${data}" target="_blank">View File</a>`;
-            }},
-            { data: 'keterangan', name: 'keterangan' },
-            { data: 'status_approve', name: 'status_approve' },
-            { data: 'aksi', name: 'aksi', orderable: false, searchable: false }
+            {
+                data: 'DT_RowIndex',
+                name: 'DT_RowIndex',
+                orderable: false,
+                searchable: false
+            },
+            {
+                data: 'kode_izin',
+                name: 'kode_izin'
+            },
+            {
+                data: 'tgl_izin_dari',
+                name: 'tgl_izin_dari',
+                render: function(data) {
+                    return data ? moment(data).format('D MMM YYYY') : 'N/A';
+                }
+            },
+            {
+                data: 'tgl_izin_sampai',
+                name: 'tgl_izin_sampai',
+                render: function(data) {
+                    return data ? moment(data).format('D MMM YYYY') : 'N/A';
+                }
+            },
+            {
+                data: 'nik',
+                name: 'nik'
+            },
+            {
+                data: 'nama_karyawan',
+                name: 'nama_karyawan'
+            },
+            {
+                data: 'jabatan',
+                name: 'jabatan'
+            },
+            {
+                data: 'departemen',
+                name: 'departemen'
+            },
+            {
+                data: 'cabang',
+                name: 'cabang'
+            },
+            {
+                data: 'status',
+                name: 'status'
+            },
+            {
+                data: 'doc_sid',
+                name: 'doc_sid',
+                render: function(data) {
+                    return data ? `<a href="${data}" target="_blank">View File</a>` : 'No File';
+                }
+            },
+            {
+                data: 'keterangan',
+                name: 'keterangan'
+            },
+            {
+                data: 'status_approved',
+                name: 'status_approved'
+            },
+            {
+                data: 'aksi',
+                name: 'aksi',
+                orderable: false,
+                searchable: false,
+                render: function() {
+                    return '<button class="btn btn-info btn-sm">View</button>';
+                }
+            }
         ]
     });
 
