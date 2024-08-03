@@ -26,15 +26,31 @@ class IzinController extends Controller
                 $izins = Izin::where('kode_izin', '!=', null)->get();
             }
 
-            // Format dates and calculate jumlah_izin
+            // Format dates and prepare data
+            $formattedIzins = $izins->map(function ($izin) {
+                return [
+                    'id' => $izin->id,
+                    'kode_izin' => $izin->kode_izin,
+                    'nik' => $izin->nik,
+                    'tgl_izin_dari' => Carbon::parse($izin->tgl_izin_dari)->format('d M Y H:i'),
+                    'tgl_izin_sampai' => Carbon::parse($izin->tgl_izin_sampai)->format('d M Y H:i'),
+                    'status' => $izin->status,
+                    'kode_cuti' => $izin->kode_cuti,
+                    'keterangan' => $izin->keterangan,
+                    'doc_sid' => $izin->doc_sid,
+                    'status_approved' => $izin->status_approved,
+                    'created_at' => Carbon::parse($izin->created_at)->format('d M Y H:i'),
+                    'updated_at' => Carbon::parse($izin->updated_at)->format('d M Y H:i'),
+                ];
+            });
 
-
+            // Calculate jumlah_izin
             $jumlah_izin = $izins->count();
 
             // Return response with jumlah_izin and formatted data
             return response()->json([
                 'jumlah_izin' => $jumlah_izin,
-                'data' => $izins
+                'data' => $formattedIzins
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error retrieving izin data: ' . $e->getMessage()], 500);
