@@ -58,27 +58,7 @@
         <div class="card-body py-4">
             <!--begin::Table-->
             <table class="table align-middle table-row-dashed fs-6 gy-5" id="izin_table">
-                <thead>
-                    <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
-                        <th>No.</th>
-                        <th>Kode Izin</th>
-                        <th>Tanggal Mulai</th> <!-- Changed from 'Tanggal' to 'Tanggal Mulai' -->
-                        <th>Tanggal Selesai</th> <!-- Added 'Tanggal Selesai' -->
-                        <th>Nik</th>
-                        <th>Nama Karyawan</th>
-                        <th>Jabatan</th>
-                        <th>Departemen</th>
-                        <th>Cabang</th>
-                        <th>Status</th>
-                        <th>File</th>
-                        <th>Keterangan</th>
-                        <th>Status Approve</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-600 fw-semibold">
-                    <!-- Data will be populated here -->
-                </tbody>
+                <!-- Table headers and body -->
             </table>
 
 
