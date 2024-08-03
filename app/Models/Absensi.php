@@ -26,8 +26,8 @@ class Absensi extends Model
         return $this->belongsTo(Department::class, 'department_id'); // Adjust foreign key as needed
     }
 
-    public function konfigurasiJamKerja()
+    public function kodeJamKerja()
     {
-        return $this->belongsTo(KonfigurasiJamKerja::class, 'kode_jam_kerja'); // Adjust foreign key as needed
+        return $this->belongsTo(JamKerja::class, 'kode_jam_kerja','kode_jk'); // Adjust foreign key as needed
     }
 }
