@@ -41,6 +41,7 @@ Route::post('/izin/store', [IzinController::class, 'store']);
 Route::get('/izin/history', [IzinController::class, 'index']);
 Route::post('/cuti/store', [IzinController::class, 'storeCuti']);
 Route::get('/cuti/history', [IzinController::class, 'indexCuti']);
+Route::get('/cuti/getData', [IzinController::class, 'getData']);
 Route::post('/absensi/store', [AbsensiController::class, 'store']);
 Route::get('/absensi/history', [AbsensiController::class, 'index']);
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Models\Izin;
 use App\Http\Controllers\Controller;
+use App\Models\Cuti;
 use App\Models\User;
 use App\Notifications\IzinNotification;
 use Carbon\Carbon;
@@ -169,6 +170,11 @@ class IzinController extends Controller
         $izin->status_approved = "Progress";
         $izin->save();
         return response()->json($izin, 201);
+    }
+
+    public function getData(){
+        $cuti = Cuti::all(); // Assuming you have a model named JenisIzin
+        return response()->json($cuti);
     }
 
     /**
