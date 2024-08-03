@@ -13,7 +13,7 @@ class Absensi extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'nik'); // Adjust 'user_id' if necessary
+        return $this->belongsTo(User::class, 'nik','username'); // Adjust 'user_id' if necessary
     }
 
     public function cabang()
