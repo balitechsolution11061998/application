@@ -97,26 +97,62 @@ class IzinController extends Controller
 
      public function store(Request $request)
      {
-         $izin = new Izin();
-         $izin->kode_izin = $request->input('kode_izin');
-         $izin->nik = $request->input('nik');
-         $izin->tgl_izin_dari = $request->input('tgl_izin_dari');
-         $izin->tgl_izin_sampai = $request->input('tgl_izin_sampai');
-         $izin->status = "Progress";
-         $izin->keterangan = $request->input('keterangan');
-         $izin->doc_sid = $request->input('doc_sid');
-         $izin->status_approved = "Progress";
-         $izin->save();
+         try {
+             // Validate the request
+            //  $request->validate([
+            //      'kode_izin' => 'required|string',
+            //      'nik' => 'required|string',
+            //      'tgl_izin_dari' => 'required|date',
+            //      'tgl_izin_sampai' => 'required|date',
+            //      'keterangan' => 'required|string',
+            //      'doc_sid' => 'nullable|file|mimes:pdf,doc,docx,jpg,png|max:2048', // Validate file (adjust types and size as needed)
+            //  ]);
 
-         // Find the user to notify
-         $user = User::where('nik', $izin->nik)->first();
+             // Create a new Izin instance
+             $izin = new Izin();
+             $izin->kode_izin = $request->input('kode_izin');
+             $izin->nik = $request->input('nik');
+             $izin->tgl_izin_dari = $request->input('tgl_izin_dari');
+             $izin->tgl_izin_sampai = $request->input('tgl_izin_sampai');
+             $izin->status = "Progress";
+             $izin->keterangan = $request->input('keterangan');
 
-         // Send notification
-         if ($user) {
-             $user->notify(new IzinNotification($izin));
+             // Handle file upload
+             if ($request->hasFile('doc_sid')) {
+                 $file = $request->file('doc_sid');
+                 $filePath = $file->store('public/izin_files'); // Save file to storage/app/public/izin_files
+                 $izin->doc_sid = $filePath; // Save the file path to the database
+             }
+
+             $izin->status_approved = "Progress";
+             $izin->save();
+
+             // Find the user to notify
+             $user = User::where('nik', $izin->nik)->first();
+
+             // Send notification
+             if ($user) {
+                 $user->notify(new IzinNotification($izin));
+             }
+
+             return response()->json($izin, 201);
+
+         } catch (\Illuminate\Validation\ValidationException $e) {
+             // Handle validation errors
+             return response()->json([
+                 'error' => 'Validation Error',
+                 'message' => $e->getMessage(),
+                 'errors' => $e->errors()
+             ], 422);
+
+         } catch (\Exception $e) {
+             // Handle general errors
+             return response()->json([
+                 'error' => 'Internal Server Error',
+                 'message' => 'An unexpected error occurred.',
+                 'details' => $e->getMessage()
+             ], 500);
          }
-
-         return response()->json($izin, 201);
      }
 
     public function storeCuti(Request $request)
