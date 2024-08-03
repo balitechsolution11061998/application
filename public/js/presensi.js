@@ -51,7 +51,7 @@ $(document).ready(function() {
             { data: 'user.name', name: 'user.name' },
             { data: 'user.cabang.name', name: 'user.cabang.name' }, // Adjust according to your relationship
             { data: 'user.department.name', name: 'user.department.name' }, // Adjust according to your relationship
-            { data: 'tanggal_presensi', name: 'tanggal_presensi' }, // Adjust according to your relationship
+            { data: 'tgl_presensi', name: 'tgl_presensi' }, // Adjust according to your relationship
             { data: 'jam_in', name: 'jam_in' },
             { data: 'foto_in', name: 'foto_in' },
             { data: 'jam_out', name: 'jam_out' },
