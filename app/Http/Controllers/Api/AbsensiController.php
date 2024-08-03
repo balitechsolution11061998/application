@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Absensi;
+use App\Models\Presensi;
 
 class AbsensiController extends Controller
 {
@@ -35,7 +36,7 @@ class AbsensiController extends Controller
     public function store(Request $request)
     {
         try {
-            $absensi = new Absensi();
+            $absensi = new Presensi();
             $absensi->nik = $request->input('nik');
             $absensi->tgl_presensi = $request->input('tgl_presensi');
             $absensi->jam_in = $request->input('jam_in');
