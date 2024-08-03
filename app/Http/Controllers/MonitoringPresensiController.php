@@ -19,7 +19,7 @@ class MonitoringPresensiController extends Controller
     {
         try {
             // Start building the query
-            $query = Absensi::with('user', 'konfigurasiJamKerja');
+            $query = Absensi::with('user', 'jamKerja');
 
             // Apply search filter if provided
             if ($request->filled('search')) {
