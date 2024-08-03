@@ -62,7 +62,7 @@ return [
             'route'          => 'monitoring-presensi.index',
         ],
         [
-            'label'          => 'Izin',
+            'label'          => 'Data Izin/Sakit',
             'type'           => 'item',
             'permission'     => ['monitoring-show'],
             'permissionType' => 'gate',
