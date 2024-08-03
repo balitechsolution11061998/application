@@ -16,16 +16,6 @@ class Absensi extends Model
         return $this->belongsTo(User::class, 'nik','nik'); // Adjust 'user_id' if necessary
     }
 
-    public function cabang()
-    {
-        return $this->belongsTo(Cabang::class, 'cabang_id'); // Adjust foreign key as needed
-    }
-
-    public function department()
-    {
-        return $this->belongsTo(Department::class, 'department_id'); // Adjust foreign key as needed
-    }
-
     public function jamKerja()
     {
         return $this->belongsTo(JamKerja::class, 'kode_jam_kerja','kode_jk'); // Adjust foreign key as needed
