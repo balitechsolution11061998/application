@@ -16,7 +16,7 @@ class IzinController extends Controller
     public function data(Request $request)
     {
         $query = Izin::with('user') // Include the user relationship
-            ->select('izins.*'); // Adjust table name if needed
+            ->select('izin.*'); // Adjust table name if needed
 
         // Apply filters if any
         if ($request->has('search') && $request->search) {
