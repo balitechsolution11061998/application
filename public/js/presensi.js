@@ -49,9 +49,9 @@ $(document).ready(function() {
             { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
             { data: 'nik', name: 'nik' },
             { data: 'user.name', name: 'user.name' },
-            { data: 'cabang', name: 'cabang' },
-            { data: 'department', name: 'department' },
-            { data: 'jadwal', name: 'jadwal' },
+            { data: 'user.cabang.name', name: 'user.cabang.name' }, // Adjust according to your relationship
+            { data: 'user.department.name', name: 'user.department.name' }, // Adjust according to your relationship
+            { data: 'jamKerja.jadwal', name: 'jamKerja.jadwal' }, // Adjust according to your relationship
             { data: 'jam_masuk', name: 'jam_masuk' },
             { data: 'foto_masuk', name: 'foto_masuk' },
             { data: 'jam_pulang', name: 'jam_pulang' },

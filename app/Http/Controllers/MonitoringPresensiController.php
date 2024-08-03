@@ -14,12 +14,11 @@ class MonitoringPresensiController extends Controller
     public function index(){
         return view('monitoring-presensi.index');
     }
-
     public function data(Request $request)
     {
         try {
             // Start building the query
-            $query = Absensi::with('user', 'jamKerja','user.cabang');
+            $query = Absensi::with('user', 'jamKerja', 'user.cabang', 'user.department');
 
             // Apply search filter if provided
             if ($request->filled('search')) {
@@ -63,6 +62,7 @@ class MonitoringPresensiController extends Controller
             ], 500);
         }
     }
+
 
 
 
