@@ -13,6 +13,16 @@ class IzinController extends Controller
         return view('izin.index');
     }
 
+    public function show($id)
+    {
+        // Fetch the izin record by ID
+        $izin = Izin::with('user') // Eager load the user relationship if needed
+            ->findOrFail($id);
+
+        // Return the data as JSON
+        return response()->json($izin);
+    }
+
     public function data(Request $request)
     {
         $query = Izin::with('user'); // Use the Izin model directly
