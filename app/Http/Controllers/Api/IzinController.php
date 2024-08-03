@@ -155,6 +155,7 @@ class IzinController extends Controller
          }
      }
 
+
     public function storeCuti(Request $request)
     {
         $izin = new Izin();

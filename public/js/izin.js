@@ -24,40 +24,64 @@ $(document).ready(function() {
             { data: 'departemen', name: 'departemen' },
             { data: 'cabang', name: 'cabang' },
             { data: 'status', name: 'status' },
-            { data: 'doc_sid', name: 'doc_sid', render: function(data) {
-                return data ? `<a href="${data}" target="_blank">View File</a>` : 'No File';
-            }},
-            { data: 'keterangan', name: 'keterangan' },
-            { data: 'status_approved', name: 'status_approved', render: function(data) {
-                var badgeClass;
-                var iconClass;
-
-                switch (data) {
-                    case 'Approved':
-                        badgeClass = 'badge bg-success';
-                        iconClass = 'fas fa-check';
-                        break;
-                    case 'Progress':
-                        badgeClass = 'badge bg-warning';
-                        iconClass = 'fas fa-hourglass-half';
-                        break;
-                    case 'Rejected':
-                        badgeClass = 'badge bg-danger';
-                        iconClass = 'fas fa-times';
-                        break;
-                    default:
-                        badgeClass = 'badge bg-secondary';
-                        iconClass = 'fas fa-question';
-                        break;
+            {
+                data: 'doc_sid',
+                name: 'doc_sid',
+                render: function(data) {
+                    if (data) {
+                        let fileUrl = `${data.replace('public/', 'storage/')}`;
+                        return `<a href="${fileUrl}" class="lightbox" data-lg-size="1600-2400" data-src="${fileUrl}" target="_blank">View File</a>`;
+                    }
+                    return 'No File';
                 }
+            },
+            { data: 'keterangan', name: 'keterangan' },
+            {
+                data: 'status_approved',
+                name: 'status_approved',
+                render: function(data) {
+                    var badgeClass;
+                    var iconClass;
 
-                return `<span class="${badgeClass}"><i class="${iconClass}"></i> ${data}</span>`;
-            }},
-            { data: 'id', name: 'id', orderable: false, searchable: false, render: function(id) {
-                return `<button class="btn btn-info btn-sm view-details" data-id="${id}"><i class="fas fa-eye"></i></button>`;
-            }}
-        ]
+                    switch (data) {
+                        case 'Approved':
+                            badgeClass = 'badge bg-success';
+                            iconClass = 'fas fa-check';
+                            break;
+                        case 'Progress':
+                            badgeClass = 'badge bg-warning';
+                            iconClass = 'fas fa-hourglass-half';
+                            break;
+                        case 'Rejected':
+                            badgeClass = 'badge bg-danger';
+                            iconClass = 'fas fa-times';
+                            break;
+                        default:
+                            badgeClass = 'badge bg-secondary';
+                            iconClass = 'fas fa-question';
+                            break;
+                    }
+
+                    return `<span class="${badgeClass}"><i class="${iconClass}"></i> ${data}</span>`;
+                }
+            },
+            {
+                data: 'id',
+                name: 'id',
+                orderable: false,
+                searchable: false,
+                render: function(id) {
+                    return `<button class="btn btn-info btn-sm view-details" data-id="${id}"><i class="fas fa-eye"></i></button>`;
+                }
+            }
+        ],
+        drawCallback: function() {
+            lightGallery(document.querySelectorAll('.lightbox'), {
+                selector: 'this'
+            });
+        }
     });
+
 
 
     // Handle the click event for the view button
