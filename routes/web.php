@@ -117,13 +117,15 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::post('/store', 'DepartmentController@store')->name('store');
         Route::get('/{id}/edit', 'DepartmentController@edit')->name('edit');
         Route::delete('/{id}/delete', 'DepartmentController@delete')->name('delete');
+        Route::get('/getDepartments', 'DepartmentController@getDepartments')->name('getDepartments');
+
 
     });
 
     Route::prefix('kantor_cabang')->name('kantor_cabang.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/index', 'KantorCabangController@index')->name('index');
         Route::get('/data', 'KantorCabangController@data')->name('data');
-        Route::get('/getData', 'DepartmentController@getData')->name('getData');
+        Route::get('/getData', 'KantorCabangController@getData')->name('getData');
         Route::post('/store', 'KantorCabangController@store')->name('store');
         Route::get('/{id}/edit', 'KantorCabangController@edit')->name('edit');
         Route::delete('/{id}/delete', 'KantorCabangController@delete')->name('delete');
@@ -265,6 +267,12 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::post('/end', 'UjianController@end')->name('end');
         Route::get('/hasil-ujian/{id}', 'UjianController@showHasilUjian')->name('hasil-ujian');
         Route::get('/fetchHistory', 'UjianController@fetchHistory')->name('fetchHistory');
+    });
+
+    Route::prefix('monitoring-presensi')->name('monitoring-presensi.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'MonitoringPresensiController@index')->name('index');
+        Route::get('/data', 'MonitoringPresensiController@data')->name('data');
+
     });
 
     Route::get('/query-performance-logs', [QueryPerformanceLogController::class, 'getLogs']);

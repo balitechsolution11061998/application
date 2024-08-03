@@ -319,7 +319,6 @@ class UserController extends Controller
 
     public function konfigurasiStore(Request $request)
     {
-
         try {
             // Retrieve the data from the request
             $hari = $request->input('hari');
@@ -349,8 +348,8 @@ class UserController extends Controller
             // Respond back to the client
             return response()->json(['success' => true, 'message' => 'Data has been saved successfully']);
         } catch (\Exception $e) {
+            dd($e->getMessage());
             // Log the exception message for debugging
-            \Log::error('Error in konfigurasiStore: ' . $e->getMessage());
 
             // Respond with an error message
             return response()->json(['success' => false, 'message' => 'An error occurred while processing your request.'], 500);
@@ -447,6 +446,7 @@ class UserController extends Controller
 
     public function setjamkerja($nik)
     {
+
         try {
             $karyawan = DB::table('users')->where('nik', $nik)->first();
             $jamkerja = DB::table('jam_kerja')->orderBy('nama_jk')->get();

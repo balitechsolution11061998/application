@@ -92,6 +92,13 @@ class User extends Authenticatable implements LaratrustUser,JWTSubject
     public function siswa(){
         return $this->hasOne(Siswa::class,'nis','username');
     }
+
+    public function konfigurasiJamKerja()
+    {
+        return $this->hasMany(KonfigurasiJamKerja::class, 'nik', 'username');
+    }
+
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

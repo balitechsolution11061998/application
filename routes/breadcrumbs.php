@@ -81,4 +81,8 @@ Breadcrumbs::for('ujian', function (BreadcrumbTrail $trail) {
     $trail->push('Ujian', route('ujian.index'));
 });
 
+Breadcrumbs::for('monitoring-presensi', function (BreadcrumbTrail $trail) {
+    $trail->push('monitoring-presensi', route('monitoring-presensi.index'));
+});
+
 

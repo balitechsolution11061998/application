@@ -462,10 +462,10 @@ function setJamKerja(nik) {
 
                         // Append options to the shift select element in the By Date tab
                         $('#shift').append(jamKerjaOptions);
-                        if(response.setjamkerja.length>0){
+                        if (response.setjamkerja && response.setjamkerja.length > 0) {
                             setSelectedValues(response.setjamkerja);
                         }
-                        if(response.setJamkerjaByDate.length>0){
+                        if (response.setJamkerjaByDate && response.setJamkerjaByDate.length > 0) {
                             populateTable(response.setJamkerjaByDate);
                         }
 

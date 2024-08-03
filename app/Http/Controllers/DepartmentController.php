@@ -81,6 +81,24 @@ class DepartmentController extends Controller
         }
     }
 
+    public function getDepartments()
+    {
+        try {
+            $departments = Department::all(); // Adjust based on your model and database structure
+
+            return response()->json([
+                'success' => true,
+                'data' => $departments
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch departments.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function edit($id)
     {
         try {

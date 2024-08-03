@@ -88,5 +88,24 @@ public function delete($id)
     }
 }
 
+public function getData()
+{
+    try {
+        $cabangs = Cabang::all(); // Adjust based on your model and database structure
+
+        return response()->json([
+            'success' => true,
+            'data' => $cabangs
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to fetch cabangs.',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+
 
 }

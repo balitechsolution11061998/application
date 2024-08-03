@@ -56,10 +56,10 @@ return [
             'type'           => 'item',
             'permission'     => ['monitoring-show'],
             'permissionType' => 'gate',
-            'icon'           => 'ki',
-            'iconName'       => 'ki-element-11',
+            'icon'           => 'fas', // updated icon
+            'iconName'       => 'fa-tv', // updated icon name
             'iconPath'       => 5,
-            'route'          => 'po.index',
+            'route'          => 'monitoring-presensi.index',
         ],
         [
             'label'          => 'Paket Soal',
