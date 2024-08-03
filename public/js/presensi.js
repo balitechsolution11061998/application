@@ -51,11 +51,11 @@ $(document).ready(function() {
             { data: 'user.name', name: 'user.name' },
             { data: 'user.cabang.name', name: 'user.cabang.name' }, // Adjust according to your relationship
             { data: 'user.department.name', name: 'user.department.name' }, // Adjust according to your relationship
-            { data: 'jamKerja.jadwal', name: 'jamKerja.jadwal' }, // Adjust according to your relationship
-            { data: 'jam_masuk', name: 'jam_masuk' },
-            { data: 'foto_masuk', name: 'foto_masuk' },
-            { data: 'jam_pulang', name: 'jam_pulang' },
-            { data: 'foto_pulang', name: 'foto_pulang' },
+            { data: 'tanggal_presensi', name: 'tanggal_presensi' }, // Adjust according to your relationship
+            { data: 'jam_in', name: 'jam_in' },
+            { data: 'foto_in', name: 'foto_in' },
+            { data: 'jam_out', name: 'jam_out' },
+            { data: 'foto_out', name: 'foto_out' },
             { data: 'status', name: 'status' },
             { data: 'keterangan', name: 'keterangan' }
         ]
