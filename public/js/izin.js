@@ -30,7 +30,7 @@ $(document).ready(function() {
                 render: function(data) {
                     if (data) {
                         let fileUrl = `${data.replace('public/', 'storage/')}`;
-                        return `<a href="${fileUrl}" class="lightbox" data-lg-size="1600-2400" data-src="${fileUrl}" target="_blank">View File</a>`;
+                        return `<a href="${fileUrl}" class="fancybox" data-fancybox="gallery">View File</a>`;
                     }
                     return 'No File';
                 }
@@ -76,8 +76,8 @@ $(document).ready(function() {
             }
         ],
         drawCallback: function() {
-            lightGallery(document.querySelectorAll('.lightbox'), {
-                selector: 'this'
+            Fancybox.bind('.fancybox', {
+                groupAll: true, // Group all items
             });
         }
     });
