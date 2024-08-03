@@ -71,6 +71,14 @@ $(document).ready(function() {
                 // Populate the modal with data
                 $('#mdlFormTitle').text(`Detail for ${data.kode_izin}`); // Set the title dynamically
 
+                let actionButtons = '';
+                if (data.status_approved !== 'Rejected') {
+                    actionButtons = `
+                        <button type="button" class="btn btn-success btn-lg" id="approveBtn" data-id="${data.id}">Approve</button>
+                        <button type="button" class="btn btn-danger btn-lg" id="rejectBtn" data-id="${data.id}">Reject</button>
+                    `;
+                }
+                $('#mdlFormContent').html('');
                 $('#mdlFormContent').html(`
                     <div class="container">
                         <div class="row mb-3">
@@ -132,8 +140,7 @@ $(document).ready(function() {
                         </div>
                         <!-- Action Buttons -->
                         <div class="text-center mt-4">
-                            <button type="button" class="btn btn-success btn-lg" id="approveBtn" data-id="${data.id}">Approve</button>
-                            <button type="button" class="btn btn-danger btn-lg" id="rejectBtn" data-id="${data.id}">Reject</button>
+                            ${actionButtons}
                         </div>
                     </div>
                 `);
@@ -141,6 +148,7 @@ $(document).ready(function() {
                 // Show the modal
                 $('#mdlForm').modal('show');
             },
+
             error: function() {
                 // Handle errors if needed
                 alert('Failed to fetch data.');
