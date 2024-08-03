@@ -27,11 +27,7 @@ class IzinController extends Controller
             }
 
             // Format dates and calculate jumlah_izin
-            $izins->transform(function($izin) {
-                $izin->tgl_izin_dari = Carbon::parse($izin->tgl_izin_dari)->locale('id')->format('j F Y');
-                $izin->tgl_izin_sampai = Carbon::parse($izin->tgl_izin_sampai)->locale('id')->format('j F Y');
-                return $izin;
-            });
+
 
             $jumlah_izin = $izins->count();
 
