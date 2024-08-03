@@ -28,7 +28,24 @@ $(document).ready(function() {
                 return data ? `<a href="${data}" target="_blank">View File</a>` : 'No File';
             }},
             { data: 'keterangan', name: 'keterangan' },
-            { data: 'status_approved', name: 'status_approved' },
+            { data: 'status_approved', name: 'status_approved', render: function(data) {
+                var badgeClass;
+                switch (data) {
+                    case 'Approved':
+                        badgeClass = 'badge bg-success';
+                        break;
+                    case 'Pending':
+                        badgeClass = 'badge bg-warning';
+                        break;
+                    case 'Rejected':
+                        badgeClass = 'badge bg-danger';
+                        break;
+                    default:
+                        badgeClass = 'badge bg-secondary';
+                        break;
+                }
+                return `<span class="${badgeClass}">${data}</span>`;
+            }},
             { data: 'aksi', name: 'aksi', orderable: false, searchable: false, render: function() {
                 return '<button class="btn btn-info btn-sm">View</button>';
             }}
