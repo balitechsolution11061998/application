@@ -85,4 +85,8 @@ Breadcrumbs::for('monitoring-presensi', function (BreadcrumbTrail $trail) {
     $trail->push('monitoring-presensi', route('monitoring-presensi.index'));
 });
 
+Breadcrumbs::for('izin', function (BreadcrumbTrail $trail) {
+    $trail->push('izin', route('izin.index'));
+});
+
 

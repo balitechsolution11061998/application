@@ -275,6 +275,12 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
 
     });
 
+    Route::prefix('izin')->name('izin.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'IzinController@index')->name('index');
+        Route::get('/data', 'IzinController@data')->name('data');
+
+    });
+
     Route::get('/query-performance-logs', [QueryPerformanceLogController::class, 'getLogs']);
 
 

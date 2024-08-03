@@ -62,6 +62,16 @@ return [
             'route'          => 'monitoring-presensi.index',
         ],
         [
+            'label'          => 'Izin',
+            'type'           => 'item',
+            'permission'     => ['monitoring-show'],
+            'permissionType' => 'gate',
+            'icon'           => 'fas', // Font Awesome Solid icon set
+            'iconName'       => 'fa-calendar-check', // Font Awesome icon for "leave" or "permission"
+            'iconPath'       => 5,
+            'route'          => 'izin.index',
+        ],
+        [
             'label'          => 'Paket Soal',
             'type'           => 'item',
             'permission'     => ['paketsoal-show'],
