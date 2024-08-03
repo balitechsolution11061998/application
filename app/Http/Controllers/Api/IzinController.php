@@ -19,17 +19,22 @@ class IzinController extends Controller
 
             if ($nik) {
                 // Get the izin records for the given nik
-                $izins = Izin::where('nik', $nik)->where('kode_izin','!=',null)->get();
-                // Calculate the jumlah_izin
-                $jumlah_izin = $izins->count();
+                $izins = Izin::where('nik', $nik)->where('kode_izin', '!=', null)->get();
             } else {
                 // Get all izin records
-                $izins = Izin::where('kode_izin','!=',null)->get();
-                // Calculate the jumlah_izin
-                $jumlah_izin = $izins->count();
+                $izins = Izin::where('kode_izin', '!=', null)->get();
             }
 
-            // Return response with jumlah_izin
+            // Format dates and calculate jumlah_izin
+            $izins->transform(function($izin) {
+                $izin->tgl_izin_dari = Carbon::parse($izin->tgl_izin_dari)->format('d F Y');
+                $izin->tgl_izin_sampai = Carbon::parse($izin->tgl_izin_sampai)->format('d F Y');
+                return $izin;
+            });
+
+            $jumlah_izin = $izins->count();
+
+            // Return response with jumlah_izin and formatted data
             return response()->json([
                 'jumlah_izin' => $jumlah_izin,
                 'data' => $izins
