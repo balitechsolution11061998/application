@@ -23,6 +23,34 @@ class IzinController extends Controller
         return response()->json($izin);
     }
 
+     // Method to approve an Izin request
+     public function approve($id)
+     {
+         $izin = Izin::findOrFail($id);
+
+         // Update status to approved
+         $izin->status_approved = 'Approved';
+         $izin->save();
+
+         // Optionally log the action or notify the user
+
+         return response()->json(['message' => 'Izin approved successfully.']);
+     }
+
+     // Method to reject an Izin request
+     public function reject($id)
+     {
+         $izin = Izin::findOrFail($id);
+
+         // Update status to rejected
+         $izin->status_approved = 'Rejected';
+         $izin->save();
+
+         // Optionally log the action or notify the user
+
+         return response()->json(['message' => 'Izin rejected successfully.']);
+     }
+
     public function data(Request $request)
     {
         $query = Izin::with('user'); // Use the Izin model directly
