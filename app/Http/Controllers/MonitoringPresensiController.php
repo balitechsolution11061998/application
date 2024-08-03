@@ -33,7 +33,7 @@ class MonitoringPresensiController extends Controller
             // Apply cabang filter if provided
             if ($request->filled('cabang')) {
                 $query->whereHas('user', function ($query) use ($request) {
-                    $query->where('cabang_id', $request->cabang);
+                    $query->where('kode_cabang', $request->cabang);
                 });
             }
 
