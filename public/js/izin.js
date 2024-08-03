@@ -65,18 +65,70 @@ $('#izin_table').on('click', '.view-details', function() {
             $('#mdlFormTitle').text(`Detail for ${data.kode_izin}`); // Set the title dynamically
 
             $('#mdlFormContent').html(`
-                <p><strong>Kode Izin:</strong> ${data.kode_izin}</p>
-                <p><strong>Tanggal Izin Dari:</strong> ${data.tgl_izin_dari}</p>
-                <p><strong>Tanggal Izin Sampai:</strong> ${data.tgl_izin_sampai}</p>
-                <p><strong>NIK:</strong> ${data.nik}</p>
-                <p><strong>Nama Karyawan:</strong> ${data.nama_karyawan}</p>
-                <p><strong>Jabatan:</strong> ${data.jabatan}</p>
-                <p><strong>Departemen:</strong> ${data.departemen}</p>
-                <p><strong>Cabang:</strong> ${data.cabang}</p>
-                <p><strong>Status:</strong> ${data.status}</p>
-                <p><strong>Keterangan:</strong> ${data.keterangan}</p>
-                <p><strong>Status Approved:</strong> ${data.status_approved}</p>
-                ${data.doc_sid ? `<p><a href="${data.doc_sid}" target="_blank">View File</a></p>` : ''}
+                <div class="container">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <p><strong>Kode Izin:</strong></p>
+                            <p class="text-muted">${data.kode_izin}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Tanggal Izin Dari:</strong></p>
+                            <p class="text-muted">${data.tgl_izin_dari}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Tanggal Izin Sampai:</strong></p>
+                            <p class="text-muted">${data.tgl_izin_sampai}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <p><strong>NIK:</strong></p>
+                            <p class="text-muted">${data.nik}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Nama Karyawan:</strong></p>
+                            <p class="text-muted">${data.nama_karyawan}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Jabatan:</strong></p>
+                            <p class="text-muted">${data.jabatan}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <p><strong>Departemen:</strong></p>
+                            <p class="text-muted">${data.departemen}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Cabang:</strong></p>
+                            <p class="text-muted">${data.cabang}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Status:</strong></p>
+                            <p class="text-muted">${data.status}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <p><strong>Keterangan:</strong></p>
+                            <p class="text-muted">${data.keterangan}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Status Approved:</strong></p>
+                            <p class="text-muted">${data.status_approved}</p>
+                        </div>
+                        <div class="col-md-6">
+                            ${data.doc_sid ? `<p><a href="${data.doc_sid}" class="btn btn-primary" target="_blank">View File</a></p>` : ''}
+                        </div>
+                    </div>
+                    <!-- Action Buttons -->
+                    <div class="text-center mt-4">
+                        <button type="button" class="btn btn-success btn-lg" id="approveBtn">Approve</button>
+                        <button type="button" class="btn btn-danger btn-lg" id="rejectBtn">Reject</button>
+                    </div>
+                </div>
             `);
 
             // Show the modal
