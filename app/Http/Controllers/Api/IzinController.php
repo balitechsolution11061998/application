@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Models\Izin;
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Notifications\IzinNotification;
 use Carbon\Carbon;
 
 class IzinController extends Controller
@@ -92,20 +94,30 @@ class IzinController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        $izin = new Izin();
-        $izin->kode_izin = $request->input('kode_izin');
-        $izin->nik = $request->input('nik');
-        $izin->tgl_izin_dari = $request->input('tgl_izin_dari');
-        $izin->tgl_izin_sampai = $request->input('tgl_izin_sampai');
-        $izin->status = "Progress";
-        $izin->keterangan = $request->input('keterangan');
-        $izin->doc_sid = $request->input('doc_sid');
-        $izin->status_approved = "Progress";
-        $izin->save();
-        return response()->json($izin, 201);
-    }
+
+     public function store(Request $request)
+     {
+         $izin = new Izin();
+         $izin->kode_izin = $request->input('kode_izin');
+         $izin->nik = $request->input('nik');
+         $izin->tgl_izin_dari = $request->input('tgl_izin_dari');
+         $izin->tgl_izin_sampai = $request->input('tgl_izin_sampai');
+         $izin->status = "Progress";
+         $izin->keterangan = $request->input('keterangan');
+         $izin->doc_sid = $request->input('doc_sid');
+         $izin->status_approved = "Progress";
+         $izin->save();
+
+         // Find the user to notify
+         $user = User::where('nik', $izin->nik)->first();
+
+         // Send notification
+         if ($user) {
+             $user->notify(new IzinNotification($izin));
+         }
+
+         return response()->json($izin, 201);
+     }
 
     public function storeCuti(Request $request)
     {

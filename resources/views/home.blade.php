@@ -575,7 +575,10 @@
                     }
                 });
             });
-
+            Echo.private('App.Models.User.' + userId)
+    .notification((notification) => {
+        showNotification(notification.message);
+    });
             function showNotification() {
                 const notification = new Notification('Test Notification', {
                     body: 'This is a test notification',
