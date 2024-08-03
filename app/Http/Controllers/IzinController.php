@@ -15,7 +15,7 @@ class IzinController extends Controller
 
     public function data(Request $request)
     {
-        $query = Izin::query(); // Use the Izin model directly
+        $query = Izin::with('user'); // Use the Izin model directly
 
         // Apply filters if any
         if ($request->has('search') && $request->search) {

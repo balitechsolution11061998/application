@@ -16,11 +16,6 @@ class Izin extends Model
         return $this->belongsTo(User::class, 'nik','nik'); // Adjust 'user_id' if necessary
     }
 
-    public function jamKerja()
-    {
-        return $this->belongsTo(JamKerja::class, 'kode_jam_kerja','kode_jk'); // Adjust foreign key as needed
-    }
-
     protected $casts = [
         'tgl_izin_dari' => 'date',
         'tgl_izin_sampai' => 'date',
