@@ -53,32 +53,42 @@ $(document).ready(function() {
     });
 
     // Handle the click event for the view button
-    $('#izin_table').on('click', '.view-details', function() {
-        var id = $(this).data('id');
-        // Fetch data for the modal
-        $.ajax({
-            url: `/izin/${id}`,
-            method: 'GET',
-            success: function(data) {
-                // Populate the modal with data
-                $('#modalDetails .modal-body').html(`
-                    <p><strong>Kode Izin:</strong> ${data.kode_izin}</p>
-                    <p><strong>Tanggal Izin Dari:</strong> ${data.tgl_izin_dari}</p>
-                    <p><strong>Tanggal Izin Sampai:</strong> ${data.tgl_izin_sampai}</p>
-                    <p><strong>NIK:</strong> ${data.nik}</p>
-                    <p><strong>Nama Karyawan:</strong> ${data.nama_karyawan}</p>
-                    <p><strong>Jabatan:</strong> ${data.jabatan}</p>
-                    <p><strong>Departemen:</strong> ${data.departemen}</p>
-                    <p><strong>Cabang:</strong> ${data.cabang}</p>
-                    <p><strong>Status:</strong> ${data.status}</p>
-                    <p><strong>Keterangan:</strong> ${data.keterangan}</p>
-                    <p><strong>Status Approved:</strong> ${data.status_approved}</p>
-                    ${data.doc_sid ? `<p><a href="${data.doc_sid}" target="_blank">View File</a></p>` : ''}
-                `);
-                $('#modalDetails').modal('show');
-            }
-        });
+ // Add this JavaScript to handle the 'View' button click and modal population
+$('#izin_table').on('click', '.view-details', function() {
+    var id = $(this).data('id'); // Get the ID from the button's data attribute
+
+    $.ajax({
+        url: `/izin/${id}/show`,
+        method: 'GET',
+        success: function(data) {
+            // Populate the modal with data
+            $('#mdlFormTitle').text(`Detail for ${data.kode_izin}`); // Set the title dynamically
+
+            $('#mdlFormContent').html(`
+                <p><strong>Kode Izin:</strong> ${data.kode_izin}</p>
+                <p><strong>Tanggal Izin Dari:</strong> ${data.tgl_izin_dari}</p>
+                <p><strong>Tanggal Izin Sampai:</strong> ${data.tgl_izin_sampai}</p>
+                <p><strong>NIK:</strong> ${data.nik}</p>
+                <p><strong>Nama Karyawan:</strong> ${data.nama_karyawan}</p>
+                <p><strong>Jabatan:</strong> ${data.jabatan}</p>
+                <p><strong>Departemen:</strong> ${data.departemen}</p>
+                <p><strong>Cabang:</strong> ${data.cabang}</p>
+                <p><strong>Status:</strong> ${data.status}</p>
+                <p><strong>Keterangan:</strong> ${data.keterangan}</p>
+                <p><strong>Status Approved:</strong> ${data.status_approved}</p>
+                ${data.doc_sid ? `<p><a href="${data.doc_sid}" target="_blank">View File</a></p>` : ''}
+            `);
+
+            // Show the modal
+            $('#mdlForm').modal('show');
+        },
+        error: function() {
+            // Handle errors if needed
+            alert('Failed to fetch data.');
+        }
     });
+});
+
 
     // Apply filters
     $('#filter_btn').on('click', function() {
