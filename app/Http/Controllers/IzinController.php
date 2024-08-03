@@ -51,7 +51,7 @@ class IzinController extends Controller
                 return $row->nik;
             })
             ->editColumn('nama_karyawan', function ($row) {
-                return $row->user ? $row->user->nama_karyawan : 'N/A'; // Access user data if available
+                return $row->user ? $row->user->name : 'N/A'; // Access user data if available
             })
             ->editColumn('jabatan', function ($row) {
                 return $row->user ? $row->user->jabatan : 'N/A'; // Access user data if available
