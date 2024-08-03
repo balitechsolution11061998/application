@@ -36,7 +36,7 @@ class AbsensiController extends Controller
     public function store(Request $request)
     {
         try {
-            $absensi = new Presensi();
+            $absensi = new Absensi();
             $absensi->nik = $request->input('nik');
             $absensi->tgl_presensi = $request->input('tgl_presensi');
             $absensi->jam_in = $request->input('jam_in');

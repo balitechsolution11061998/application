@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Absensi;
 use App\Models\Presensi;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class MonitoringPresensiController extends Controller
     {
         try {
             // Start building the query
-            $query = Presensi::with('user', 'konfigurasiJamKerja');
+            $query = Absensi::with('user', 'konfigurasiJamKerja');
 
             // Apply search filter if provided
             if ($request->filled('search')) {
