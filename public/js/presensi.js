@@ -51,11 +51,51 @@ $(document).ready(function() {
             { data: 'user.name', name: 'user.name' },
             { data: 'user.cabang.name', name: 'user.cabang.name' }, // Adjust according to your relationship
             { data: 'user.department.name', name: 'user.department.name' }, // Adjust according to your relationship
-            { data: 'tgl_presensi', name: 'tgl_presensi' }, // Adjust according to your relationship
-            { data: 'jam_in', name: 'jam_in' },
-            { data: 'foto_in', name: 'foto_in' },
-            { data: 'jam_out', name: 'jam_out' },
-            { data: 'foto_out', name: 'foto_out' },
+            {
+                data: 'tgl_presensi',
+                name: 'tgl_presensi',
+                render: function(data, type, row) {
+                    var date = new Date(data);
+                    var day = date.getDate();
+                    var month = date.toLocaleString('id-ID', { month: 'long' });
+                    var year = date.getFullYear();
+                    return `${day} ${month} ${year}`;
+                }
+            },
+            {
+                data: 'jam_in',
+                name: 'jam_in',
+                render: function(data, type, row) {
+                    var time = new Date('1970-01-01T' + data + 'Z');
+                    var hours = String(time.getUTCHours()).padStart(2, '0');
+                    var minutes = String(time.getUTCMinutes()).padStart(2, '0');
+                    return `${hours}:${minutes}`;
+                }
+            },
+            {
+                data: 'foto_in',
+                name: 'foto_in',
+                render: function(data, type, row) {
+                    return `<img src="{{ asset('storage/absensi/foto_in/') }}/${data}" alt="Foto In" style="width: 100px; height: auto;">`;
+                }
+            },
+            {
+                data: 'jam_out',
+                name: 'jam_out',
+                render: function(data, type, row) {
+                    var time = new Date('1970-01-01T' + data + 'Z');
+                    var hours = String(time.getUTCHours()).padStart(2, '0');
+                    var minutes = String(time.getUTCMinutes()).padStart(2, '0');
+                    return `${hours}:${minutes}`;
+                }
+            },
+            {
+                data: 'foto_out',
+                name: 'foto_out',
+                render: function(data, type, row) {
+                    return `<img src="{{ asset('storage/absensi/foto_out/') }}/${data}" alt="Foto Out" style="width: 100px; height: auto;">`;
+                }
+            },
             { data: 'status', name: 'status' },
             { data: 'keterangan', name: 'keterangan' }
         ]
