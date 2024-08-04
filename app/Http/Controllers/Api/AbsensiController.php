@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Absensi;
 use App\Models\Presensi;
+use Illuminate\Support\Facades\DB;
 
 class AbsensiController extends Controller
 {
