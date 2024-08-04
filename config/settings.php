@@ -12,6 +12,11 @@ return [
     'KT_APP_NAME' => env('APP_NAME', 'M Mart'),
     'KT_APP_SLOGAN' => env('APP_SLOGAN', ''),
 
+    'KT_APP_NAME_E_PRESENSI' => 'E-PRESENSI',
+    'KT_APP_NAME_CBT' => 'CBT',
+    'KT_APP_NAME_BAYU_SYS' => 'BAYU SYS',
+    'KT_APP_SLOGAN' => 'Your Slogan Here',
+
     'KT_THEME' => 'metronic',
 
     # Theme layout templates directory
