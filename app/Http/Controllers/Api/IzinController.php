@@ -128,6 +128,19 @@ class IzinController extends Controller
              $izin->status_approved = "Progress";
              $izin->save();
 
+             DB::table('notifications')->insert([
+                'type' => 'App\Notifications\IzinRequestNotification',
+                'notifiable_type' => 'App\Models\User',
+                'notifiable_id' => 1, // ID of the user or model receiving the notification
+                'data' => json_encode([
+                    'message' => 'New izin request has been created.',
+                    'izin_id' => $izin->id
+                ]),
+                'read_at' => null, // Set to a timestamp if the notification has been read
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
              // Dispatch the event
              event(new IzinRequestCreated($izin));
              $roleId = DB::table('roles')->where('name', 'superadministrator')->value('id');
