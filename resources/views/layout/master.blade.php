@@ -191,6 +191,40 @@ function showNotification() {
                 });
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function () {
+    const notificationIcon = document.querySelector('#kt_menu_item_wow');
+    const dropdownMenu = document.querySelector('#notificationDropdownMenu');
+
+    // Function to generate notifications HTML
+    function generateNotificationsHTML(notifications) {
+        if (notifications.length === 0) {
+            return '<p class="text-center">No notifications</p>';
+        }
+
+        return notifications.map(notification => `
+            <li class="list-group-item">
+                <a href="${notification.data.link || '#'}" class="text-decoration-none">
+                    ${notification.data.message}
+                    ${notification.read_at ? '<span class="badge bg-success">Read</span>' : '<span class="badge bg-warning">Unread</span>'}
+                </a>
+            </li>
+        `).join('');
+    }
+
+    // Fetch notifications when clicking the notification icon
+    notificationIcon.addEventListener('click', function () {
+        fetch('{{ route('notifications.fetch') }}')
+            .then(response => response.json())
+            .then(data => {
+                dropdownMenu.innerHTML = generateNotificationsHTML(data);
+            })
+            .catch(error => {
+                console.error('Error fetching notifications:', error);
+                dropdownMenu.innerHTML = '<p class="text-center">Error loading notifications</p>';
+            });
+    });
+});
     </script>
 
 </body>
