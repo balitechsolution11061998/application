@@ -41,7 +41,6 @@ class AbsensiController extends Controller
             $nik = $request->input('nik');
             $tgl_presensi = $request->input('tgl_presensi');
             $jam_in = $request->input('jam_in');
-            $kode_jam_kerja = $request->input('kode_jam_kerja');
 
             // Determine the current day of the week
             $currentDay = date('l', strtotime($tgl_presensi)); // Gets full day name (e.g., 'Monday')
@@ -50,14 +49,13 @@ class AbsensiController extends Controller
             $config = DB::table('konfigurasi_jam_kerja')
                 ->where('nik', $nik)
                 ->where('hari', $currentDay)
-                ->where('kode_jam_kerja', $kode_jam_kerja)
                 ->first();
 
             // If no valid configuration is found, return an error
             if (!$config) {
                 return response()->json(['error' => 'No valid jam kerja configuration found for the specified details.'], 400);
             }
-
+            $kode_jam_kerja = $config->kode_jam_kerja;
             // Check if jam_in is within the valid working hours
             $jam_in_time = strtotime($jam_in);
             $start_time = strtotime($config->jam_mulai); // Assuming jam_mulai is the start time in configuration
