@@ -36,6 +36,11 @@ class IzinRequestCreated
         return new Channel('izin-notifications');
     }
 
+    public function broadcastAs()
+    {
+        return 'izin-notifications-updated';
+    }
+
     public function broadcastWith()
     {
         return [

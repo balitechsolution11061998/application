@@ -143,23 +143,30 @@
         });
     </script>
     <script>
-        Pusher.logToConsole = true;
-        var chartInstance = null;
-        var pusher = new Pusher('200a3ba86105ed6ce25f', {
-            cluster: 'ap1'
-        });
-        var channel = pusher.subscribe('izin-notifications');
 
-        // Listen for the event
-        channel.bind('App\\Events\\IzinRequestCreated', function(data) {
-            console.log('Notification received:', data.izin);
-            // Show the notification
-            new Notification('New Izin Request', {
-                body: `Izin Code: ${data.izin.kode_izin}\nFrom: ${data.izin.tgl_izin_dari}\nTo: ${data.izin.tgl_izin_sampai}`,
-                icon: '/image/logo.png' // optional
-            });
+      Pusher.logToConsole = true;
+                var chartInstance = null;
+                var pusher = new Pusher('e711f943616263ae8acc', {
+                    cluster: 'ap1'
+                });
 
-        });
+                // Subscribe to the performance channel
+                var channel = pusher.subscribe('izin-notifications');
+                channel.bind('izin-notifications-updated', function(data) {
+                    showNotification();
+                });
+
+                function showNotification() {
+                const notification = new Notification('Test Notification', {
+                    body: 'This is a test notification',
+                    icon: '/image/logo.png' // Replace with your icon URL
+                });
+
+                notification.onclick = function() {
+                    window.focus();
+                    notification.close();
+                };
+            }
     </script>
 </body>
 <!--end::Body-->
