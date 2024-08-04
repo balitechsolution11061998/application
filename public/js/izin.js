@@ -29,7 +29,7 @@ $(document).ready(function() {
                 name: 'doc_sid',
                 render: function(data) {
                     if (data) {
-                        return `<a href="/public/storage/izin_files/${data}" class="fancybox" data-fancybox="gallery">View File</a>`;
+                        return `<a href="/storage/izin_files/${data}" class="fancybox" data-fancybox="gallery">View File</a>`;
                     }
                     return 'No File';
                 }
