@@ -3,7 +3,7 @@
     <!--begin::Logo image-->
     <a href="{{ route('home') }}">
         <div class="app-sidebar-logo-default d-flex align-items-center theme-light-show">
-            <img alt="Logo" src="{{ asset(config('settings.KT_APP_LOGO', '/image/logo.png')) }}"
+            <img alt="Logo" src="{{ Auth::check() && Auth::user()->photo ? asset(Auth::user()->photo) : asset(config('settings.KT_APP_LOGO', '/image/logo.png')) }}"
                 class="h-40px app-sidebar-logo-default" />
             <div class="ms-3 app-sidebar-logo-default">
                 <h1 class="page-heading text-gray-900 fw-semibold fs-1" style="font-family: Rubik; margin-bottom: -6px">
@@ -14,7 +14,7 @@
         </div>
 
         <div class="app-sidebar-logo-default d-flex align-items-center theme-dark-show">
-            <img alt="Logo" src="{{ asset(config('settings.KT_APP_LOGO', '/image/logo.png')) }}"
+            <img alt="Logo" src="{{ Auth::check() && Auth::user()->photo ? asset(Auth::user()->photo) : asset(config('settings.KT_APP_LOGO', '/image/logo.png')) }}"
                 class="h-40px app-sidebar-logo-default" />
             <div class="ms-3 app-sidebar-logo-default">
                 <h1 class="page-heading text-gray-900 fw-semibold fs-1" style="font-family: Rubik; margin-bottom: -6px">
@@ -23,12 +23,12 @@
 
             </div>
         </div>
-
         <img
         alt="Logo"
         src="{{ Auth::check() && Auth::user()->photo ? asset(Auth::user()->photo) : asset(config('settings.KT_APP_LOGO', '/image/logo.png')) }}"
         class="h-30px app-sidebar-logo-minimize"
     />
+
 
     </a>
     <!--end::Logo image-->
