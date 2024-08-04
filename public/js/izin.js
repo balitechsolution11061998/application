@@ -29,7 +29,8 @@ $(document).ready(function() {
                 name: 'doc_sid',
                 render: function(data) {
                     if (data) {
-                        return `<a href="/storage/izin_files/${data}" class="fancybox" data-fancybox="gallery">View File</a>`;
+                        let fileUrl = `/storage/izin_files/${data}`; // Adjust path based on filename only
+                        return `<a href="${fileUrl}" class="fancybox" data-fancybox="gallery">View File</a>`;
                     }
                     return 'No File';
                 }
