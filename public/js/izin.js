@@ -29,7 +29,7 @@ $(document).ready(function() {
                 name: 'doc_sid',
                 render: function(data) {
                     if (data) {
-                        let fileUrl = `${data.replace('/public/', '/storage/')}`;
+                        let fileUrl = data.replace('/public/', '/storage/');
                         return `<a href="${fileUrl}" class="fancybox" data-fancybox="gallery">View File</a>`;
                     }
                     return 'No File';

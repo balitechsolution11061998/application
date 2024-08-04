@@ -8,6 +8,7 @@ use App\Models\Cuti;
 use App\Models\User;
 use App\Notifications\IzinNotification;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class IzinController extends Controller
 {
@@ -121,7 +122,12 @@ class IzinController extends Controller
              // Handle file upload
              if ($request->hasFile('doc_sid')) {
                  $file = $request->file('doc_sid');
-                 $filePath = $file->store('public/izin_files'); // Save file to storage/app/public/izin_files
+                 // Ensure directory exists
+                 $directory = 'public/izin_files';
+                 if (!Storage::exists($directory)) {
+                     Storage::makeDirectory($directory);
+                 }
+                 $filePath = $file->store($directory); // Save file to storage/app/public/izin_files
                  $izin->doc_sid = $filePath; // Save the file path to the database
              }
 
@@ -155,6 +161,7 @@ class IzinController extends Controller
              ], 500);
          }
      }
+
 
 
     public function storeCuti(Request $request)
