@@ -138,8 +138,8 @@ class IzinController extends Controller
             })->first();
              // Send notification
              if ($admin) {
-                Notification::mailer('mailtrap2')->send($admin, new IzinRequestNotification($izin));
-             }
+                Notification::send($admin, new IzinRequestNotification($izin));
+            }
 
              return response()->json($izin, 201);
 
