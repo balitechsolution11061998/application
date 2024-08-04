@@ -131,7 +131,7 @@ class IzinController extends Controller
              event(new IzinRequestCreated($izin));
 
              // Find the admin to notify
-             $admin = User::where('role', 'admin')->first(); // Adjust role or method to fetch admin
+             $admin = User::role('superadministrator')->first(); // Use Laratrust's role method
 
              // Send notification
              if ($admin) {
