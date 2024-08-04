@@ -121,15 +121,18 @@ class IzinController extends Controller
 
              // Handle file upload
              if ($request->hasFile('doc_sid')) {
-                 $file = $request->file('doc_sid');
-                 // Ensure directory exists
-                 $directory = 'public/izin_files';
-                 if (!Storage::exists($directory)) {
-                     Storage::makeDirectory($directory);
-                 }
-                 $filePath = $file->store($directory); // Save file to storage/app/public/izin_files
-                 $izin->doc_sid = $filePath; // Save the file path to the database
-             }
+                $file = $request->file('doc_sid');
+                // Ensure directory exists
+                $directory = 'public/izin_files';
+                if (!Storage::exists($directory)) {
+                    Storage::makeDirectory($directory);
+                }
+                $filePath = $file->store($directory); // Save file to storage/app/public/izin_files
+
+                // Extract filename from the path
+                $filename = basename($filePath);
+                $izin->doc_sid = $filename; // Save the filename to the database
+            }
 
              $izin->status_approved = "Progress";
              $izin->save();
