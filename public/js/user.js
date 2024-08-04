@@ -773,39 +773,66 @@ async function filterUser() {
     $("#mdlFormTitle").html("Filter User");
     $("#mdlFormContent").html("");
 
-    const departments = await fetchOptions("/departments/data");
+    try {
+        const [departments, cabangs] = await Promise.all([
+            fetchOptions("/departments/data"),
+            fetchOptions("/kantor_cabang/getData")
+        ]);
 
-    const departmentOptions = departments
-        .map((dept) => `<option value="${dept.id}">${dept.name}</option>`)
-        .join("");
+        const departmentOptions = departments
+            .map((dept) => `<option value="${dept.id}">${dept.name}</option>`)
+            .join("");
 
-    $("#mdlFormContent").append(`
-        <div class="container mt-3">
-            <div class="row">
-                <div class="col">
-                    <input type="text" class="form-control"  name="name" id="name" placeholder="Nama Karyawan">
-                </div>
-                <div class="col">
-                    <select class="form-control" name="department" id="department">
-                        <option value="">Departemen</option>
-                        ${departmentOptions}
-                    </select>
-                </div>
-                <div class="col">
-                    <select class="form-control" name="cabang" id="cabang">
-                        <option value="">Semua Cabang</option>
-                        <option value="bali">Bali</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <button type="button" class="btn btn-primary" onclick="searchUser()">
-                        <i class="fas fa-search"></i> Cari
-                    </button>
+        const cabangOptions = cabangs.data
+            .map((cab) => `<option value="${cab.id}">${cab.name}</option>`)
+            .join("");
+
+        $("#mdlFormContent").append(`
+            <div class="container mt-3">
+                <div class="row">
+                    <div class="col">
+                        <input type="text" class="form-control form-control-sm" name="name" id="name" placeholder="Nama Karyawan">
+                    </div>
+                    <div class="col">
+                        <select class="form-control form-control-sm" name="department" id="department">
+                            <option value="">Departemen</option>
+                            ${departmentOptions}
+                        </select>
+                    </div>
+                    <div class="col">
+                        <select class="form-control form-control-sm" name="cabang" id="cabang">
+                            <option value="">Semua Cabang</option>
+                            ${cabangOptions}
+                        </select>
+                    </div>
+                    <div class="col">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="searchUser()">
+                            <i class="fas fa-search"></i> Cari
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-    `);
+        `);
+
+        // Initialize Select2 after the elements are appended to the DOM
+        $('#department').select2({
+            placeholder: 'Pilih Departemen',
+            width: '100%'
+        });
+
+        $('#cabang').select2({
+            placeholder: 'Pilih Cabang',
+            width: '100%'
+        });
+
+    } catch (error) {
+        $("#mdlFormContent").html("<p>Error loading form options. Please try again later.</p>");
+        console.error("Error fetching data:", error);
+    }
 }
+
+
+
 
 function searchUser() {
     fetchDataUser();

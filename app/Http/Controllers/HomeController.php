@@ -10,6 +10,7 @@ use App\Services\Rcv\RcvService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -28,14 +29,32 @@ class HomeController extends Controller
         $this->middleware('auth');
 
     }
-    public function index(){
-        return view('home');
+    public function index()
+    {
+        if (Auth::check() && Auth::user()->hasRole('superadministrator')) {
+            return view('home');
+        }elseif (Auth::user()->hasRole('admin_karyawan')) {
+            return redirect()->route('home.epresensi'); // Replace 'home2.route' with the actual route name for the karyawan view
+        }
+        elseif (Auth::user()->hasRole('karyawan')) {
+            return redirect()->route('home.epresensi'); // Replace 'home2.route' with the actual route name for the karyawan view
+        } elseif (Auth::user()->hasRole('admin_cbt')) {
+            return redirect()->route('home.cbt'); // Replace 'home3.route' with the actual route name for the siswa view
+        }elseif (Auth::user()->hasRole('siswa')) {
+            return redirect()->route('home.cbt'); // Replace 'home3.route' with the actual route name for the siswa view
+        }
     }
-    public function index2(){
-        return view('home2');
+
+    public function index2()
+    {
+            return view('home2');
+
     }
-    public function index3(){
-        return view('home3');
+
+    public function index3()
+    {
+            return view('home3');
+
     }
 
 

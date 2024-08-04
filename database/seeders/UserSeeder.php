@@ -1,167 +1,263 @@
 <?php
-
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Department;
 use App\Models\Jabatan;
 use App\Models\Cabang;
 use App\Models\Role;
-use App\Models\Rombel;
-use App\Models\Siswa;
+use App\Models\KonfigurasiJamKerja;
 use Faker\Factory as Faker;
 
 class UserSeeder extends Seeder
 {
+    private function createUsersWithRole(string $roleName, $faker, array $departmentIds, array $jabatans, array $cabang)
+    {
+        $role = Role::where('name', $roleName)->first();
+
+        if ($role) {
+            // Define specific cabang IDs for Badung and Bangli
+            $badungCabangIds = [1, 2, 3]; // Example IDs for Badung
+            $bangliCabangIds = [4, 5, 6]; // Example IDs for Bangli
+
+            foreach ($departmentIds as $departmentId) {
+                foreach ($cabang as $cabangId) {
+                    // Check if the cabang ID belongs to Badung or Bangli
+                    if (in_array($cabangId, $badungCabangIds)) {
+                        $userCount = 10; // Fixed number for Badung
+                    } elseif (in_array($cabangId, $bangliCabangIds)) {
+                        $userCount = 10; // Fixed number for Bangli
+                    } else {
+                        $userCount = rand(2, 10); // Random number for other districts
+                    }
+
+                    for ($i = 1; $i <= $userCount; $i++) {
+                        $username = $faker->unique()->numberBetween(10000000, 99999999);
+
+                        $userData = [
+                            'username' => $username,
+                            'name' => $faker->name,
+                            'email' => $faker->unique()->safeEmail,
+                            'password_show' => '12345678',
+                            'password' => Hash::make('12345678'),
+                            'region' => '1',
+                            'phone_number' => $faker->phoneNumber,
+                            'nik' => $faker->unique()->numberBetween(10000000, 99999999),
+                            'join_date' => $faker->date,
+                            'status' => 'y',
+                            'alamat' => $faker->address,
+                            'photo' => '/image/logo.png',
+                            'kode_dept' => $departmentId,
+                            'kode_jabatan' => $faker->randomElement($jabatans),
+                            'kode_cabang' => $cabangId,
+                        ];
+
+                        $user = User::updateOrCreate(
+                            ['username' => $userData['username']],
+                            $userData
+                        );
+
+                        $user->syncRoles([$role->name]);
+
+                        if ($roleName === 'karyawan') {
+                            $this->createKonfigurasiJamKerja($user, $faker);
+                        }
+                    }
+                }
+            }
+        } else {
+            echo "Role '{$roleName}' not found!\n";
+        }
+    }
+
+
+    private function createKonfigurasiJamKerja(User $user, $faker)
+    {
+        // Fetch available jam_kerja codes
+        $jamKerjaCodes = DB::table('jam_kerja')->pluck('kode_jk')->toArray();
+
+        // Define sample working days
+        $workingDays = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+
+        foreach ($workingDays as $day) {
+            $kode_jam_kerja = $faker->randomElement($jamKerjaCodes);
+
+            $configData = [
+                'kode_jam_kerja' => $kode_jam_kerja,
+                'nik' => $user->nik,
+                'hari' => $day,
+            ];
+
+            KonfigurasiJamKerja::updateOrCreate(
+                [
+                    'nik' => $user->nik,
+                    'hari' => $day,
+                ],
+                $configData
+            );
+        }
+    }
+
     public function run()
     {
         $faker = Faker::create('id_ID');
 
-        // Predefined user data
-        $dataUser = [
+        // Example data for jam_kerja table
+        $data = [
             [
-                'username' => '219811991',
-                'name' => 'I Wayan Bayu Sulaksana',
-                'email' => 'notification@supplier.m-mart.co.id',
-                'password_show' => '12345678',
-                'password' => Hash::make('Superman2000@'),
-                'region' => '1',
-                'phone_number' => '1',
-                'nik' => '11223344',
-                'join_date' => '2022-12-02',
-                'status' => 'y',
-                'alamat' => $faker->address,
-                'photo' => '/image/logo.png',
+                'kode_jk' => 'JK001',
+                'nama_jk' => 'Jam Kerja Pagi',
+                'awal_jam_masuk' => '08:00:00',
+                'jam_masuk' => '08:30:00',
+                'akhir_jam_masuk' => '09:00:00',
+                'jam_pulang' => '17:00:00',
+                'lintas_hari' => false,
             ],
             [
-                'username' => 'karyawan1',
-                'name' => 'Karyawan 1',
-                'email' => 'karyawan1@gmail.com',
-                'password_show' => '12345678',
-                'password' => Hash::make('12345678'),
-                'region' => '1',
-                'phone_number' => '089534386678',
-                'nik' => '219092349',
-                'join_date' => '2022-12-02',
-                'status' => 'y',
-                'alamat' => 'Sumenep',
-                'photo' => '/image/logo.png',
+                'kode_jk' => 'JK002',
+                'nama_jk' => 'Jam Kerja Siang',
+                'awal_jam_masuk' => '12:00:00',
+                'jam_masuk' => '12:30:00',
+                'akhir_jam_masuk' => '13:00:00',
+                'jam_pulang' => '21:00:00',
+                'lintas_hari' => false,
             ],
             [
-                'username' => 'guru1',
-                'name' => 'Guru 1',
-                'email' => 'guru1@gmail.com',
-                'password_show' => '12345678',
-                'password' => Hash::make('12345678'),
-                'region' => '1',
-                'phone_number' => '089534386679',
-                'nik' => '319092349',
-                'join_date' => '2022-12-02',
-                'status' => 'y',
-                'alamat' => 'Denpasar',
-                'photo' => '/image/logo.png',
-            ],
-            [
-                'username' => 'admin_cbt1',
-                'name' => 'Admin CBT 1',
-                'email' => 'admin_cbt1@gmail.com',
-                'password_show' => '12345678',
-                'password' => Hash::make('12345678'),
-                'region' => '1',
-                'phone_number' => '089534386680',
-                'nik' => '419092349',
-                'join_date' => '2022-12-02',
-                'status' => 'y',
-                'alamat' => 'Tabanan',
-                'photo' => '/image/logo.png',
+                'kode_jk' => 'JK003',
+                'nama_jk' => 'Jam Kerja Malam',
+                'awal_jam_masuk' => '22:00:00',
+                'jam_masuk' => '22:30:00',
+                'akhir_jam_masuk' => '23:00:00',
+                'jam_pulang' => '07:00:00',
+                'lintas_hari' => true,
             ],
         ];
+
+        // Insert example data into jam_kerja
+        DB::table('jam_kerja')->insert($data);
+
+        // Create a single superadministrator
+        $this->createSuperadministrator();
+        $this->createAdminCbt();
+        $this->createAdminEPresensi();
 
         // Fetch department, jabatan, and cabang IDs
         $departmentIds = Department::pluck('id')->toArray();
         $jabatans = Jabatan::pluck('id')->toArray();
         $cabang = Cabang::pluck('id')->toArray();
 
-        // Add predefined users
-        foreach ($dataUser as $data) {
-            $data['kode_dept'] = $faker->randomElement($departmentIds); // Assign a random department ID
-            $data['kode_jabatan'] = $faker->randomElement($jabatans); // Assign a random jabatan ID
-            $data['kode_cabang'] = $faker->randomElement($cabang); // Assign a random cabang ID
+        // Create users with roles
+        $this->createUsersWithRole('karyawan', $faker, $departmentIds, $jabatans, $cabang);
+        $this->createUsersWithRole('guru', $faker, $departmentIds, $jabatans, $cabang);
+        $this->createUsersWithRole('admin_cbt', $faker, $departmentIds, $jabatans, $cabang);
+        // Add more roles as needed
+    }
 
-            // Create user
-            $user = User::updateOrCreate(
-                ['username' => $data['username']],  // Use username to avoid duplicates
-                $data
-            );
-
-            // Assign roles separately
-            if ($user->username === '219811991') {
-                $role = Role::where('name', 'superadministrator')->first();
-                if ($role) {
-                    $user->syncRoles([$role->name]);
-                }
-            } elseif ($user->username === 'karyawan1') {
-                $role = Role::where('name', 'karyawan')->first();
-                if ($role) {
-                    $user->syncRoles([$role->name]);
-                }
-            } elseif ($user->username === 'guru1') {
-                $role = Role::where('name', 'guru')->first();
-                if ($role) {
-                    $user->syncRoles([$role->name]);
-                }
-            } elseif ($user->username === 'admin_cbt1') {
-                $role = Role::where('name', 'admin_cbt')->first();
-                if ($role) {
-                    $user->syncRoles([$role->name]);
-                }
-            }
-        }
-
-        // Generate random users for Siswa
-        $roleName = 'siswa';
-        $role = Role::where('name', $roleName)->first();
+    private function createSuperadministrator()
+    {
+        $role = Role::where('name', 'superadministrator')->first();
 
         if ($role) {
-            $rombels = Rombel::pluck('id')->toArray();
-            for ($i = 1; $i <= 200; $i++) {
-                $username = $faker->unique()->numberBetween(10000000, 99999999);
+            $username = 'superadministrator';
+            $userData = [
+                'username' => $username,
+                'name' => 'Super Administrator',
+                'email' => 'superadmin@example.com',
+                'password_show' => 'Superman2000@',
+                'password' => Hash::make('Superman2000@'),
+                'region' => '1',
+                'phone_number' => '0000000000',
+                'nik' => '99999999',
+                'join_date' => now(),
+                'status' => 'y',
+                'alamat' => 'Super Admin Address',
+                'photo' => '/image/logo.png',
+                'kode_dept' => null,
+                'kode_jabatan' => null,
+                'kode_cabang' => null,
+            ];
 
-                $userData = [
-                    'username' => $username,
-                    'name' => $faker->name,
-                    'email' => $faker->unique()->safeEmail,
-                    'password_show' => '12345678',
-                    'password' => Hash::make('12345678'),
-                    'region' => $faker->numberBetween(1, 10),
-                    'phone_number' => $faker->phoneNumber,
-                    'nik' => $faker->unique()->numberBetween(10000000, 99999999),
-                    'join_date' => $faker->date,
-                    'status' => 'y',
-                    'alamat' => $faker->address,
-                    'photo' => $faker->imageUrl,
-                ];
+            $user = User::updateOrCreate(
+                ['username' => $userData['username']],
+                $userData
+            );
 
-                $user = User::updateOrCreate(
-                    ['username' => $userData['username']],  // Use username to avoid duplicates
-                    $userData
-                );
-
-                // Assign role to user
-                $user->syncRoles([$role->name]);
-
-                // Create corresponding siswa record
-                Siswa::create([
-                    'rombel_id' => $faker->randomElement($rombels),
-                    'nama' => $user->name,
-                    'nis' => $username,  // Set nis same as username
-                    'jenis_kelamin' => $faker->randomElement(['L', 'P']),
-                ]);
-            }
+            $user->syncRoles([$role->name]);
         } else {
-            echo "Role '{$roleName}' not found!";
+            echo "Role 'superadministrator' not found!\n";
+        }
+    }
+
+    private function createAdminCbt()
+    {
+        $role = Role::where('name', 'admin_cbt')->first();
+
+        if ($role) {
+            $username = 'admincbt';
+            $userData = [
+                'username' => $username,
+                'name' => 'Admin CBT',
+                'email' => 'admincbt@example.com',
+                'password_show' => 'CbtAdmin123!',
+                'password' => Hash::make('CbtAdmin123!'),
+                'region' => '1',
+                'phone_number' => '0000000000',
+                'nik' => '88888888',
+                'join_date' => now(),
+                'status' => 'y',
+                'alamat' => 'Admin CBT Address',
+                'photo' => '/image/logo.png',
+                'kode_dept' => null,
+                'kode_jabatan' => null,
+                'kode_cabang' => null,
+            ];
+
+            $user = User::updateOrCreate(
+                ['username' => $userData['username']],
+                $userData
+            );
+
+            $user->syncRoles([$role->name]);
+        } else {
+            echo "Role 'admin_cbt' not found!\n";
+        }
+    }
+
+    private function createAdminEPresensi()
+    {
+        $role = Role::where('name', 'admin_karyawan')->first();
+
+        if ($role) {
+            $username = 'admin_karyawan';
+            $userData = [
+                'username' => $username,
+                'name' => 'Admin E Presensi',
+                'email' => 'adminkaryawan@example.com',
+                'password_show' => 'EPresensi123!',
+                'password' => Hash::make('EPresensi123!'),
+                'region' => '1',
+                'phone_number' => '0000000000',
+                'nik' => '88888888',
+                'join_date' => now(),
+                'status' => 'y',
+                'alamat' => 'Admin CBT Address',
+                'photo' => '/image/logo.png',
+                'kode_dept' => null,
+                'kode_jabatan' => null,
+                'kode_cabang' => null,
+            ];
+
+            $user = User::updateOrCreate(
+                ['username' => $userData['username']],
+                $userData
+            );
+
+            $user->syncRoles([$role->name]);
+        } else {
+            echo "Role 'admin_cbt' not found!\n";
         }
     }
 }

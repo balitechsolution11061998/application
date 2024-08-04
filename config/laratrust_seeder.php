@@ -13,7 +13,9 @@ return [
 
     'roles_structure' => [
         'superadministrator' => [
-            'dashboard' => 's',
+            'dashboardsupplier' => 's',
+            'dashboardcbt' => 's',
+            'dashboardpresensi' => 's',
             'users' => 's',
             'permissions' => 's,c',
             'items' => 's',
@@ -36,7 +38,7 @@ return [
             'ujian' => 's',
         ],
         'admin_cbt' => [
-            'dashboard' => 's',
+            'dashboardcbt' => 's',
             'users' => 's',
             'permissions' => 's,c',
             'roles' => 's',
@@ -50,20 +52,20 @@ return [
             'ujian' => 's',
         ],
         'karyawan' => [
-            'dashboard' => 's',
+            'dashboardpresensi' => 's',
         ],
         'admin_karyawan' => [
-            'dashboard' => 's',
+            'dashboardpresensi' => 's',
         ],
         'guru' => [
-            'dashboard' => 's',
+            'dashboardcbt' => 's',
             'paketsoal' => 's',
             'manajementsoal' => 's',
             'siswa' => 's',
             'users' => 's',
         ],
         'siswa' => [
-            'dashboard' => 's',
+            'dashboardcbt' => 's',
         ],
         // 'user' => [
         //     'profile' => 'r,u',

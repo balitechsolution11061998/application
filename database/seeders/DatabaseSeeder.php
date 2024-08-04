@@ -39,56 +39,51 @@ class DatabaseSeeder extends Seeder
         $data_kel = json_decode($json_kel, true);
 
 
+        // Coordinates for your laptop or another specific location
+        $laptopLatitude = '-8.459637';  // Example latitude
+        $laptopLongitude = '115.355565'; // Example longitude
+
         foreach ($data_prov as $provinsi) {
             $provinsi_id = $provinsi['id'];
             $provinsi_name = $provinsi['name'];
             $kode_provinsi = $provinsi['code'];
 
-            // Check if the province is Bali
-            if ($provinsi_name == 'Bali') {
-                // Get related kabupaten
-                $kabupaten_list = array_filter($data_kab, function ($kabupaten) use ($provinsi_id) {
-                    return $kabupaten['provinsi_id'] == $provinsi_id;
-                });
+            // Get related kabupaten for the current provinsi
+            $kabupaten_list = array_filter($data_kab, function ($kabupaten) use ($provinsi_id) {
+                return $kabupaten['provinsi_id'] == $provinsi_id;
+            });
 
-                foreach ($kabupaten_list as $kabupaten) {
-                    $kabupaten_id = $kabupaten['id'];
-                    $kabupaten_name = $kabupaten['name'];
+            foreach ($kabupaten_list as $kabupaten) {
+                $kabupaten_id = $kabupaten['id'];
+                $kabupaten_name = $kabupaten['name'];
+                $kode_kabupaten = $kabupaten['code']; // Assuming `code` is the desired `kode_kabupaten`
 
-                    // Check if the kabupaten is Badung
-                    if ($kabupaten_name == 'Badung') {
-                        // Get related kecamatan
-                        $kecamatan_list = array_filter($data_kec, function ($kecamatan) use ($kabupaten_id) {
-                            return $kecamatan['kabupaten_id'] == $kabupaten_id;
-                        });
-
-                        foreach ($kecamatan_list as $kecamatan) {
-                            $kecamatan_id = $kecamatan['id'];
-
-                            // Get related kelurahan
-                            $kelurahan_list = array_filter($data_kel, function ($kelurahan) use ($kecamatan_id) {
-                                return $kelurahan['kecamatan_id'] == $kecamatan_id;
-                            });
-
-                            foreach ($kelurahan_list as $kelurahan) {
-                                $kelurahan_id = $kelurahan['id'];
-
-                                DB::table('cabang')->insert([
-                                    'name' => $provinsi_name,
-                                    'kode_cabang' => $kode_provinsi,
-                                    'provinsi_id' => $provinsi_id,
-                                    'kabupaten_id' => $kabupaten_id,
-                                    'kecamatan_id' => $kecamatan_id,
-                                    'kelurahan_id' => $kelurahan_id,
-                                    'created_at' => now(),
-                                    'updated_at' => now(),
-                                ]);
-                            }
-                        }
-                    }
+                // Check if the kabupaten is 'Bangli'
+                if (strtolower($kabupaten_name) === 'bangli') {
+                    $latitude = $laptopLatitude;  // Set latitude
+                    $longitude = $laptopLongitude; // Set longitude
+                } else {
+                    $latitude = null;  // Default or null if not 'Bangli'
+                    $longitude = null; // Default or null if not 'Bangli'
                 }
+
+                // Insert cabang record per kabupaten
+                DB::table('cabang')->insert([
+                    'name' => $kabupaten_name,  // Set the name as the kabupaten name
+                    'kode_cabang' => $kode_kabupaten,  // Use the kabupaten code as the cabang code
+                    'provinsi_id' => $provinsi_id,
+                    'kabupaten_id' => $kabupaten_id,
+                    'kecamatan_id' => null,  // Set kecamatan_id to null since it's per kabupaten
+                    'kelurahan_id' => null,  // Set kelurahan_id to null since it's per kabupaten
+                    'latitude' => $latitude,
+                    'longitude' => $longitude,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
             }
         }
+
+
 
 
         echo "Memulai proses seeder data Provinsi...\n";
@@ -169,6 +164,8 @@ class DatabaseSeeder extends Seeder
         $this->call(KelasSeeder::class);
         $this->call(RombelSeeder::class);
         $this->call(MataPelajaranSeeder::class);
+        $this->call(CutiSeeder::class);
+
         // $this->call(UserSeeder::class);
         AddUsersJob::dispatch();
         $this->call(PaketSoalSeeder::class);
@@ -176,8 +173,5 @@ class DatabaseSeeder extends Seeder
         SeedSoalJob::dispatch();
 
         $this->call(UjianSeeder::class);
-
-
-
     }
 }

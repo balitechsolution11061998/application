@@ -20,6 +20,8 @@ return new class extends Migration
             $table->unsignedBigInteger('kecamatan_id')->nullable();
             $table->unsignedBigInteger('kelurahan_id')->nullable();
             $table->double('radius')->nullable();
+            $table->decimal('latitude', 10, 7)->nullable(); // Latitude with precision
+            $table->decimal('longitude', 10, 7)->nullable(); // Longitude with precision
             $table->timestamps();
         });
     }
