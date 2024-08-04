@@ -551,45 +551,6 @@
     @push('scripts')
         <script src="{{ asset('js/home.js') }}"></script>
         <script src="{{ asset('js/formatRupiah.js') }}"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                if (Notification.permission === 'default' || Notification.permission === 'denied') {
-                    Notification.requestPermission().then(function(permission) {
-                        if (permission === 'granted') {
-                            showNotification();
-                        }
-                    });
-                } else if (Notification.permission === 'granted') {
-                    showNotification();
-                }
 
-                document.getElementById('notify-btn').addEventListener('click', function() {
-                    if (Notification.permission === 'granted') {
-                        showNotification();
-                    } else {
-                        Notification.requestPermission().then(function(permission) {
-                            if (permission === 'granted') {
-                                showNotification();
-                            }
-                        });
-                    }
-                });
-            });
-            Echo.private('App.Models.User.' + userId)
-    .notification((notification) => {
-        showNotification(notification.message);
-    });
-            function showNotification() {
-                const notification = new Notification('Test Notification', {
-                    body: 'This is a test notification',
-                    icon: '/image/logo.png' // Replace with your icon URL
-                });
-
-                notification.onclick = function() {
-                    window.focus();
-                    notification.close();
-                };
-            }
-        </script>
     @endpush
 </x-default-layout>

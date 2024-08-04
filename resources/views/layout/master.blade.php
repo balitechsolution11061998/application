@@ -104,6 +104,8 @@
     <script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
     <script src="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pusher-js@7.0.3/dist/pusher.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.11.3/dist/echo.min.js"></script>
 
 
     <!--end::Custom Javascript-->
@@ -114,7 +116,55 @@
     <script>
         let chart;
         var calendar;
+        // Enable Pusher logging to console for debugging
+           // Enable Pusher logging to console for debugging
+           Pusher.logToConsole = true;
 
+// Initialize Pusher
+var pusher = new Pusher('e711f943616263ae8acc', {
+    cluster: 'ap1'
+});
+
+// Initialize Laravel Echo
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: 'e711f943616263ae8acc', // Same as Pusher key
+    cluster: 'ap1',
+    encrypted: true
+});
+
+// Listen for events using Laravel Echo
+window.Echo.channel('izin-notifications')
+    .listen('.IzinRequestCreated', (event) => {
+        console.log('Received event:', event);
+        showNotification(); // Show notification when event is received
+    })
+    .error((error) => {
+        console.error('Subscription error:', error);
+    });
+
+// Function to display notifications
+function showNotification() {
+    // Check if the user has granted permission for notifications
+    if (Notification.permission === 'granted') {
+        const notification = new Notification('Test Notification', {
+            body: 'This is a test notification',
+            icon: '/image/logo.png' // Replace with your icon URL
+        });
+
+        notification.onclick = function() {
+            window.focus();
+            notification.close();
+        };
+    } else if (Notification.permission !== 'denied') {
+        // Request permission if not granted yet
+        Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+                showNotification(); // Re-show notification if permission granted
+            }
+        });
+    }
+}
         document.addEventListener('livewire:load', () => {
             Livewire.on('success', (message) => {
                 toastr.success(message);
@@ -142,32 +192,7 @@
             });
         });
     </script>
-    <script>
 
-      Pusher.logToConsole = true;
-                var chartInstance = null;
-                var pusher = new Pusher('e711f943616263ae8acc', {
-                    cluster: 'ap1'
-                });
-
-                // Subscribe to the performance channel
-                var channel = pusher.subscribe('izin-notifications');
-                channel.bind('izin-notifications-updated', function(data) {
-                    showNotification();
-                });
-
-                function showNotification() {
-                const notification = new Notification('Test Notification', {
-                    body: 'This is a test notification',
-                    icon: '/image/logo.png' // Replace with your icon URL
-                });
-
-                notification.onclick = function() {
-                    window.focus();
-                    notification.close();
-                };
-            }
-    </script>
 </body>
 <!--end::Body-->
 

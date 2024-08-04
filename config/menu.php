@@ -5,16 +5,39 @@ return [
     'KT_MENU_MODE' => 'auto', /** 'manual' or 'auto' */
 
     'KT_MENUS' => [
-          [
-            'label'          => 'Dashboard',
-            'type'           => 'item',
-            'permission'     => ['dashboard-show'],
-            'permissionType' => 'gate',
-            'icon'           => 'ki',
-            'iconName'       => 'ki-element-11',
-            'iconPath'       => 4,
-            'route'          => 'home',
-        ],
+
+            [
+                'label'          => 'Dashboard',
+                'type'           => 'item',
+                'permission'     => ['dashboard-show'],
+                'permissionType' => 'gate',
+                'icon'           => 'fas',
+                'iconName'       => 'fa-tachometer-alt', // Font Awesome icon for dashboard
+                'iconPath'       => 7,
+                'route'          => 'home',
+            ],
+            [
+                'label'          => 'Dashboard',
+                'type'           => 'item',
+                'permission'     => ['dashboard-show'],
+                'permissionType' => 'gate',
+                'icon'           => 'fas',
+                'iconName'       => 'fa-chart-line', // Font Awesome icon for reports
+                'iconPath'       => 7,
+                'route'          => 'home',
+            ],
+            [
+                'label'          => 'Dashboard',
+                'type'           => 'item',
+                'permission'     => ['dashboard-show'],
+                'permissionType' => 'gate',
+                'icon'           => 'fas',
+                'iconName'       => 'fa-chart-pie', // Font Awesome icon for analytics
+                'iconPath'       => 7,
+                'route'          => 'home',
+            ],
+
+
 
         [
             'label' => 'MENU',

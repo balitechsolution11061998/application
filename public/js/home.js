@@ -21,50 +21,59 @@ document
     function initializeCalendar(events) {
         var calendarEl = document.getElementById("calendar");
 
+        if (!calendarEl) {
+            console.error("Calendar element not found.");
+            return;
+        }
+
         if (calendar) {
             calendar.destroy(); // Destroy existing calendar instance if it exists
         }
 
-        calendar = new FullCalendar.Calendar(calendarEl, {
-            headerToolbar: {
-                left: "prev,next today",
-                center: "title",
-                right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
-            },
-            height: 600,
-            nowIndicator: true,
-            initialView: "dayGridMonth",
-            editable: false,
-            dayMaxEvents: true,
-            events: events.map(event => {
-                const eventDate = moment(event.start).format('YYYY-MM-DD');
-                const todayDate = moment().format('YYYY-MM-DD');
+        try {
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                headerToolbar: {
+                    left: "prev,next today",
+                    center: "title",
+                    right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
+                },
+                height: 600,
+                nowIndicator: true,
+                initialView: "dayGridMonth",
+                editable: false,
+                dayMaxEvents: true,
+                events: events.map(event => {
+                    const eventDate = moment(event.start).format('YYYY-MM-DD');
+                    const todayDate = moment().format('YYYY-MM-DD');
 
-                return {
-                    ...event,
-                    classNames: eventDate === todayDate ? 'bg-warning' : 'bg-purple', // Conditional styling
-                    extendedProps: {
-                        htmlContent: `
-                            <div class="event-content d-flex align-items-center">
-                                <i class="fas fa-truck text-white fs-4 me-2"></i>
-                                <span class="text-black">${event.title}</span>
-                            </div>
-                        ` // FontAwesome truck icon with title
-                    }
-                };
-            }),
-            eventContent: function(info) {
-                // Render HTML content from extendedProps
-                return { html: info.event.extendedProps.htmlContent };
-            },
-            // Optional: Handle animation after rendering
-            eventsSet: function() {
-                // Add any additional logic if needed
-            }
-        });
+                    return {
+                        ...event,
+                        classNames: eventDate === todayDate ? 'bg-warning' : 'bg-purple', // Conditional styling
+                        extendedProps: {
+                            htmlContent: `
+                                <div class="event-content d-flex align-items-center">
+                                    <i class="fas fa-truck text-white fs-4 me-2"></i>
+                                    <span class="text-black">${event.title}</span>
+                                </div>
+                            ` // FontAwesome truck icon with title
+                        }
+                    };
+                }),
+                eventContent: function(info) {
+                    // Render HTML content from extendedProps
+                    return { html: info.event.extendedProps.htmlContent };
+                },
+                eventsSet: function() {
+                    // Add any additional logic if needed
+                }
+            });
 
-        calendar.render();
+            calendar.render();
+        } catch (error) {
+            console.error("Error initializing calendar:", error);
+        }
     }
+
 
     // function fetchMataPelajaranData() {
     //     document.getElementById('spinner-mata-pelajaran').style.display = 'block';
