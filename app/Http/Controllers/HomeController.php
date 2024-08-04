@@ -29,9 +29,15 @@ class HomeController extends Controller
 
     }
     public function index(){
-
         return view('home');
     }
+    public function index2(){
+        return view('home2');
+    }
+    public function index3(){
+        return view('home3');
+    }
+
 
     public function countDataPoPerDays(Request $request){
         $startTime = microtime(true);

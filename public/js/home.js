@@ -1,17 +1,9 @@
 $(document).ready(function () {
-    fetchJamKerja();
-    fetchDepartmentCount();
-    fetchCabangCount();
-    fetchJumlahCuti();
-    fetchListCuti();
+
     fetchPoData();
     fetchPoDataPerDays();
     fetchTimelineConfirmedData();
-    fetchStudentData();
-    fetchKelasData();
-    fetchRombelData();
     // fetchMataPelajaranData();
-    fetchHistoryUjian();
     fetchQueryPerformanceLogs();
 });
 document
@@ -75,68 +67,11 @@ document
     }
 
 
-    // function fetchMataPelajaranData() {
-    //     document.getElementById('spinner-mata-pelajaran').style.display = 'block';
-
-    //     fetch('/mata-pelajaran/getMataPelajaranData')
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             document.getElementById('spinner-mata-pelajaran').style.display = 'none';
-    //             document.getElementById('mata-pelajaran-content').textContent = data.total_mata_pelajaran;
-
-    //             let mataPelajaranTableBody = document.getElementById('mata-pelajaran-table-body');
-    //             mataPelajaranTableBody.innerHTML = ''; // Ensure element exists
-
-    //             data.mataPelajaranCounts.forEach(item => {
-    //                 let row = document.createElement('tr');
-    //                 row.innerHTML = `
-    //                     <td>${item.name}</td>
-    //                     <td>${item.count}</td>
-    //                 `;
-    //                 mataPelajaranTableBody.appendChild(row);
-    //             });
-    //         })
-    //         .catch(error => {
-    //             console.error('Error fetching mata pelajaran data:', error);
-    //             document.getElementById('spinner-mata-pelajaran').style.display = 'none';
-    //         });
-    // }
 
 
 
-    function fetchKelasData() {
-        document.getElementById('spinner-kelas').style.display = 'block';
-
-        fetch('/kelas/getKelasData')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('spinner-kelas').style.display = 'none';
-
-                document.getElementById('kelas-content').textContent = data.total_kelas;
-            })
-            .catch(error => {
-                console.error('Error fetching class data:', error);
-                document.getElementById('spinner-kelas').style.display = 'none';
-            });
-    }
-
-    function fetchRombelData() {
-        document.getElementById('spinner-rombel').style.display = 'block';
-
-        fetch('/rombel/getRombelData')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('spinner-rombel').style.display = 'none';
-
-                document.getElementById('rombel-content').textContent = data.rombelCounts;
 
 
-            })
-            .catch(error => {
-                console.error('Error fetching rombel data:', error);
-                document.getElementById('spinner-rombel').style.display = 'none';
-            });
-    }
 
 
 // Button click to show modal and initialize calendar

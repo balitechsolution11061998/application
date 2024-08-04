@@ -32,6 +32,8 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
 
 // Route::group(['middleware' => ['verifiedmiddleware','twostep','verified','auth','log.user.access']], function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/home/epresensi', [HomeController::class, 'index3'])->name('home.epresensi');
+    Route::get('/home/cbt', [HomeController::class, 'index2'])->name('home.cbt');
     Route::get('/performance-data', [PerformanceController::class, 'getPerformanceData']);
 
     Route::prefix('home')->name('home.')->namespace('App\Http\Controllers')->group(function () {

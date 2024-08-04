@@ -17,24 +17,24 @@ return [
                 'route'          => 'home',
             ],
             [
-                'label'          => 'Dashboard',
+                'label'          => 'Dashboard CBT',
                 'type'           => 'item',
                 'permission'     => ['dashboard-show'],
                 'permissionType' => 'gate',
                 'icon'           => 'fas',
                 'iconName'       => 'fa-chart-line', // Font Awesome icon for reports
                 'iconPath'       => 7,
-                'route'          => 'home',
+                'route'          => 'home.cbt',
             ],
             [
-                'label'          => 'Dashboard',
+                'label'          => 'Dashboard Presensi',
                 'type'           => 'item',
                 'permission'     => ['dashboard-show'],
                 'permissionType' => 'gate',
                 'icon'           => 'fas',
                 'iconName'       => 'fa-chart-pie', // Font Awesome icon for analytics
                 'iconPath'       => 7,
-                'route'          => 'home',
+                'route'          => 'home.epresensi',
             ],
 
 
