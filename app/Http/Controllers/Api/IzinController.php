@@ -11,6 +11,7 @@ use App\Notifications\IzinNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use App\Notifications\IzinRequestNotification;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 
 class IzinController extends Controller
@@ -129,10 +130,12 @@ class IzinController extends Controller
 
              // Dispatch the event
              event(new IzinRequestCreated($izin));
+             $roleId = DB::table('roles')->where('name', 'superadministrator')->value('id');
 
              // Find the admin to notify
-             $admin = User::role('superadministrator')->first(); // Use Laratrust's role method
-
+             $admin = User::whereHas('roles', function ($query) use ($roleId) {
+                $query->where('roles.id', $roleId);
+            })->first();
              // Send notification
              if ($admin) {
                 Notification::mailer('mailtrap2')->send($admin, new IzinRequestNotification($izin));
