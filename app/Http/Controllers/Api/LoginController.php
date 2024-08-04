@@ -37,17 +37,19 @@ class LoginController extends Controller
         }
 
         // If auth success
-    $user = Auth::guard('api')->user(); // Eager load relationships
+        $user = Auth::guard('api')->user();
 
         // Get user's roles' display names using Laratrust
-        $roles = $user->roles->pluck('display_name')->first(); // Get role display names
+        $roles = $user->roles->pluck('display_name')->first();
 
-        // Prepare user data
+        // Prepare user data with latitude and longitude
         $userData = $user->toArray();
         $userData['roles'] = $roles;
         $userData['jabatan_name'] = $user->position ? $user->position->name : null;
         $userData['department_name'] = $user->department ? $user->department->name : null;
         $userData['cabang_name'] = $user->cabang ? $user->cabang->name : null;
+        $userData['latitude'] = $user->cabang ? $user->cabang->latitude : null;
+        $userData['longitude'] = $user->cabang ? $user->cabang->longitude : null;
 
         return response()->json([
             'success' => true,
@@ -55,5 +57,6 @@ class LoginController extends Controller
             'token' => $token
         ], 200);
     }
+
 }
 
