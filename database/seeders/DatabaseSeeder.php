@@ -42,8 +42,11 @@ class DatabaseSeeder extends Seeder
         $laptopLatitude = '-8.459658';  // Example latitude
         $laptopLongitude = '115.355545'; // Example longitude
 
+        $sumenepLatitude = '-7.033425';  // Example latitude for Sumenep
+        $sumenepLongitude = '113.657203'; // Example longitude for Sumenep
+
         // Define the specific kabupaten to insert
-        $specificKabupaten = ['bangli', 'badung', 'denpasar'];
+        $specificKabupaten = ['bangli', 'badung', 'denpasar','sumenep'];
 
         foreach ($data_prov as $provinsi) {
             $provinsi_id = $provinsi['id'];
@@ -65,7 +68,11 @@ class DatabaseSeeder extends Seeder
                     if ($kabupaten_name_lower === 'bangli') {
                         $latitude = $laptopLatitude;  // Set latitude for Bangli
                         $longitude = $laptopLongitude; // Set longitude for Bangli
-                    } else {
+                    } else if ($kabupaten_name_lower === 'sumenep') {
+                        $latitude = $sumenepLatitude;  // Set latitude for Bangli
+                        $longitude = $sumenepLongitude; // Set longitude for Bangli
+                    }
+                    else {
                         $latitude = null;  // Default or null for others
                         $longitude = null; // Default or null for others
                     }
