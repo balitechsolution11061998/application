@@ -7,7 +7,7 @@
                 class="h-40px app-sidebar-logo-default" />
             <div class="ms-3 app-sidebar-logo-default">
                 <h1 class="page-heading text-gray-900 fw-semibold fs-1" style="font-family: Rubik; margin-bottom: -6px">
-                    {{ config('settings.KT_APP_NAME_' . (Auth::user() && Auth::user()->hasRole('karyawan') ? 'E_PRESENSI' : (Auth::user() && Auth::user()->hasRole('siswa') ? 'CBT' : 'BAYU_SYS'))) }}
+                    {{ config('settings.KT_APP_NAME_' . (Auth::user() && Auth::user()->hasRole('admin_karyawan') ? 'E_PRESENSI' : (Auth::user() && Auth::user()->hasRole('admin_cbt') ? 'CBT' : 'BAYU_SYS'))) }}
                 </h1>
 
             </div>
@@ -18,7 +18,7 @@
                 class="h-40px app-sidebar-logo-default" />
             <div class="ms-3 app-sidebar-logo-default">
                 <h1 class="page-heading text-gray-900 fw-semibold fs-1" style="font-family: Rubik; margin-bottom: -6px">
-                    {{ config('settings.KT_APP_NAME_' . (Auth::user() && Auth::user()->hasRole('karyawan') ? 'E_PRESENSI' : (Auth::user() && Auth::user()->hasRole('siswa') ? 'CBT' : 'BAYU_SYS'))) }}
+                    {{ config('settings.KT_APP_NAME_' . (Auth::user() && Auth::user()->hasRole('admin_karyawan') ? 'E_PRESENSI' : (Auth::user() && Auth::user()->hasRole('admin_cbt') ? 'CBT' : 'BAYU_SYS'))) }}
                 </h1>
 
             </div>
