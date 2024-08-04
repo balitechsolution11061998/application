@@ -38,15 +38,15 @@ class DatabaseSeeder extends Seeder
         $data_kec = json_decode($json_kec, true);
         $data_kel = json_decode($json_kel, true);
 
-
         // Coordinates for your laptop or another specific location
-        $laptopLatitude = '-8.459637';  // Example latitude
-        $laptopLongitude = '115.355565'; // Example longitude
+        $laptopLatitude = '-8.459658';  // Example latitude
+        $laptopLongitude = '115.355545'; // Example longitude
+
+        // Define the specific kabupaten to insert
+        $specificKabupaten = ['bangli', 'badung', 'denpasar'];
 
         foreach ($data_prov as $provinsi) {
             $provinsi_id = $provinsi['id'];
-            $provinsi_name = $provinsi['name'];
-            $kode_provinsi = $provinsi['code'];
 
             // Get related kabupaten for the current provinsi
             $kabupaten_list = array_filter($data_kab, function ($kabupaten) use ($provinsi_id) {
@@ -54,34 +54,39 @@ class DatabaseSeeder extends Seeder
             });
 
             foreach ($kabupaten_list as $kabupaten) {
-                $kabupaten_id = $kabupaten['id'];
-                $kabupaten_name = $kabupaten['name'];
-                $kode_kabupaten = $kabupaten['code']; // Assuming `code` is the desired `kode_kabupaten`
+                $kabupaten_name_lower = strtolower($kabupaten['name']);
 
-                // Check if the kabupaten is 'Bangli'
-                if (strtolower($kabupaten_name) === 'bangli') {
-                    $latitude = $laptopLatitude;  // Set latitude
-                    $longitude = $laptopLongitude; // Set longitude
-                } else {
-                    $latitude = null;  // Default or null if not 'Bangli'
-                    $longitude = null; // Default or null if not 'Bangli'
+                // Only proceed if the kabupaten is one of the specified ones
+                if (in_array($kabupaten_name_lower, $specificKabupaten)) {
+                    $kabupaten_id = $kabupaten['id'];
+                    $kode_kabupaten = $kabupaten['code']; // Assuming `code` is the desired `kode_kabupaten`
+
+                    // Set coordinates for 'Bangli' and null for others
+                    if ($kabupaten_name_lower === 'bangli') {
+                        $latitude = $laptopLatitude;  // Set latitude for Bangli
+                        $longitude = $laptopLongitude; // Set longitude for Bangli
+                    } else {
+                        $latitude = null;  // Default or null for others
+                        $longitude = null; // Default or null for others
+                    }
+
+                    // Insert cabang record for the specified kabupaten
+                    DB::table('cabang')->insert([
+                        'name' => $kabupaten['name'],  // Set the name as the kabupaten name
+                        'kode_cabang' => $kode_kabupaten,  // Use the kabupaten code as the cabang code
+                        'provinsi_id' => $provinsi_id,
+                        'kabupaten_id' => $kabupaten_id,
+                        'kecamatan_id' => null,  // Set kecamatan_id to null since it's per kabupaten
+                        'kelurahan_id' => null,  // Set kelurahan_id to null since it's per kabupaten
+                        'latitude' => $latitude,
+                        'longitude' => $longitude,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
                 }
-
-                // Insert cabang record per kabupaten
-                DB::table('cabang')->insert([
-                    'name' => $kabupaten_name,  // Set the name as the kabupaten name
-                    'kode_cabang' => $kode_kabupaten,  // Use the kabupaten code as the cabang code
-                    'provinsi_id' => $provinsi_id,
-                    'kabupaten_id' => $kabupaten_id,
-                    'kecamatan_id' => null,  // Set kecamatan_id to null since it's per kabupaten
-                    'kelurahan_id' => null,  // Set kelurahan_id to null since it's per kabupaten
-                    'latitude' => $latitude,
-                    'longitude' => $longitude,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
             }
         }
+
 
 
 
