@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 
+use App\Events\IzinRequestCreated;
 use Illuminate\Http\Request;
 use App\Models\Izin;
 use App\Http\Controllers\Controller;
@@ -9,6 +10,8 @@ use App\Models\User;
 use App\Notifications\IzinNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\IzinRequestNotification;
+use Illuminate\Support\Facades\Notification;
 
 class IzinController extends Controller
 {
@@ -100,16 +103,6 @@ class IzinController extends Controller
      public function store(Request $request)
      {
          try {
-             // Validate the request
-            //  $request->validate([
-            //      'kode_izin' => 'required|string',
-            //      'nik' => 'required|string',
-            //      'tgl_izin_dari' => 'required|date',
-            //      'tgl_izin_sampai' => 'required|date',
-            //      'keterangan' => 'required|string',
-            //      'doc_sid' => 'nullable|file|mimes:pdf,doc,docx,jpg,png|max:2048', // Validate file (adjust types and size as needed)
-            //  ]);
-
              // Create a new Izin instance
              $izin = new Izin();
              $izin->kode_izin = $request->input('kode_izin');
@@ -121,34 +114,33 @@ class IzinController extends Controller
 
              // Handle file upload
              if ($request->hasFile('doc_sid')) {
-                $file = $request->file('doc_sid');
-                // Ensure directory exists
-                $directory = 'public/izin_files';
-                if (!Storage::exists($directory)) {
-                    Storage::makeDirectory($directory);
-                }
-                $filePath = $file->store($directory); // Save file to storage/app/public/izin_files
-
-                // Extract filename from the path
-                $filename = basename($filePath);
-                $izin->doc_sid = $filename; // Save the filename to the database
-            }
+                 $file = $request->file('doc_sid');
+                 $directory = 'public/izin_files';
+                 if (!Storage::exists($directory)) {
+                     Storage::makeDirectory($directory);
+                 }
+                 $filePath = $file->store($directory);
+                 $filename = basename($filePath);
+                 $izin->doc_sid = $filename;
+             }
 
              $izin->status_approved = "Progress";
              $izin->save();
 
-             // Find the user to notify
-             $user = User::where('nik', $izin->nik)->first();
+             // Dispatch the event
+             event(new IzinRequestCreated($izin));
+
+             // Find the admin to notify
+             $admin = User::where('role', 'admin')->first(); // Adjust role or method to fetch admin
 
              // Send notification
-             if ($user) {
-                 $user->notify(new IzinNotification($izin));
+             if ($admin) {
+                 Notification::send($admin, new IzinRequestNotification($izin));
              }
 
              return response()->json($izin, 201);
 
          } catch (\Illuminate\Validation\ValidationException $e) {
-             // Handle validation errors
              return response()->json([
                  'error' => 'Validation Error',
                  'message' => $e->getMessage(),
@@ -156,7 +148,6 @@ class IzinController extends Controller
              ], 422);
 
          } catch (\Exception $e) {
-             // Handle general errors
              return response()->json([
                  'error' => 'Internal Server Error',
                  'message' => 'An unexpected error occurred.',
