@@ -37,6 +37,12 @@ class UserSeeder extends Seeder
                     for ($i = 1; $i <= $userCount; $i++) {
                         $username = $faker->unique()->numberBetween(10000000, 99999999);
 
+                        // Set the photo based on the role
+                        $photo = '/image/logo1.jpg';
+                        if ($roleName === 'guru' || $roleName === 'siswa') {
+                            $photo = '/image/logo2.jpg';
+                        }
+
                         $userData = [
                             'username' => $username,
                             'name' => $faker->name,
@@ -49,7 +55,7 @@ class UserSeeder extends Seeder
                             'join_date' => $faker->date,
                             'status' => 'y',
                             'alamat' => $faker->address,
-                            'photo' => '/image/logo.png',
+                            'photo' => $photo, // Assign photo based on role
                             'kode_dept' => $departmentId,
                             'kode_jabatan' => $faker->randomElement($jabatans),
                             'kode_cabang' => $cabangId,
@@ -64,6 +70,8 @@ class UserSeeder extends Seeder
 
                         if ($roleName === 'karyawan') {
                             $this->createKonfigurasiJamKerja($user, $faker);
+                        }else   if ($roleName === 'siswa') {
+                            $this->createSiswaRecord($user, $faker);
                         }
                     }
                 }
@@ -73,6 +81,21 @@ class UserSeeder extends Seeder
         }
     }
 
+    private function createSiswaRecord(User $user, $faker)
+    {
+        // Assuming you have a Siswa model and a relationship with Rombel model
+        $siswaData = [
+            'rombel_id' => \App\Models\Rombel::inRandomOrder()->first()->id, // Assign a random Rombel ID
+            'nama' => $user->name, // Use the user's name for the 'nama' field
+            'nis' => $faker->unique()->numberBetween(100000, 999999),
+            'jenis_kelamin' => $faker->randomElement(['L', 'P']), // Randomly assign gender
+        ];
+
+        \App\Models\Siswa::updateOrCreate(
+            ['nis' => $siswaData['nis']], // Use 'nis' as the unique identifier
+            $siswaData
+        );
+    }
 
     private function createKonfigurasiJamKerja(User $user, $faker)
     {
@@ -209,7 +232,7 @@ class UserSeeder extends Seeder
                 'join_date' => now(),
                 'status' => 'y',
                 'alamat' => 'Admin CBT Address',
-                'photo' => '/image/logo.png',
+                'photo' => '/image/logo2.jpg',
                 'kode_dept' => null,
                 'kode_jabatan' => null,
                 'kode_cabang' => null,
@@ -243,8 +266,8 @@ class UserSeeder extends Seeder
                 'nik' => '88888888',
                 'join_date' => now(),
                 'status' => 'y',
-                'alamat' => 'Admin CBT Address',
-                'photo' => '/image/logo.png',
+                'alamat' => 'Admin Karyawan Address',
+                'photo' => '/image/logo1.jpg',
                 'kode_dept' => null,
                 'kode_jabatan' => null,
                 'kode_cabang' => null,
