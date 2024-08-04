@@ -48,8 +48,7 @@
     <link rel="stylesheet" href="{{ asset('css/leaflet.css') }}">
     <link rel="stylesheet" href="{{ asset('css/jquery.fancybox.min.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Evergreen+Memories&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-        integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMhXoq9Z2R9rFmgLfu7v5OfmwLf1j5R93Xy5tD" crossorigin="anonymous">
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.css" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css') }}" rel="stylesheet"
         type="text/css" />
@@ -96,16 +95,13 @@
     <script src="{{ asset('js/leaflet.js') }}"></script>
     <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('js/jquery.fancybox.min.js') }}"></script>
-    <script src="{{ asset('js/tourguide.js') }}"></script>
+    {{-- <script src="{{ asset('js/tourguide.js') }}"></script> --}}
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.11.3/echo.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
     <script src="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/pusher-js@7.0.3/dist/pusher.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.11.3/dist/echo.min.js"></script>
 
 
     <!--end::Custom Javascript-->
@@ -120,51 +116,7 @@
            // Enable Pusher logging to console for debugging
            Pusher.logToConsole = true;
 
-// Initialize Pusher
-var pusher = new Pusher('e711f943616263ae8acc', {
-    cluster: 'ap1'
-});
 
-// Initialize Laravel Echo
-window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: 'e711f943616263ae8acc', // Same as Pusher key
-    cluster: 'ap1',
-    encrypted: true
-});
-
-// Listen for events using Laravel Echo
-window.Echo.channel('izin-notifications')
-    .listen('.IzinRequestCreated', (event) => {
-        console.log('Received event:', event);
-        showNotification(); // Show notification when event is received
-    })
-    .error((error) => {
-        console.error('Subscription error:', error);
-    });
-
-// Function to display notifications
-function showNotification() {
-    // Check if the user has granted permission for notifications
-    if (Notification.permission === 'granted') {
-        const notification = new Notification('Test Notification', {
-            body: 'This is a test notification',
-            icon: '/image/logo.png' // Replace with your icon URL
-        });
-
-        notification.onclick = function() {
-            window.focus();
-            notification.close();
-        };
-    } else if (Notification.permission !== 'denied') {
-        // Request permission if not granted yet
-        Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-                showNotification(); // Re-show notification if permission granted
-            }
-        });
-    }
-}
         document.addEventListener('livewire:load', () => {
             Livewire.on('success', (message) => {
                 toastr.success(message);
@@ -194,7 +146,7 @@ function showNotification() {
 
         document.addEventListener('DOMContentLoaded', function () {
     const notificationIcon = document.querySelector('#kt_menu_item_wow');
-    const dropdownMenu = document.querySelector('#notificationDropdownMenu');
+    const dropdownMenu = document.querySelector('#kt_menu_notifications');
 
     // Function to generate notifications HTML
     function generateNotificationsHTML(notifications) {
@@ -214,10 +166,15 @@ function showNotification() {
 
     // Fetch notifications when clicking the notification icon
     notificationIcon.addEventListener('click', function () {
+        console.log('Notification icon clicked');
+
         fetch('{{ route('notifications.fetch') }}')
             .then(response => response.json())
             .then(data => {
+                console.log('Notifications data:', data); // Debugging line to ensure data is fetched
                 dropdownMenu.innerHTML = generateNotificationsHTML(data);
+                // Optionally, you could also handle visibility here
+                dropdownMenu.classList.toggle('show'); // Toggle visibility for example
             })
             .catch(error => {
                 console.error('Error fetching notifications:', error);

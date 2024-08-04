@@ -22,7 +22,6 @@
     <!--end::Activities-->
     <!--begin::Notifications-->
     <div class="app-navbar-item ms-1 ms-md-4">
-        <!-- Begin Menu wrapper -->
         <div class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-35px h-35px"
              data-kt-menu-trigger="{default: 'click', lg: 'hover'}"
              data-kt-menu-attach="parent"
@@ -35,10 +34,9 @@
                 <span class="path4"></span>
             </i>
         </div>
-        <div class="dropdown-menu p-0 m-0" id="notificationDropdownMenu">
+        <div class="menu menu-sub menu-sub-dropdown menu-column w-350px w-lg-375px" data-kt-menu="true" id="kt_menu_notifications">
             <!-- Notifications will be populated here -->
         </div>
-        <!-- End Menu wrapper -->
     </div>
 
     <!--end::Notifications-->
