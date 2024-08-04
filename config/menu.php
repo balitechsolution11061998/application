@@ -9,7 +9,7 @@ return [
             [
                 'label'          => 'Dashboard',
                 'type'           => 'item',
-                'permission'     => ['dashboard-show'],
+                'permission'     => ['dashboardsupplier-show'],
                 'permissionType' => 'gate',
                 'icon'           => 'fas',
                 'iconName'       => 'fa-tachometer-alt', // Font Awesome icon for dashboard
@@ -19,7 +19,7 @@ return [
             [
                 'label'          => 'Dashboard CBT',
                 'type'           => 'item',
-                'permission'     => ['dashboard-show'],
+                'permission'     => ['dashboardcbt-show'],
                 'permissionType' => 'gate',
                 'icon'           => 'fas',
                 'iconName'       => 'fa-chart-line', // Font Awesome icon for reports
@@ -29,7 +29,7 @@ return [
             [
                 'label'          => 'Dashboard Presensi',
                 'type'           => 'item',
-                'permission'     => ['dashboard-show'],
+                'permission'     => ['dashboardpresensi-show'],
                 'permissionType' => 'gate',
                 'icon'           => 'fas',
                 'iconName'       => 'fa-chart-pie', // Font Awesome icon for analytics
