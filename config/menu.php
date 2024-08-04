@@ -39,10 +39,7 @@ return [
 
 
 
-        [
-            'label' => 'MENU',
-            'type' => 'heading'
-        ],
+
         [
             'label'          => 'Items',
             'type'           => 'item',
@@ -136,10 +133,7 @@ return [
             'iconPath'       => '',
 
         ],
-        [
-            'label' => 'User',
-            'type' => 'heading'
-        ],
+
         [
 
             'label'          => 'User',
@@ -181,10 +175,7 @@ return [
 
             ]
         ],
-        [
-            'label' => 'Master Data',
-            'type' => 'heading'
-        ],
+
         [
             'label'          => 'Settings',
             'type'           => 'item',
