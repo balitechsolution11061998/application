@@ -65,7 +65,20 @@
     @include('partials/theme-mode/_init')
 
     @yield('content')
-
+<!-- Notification Detail Modal -->
+<div class="modal fade" id="notificationDetailModal" tabindex="-1" aria-labelledby="notificationDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notificationDetailModalLabel">Notification Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="notificationDetailMessage"></p>
+            </div>
+        </div>
+    </div>
+</div>
     <!--begin::Javascript-->
     <!--begin::Global Javascript Bundle(mandatory for all pages)-->
     @foreach (getGlobalAssets() as $path)
@@ -155,7 +168,7 @@
         }
 
         return notifications.map(notification => `
-            <li class="list-group-item">
+            <li class="list-group-item" data-id="${notification.id}">
                 <a href="${notification.data.link || '#'}" class="text-decoration-none">
                     ${notification.data.message}
                     ${notification.read_at ? '<span class="badge bg-success">Read</span>' : '<span class="badge bg-warning">Unread</span>'}
@@ -164,16 +177,36 @@
         `).join('');
     }
 
-    // Fetch notifications when clicking the notification icon
+    // Function to mark notification as read
+    function markAsRead(notificationId) {
+        fetch(`{{ route('notifications.markAsRead', '') }}/${notificationId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({}),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Notification marked as read');
+            }
+        })
+        .catch(error => {
+            console.error('Error marking notification as read:', error);
+        });
+    }
+
+    // Fetch notifications and update the dropdown menu
     notificationIcon.addEventListener('click', function () {
         console.log('Notification icon clicked');
 
         fetch('{{ route('notifications.fetch') }}')
             .then(response => response.json())
             .then(data => {
-                console.log('Notifications data:', data); // Debugging line to ensure data is fetched
+                console.log('Notifications data:', data);
                 dropdownMenu.innerHTML = generateNotificationsHTML(data);
-                // Optionally, you could also handle visibility here
                 dropdownMenu.classList.toggle('show'); // Toggle visibility for example
             })
             .catch(error => {
@@ -181,7 +214,24 @@
                 dropdownMenu.innerHTML = '<p class="text-center">Error loading notifications</p>';
             });
     });
+
+    // Show notification details and mark as read
+    dropdownMenu.addEventListener('click', function (event) {
+        const listItem = event.target.closest('.list-group-item');
+        if (listItem) {
+            const notificationId = listItem.getAttribute('data-id');
+            const notification = JSON.parse(listItem.getAttribute('data-notification'));
+
+            // Show notification details in modal
+            document.getElementById('notificationDetailMessage').textContent = notification.data.message;
+            new bootstrap.Modal(document.getElementById('notificationDetailModal')).show();
+
+            // Mark as read
+            markAsRead(notificationId);
+        }
+    });
 });
+
     </script>
 
 </body>
