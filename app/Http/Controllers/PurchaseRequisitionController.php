@@ -1,4 +1,5 @@
 <?php
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -6,27 +7,31 @@ use App\Models\PurchaseRequisition;
 use App\Models\PurchaseRequisitionDetail;
 use App\Models\PurchaseRequisitionImage;
 use Illuminate\Http\Request;
-class QueryPerformanceLogController extends Controller
+
+class PurchaseRequisitionController extends Controller
 {
     public function store(Request $request)
     {
         DB::beginTransaction();
 
         try {
+            // Extract main requisition data from the request
+            $data = $request->all()[0];
+
             // Insert into purchase_requisition table without 'no_pr'
             $purchaseRequisition = PurchaseRequisition::create([
                 'region_id' => 4, // Set this according to your logic
                 'department_id' => 9, // Set this according to your logic
                 'nama_department' => 'Development', // Set this according to your logic
-                'nama_pembuat' => $request->input('nama_pembuat'),
-                'tanggalpr' => $request->input('tanggal_pr'),
+                'nama_pembuat' => $data['nama_pembuat'],
+                'tanggalpr' => $data['tanggal_pr'],
                 'tanggal_update_step_pr' => now(),
                 'kondisiBarang' => 'Baru', // Set this according to your logic
-                'keteranganKondisiBarang' => $request->input('keteranganKondisiBarang'),
+                'keteranganKondisiBarang' => $data['keteranganKondisiBarang'],
                 'pembayaran' => 'Kredit', // Set this according to your logic
                 'status' => 'progress', // Set this according to your logic
                 'steps' => 'Department Head Office', // Set this according to your logic
-                'nama_pr' => $request->input('nama_pr'),
+                'nama_pr' => $data['nama_pr'],
                 'departement_pemesan' => 9, // Set this according to your logic
             ]);
 
@@ -35,8 +40,7 @@ class QueryPerformanceLogController extends Controller
             $purchaseRequisition->save();
 
             // Insert into purchase_requisition_detail table
-            $details = json_decode($request->input('detail'), true);
-            foreach ($details as $detail) {
+            foreach ($data['detail'] as $detail) {
                 PurchaseRequisitionDetail::create([
                     'purchase_requisition_id' => $purchaseRequisition->id,
                     'purchase_requisition_detail_name' => $detail['purchase_requisition_detail_name'],
@@ -52,8 +56,7 @@ class QueryPerformanceLogController extends Controller
             }
 
             // Insert into purchase_requisition_image table
-            $images = json_decode($request->input('image'), true);
-            foreach ($images as $image) {
+            foreach ($data['image'] as $image) {
                 PurchaseRequisitionImage::create([
                     'purchase_requisition_id' => $purchaseRequisition->id,
                     'link_file' => $image['name'],
