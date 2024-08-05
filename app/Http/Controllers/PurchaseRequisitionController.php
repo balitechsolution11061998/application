@@ -18,7 +18,7 @@ class PurchaseRequisitionController extends Controller
             // Extract main requisition data from the request
             $data = $request->all();
 
-            return $data;
+            return $data['nama_pembuat'];
 
             // Insert into purchase_requisition table without 'no_pr'
             $purchaseRequisition = PurchaseRequisition::create([
