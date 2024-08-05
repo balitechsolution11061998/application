@@ -18,7 +18,9 @@ class PurchaseRequisitionController extends Controller
             // Extract main requisition data from the request
             $data = $request->all();
 
-            return $data['nama_pembuat'];
+            // Decode the 'detail' and 'image' JSON strings
+            $details = json_decode($data['detail'], true);
+            $images = json_decode($data['image'], true);
 
             // Insert into purchase_requisition table without 'no_pr'
             $purchaseRequisition = PurchaseRequisition::create([
@@ -40,8 +42,10 @@ class PurchaseRequisitionController extends Controller
             // Generate no_pr based on the ID
             $purchaseRequisition->no_pr = 'PR-' . $purchaseRequisition->id;
             $purchaseRequisition->save();
-            if(count($$data['detail'] )>0){
-                foreach ($data['detail'] as $detail) {
+
+            // Insert into purchase_requisition_detail table
+            if(count($details) > 0){
+                foreach ($details as $detail) {
                     PurchaseRequisitionDetail::create([
                         'purchase_requisition_id' => $purchaseRequisition->id,
                         'purchase_requisition_detail_name' => $detail['purchase_requisition_detail_name'],
@@ -56,12 +60,10 @@ class PurchaseRequisitionController extends Controller
                     ]);
                 }
             }
-            // Insert into purchase_requisition_detail table
-
 
             // Insert into purchase_requisition_image table
-            if($data['image']>0){
-                foreach ($data['image'] as $image) {
+            if(count($images) > 0){
+                foreach ($images as $image) {
                     PurchaseRequisitionImage::create([
                         'purchase_requisition_id' => $purchaseRequisition->id,
                         'link_file' => $image['name'],
@@ -69,7 +71,6 @@ class PurchaseRequisitionController extends Controller
                     ]);
                 }
             }
-
 
             DB::commit();
 
@@ -88,4 +89,5 @@ class PurchaseRequisitionController extends Controller
             ], 500);
         }
     }
+
 }
