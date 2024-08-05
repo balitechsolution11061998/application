@@ -39,9 +39,6 @@ return [
         ],
         'admin_cbt' => [
             'dashboardcbt' => 's',
-            'users' => 's',
-            'permissions' => 's,c',
-            'roles' => 's',
             'soal' => 's',
             'paketsoal' => 's',
             'manajementsoal' => 's',

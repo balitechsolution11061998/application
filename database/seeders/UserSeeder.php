@@ -166,6 +166,7 @@ class UserSeeder extends Seeder
         $this->createSuperadministrator();
         $this->createAdminCbt();
         $this->createAdminEPresensi();
+        $this->createGuru();
 
         // Fetch department, jabatan, and cabang IDs
         $departmentIds = Department::pluck('id')->toArray();
@@ -173,9 +174,8 @@ class UserSeeder extends Seeder
         $cabang = Cabang::pluck('id')->toArray();
 
         // Create users with roles
+        $this->createUsersWithRole('siswa', $faker, $departmentIds, $jabatans, $cabang);
         $this->createUsersWithRole('karyawan', $faker, $departmentIds, $jabatans, $cabang);
-        $this->createUsersWithRole('guru', $faker, $departmentIds, $jabatans, $cabang);
-        $this->createUsersWithRole('admin_cbt', $faker, $departmentIds, $jabatans, $cabang);
         // Add more roles as needed
     }
 
@@ -232,6 +232,41 @@ class UserSeeder extends Seeder
                 'join_date' => now(),
                 'status' => 'y',
                 'alamat' => 'Admin CBT Address',
+                'photo' => '/image/logo2.jpg',
+                'kode_dept' => null,
+                'kode_jabatan' => null,
+                'kode_cabang' => null,
+            ];
+
+            $user = User::updateOrCreate(
+                ['username' => $userData['username']],
+                $userData
+            );
+
+            $user->syncRoles([$role->name]);
+        } else {
+            echo "Role 'admin_cbt' not found!\n";
+        }
+    }
+
+    private function createGuru()
+    {
+        $role = Role::where('name', 'guru')->first();
+
+        if ($role) {
+            $username = 'guru';
+            $userData = [
+                'username' => $username,
+                'name' => 'Guru ',
+                'email' => 'guru@example.com',
+                'password_show' => 'Guru123!',
+                'password' => Hash::make('Guru123!'),
+                'region' => '1',
+                'phone_number' => '0000000000',
+                'nik' => '88888888',
+                'join_date' => now(),
+                'status' => 'y',
+                'alamat' => 'Guru Address',
                 'photo' => '/image/logo2.jpg',
                 'kode_dept' => null,
                 'kode_jabatan' => null,
