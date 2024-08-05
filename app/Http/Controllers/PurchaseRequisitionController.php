@@ -18,6 +18,7 @@ class PurchaseRequisitionController extends Controller
             // Extract main requisition data from the request
             $data = $request->all()[0];
 
+
             // Insert into purchase_requisition table without 'no_pr'
             $purchaseRequisition = PurchaseRequisition::create([
                 'region_id' => 4, // Set this according to your logic
