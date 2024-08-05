@@ -17,7 +17,6 @@ class PurchaseRequisitionController extends Controller
         try {
             // Extract main requisition data from the request
             $data = $request->all();
-            return $data;
 
 
             // Insert into purchase_requisition table without 'no_pr'
@@ -73,7 +72,6 @@ class PurchaseRequisitionController extends Controller
                 'success' => true,
                 'message' => 'Purchase Requisition created successfully.',
                 'purchase_requisition_id' => $purchaseRequisition->id,
-                'no_pr' => $purchaseRequisition->no_pr,
             ]);
 
         } catch (\Exception $e) {
