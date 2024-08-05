@@ -42,6 +42,8 @@ class HomeController extends Controller
             return redirect()->route('home.cbt'); // Replace 'home3.route' with the actual route name for the siswa view
         }elseif (Auth::user()->hasRole('siswa')) {
             return redirect()->route('home.cbt'); // Replace 'home3.route' with the actual route name for the siswa view
+        }elseif (Auth::user()->hasRole('guru')) {
+            return redirect()->route('home.cbt'); // Replace 'home3.route' with the actual route name for the siswa view
         }
     }
 
@@ -73,7 +75,7 @@ class HomeController extends Controller
 
             // Log performance metrics
             QueryPerformanceLog::create([
-                'function_name' => 'countDataPo',
+                'function_name' => 'Count Data PO Per Days',
                 'parameters' => json_encode(['filterDate' => $filterDate, 'filterSupplier' => $filterSupplier]),
                 'execution_time' => $executionTime,
                 'memory_usage' => $memoryUsage
@@ -173,7 +175,7 @@ class HomeController extends Controller
 
             // Log performance metrics
             QueryPerformanceLog::create([
-                'function_name' => 'countDataPo',
+                'function_name' => 'Count Data Purchase Order',
                 'parameters' => json_encode(['filterDate' => $filterDate, 'filterSupplier' => $filterSupplier]),
                 'execution_time' => $executionTime,
                 'memory_usage' => $memoryUsage

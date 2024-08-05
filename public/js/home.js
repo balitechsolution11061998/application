@@ -1,11 +1,78 @@
 $(document).ready(function () {
 
-    fetchPoData();
     fetchPoDataPerDays();
     fetchTimelineConfirmedData();
-    // fetchMataPelajaranData();
-    fetchQueryPerformanceLogs();
+
+
+       // Automatically check the 'Average Execution Time' checkbox
+       document.getElementById('showExecutionTime').checked = true;
+
+       // Fetch and render chart data based on the default checkbox state
+       fetchQueryPerformanceLogs();
+
+       const checkboxes = document.querySelectorAll('.dropdown-item .form-check-input');
+
+       checkboxes.forEach(checkbox => {
+           checkbox.addEventListener('change', async function () {
+               if (this.checked) {
+                   checkboxes.forEach(cb => {
+                       if (cb !== this) {
+                           cb.checked = false; // Uncheck all other checkboxes
+                       }
+                   });
+               }
+
+               // Fetch and render chart data based on the selected checkbox
+               await fetchQueryPerformanceLogs();
+           });
+       });
+
+
+    document.getElementById('toggleView').addEventListener('change', function () {
+        const isChecked = this.checked;
+
+        // Show chart if checkbox is unchecked, otherwise show table
+        document.getElementById('chartContainer').style.display = isChecked ? 'none' : 'block';
+        document.getElementById('tableContainer').style.display = isChecked ? 'block' : 'none';
+    });
+
+    const toggleCost = document.getElementById("toggle-cost");
+    const optionCost = document.getElementById("option2");
+
+    if (toggleCost && optionCost) {
+        // Set the default radio button to "Cost"
+        toggleCost.classList.add("active");
+        optionCost.checked = true;
+
+        // Fetch data initially
+        fetchPoData();
+
+        // Add event listeners to the toggle buttons
+        document.getElementById("toggle-quantity").addEventListener("click", fetchPoData);
+        document.getElementById("toggle-cost").addEventListener("click", fetchPoData);
+    } else {
+        console.error("Toggle elements not found");
+    }
+
 });
+
+document.querySelectorAll('.toggle-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            // Uncheck all checkboxes
+            document.querySelectorAll('.toggle-checkbox').forEach(cb => cb.checked = false);
+            // Check the current one
+            this.checked = true;
+
+            // Remove active class from all labels
+            document.querySelectorAll('.btn-group-toggle .btn').forEach(btn => btn.classList.remove('active'));
+            // Add active class to the corresponding label
+            this.closest('label').classList.add('active');
+        }
+    });
+});
+
+
 document
     .getElementById("filter-date")
     .addEventListener("change", fetchPoDataPerDays);
@@ -87,70 +154,6 @@ $("#deliveryModalBtn").on("click", function () {
     fetchTimelineConfirmedData(); // Fetch and display data when modal is shown
 });
 
-function fetchHistoryUjian() {
-    $.ajax({
-        url: '/ujian/fetchHistory',
-        method: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            let tableBody = $('#historyUjian-table-body');
-            tableBody.empty(); // Clear any existing data
-
-            // Iterate over the data and append rows to the table
-            data.forEach(function(row) {
-                tableBody.append(`
-                    <tr>
-                        <td>${row.siswa_name}</td>
-                        <td>${row.rombel_name} - ${row.kelas_name}</td>
-                        <td>${row.jumlah_benar}</td>
-                        <td>${row.jumlah_salah}</td>
-                        <td>${row.total_nilai}</td>
-                    </tr>
-                `);
-            });
-
-            $('#spinner-detail').hide(); // Hide spinner after data is loaded
-        },
-        error: function() {
-            $('#spinner-detail').hide();
-            alert('Failed to load data');
-        }
-    });
-}
-
-
-function fetchStudentData() {
-    document.getElementById('spinner-student').style.display = 'block';
-
-    fetch('/siswa/getStudentData')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('spinner-student').style.display = 'none';
-
-            document.getElementById('student-content').textContent = data.total;
-            document.getElementById('male-count').textContent = `Laki-laki: ${data.male}`;
-            document.getElementById('female-count').textContent = `Perempuan: ${data.female}`;
-
-            // Handle the Rombel and Kelas counts
-            let rombelTableBody = document.getElementById('rombel-table-body');
-
-            // Clear existing rows
-            rombelTableBody.innerHTML = '';
-
-            for (let [rombelKelas, count] of Object.entries(data.rombelKelasCounts)) {
-                let row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${rombelKelas}</td>
-                    <td>${count}</td>
-                `;
-                rombelTableBody.appendChild(row);
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching student data:', error);
-            document.getElementById('spinner-student').style.display = 'none';
-        });
-}
 
 
 
@@ -314,27 +317,169 @@ function fetchTimelineConfirmedData() {
     });
 }
 
+
 async function fetchQueryPerformanceLogs() {
-    $('#queryPerformance-table').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: '/query-performance-logs',
-            type: 'GET'
-        },
-        columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex' },
-            { data: 'function_name', name: 'function_name' },
-            { data: 'avg_execution_time', name: 'avg_execution_time' },
-            { data: 'avg_ping', name: 'avg_ping' },
-            { data: 'avg_download_speed', name: 'avg_download_speed' },
-            { data: 'avg_upload_speed', name: 'avg_upload_speed' }
-        ],
-        columnDefs: [
-            { targets: [0], orderable: false } // Disable ordering for the index column
-        ]
-    });
+    try {
+        // Destroy existing DataTable instance if it exists
+        if ($.fn.DataTable.isDataTable('#queryPerformance-table')) {
+            $('#queryPerformance-table').DataTable().clear().destroy();
+        }
+
+        // Initialize DataTable
+        dataTable = $('#queryPerformance-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '/query-performance-logs',
+                type: 'GET',
+                data: function (d) {
+                    d.function = $('#filterFunction').val(); // Add filter parameter
+                }
+            },
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+                { data: 'function_name', name: 'function_name' },
+                { data: 'avg_execution_time', name: 'avg_execution_time' },
+                { data: 'avg_ping', name: 'avg_ping' },
+                { data: 'avg_download_speed', name: 'avg_download_speed' },
+                { data: 'avg_upload_speed', name: 'avg_upload_speed' }
+            ],
+            columnDefs: [
+                { targets: [0], orderable: false } // Disable ordering for the index column
+            ]
+        });
+
+        // Fetch chart data
+        const chartResponse = await fetch('/query-performance-logs/chart-data');
+        const chartData = await chartResponse.json();
+
+        // Check if chartData contains expected data
+        if (chartData && chartData.labels) {
+            const labels = chartData.labels;
+
+            // Convert milliseconds to seconds and format to 2 decimal places
+            const executionTimes = chartData.executionTimes.map(time => (time).toFixed(2)); // Convert ms to s
+            const pings = chartData.pings.map(ping => (ping / 1000).toFixed(2)); // Convert ms to s
+            const memoryUsages = chartData.memoryUsages.map(memory => (memory / 1024).toFixed(2)); // Convert bytes to MB
+
+            // Render chart with all data
+            renderChart(labels, executionTimes, pings, memoryUsages);
+        } else {
+            console.warn("Unexpected chart data format:", chartData);
+        }
+
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
 }
+
+function renderChart(labels, executionTimes, pings, memoryUsages) {
+    console.log(labels, executionTimes, pings, memoryUsages);
+
+    // Destroy existing chart instance if it exists
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+
+    // Determine which series to include based on checkbox states
+    const series = [];
+
+    if (document.getElementById('showExecutionTime').checked) {
+        series.push({
+            name: 'Average Execution Time',
+            data: executionTimes,
+            color: '#1f77b4' // Blue color for execution times
+        });
+    }
+
+    if (document.getElementById('showPing').checked) {
+        series.push({
+            name: 'Average Ping',
+            data: pings,
+            color: '#ff7f0e' // Orange color for ping times
+        });
+    }
+
+    if (document.getElementById('showMemoryUsage').checked) {
+        // Convert memory usage values to MB
+        const memoryUsagesInMB = memoryUsages.map(memory => (memory / 1024).toFixed(2)); // Convert bytes to MB
+
+        series.push({
+            name: 'Memory Usage',
+            data: memoryUsagesInMB,
+            color: '#2ca02c' // Green color for memory usage
+        });
+    }
+
+    if (series.length === 0) {
+        // No series to show
+        return;
+    }
+
+    // Create a new chart
+    chartInstance = new ApexCharts(document.querySelector("#chartCanvas"), {
+        chart: {
+            type: 'bar', // Set to 'bar' for a bar chart
+            height: 350,
+            width: '100%',
+            animations: {
+                enabled: true,
+                easing: 'easeinout',
+                speed: 800
+            }
+        },
+        series: series,
+        xaxis: {
+            categories: labels, // Set categories for the x-axis
+            title: {
+                text: 'Function Names'
+            }
+        },
+        yaxis: {
+            title: {
+                text: 'Values' // Label for the y-axis
+            },
+            labels: {
+                formatter: function (value) {
+                    // Determine if memory usage is being displayed
+                    const isMemoryUsage = series.some(s => s.name === 'Memory Usage');
+                    return isMemoryUsage ? `${value} MB` : value.toFixed(2); // Append 'MB' for memory usage
+                }
+            }
+        },
+        plotOptions: {
+            bar: {
+                horizontal: false, // Set to true for horizontal bars
+                columnWidth: '35%', // Width of bars (adjusted for better spacing)
+                endingShape: 'rounded', // Rounded edges for bars
+                borderRadius: 5 // Radius for rounded corners
+            }
+        },
+        dataLabels: {
+            enabled: true // Show data labels on bars
+        },
+        legend: {
+            position: 'top',
+            horizontalAlign: 'center'
+        },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    // Determine if memory usage is being displayed
+                    const isMemoryUsage = series.some(s => s.name === 'Memory Usage');
+                    return isMemoryUsage ? `${val} MB` : `${val} ms`; // Append 'MB' or 'ms' based on the data
+                }
+            }
+        }
+    });
+
+    // Render the chart
+    chartInstance.render();
+}
+
+
+
+
 
 async function fetchPoDataPerDays() {
     const spinner = document.getElementById("spinner-po");
@@ -715,10 +860,11 @@ async function fetchPoDataPerDays() {
 async function fetchPoData() {
     const spinner = document.getElementById("spinner-po");
     const poContent = document.getElementById("po-content");
+    const poTitle = document.getElementById("po-title");
 
     // Check if elements exist
-    if (!spinner || !poContent) {
-        console.error("Spinner or PO content element not found");
+    if (!spinner || !poContent || !poTitle) {
+        console.error("Spinner, PO content, or PO title element not found");
         return;
     }
 
@@ -733,16 +879,57 @@ async function fetchPoData() {
         }
         const data = await response.json();
         console.log(data, "data");
+
+        // Extract data
+        const { totalCost, totalPo } = data.data;
+
+        // Get the current month and year
+        const now = new Date();
+        const currentMonth = now.toLocaleString('default', { month: 'long' });
+        const currentYear = now.getFullYear();
+
+        // Get the selected toggle
+        const selectedToggle = document.querySelector('input[name="options"]:checked').id;
+
+        let contentHtml = '';
+        let titleHtml = '';
+        if (selectedToggle === "option1") {
+            // Show Quantity
+            contentHtml = `
+                <div class="content-container">
+                    <div class="data-value">${totalPo}</div>
+                    <div class="small-text"><strong>Month:</strong> ${currentMonth}<br>
+                    <strong>Year:</strong> ${currentYear}</div>
+                </div>
+            `;
+            titleHtml = `Total PO Count: `;
+        } else if (selectedToggle === "option2") {
+            // Show Cost
+            const formattedCost = formatRupiah(totalCost);
+            contentHtml = `
+                <div class="content-container">
+                    <div class="data-value">${formattedCost}</div>
+                    <div class="small-text"><strong>Month:</strong> ${currentMonth}<br>
+                    <strong>Year:</strong> ${currentYear}</div>
+                </div>
+            `;
+            titleHtml = `Total Cost: `;
+        }
+
         // Update the content with fetched data
-        poContent.textContent = formatRupiah(data.data.totalCost); // Adjust according to your data structure
+        poContent.innerHTML = contentHtml;
         poContent.style.display = "block"; // Show the content if data is fetched successfully
+        poTitle.innerHTML = titleHtml; // Update the title
     } catch (error) {
         console.error("Error fetching PO data:", error);
+        poContent.innerHTML = "<p>Error fetching data</p>"; // Show error message if needed
     } finally {
         // Hide the spinner after fetching data
         spinner.style.display = "none";
     }
 }
+
+
 
 function fetchJumlahCuti() {
     $("#spinner-leave").show(); // Show spinner

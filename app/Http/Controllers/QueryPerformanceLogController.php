@@ -9,6 +9,33 @@ use Illuminate\Support\Facades\DB;
 
 class QueryPerformanceLogController extends Controller
 {
+
+    public function getChartData()
+    {
+        // Fetch the data from the database
+        $data = QueryPerformanceLog::query()
+            ->select([
+                'function_name',
+                DB::raw('AVG(execution_time) as avg_execution_time'),
+                DB::raw('AVG(ping) as avg_ping'),
+                DB::raw('AVG(memory_usage) as avg_memory_usage') // Add this line
+            ])
+            ->groupBy('function_name')
+            ->get();
+
+        // Prepare data for chart
+        $chartData = [
+            'labels' => $data->pluck('function_name')->toArray(),
+            'executionTimes' => $data->pluck('avg_execution_time')->toArray(),
+            'pings' => $data->pluck('avg_ping')->toArray(),
+            'memoryUsages' => $data->pluck('avg_memory_usage')->toArray() // Add this line
+        ];
+
+        // Return the data as JSON
+        return response()->json($chartData);
+    }
+
+
     public function getLogs(Request $request)
     {
         if ($request->ajax()) {

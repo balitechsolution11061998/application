@@ -11,42 +11,177 @@
 
         <!-- Dashboard Cards -->
         <div class="container mt-4">
-            <div class="row">
+            <!-- Toggle for Quantity or Cost -->
+            <div class="d-flex justify-content-end mb-3">
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-sm btn-outline-primary" id="toggle-quantity">
+                        <input type="radio" name="options" id="option1" autocomplete="off"> Quantity
+                    </label>
+                    <label class="btn btn-sm btn-outline-primary" id="toggle-cost">
+                        <input type="radio" name="options" id="option2" autocomplete="off"> Cost
+                    </label>
+                </div>
+            </div>
 
-                @can('po-show')
-                    <div class="col-md-4 mb-4">
-                        <div class="card">
-                            <h2 class="section-title"><i class="fas fa-file-alt"></i> Jumlah PO</h2>
+            <!-- Row with PO and Receiving Cards -->
+            <div class="row">
+                <!-- Total POs Card -->
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                    <div class="card h-100 shadow-sm rounded border-0">
+                        <div class="card-body text-center">
+                            <h3 class="section-title">
+                                <i class="fas fa-file-invoice"></i> <!-- Updated Icon -->
+                                <span id="po-title">Total POs</span>
+                                <span class="badge badge-info ml-2" id="po-month-year">Aug 2024</span>
+                                <!-- Badge for month and year -->
+                            </h3>
                             <div id="spinner-po" style="display: none;">
-                                <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+                                <i class="fas fa-spinner fa-spin" style="font-size: 20px;"></i>
                             </div>
-                            <div class="chart-container">
-                                <i class="fas fa-chart-line icon-animate" style="font-size: 48px; color: #9b59b6;"></i>
-                                <span class="chart-number custom-font" id="po-content">0</span>
+                            <div class="chart-container my-2">
+                                <i class="fas fa-chart-bar icon-animate" style="font-size: 40px; color: #9b59b6;"></i>
+                                <!-- Updated Icon -->
+                                <span class="chart-number custom-font d-block" id="po-content">0</span>
                             </div>
-                            <a href="/pos" class="btn btn-sm btn-primary">
-                                <i class="fas fa-file-alt"></i> View POs
+                            <a href="/po" class="btn btn-sm btn-primary mt-2">
+                                <i class="fas fa-file-invoice"></i> View POs
                             </a>
                         </div>
                     </div>
-                @endcan
+                </div>
 
+                <!-- Total Receivings Card -->
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                    <div class="card h-100 shadow-sm rounded border-0">
+                        <div class="card-body text-center">
+                            <h3 class="section-title">
+                                <i class="fas fa-box"></i> <!-- Updated Icon -->
+                                Total Receivings
+                                <span class="badge badge-info ml-2" id="receiving-month-year">Aug 2024</span>
+                                <!-- Badge for month and year -->
+                            </h3>
+                            <div id="spinner-receiving" style="display: none;">
+                                <i class="fas fa-spinner fa-spin" style="font-size: 20px;"></i>
+                            </div>
+                            <div class="chart-container my-2">
+                                <i class="fas fa-cube icon-animate" style="font-size: 40px; color: #3498db;"></i>
+                                <!-- Updated Icon -->
+                                <span class="chart-number custom-font d-block" id="receiving-content">0</span>
+                            </div>
+                            <a href="/receivings" class="btn btn-sm btn-primary mt-2">
+                                <i class="fas fa-box"></i> View Receivings
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Tanda Terima Card -->
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                    <div class="card h-100 shadow-sm rounded border-0">
+                        <div class="card-body text-center">
+                            <h3 class="section-title">
+                                <i class="fas fa-handshake"></i> <!-- Updated Icon -->
+                                Total Tanda Terima
+                                <span class="badge badge-info ml-2" id="tanda-terima-month-year">Aug 2024</span>
+                                <!-- Badge for month and year -->
+                            </h3>
+                            <div id="spinner-tanda-terima" style="display: none;">
+                                <i class="fas fa-spinner fa-spin" style="font-size: 20px;"></i>
+                            </div>
+                            <div class="chart-container my-2">
+                                <i class="fas fa-handshake-alt icon-animate"
+                                    style="font-size: 40px; color: #3498db;"></i> <!-- Updated Icon -->
+                                <span class="chart-number custom-font d-block" id="tanda-terima-content">0</span>
+                            </div>
+                            <a href="/tanda-terima" class="btn btn-sm btn-primary mt-2">
+                                <i class="fas fa-handshake"></i> View Tanda Terima
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total RTV Card -->
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                    <div class="card h-100 shadow-sm rounded border-0">
+                        <div class="card-body text-center">
+                            <h3 class="section-title">
+                                <i class="fas fa-box-open"></i> <!-- Updated Icon -->
+                                Total RTV
+                                <span class="badge badge-info ml-2" id="rtv-month-year">Aug 2024</span>
+                                <!-- Badge for month and year -->
+                            </h3>
+                            <div id="spinner-rtv" style="display: none;">
+                                <i class="fas fa-spinner fa-spin" style="font-size: 20px;"></i>
+                            </div>
+                            <div class="chart-container my-2">
+                                <i class="fas fa-box-open icon-animate" style="font-size: 40px; color: #3498db;"></i>
+                                <!-- Updated Icon -->
+                                <span class="chart-number custom-font d-block" id="rtv-content">0</span>
+                            </div>
+                            <a href="/rtv" class="btn btn-sm btn-primary mt-2">
+                                <i class="fas fa-box-open"></i> View RTV
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
+
+
+
 
         <!-- Rombel and Kelas Detail Card -->
 
         <div class="row">
             <div class="col-md-6">
                 <div class="card shadow-sm border-light">
-                    <div class="card-header">
+                    <div class="card-header d-flex justify-content-between align-items-center">
                         <h2 class="section-title mb-0"><i class="fas fa-info-circle"></i> Query Performance Logs</h2>
+                        <div class="d-flex align-items-center">
+                            <!-- Toggle Switch with Custom Styling -->
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="toggleView">
+                                <label class="form-check-label" for="toggleView">Show Table</label>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
-                        <div id="spinner-detail" class="text-center mb-3" style="display: none;">
-                            <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+                        <!-- Dropdown Button -->
+                        <div class="dropdown mb-4">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                Show Data Series
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                <li>
+                                    <div class="dropdown-item form-check">
+                                        <input class="form-check-input" type="checkbox" id="showExecutionTime">
+                                        <label class="form-check-label" for="showExecutionTime">Average Execution Time</label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="dropdown-item form-check">
+                                        <input class="form-check-input" type="checkbox" id="showPing">
+                                        <label class="form-check-label" for="showPing">Average Ping</label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="dropdown-item form-check">
+                                        <input class="form-check-input" type="checkbox" id="showMemoryUsage">
+                                        <label class="form-check-label" for="showMemoryUsage">Memory Usage</label>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
-                        <div class="chart-container table-responsive">
+
+
+
+                        <!-- Chart Container -->
+                        <div class="chart-container mb-4" id="chartContainer">
+                            <div id="chartCanvas"></div>
+                        </div>
+                        <!-- Table Container (Initially Hidden) -->
+                        <div class="table-responsive" id="tableContainer" style="display: none;">
                             <table id="queryPerformance-table" class="table align-middle table-row-dashed fs-6 gy-5">
                                 <thead class="thead-dark">
                                     <tr>
@@ -66,7 +201,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
 
@@ -250,63 +384,81 @@
                 </div>
 
                 <div class="col-xl-8">
-                    <div class="card card-bordered" data-intro="This section displays Purchase Order data filtered by month and year.">
+                    <div class="card card-bordered"
+                        data-intro="This section displays Purchase Order data filtered by month and year.">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title" data-intro="This is the title indicating the data type being displayed.">PO Data by Month and Year</h5>
-                                <button id="help-btn" class="btn btn-info ms-auto" data-intro="Click here for help with using this section.">
+                                <h5 class="card-title"
+                                    data-intro="This is the title indicating the data type being displayed.">PO Data by
+                                    Month and Year</h5>
+                                <button id="help-btn" class="btn btn-info ms-auto"
+                                    data-intro="Click here for help with using this section.">
                                     <i class="fas fa-info-circle me-1"></i> Help
                                 </button>
                             </div>
-                            <div id="filter-container" class="mb-3" data-intro="Use these filters to adjust the data displayed.">
+                            <div id="filter-container" class="mb-3"
+                                data-intro="Use these filters to adjust the data displayed.">
                                 <div class="form-container mb-3">
-                                    <label for="filter-date" class="filter-label" data-intro="Select a month to filter the Purchase Order data.">Date:</label>
+                                    <label for="filter-date" class="filter-label"
+                                        data-intro="Select a month to filter the Purchase Order data.">Date:</label>
                                     <div class="input-wrapper mb-3">
                                         <input type="month" id="filter-date" class="form-control">
                                     </div>
 
-                                    <label for="filter-select" class="filter-label" data-intro="Choose to view data by Quantity or Total Cost.">Filter:</label>
+                                    <label for="filter-select" class="filter-label"
+                                        data-intro="Choose to view data by Quantity or Total Cost.">Filter:</label>
                                     <select id="filter-select" class="form-select">
                                         <option value="qty">Quantity</option>
                                         <option value="cost">Total Cost</option>
                                     </select>
                                 </div>
 
-                                <div id="dropdown-container" class="dropdown mb-3" data-intro="Select the status of the Purchase Orders you wish to display.">
+                                <div id="dropdown-container" class="dropdown mb-3"
+                                    data-intro="Select the status of the Purchase Orders you wish to display.">
                                     <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdown"
                                         data-bs-toggle="dropdown" aria-expanded="false">
                                         Status
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="statusDropdown">
-                                        <li class="dropdown-item" data-intro="Expired: Purchase Orders that have passed their valid date.">
+                                        <li class="dropdown-item"
+                                            data-intro="Expired: Purchase Orders that have passed their valid date.">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="show-expired" checked>
+                                                <input class="form-check-input" type="checkbox" id="show-expired"
+                                                    checked>
                                                 <label class="form-check-label" for="show-expired">Expired</label>
                                             </div>
                                         </li>
-                                        <li class="dropdown-item" data-intro="Completed: Purchase Orders that have been fulfilled.">
+                                        <li class="dropdown-item"
+                                            data-intro="Completed: Purchase Orders that have been fulfilled.">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="show-completed" checked>
+                                                <input class="form-check-input" type="checkbox" id="show-completed"
+                                                    checked>
                                                 <label class="form-check-label" for="show-completed">Completed</label>
                                             </div>
                                         </li>
-                                        <li class="dropdown-item" data-intro="Confirmed: Purchase Orders that have been confirmed.">
+                                        <li class="dropdown-item"
+                                            data-intro="Confirmed: Purchase Orders that have been confirmed.">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="show-confirmed" checked>
+                                                <input class="form-check-input" type="checkbox" id="show-confirmed"
+                                                    checked>
                                                 <label class="form-check-label" for="show-confirmed">Confirmed</label>
                                             </div>
                                         </li>
-                                        <li class="dropdown-item" data-intro="In Progress: Purchase Orders currently being processed.">
+                                        <li class="dropdown-item"
+                                            data-intro="In Progress: Purchase Orders currently being processed.">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="show-in-progress" checked>
+                                                <input class="form-check-input" type="checkbox" id="show-in-progress"
+                                                    checked>
                                                 <label class="form-check-label" for="show-in-progress">In Progress</label>
                                             </div>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
-                            <div id="kt_apexcharts_1" data-intro="This chart visualizes the filtered Purchase Order data."></div>
-                            <div id="spinner-po" class="spinner" data-intro="This spinner shows while data is being loaded.">Loading...</div>
+                            <div id="kt_apexcharts_1"
+                                data-intro="This chart visualizes the filtered Purchase Order data."></div>
+                            <div id="spinner-po" class="spinner"
+                                data-intro="This spinner shows while data is being loaded.">Loading...</div>
                         </div>
                     </div>
                 </div>
@@ -318,24 +470,24 @@
         @endcan
     </div>
 
-<!-- Modal Structure -->
-<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Content will be dynamically injected here -->
-                <p id="modalBody">Loading content...</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <!-- Modal Structure -->
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Content will be dynamically injected here -->
+                    <p id="modalBody">Loading content...</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
 
@@ -350,6 +502,5 @@
     @push('scripts')
         <script src="{{ asset('js/home.js') }}"></script>
         <script src="{{ asset('js/formatRupiah.js') }}"></script>
-
     @endpush
 </x-default-layout>

@@ -286,6 +286,8 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     });
 
     Route::get('/query-performance-logs', [QueryPerformanceLogController::class, 'getLogs']);
+    Route::get('/query-performance-logs/chart-data', [QueryPerformanceLogController::class, 'getChartData']);
+
     Route::get('/notifications', [NotificationController::class, 'fetchNotifications'])->name('notifications.fetch');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 

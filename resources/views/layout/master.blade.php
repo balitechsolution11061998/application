@@ -115,6 +115,7 @@
     <script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
     <script src="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 
     <!--end::Custom Javascript-->
@@ -125,6 +126,7 @@
     <script>
         let chart;
         var calendar;
+        let chartInstance = null;
         // Enable Pusher logging to console for debugging
            // Enable Pusher logging to console for debugging
            Pusher.logToConsole = true;
