@@ -16,7 +16,8 @@ class PurchaseRequisitionController extends Controller
 
         try {
             // Extract main requisition data from the request
-            $data = $request->all()[0];
+            $data = $request->all();
+            return $data;
 
 
             // Insert into purchase_requisition table without 'no_pr'
