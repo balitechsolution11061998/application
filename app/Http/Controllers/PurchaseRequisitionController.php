@@ -39,31 +39,36 @@ class PurchaseRequisitionController extends Controller
             // Generate no_pr based on the ID
             $purchaseRequisition->no_pr = 'PR-' . $purchaseRequisition->id;
             $purchaseRequisition->save();
-
-            // Insert into purchase_requisition_detail table
-            foreach ($data['detail'] as $detail) {
-                PurchaseRequisitionDetail::create([
-                    'purchase_requisition_id' => $purchaseRequisition->id,
-                    'purchase_requisition_detail_name' => $detail['purchase_requisition_detail_name'],
-                    'kebutuhan' => $detail['kebutuhan'],
-                    'keterangan_kebutuhan' => $detail['keterangan_kebutuhan'],
-                    'qty' => $detail['qty'],
-                    'hargaPerPcs' => 0, // Set this according to your logic
-                    'hargaPerPcsRp' => 'Rp 0', // Set this according to your logic
-                    'hargaTotal' => 0, // Set this according to your logic
-                    'hargaTotalRp' => 'Rp 0', // Set this according to your logic
-                    'satuan' => $detail['satuan'],
-                ]);
+            if(count($$data['detail'] )>0){
+                foreach ($data['detail'] as $detail) {
+                    PurchaseRequisitionDetail::create([
+                        'purchase_requisition_id' => $purchaseRequisition->id,
+                        'purchase_requisition_detail_name' => $detail['purchase_requisition_detail_name'],
+                        'kebutuhan' => $detail['kebutuhan'],
+                        'keterangan_kebutuhan' => $detail['keterangan_kebutuhan'],
+                        'qty' => $detail['qty'],
+                        'hargaPerPcs' => 0, // Set this according to your logic
+                        'hargaPerPcsRp' => 'Rp 0', // Set this according to your logic
+                        'hargaTotal' => 0, // Set this according to your logic
+                        'hargaTotalRp' => 'Rp 0', // Set this according to your logic
+                        'satuan' => $detail['satuan'],
+                    ]);
+                }
             }
+            // Insert into purchase_requisition_detail table
+
 
             // Insert into purchase_requisition_image table
-            foreach ($data['image'] as $image) {
-                PurchaseRequisitionImage::create([
-                    'purchase_requisition_id' => $purchaseRequisition->id,
-                    'link_file' => $image['name'],
-                    'name' => basename($image['name']),
-                ]);
+            if($data['image']>0){
+                foreach ($data['image'] as $image) {
+                    PurchaseRequisitionImage::create([
+                        'purchase_requisition_id' => $purchaseRequisition->id,
+                        'link_file' => $image['name'],
+                        'name' => basename($image['name']),
+                    ]);
+                }
             }
+
 
             DB::commit();
 
