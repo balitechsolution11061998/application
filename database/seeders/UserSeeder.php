@@ -103,7 +103,7 @@ class UserSeeder extends Seeder
         $jamKerjaCodes = DB::table('jam_kerja')->pluck('kode_jk')->toArray();
 
         // Define sample working days
-        $workingDays = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+        $workingDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday','Saturday'];
 
         foreach ($workingDays as $day) {
             $kode_jam_kerja = $faker->randomElement($jamKerjaCodes);

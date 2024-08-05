@@ -17,14 +17,17 @@
                     <label class="btn btn-sm btn-outline-primary" id="toggle-quantity">
                         <input type="radio" name="options" id="option1" autocomplete="off"> Quantity
                     </label>
-                    <label class="btn btn-sm btn-outline-primary" id="toggle-cost">
-                        <input type="radio" name="options" id="option2" autocomplete="off"> Cost
+                    <label class="btn btn-sm btn-outline-primary active" id="toggle-cost">
+                        <input type="radio" name="options" id="option2" autocomplete="off" checked> Cost
                     </label>
                 </div>
             </div>
 
-            <!-- Row with PO and Receiving Cards -->
+
+
+            <!-- Row with PO, Receiving, Tanda Terima, RTV, and Cost Cards -->
             <div class="row">
+
                 <!-- Total POs Card -->
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
                     <div class="card h-100 shadow-sm rounded border-0">
@@ -33,14 +36,12 @@
                                 <i class="fas fa-file-invoice"></i> <!-- Updated Icon -->
                                 <span id="po-title">Total POs</span>
                                 <span class="badge badge-info ml-2" id="po-month-year">Aug 2024</span>
-                                <!-- Badge for month and year -->
                             </h3>
                             <div id="spinner-po" style="display: none;">
                                 <i class="fas fa-spinner fa-spin" style="font-size: 20px;"></i>
                             </div>
                             <div class="chart-container my-2">
                                 <i class="fas fa-chart-bar icon-animate" style="font-size: 40px; color: #9b59b6;"></i>
-                                <!-- Updated Icon -->
                                 <span class="chart-number custom-font d-block" id="po-content">0</span>
                             </div>
                             <a href="/po" class="btn btn-sm btn-primary mt-2">
@@ -56,16 +57,14 @@
                         <div class="card-body text-center">
                             <h3 class="section-title">
                                 <i class="fas fa-box"></i> <!-- Updated Icon -->
-                                Total Receivings
+                                <span id="receiving-title">Total Receivings</span>
                                 <span class="badge badge-info ml-2" id="receiving-month-year">Aug 2024</span>
-                                <!-- Badge for month and year -->
                             </h3>
                             <div id="spinner-receiving" style="display: none;">
                                 <i class="fas fa-spinner fa-spin" style="font-size: 20px;"></i>
                             </div>
                             <div class="chart-container my-2">
                                 <i class="fas fa-cube icon-animate" style="font-size: 40px; color: #3498db;"></i>
-                                <!-- Updated Icon -->
                                 <span class="chart-number custom-font d-block" id="receiving-content">0</span>
                             </div>
                             <a href="/receivings" class="btn btn-sm btn-primary mt-2">
@@ -124,10 +123,11 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Total Cost Card -->
+
             </div>
         </div>
-
-
 
 
 
@@ -152,7 +152,7 @@
                             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                 Show Data Series
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-average-query" aria-labelledby="dropdownMenuButton">
                                 <li>
                                     <div class="dropdown-item form-check">
                                         <input class="form-check-input" type="checkbox" id="showExecutionTime">
@@ -181,7 +181,7 @@
                             <div id="chartCanvas"></div>
                         </div>
                         <!-- Table Container (Initially Hidden) -->
-                        <div class="table-responsive" id="tableContainer" style="display: none;">
+                        <div class="table-responsive" id="tableQueryPerformanceLog" style="display: none;">
                             <table id="queryPerformance-table" class="table align-middle table-row-dashed fs-6 gy-5">
                                 <thead class="thead-dark">
                                     <tr>

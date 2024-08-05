@@ -210,7 +210,7 @@ class HomeController extends Controller
 
             // Log performance metrics
             QueryPerformanceLog::create([
-                'function_name' => 'countDataRcv',
+                'function_name' => 'Count Data Rcv',
                 'parameters' => json_encode(['filterDate' => $filterDate, 'filterSupplier' => $filterSupplier]),
                 'execution_time' => $executionTime,
                 'memory_usage' => $memoryUsage
@@ -218,7 +218,7 @@ class HomeController extends Controller
 
             return response()->json([
                 'success' => true,
-                'total' => $total,
+                'data' => $total,
                 'execution_time' => $executionTime,
                 'memory_usage' => $memoryUsage
             ]);

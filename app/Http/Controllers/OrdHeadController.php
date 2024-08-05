@@ -49,7 +49,7 @@ class OrdHeadController extends Controller
 
         // Log performance metrics
         QueryPerformanceLog::create([
-            'function_name' => 'Show Data PO',
+            'function_name' => 'Count Data PO',
             'parameters' => json_encode(['filterDate' => $filterDate, 'filterSupplier' => $filterSupplier]),
             'execution_time' => $executionTime,
             'memory_usage' => $memoryUsage

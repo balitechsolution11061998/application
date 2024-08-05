@@ -33,26 +33,25 @@ $(document).ready(function () {
 
         // Show chart if checkbox is unchecked, otherwise show table
         document.getElementById('chartContainer').style.display = isChecked ? 'none' : 'block';
-        document.getElementById('tableContainer').style.display = isChecked ? 'block' : 'none';
+        document.getElementById('tableQueryPerformanceLog').style.display = isChecked ? 'block' : 'none';
     });
 
-    const toggleCost = document.getElementById("toggle-cost");
-    const optionCost = document.getElementById("option2");
+    document.getElementById('option2').checked = true;
+    document.getElementById('toggle-cost').classList.add('active');
+    fetchData('po');
+    fetchData('receiving');
 
-    if (toggleCost && optionCost) {
-        // Set the default radio button to "Cost"
-        toggleCost.classList.add("active");
-        optionCost.checked = true;
+    // Event listeners for the toggle buttons
+    document.getElementById("toggle-quantity").addEventListener("click", () => {
+        fetchData('po');
+        fetchData('receiving');
 
-        // Fetch data initially
-        fetchPoData();
+    });
 
-        // Add event listeners to the toggle buttons
-        document.getElementById("toggle-quantity").addEventListener("click", fetchPoData);
-        document.getElementById("toggle-cost").addEventListener("click", fetchPoData);
-    } else {
-        console.error("Toggle elements not found");
-    }
+    document.getElementById("toggle-cost").addEventListener("click", () => {
+        fetchData('po');
+        fetchData('receiving');
+    });
 
 });
 
@@ -132,6 +131,7 @@ document
             console.error("Error initializing calendar:", error);
         }
     }
+
 
 
 
@@ -432,18 +432,32 @@ function renderChart(labels, executionTimes, pings, memoryUsages) {
         xaxis: {
             categories: labels, // Set categories for the x-axis
             title: {
-                text: 'Function Names'
+                text: 'Function Names',
+                style: {
+                    fontSize: '14px'
+                }
+            },
+            labels: {
+                style: {
+                    fontSize: '12px'
+                }
             }
         },
         yaxis: {
             title: {
-                text: 'Values' // Label for the y-axis
+                text: 'Values',
+                style: {
+                    fontSize: '14px'
+                }
             },
             labels: {
                 formatter: function (value) {
                     // Determine if memory usage is being displayed
                     const isMemoryUsage = series.some(s => s.name === 'Memory Usage');
                     return isMemoryUsage ? `${value} MB` : value.toFixed(2); // Append 'MB' for memory usage
+                },
+                style: {
+                    fontSize: '12px'
                 }
             }
         },
@@ -456,11 +470,19 @@ function renderChart(labels, executionTimes, pings, memoryUsages) {
             }
         },
         dataLabels: {
-            enabled: true // Show data labels on bars
+            enabled: true,
+            style: {
+                fontSize: '10px' // Smaller font size for data labels
+            }
         },
         legend: {
             position: 'top',
-            horizontalAlign: 'center'
+            horizontalAlign: 'center',
+            labels: {
+                style: {
+                    fontSize: '12px'
+                }
+            }
         },
         tooltip: {
             y: {
@@ -469,14 +491,55 @@ function renderChart(labels, executionTimes, pings, memoryUsages) {
                     const isMemoryUsage = series.some(s => s.name === 'Memory Usage');
                     return isMemoryUsage ? `${val} MB` : `${val} ms`; // Append 'MB' or 'ms' based on the data
                 }
+            },
+            style: {
+                fontSize: '12px' // Smaller font size for tooltip
             }
-        }
+        },
+        responsive: [{
+            breakpoint: 600,
+            options: {
+                chart: {
+                    height: 300
+                },
+                xaxis: {
+                    labels: {
+                        style: {
+                            fontSize: '10px'
+                        }
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        style: {
+                            fontSize: '10px'
+                        }
+                    }
+                },
+                dataLabels: {
+                    style: {
+                        fontSize: '8px'
+                    }
+                },
+                legend: {
+                    labels: {
+                        style: {
+                            fontSize: '10px'
+                        }
+                    }
+                },
+                tooltip: {
+                    style: {
+                        fontSize: '10px'
+                    }
+                }
+            }
+        }]
     });
 
     // Render the chart
     chartInstance.render();
 }
-
 
 
 
@@ -726,7 +789,11 @@ async function fetchPoDataPerDays() {
                                 event.preventDefault();
                                 const searchValue = document.getElementById("searchInput").value;
                                 document.getElementById("searchSpinner").classList.remove("d-none");
+
+                                // Highlight the search terms in the table
                                 dataTable.search(searchValue).draw();
+                                highlightSearchTerms(searchValue);
+
                                 document.getElementById("searchSpinner").classList.add("d-none");
                             });
                         });
@@ -741,6 +808,17 @@ async function fetchPoDataPerDays() {
                     console.error("Error fetching details:", error);
                     document.getElementById("tableContainer").textContent = "An error occurred while fetching data.";
                 });
+        }
+
+        // Function to highlight search terms in the table
+        function highlightSearchTerms(term) {
+            const table = document.getElementById("detailsTable");
+            if (term) {
+                const regex = new RegExp(`(${term})`, 'gi');
+                table.querySelectorAll('td').forEach(td => {
+                    td.innerHTML = td.textContent.replace(regex, '<span class="highlight">$1</span>');
+                });
+            }
         }
 
 
@@ -857,31 +935,42 @@ async function fetchPoDataPerDays() {
     }
 }
 
-async function fetchPoData() {
-    const spinner = document.getElementById("spinner-po");
-    const poContent = document.getElementById("po-content");
-    const poTitle = document.getElementById("po-title");
+async function fetchData(type) {
+    const spinner = document.getElementById(`spinner-${type}`);
+    const content = document.getElementById(`${type}-content`);
+    const title = document.getElementById(`${type}-title`);
 
     // Check if elements exist
-    if (!spinner || !poContent || !poTitle) {
-        console.error("Spinner, PO content, or PO title element not found");
+    if (!spinner || !content || !title) {
+        console.error(`${type} spinner, content, or title element not found`);
         return;
     }
 
     // Show the spinner while fetching data
     spinner.style.display = "block";
-    poContent.style.display = "none"; // Hide the content initially
+    content.style.display = "none"; // Hide the content initially
+
+    let endpoint = '';
+    let dataFields = {};
+
+    if (type === 'po') {
+        endpoint = "/po/count";
+        dataFields = { totalKey: 'totalPo', costKey: 'totalCost' };
+    } else if (type === 'receiving') {
+        endpoint = "/home/countDataRcv";
+        dataFields = { totalKey: 'totalRcv', costKey: 'totalCostRcv' };
+    }
 
     try {
-        const response = await fetch("/po/count"); // Replace with your API endpoint
+        const response = await fetch(endpoint);
         if (!response.ok) {
             throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        console.log(data, "data");
 
         // Extract data
-        const { totalCost, totalPo } = data.data;
+        const totalValue = data.data[dataFields.totalKey];
+        const totalCost = data.data[dataFields.costKey];
 
         // Get the current month and year
         const now = new Date();
@@ -897,12 +986,12 @@ async function fetchPoData() {
             // Show Quantity
             contentHtml = `
                 <div class="content-container">
-                    <div class="data-value">${totalPo}</div>
+                    <div class="data-value">${totalValue}</div>
                     <div class="small-text"><strong>Month:</strong> ${currentMonth}<br>
                     <strong>Year:</strong> ${currentYear}</div>
                 </div>
             `;
-            titleHtml = `Total PO Count: `;
+            titleHtml = `Total ${type === 'po' ? 'PO' : 'Receiving'} Count: `;
         } else if (selectedToggle === "option2") {
             // Show Cost
             const formattedCost = formatRupiah(totalCost);
@@ -913,16 +1002,16 @@ async function fetchPoData() {
                     <strong>Year:</strong> ${currentYear}</div>
                 </div>
             `;
-            titleHtml = `Total Cost: `;
+            titleHtml = `Total ${type === 'po' ? 'PO' : 'Receiving'} Cost: `;
         }
 
         // Update the content with fetched data
-        poContent.innerHTML = contentHtml;
-        poContent.style.display = "block"; // Show the content if data is fetched successfully
-        poTitle.innerHTML = titleHtml; // Update the title
+        content.innerHTML = contentHtml;
+        content.style.display = "block"; // Show the content if data is fetched successfully
+        title.innerHTML = titleHtml; // Update the title
     } catch (error) {
-        console.error("Error fetching PO data:", error);
-        poContent.innerHTML = "<p>Error fetching data</p>"; // Show error message if needed
+        console.error(`Error fetching ${type} data:`, error);
+        content.innerHTML = "<p>Error fetching data</p>"; // Show error message if needed
     } finally {
         // Hide the spinner after fetching data
         spinner.style.display = "none";
@@ -931,269 +1020,6 @@ async function fetchPoData() {
 
 
 
-function fetchJumlahCuti() {
-    $("#spinner-leave").show(); // Show spinner
-    $.ajax({
-        url: "/cuti/count",
-        method: "GET",
-        success: function (response) {
-            $("#spinner-leave").hide(); // Hide spinner
-            var content =
-                '<div class="cuti-count animated fadeIn">' +
-                response.count +
-                "</div>";
-            $("#leave-content").html(content);
-            // Toastify({
-            //     text: "Cuti count loaded successfully",
-            //     duration: 3000,
-            //     close: true,
-            //     gravity: "top",
-            //     position: "right",
-            //     backgroundColor: "#4CAF50",
-            //     stopOnFocus: true,
-            // }).showToast();
-        },
-        error: function (error) {
-            $("#spinner-leave").hide(); // Hide spinner
-            console.log("Error fetching data", error);
-            // Toastify({
-            //     text: "Error loading cuti count",
-            //     duration: 3000,
-            //     close: true,
-            //     gravity: "top",
-            //     position: "right",
-            //     backgroundColor: "#FF0000",
-            //     stopOnFocus: true,
-            // }).showToast();
-        },
-    });
-}
-
-function fetchCabangCount() {
-    $("#spinner-cabang").show(); // Show spinner
-    $.ajax({
-        url: "/cabang/count",
-        method: "GET",
-        success: function (response) {
-            $("#spinner-cabang").hide(); // Hide spinner
-            var content =
-                '<div class="cabang-count animated fadeIn">' +
-                response.count +
-                "</div>";
-            $("#cabang-content").html(content);
-            // Toastify({
-            //     text: "Cabang count loaded successfully",
-            //     duration: 3000,
-            //     close: true,
-            //     gravity: "top",
-            //     position: "right",
-            //     backgroundColor: "#4CAF50",
-            //     stopOnFocus: true,
-            // }).showToast();
-        },
-        error: function (error) {
-            $("#spinner-cabang").hide(); // Hide spinner
-            console.log("Error fetching data", error);
-            // Toastify({
-            //     text: "Error loading cabang count",
-            //     duration: 3000,
-            //     close: true,
-            //     gravity: "top",
-            //     position: "right",
-            //     backgroundColor: "#FF0000",
-            //     stopOnFocus: true,
-            // }).showToast();
-        },
-    });
-}
-
-function fetchDepartmentCount() {
-    $("#spinner-department").show(); // Show spinner
-    $.ajax({
-        url: "/departments/count",
-        method: "GET",
-        success: function (response) {
-            $("#spinner-department").hide(); // Hide spinner
-            var content =
-                '<div class="department-count animated fadeIn">' +
-                response.count +
-                "</div>";
-            $("#department-content").html(content);
-            // Toastify({
-            //     text: "Department count loaded successfully",
-            //     duration: 3000,
-            //     close: true,
-            //     gravity: "top",
-            //     position: "right",
-            //     backgroundColor: "#4CAF50",
-            //     stopOnFocus: true,
-            // }).showToast();
-        },
-        error: function (error) {
-            $("#spinner-department").hide(); // Hide spinner
-            console.log("Error fetching data", error);
-            // Toastify({
-            //     text: "Error loading department count",
-            //     duration: 3000,
-            //     close: true,
-            //     gravity: "top",
-            //     position: "right",
-            //     backgroundColor: "#FF0000",
-            //     stopOnFocus: true,
-            // }).showToast();
-        },
-    });
-}
-
-function fetchListCuti() {
-    $("#spinner-leave").show(); // Show spinner
-
-    $.ajax({
-        url: "/cuti/data",
-        method: "GET",
-        success: function (response) {
-            $("#spinner-leave").hide(); // Hide spinner
-            var content = "";
-
-            if (response.data.length > 0) {
-                response.data.forEach(function (item) {
-                    content +=
-                        '<div class="leave-item">' +
-                        '<h3 class="day">' +
-                        item.nama_cuti +
-                        " (" +
-                        item.kode_cuti +
-                        ")</h3>" +
-                        '<p class="days">Jumlah Hari: ' +
-                        item.jumlah_hari +
-                        "</p>" +
-                        "</div>";
-                });
-                $("#listleave-content").html(content);
-                // Toastify({
-                //     text: "Data cuti loaded successfully",
-                //     duration: 3000,
-                //     close: true,
-                //     gravity: "top",
-                //     position: "right",
-                //     backgroundColor: "#4CAF50",
-                //     stopOnFocus: true,
-                // }).showToast();
-            } else {
-                $("#listleave-content").html(
-                    '<div class="not-found-message">' +
-                        '<div class="icon-container">' +
-                        '<i class="fas fa-search" style="font-size: 25px; color: #FFAA00;"></i>' +
-                        "</div>" +
-                        '<p class="message-text">No data available</p>' +
-                        "</div>"
-                );
-                Toastify({
-                    text: "No data available",
-                    duration: 3000,
-                    close: true,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "#FFAA00",
-                    stopOnFocus: true,
-                }).showToast();
-            }
-        },
-        error: function (error) {
-            $("#spinner-leave").hide(); // Hide spinner
-            Toastify({
-                text: "Error loading data",
-                duration: 3000,
-                close: true,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#FF0000",
-                stopOnFocus: true,
-            }).showToast();
-        },
-    });
-}
-
-
-function fetchJamKerja() {
-    $("#spinner").show(); // Show spinner
-
-    $.ajax({
-        url: "/jam_kerja/data",
-        method: "GET",
-        success: function (response) {
-            $("#spinner").hide(); // Hide spinner
-            var content = "";
-
-            if (response.data.length > 0) {
-                response.data.forEach(function (item) {
-                    content +=
-                        '<div class="jam-kerja-item">' +
-                        '<h3 class="day">' +
-                        item.nama_jk +
-                        " (" +
-                        item.kode_jk +
-                        ")</h3>" +
-                        '<p class="time">Jam Masuk: ' +
-                        item.jam_masuk +
-                        " (" +
-                        item.awal_jam_masuk +
-                        " - " +
-                        item.akhir_jam_masuk +
-                        ")</p>" +
-                        '<p class="time">Jam Pulang: ' +
-                        item.jam_pulang +
-                        "</p>" +
-                        '<p class="time">Lintas Hari: ' +
-                        item.lintas_hari +
-                        "</p>" +
-                        "</div>";
-                });
-                $("#jam-kerja-content").html(content);
-                // Toastify({
-                //     text: "Data jam kerja loaded successfully",
-                //     duration: 3000,
-                //     close: true,
-                //     gravity: "top",
-                //     position: "right",
-                //     backgroundColor: "#4CAF50",
-                //     stopOnFocus: true,
-                // }).showToast();
-            } else {
-                $("#jam-kerja-content").html(
-                    '<div class="not-found-message">' +
-                        '<div class="icon-container">' +
-                        '<i class="fas fa-search" style="font-size: 25px; color: #FFAA00;"></i>' +
-                        "</div>" +
-                        '<p class="message-text">No data available</p>' +
-                        "</div>"
-                );
-                Toastify({
-                    text: "No data available",
-                    duration: 3000,
-                    close: true,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "#FFAA00",
-                    stopOnFocus: true,
-                }).showToast();
-            }
-        },
-        error: function (error) {
-            $("#spinner").hide(); // Hide spinner
-            console.log("Error fetching data", error);
-            Toastify({
-                text: "Error loading data",
-                duration: 3000,
-                close: true,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#FF0000",
-                stopOnFocus: true,
-            }).showToast();
-        },
-    });
-}
 
 async function fetchCountPoDays(status, filterDate) {
     const url = `/home/countDataPoPerDays?filterDate=${filterDate}`;
@@ -1317,169 +1143,160 @@ function fetchPriceChangeData(id) {
     });
 }
 
-async function fetchCountPo(status, filterDate) {
-    try {
-        // Show the loading indicator (spinner) and overlay
-        var loaderOverlay = document.querySelector(".loader-overlay");
-        loaderOverlay.style.display = "block";
+// async function fetchCountPo(status, filterDate) {
+//     try {
+//         // Show the loading indicator (spinner) and overlay
+//         var loaderOverlay = document.querySelector(".loader-overlay");
+//         loaderOverlay.style.display = "block";
 
-        var cardBody = document.querySelector(".card-body");
-        cardBody.style.display = "none"; // Hide the card body initially
+//         var cardBody = document.querySelector(".card-body");
+//         cardBody.style.display = "none"; // Hide the card body initially
 
-        var spinnerElement = document.createElement("span");
-        spinnerElement.className = "fas fa-spinner fa-spin"; // Font Awesome classes for the spinner
-        spinnerElement.style.fontSize = "24px"; // Optional: Adjust the size of the spinner icon
+//         var spinnerElement = document.createElement("span");
+//         spinnerElement.className = "fas fa-spinner fa-spin"; // Font Awesome classes for the spinner
+//         spinnerElement.style.fontSize = "24px"; // Optional: Adjust the size of the spinner icon
 
-        var targetElement = document.querySelector(".fs-2hx"); // Example target element
-        targetElement.appendChild(spinnerElement);
+//         var targetElement = document.querySelector(".fs-2hx"); // Example target element
+//         targetElement.appendChild(spinnerElement);
 
-        // Make an AJAX request to fetch countdataPo
-        const url = `/home/countDataPo?filterDate=${filterDate}`;
+//         // Make an AJAX request to fetch countdataPo
+//         const url = `/home/countDataPo?filterDate=${filterDate}`;
 
-        const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            redirect: "manual", // Manually handle redirects
-        });
+//         const response = await fetch(url, {
+//             method: "GET",
+//             headers: {
+//                 "Content-Type": "application/json",
+//             },
+//             redirect: "manual", // Manually handle redirects
+//         });
 
-        // Handle the response as needed
+//         // Handle the response as needed
 
-        if (response.status === 302) {
-            // Redirect detected, fetch the redirected URL
-            const redirectedResponse = await fetch(
-                response.headers.get("Location"),
-                {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    redirect: "follow", // Follow redirects for the redirected URL
-                }
-            );
+//         if (response.status === 302) {
+//             // Redirect detected, fetch the redirected URL
+//             const redirectedResponse = await fetch(
+//                 response.headers.get("Location"),
+//                 {
+//                     method: "GET",
+//                     headers: {
+//                         "Content-Type": "application/json",
+//                     },
+//                     redirect: "follow", // Follow redirects for the redirected URL
+//                 }
+//             );
 
-            if (!redirectedResponse.ok) {
-                throw new Error("Error fetching countdataPo after redirect");
-            }
+//             if (!redirectedResponse.ok) {
+//                 throw new Error("Error fetching countdataPo after redirect");
+//             }
 
-            // Parse the JSON response
-            const data = await redirectedResponse.json();
+//             // Parse the JSON response
+//             const data = await redirectedResponse.json();
 
-            // Update the DOM with the fetched countdataPo value
-            var countPoElement = document.querySelector(".fs-2hx");
-            countPoElement.textContent = data.total.totalCost; // Assuming the JSON response has a property named countdataPo
+//             // Update the DOM with the fetched countdataPo value
+//             var countPoElement = document.querySelector(".fs-2hx");
+//             countPoElement.textContent = data.total.totalCost; // Assuming the JSON response has a property named countdataPo
 
-            // Hide the loading indicator and show the card body
-            loaderOverlay.style.display = "none";
-            cardBody.style.display = "flex"; // Assuming card-body uses flex display
-            spinnerElement.remove();
-        } else if (!response.ok) {
-            throw new Error("Error fetching countdataPo");
-        } else {
-            // Parse the JSON response
-            const data = await response.json();
+//             // Hide the loading indicator and show the card body
+//             loaderOverlay.style.display = "none";
+//             cardBody.style.display = "flex"; // Assuming card-body uses flex display
+//             spinnerElement.remove();
+//         } else if (!response.ok) {
+//             throw new Error("Error fetching countdataPo");
+//         } else {
+//             // Parse the JSON response
+//             const data = await response.json();
 
-            let integerPart = 0; // Initialize integerPart as a number
+//             let integerPart = 0; // Initialize integerPart as a number
 
-            // Update the DOM with the fetched countdataPo value
-            var countPoElement = document.querySelector(".fs-2hx");
-            countPoElement.textContent = "";
-            if (status == "rupiah") {
-                integerPart = Math.floor(data.total.totalCost);
-            } else if (status == "qty") {
-                integerPart = Math.floor(data.total.totalPo);
-            } else {
-                integerPart = Math.floor(data.total.totalCost);
-            }
+//             // Update the DOM with the fetched countdataPo value
+//             var countPoElement = document.querySelector(".fs-2hx");
+//             countPoElement.textContent = "";
+//             if (status == "rupiah") {
+//                 integerPart = Math.floor(data.total.totalCost);
+//             } else if (status == "qty") {
+//                 integerPart = Math.floor(data.total.totalPo);
+//             } else {
+//                 integerPart = Math.floor(data.total.totalCost);
+//             }
 
-            countPoElement.textContent = formatNumber(integerPart); // Assuming the JSON response has a property named countdataPo
+//             countPoElement.textContent = formatNumber(integerPart); // Assuming the JSON response has a property named countdataPo
 
-            // Hide the loading indicator and show the card body
-            loaderOverlay.style.display = "none";
-            cardBody.style.display = "flex"; // Assuming card-body uses flex display
-            spinnerElement.remove();
-        }
-    } catch (error) {
-        console.error("Error fetching countdataPo:", error);
-    }
-}
+//             // Hide the loading indicator and show the card body
+//             loaderOverlay.style.display = "none";
+//             cardBody.style.display = "flex"; // Assuming card-body uses flex display
+//             spinnerElement.remove();
+//         }
+//     } catch (error) {
+//         console.error("Error fetching countdataPo:", error);
+//     }
+// }
 
-async function fetchCountRcv(status, filterDate) {
-    try {
-        // Show the loading indicator (spinner) and overlay
-        var loaderOverlay = document.querySelector(".loader-overlay");
-        loaderOverlay.style.display = "block";
+// async function fetchReceivings() {
+//     try {
+//         // Show the loading indicator (spinner)
+//         const spinner = document.getElementById('spinner-receiving');
+//         spinner.style.display = 'block';
 
-        var cardBody = document.querySelector(".card-body");
-        cardBody.style.display = "none"; // Hide the card body initially
+//         const receivingContent = document.getElementById('receiving-content');
+//         const receivingMonthYear = document.getElementById('receiving-month-year');
 
-        var spinnerElement = document.createElement("span");
-        spinnerElement.className = "fas fa-spinner fa-spin"; // Font Awesome classes for the spinner
-        spinnerElement.style.fontSize = "24px"; // Optional: Adjust the size of the spinner icon
+//         // Clear existing content
+//         receivingContent.textContent = "";
 
-        var targetElement = document.getElementById("countValueRcv"); // Example target element
-        targetElement.appendChild(spinnerElement);
+//         // Make an AJAX request to fetch receiving data
+//         const url = `/home/countDataRcv`;
 
-        // Make an AJAX request to fetch countdataPo
-        const url = `/home/countDataRcv?filterDate=${filterDate}`;
+//         const response = await fetch(url, {
+//             method: "GET",
+//             headers: {
+//                 "Content-Type": "application/json",
+//             },
+//             redirect: "manual", // Manually handle redirects
+//         });
 
-        const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            redirect: "manual", // Manually handle redirects
-        });
+//         if (response.status === 302) {
+//             // Redirect detected, fetch the redirected URL
+//             const redirectedResponse = await fetch(response.headers.get("Location"), {
+//                 method: "GET",
+//                 headers: {
+//                     "Content-Type": "application/json",
+//                 },
+//                 redirect: "follow", // Follow redirects for the redirected URL
+//             });
 
-        // Handle the response as needed
-        let data;
-        if (response.status === 302) {
-            const redirectedResponse = await fetch(
-                response.headers.get("Location"),
-                {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    redirect: "follow", // Follow redirects for the redirected URL
-                }
-            );
+//             if (!redirectedResponse.ok) {
+//                 throw new Error("Error fetching receiving data after redirect");
+//             }
 
-            if (!redirectedResponse.ok) {
-                throw new Error("Error fetching countdataPo after redirect");
-            }
+//             // Parse the JSON response
+//             const data = await redirectedResponse.json();
 
-            data = await redirectedResponse.json();
-        } else if (!response.ok) {
-            throw new Error("Error fetching countdataRcv");
-        } else {
-            data = await response.json();
-        }
+//             // Update the DOM with the fetched receiving data
+//             receivingContent.textContent = formatNumber(data.totalRcv); // Update with total receivings
+//             receivingMonthYear.textContent = `${data.month}-${data.year}`; // Update with month/year
 
-        let integerPart = 0; // Initialize integerPart as a number
+//             // Hide the spinner
+//             spinner.style.display = "none";
+//         } else if (!response.ok) {
+//             throw new Error("Error fetching receiving data");
+//         } else {
+//             // Parse the JSON response
+//             const data = await response.json();
 
-        // Update the DOM with the fetched countdataPo value
-        var countValueElement = document.getElementById("countValueRcv");
-        countValueElement.textContent = "";
-        if (status == "rupiah") {
-            integerPart = Math.floor(data.total.totalCostRcv);
-        } else if (status == "qty") {
-            integerPart = Math.floor(data.total.totalRcv);
-        } else {
-            integerPart = Math.floor(data.total.totalCostRcv);
-        }
+//             // Update the DOM with the fetched receiving data
+//             receivingContent.textContent = formatNumber(data.totalRcv); // Update with total receivings
+//             receivingMonthYear.textContent = `${data.month}-${data.year}`; // Update with month/year
 
-        countValueElement.textContent = formatNumber(integerPart); // Assuming the JSON response has a property named countdataPo
+//             // Hide the spinner
+//             spinner.style.display = "none";
+//         }
+//     } catch (error) {
+//         console.error("Error fetching receiving data:", error);
+//         receivingContent.textContent = 'Error'; // Display error message if fetch fails
+//         spinner.style.display = "none"; // Hide spinner
+//     }
+// }
 
-        // Hide the loading indicator and show the card body
-        loaderOverlay.style.display = "none";
-        cardBody.style.display = "flex"; // Assuming card-body uses flex display
-        spinnerElement.remove();
-    } catch (error) {
-        console.error("Error fetching countdataPo:", error);
-    }
-}
 
 async function fetchCountRcvDays(status, filterDate) {
     const url = `/home/countDataRcvPerDays?filterDate=${filterDate}`;

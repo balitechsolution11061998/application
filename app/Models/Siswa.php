@@ -17,6 +17,6 @@ class Siswa extends Model
 
     public function users()
     {
-        return $this->hasOne(User::class, 'username', 'nis');
+        return $this->hasOne(User::class, 'nik', 'nis');
     }
 }
