@@ -87,7 +87,7 @@ class UserSeeder extends Seeder
         $siswaData = [
             'rombel_id' => \App\Models\Rombel::inRandomOrder()->first()->id, // Assign a random Rombel ID
             'nama' => $user->name, // Use the user's name for the 'nama' field
-            'nis' => $faker->unique()->numberBetween(100000, 999999),
+            'nis' => $user->nik,
             'jenis_kelamin' => $faker->randomElement(['L', 'P']), // Randomly assign gender
         ];
 
