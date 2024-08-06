@@ -43,7 +43,7 @@ class AbsensiController extends Controller
             $jam_in = $request->input('jam_in');
             $jam_out = $request->input('jam_out');
 
-            // Convert jam_in from time string to timestamp
+            // Convert jam_in and jam_out from time string to timestamp
             $jam_in_time = strtotime($jam_in);
             $jam_out_time = strtotime($jam_out);
 
@@ -88,12 +88,20 @@ class AbsensiController extends Controller
                 $status = 'Telat';
                 // Check if lateness exceeds 2 hours
                 if ($lateness_seconds > $grace_period) {
-
                     // If lateness exceeds grace period, check jam_pulang
                     if ($jam_out_time < $jam_pulang) {
                         $can_absen_pulang = false;
                     }
                 }
+            }
+
+            // Check if the attendance spans multiple days
+            $tgl_presensi_end = date('Y-m-d', $jam_out_time);
+            if ($tgl_presensi !== $tgl_presensi_end) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You cannot mark your attendance out before the day ends.'
+                ], 400);
             }
 
             // Proceed with creating the absensi record
@@ -104,7 +112,7 @@ class AbsensiController extends Controller
             $absensi->jam_out = $can_absen_pulang ? $jam_out : null;
             $absensi->lokasi_in = $request->input('lokasi_in');
             $absensi->lokasi_out = $request->input('lokasi_out');
-            $absensi->status = $status; // Set status based on lateness
+            $absensi->status = $status; // Set status based on lateness or multi-day attendance
             $absensi->kode_izin = $request->input('kode_izin');
 
             // Handle file uploads for foto_in and foto_out
@@ -130,6 +138,7 @@ class AbsensiController extends Controller
                 'success' => true,
                 'message' => 'Absensi record has been successfully created.',
                 'lateness' => $lateness_hours > 0 || $lateness_minutes > 0 ? 'Total lateness: ' . $lateness_hours . ' hours and ' . $lateness_minutes . ' minutes.' : 'No lateness recorded.',
+                'multi_day' => $tgl_presensi !== $tgl_presensi_end ? 'Attendance spans multiple days.' : 'Single-day attendance.',
                 'data' => $absensi
             ], 201);
 
