@@ -150,8 +150,7 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
                 'stores',
 
             ])
-            ->orderBy('id', 'desc')
-            ->limit(20);
+            ->orderBy('id', 'desc');
         // Filter based on supplier if provided
         if (!empty($filterSupplier)) {
             $query->whereIn('supplier_id', $filterSupplier);

@@ -24,8 +24,8 @@ Auth::routes();
 Route::get('/scanbarcode', function(){
     return view('auth.scanbarcode');
 });
-Route::get('/', [LoginController::class, 'index'])->name('formlogin');
-Route::get('/logincbt', [LoginController::class, 'index1'])->name('logincbt');
+Route::get('/', [LoginController::class, 'index1'])->name('logincbt');
+// Route::get('/logincbt', [LoginController::class, 'index1'])->name('logincbt');
 
 Route::post('/formlogin/check_login', [LoginController::class, 'check_login'])->name('formlogin.check_login');
 Route::post('/login-with-qr', [LoginController::class, 'loginWithQrCode']);
@@ -52,6 +52,8 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/download', 'OrdHeadController@download')->name('download');
         Route::get('/count', 'OrdHeadController@count')->name('count');
         Route::get('/delivery', 'OrdHeadController@delivery')->name('delivery');
+        Route::post('/store', 'OrdHeadController@store')->name('store');
+        Route::get('/progress', 'OrdHeadController@getProgress')->name('getProgress');
 
     });
 
