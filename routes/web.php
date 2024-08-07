@@ -31,7 +31,7 @@ Route::post('/formlogin/check_login', [LoginController::class, 'check_login'])->
 Route::post('/login-with-qr', [LoginController::class, 'loginWithQrCode']);
 
 Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('google.login');
-Route::get('auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
+Route::get('/callback/google', [LoginController::class, 'handleGoogleCallback']);
 
 Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.access']], function () {
 
