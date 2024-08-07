@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {    // add the below column to "users" table
-            $table->string('social_id')->nullable();    // add social_id column with varchar type
-            $table->string('social_type')->nullable();  // add social_type column with varchar type
+            $table->string('google_id')->nullable();    // add social_id column with varchar type
         });
     }
 
@@ -23,8 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('social_id');
-            $table->dropColumn('social_type');
+            $table->dropColumn('google_id');
         });
     }
 };
