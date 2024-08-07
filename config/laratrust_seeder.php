@@ -64,6 +64,9 @@ return [
         'siswa' => [
             'dashboardcbt' => 's',
         ],
+        'guest' => [
+
+        ],
         // 'user' => [
         //     'profile' => 'r,u',
         // ],
