@@ -26,11 +26,23 @@
                 <!--begin::Card toolbar-->
                 <div class="card-toolbar">
                     <!--begin::Toolbar-->
-                    <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-                        <button type="button" class="btn btn-light-primary me-3" id="syncButton">
-                            <i class="fas fa-sync fs-2"></i> Sync Data PO
-                        </button>
+                    <div class="d-flex justify-content-end align-items-center" data-kt-user-table-toolbar="base">
+                        <div class="me-3">
+                            <label for="date" class="form-label">Filter Date:</label>
+                            <input type="date" id="date" class="form-control form-control-sm">
+                        </div>
+
+                        <div>
+                            <button type="button" class="btn btn-light-primary me-3" id="syncButton">
+                                <i class="fas fa-sync fs-2"></i> Sync Data PO
+                            </button>
+                            <button type="button" class="btn btn-light-primary" id="syncRcvButton">
+                                <i class="fas fa-sync fs-2"></i> Sync Data Receiving
+                            </button>
+                        </div>
                     </div>
+
+
                     <!--end::Toolbar-->
                     <!--begin::Group actions-->
                     <div class="d-flex justify-content-end align-items-center d-none" data-kt-user-table-toolbar="selected">

@@ -1,277 +1,291 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title><?php echo $_ENV['APP_NAME']; ?></title>
-    <!-- Site favicon -->
-    <link rel="shortcut icon" href="{{ asset('login/images/favicon.ico')}}">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <!-- Mobile Specific Metas -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700" rel="stylesheet">
-    <!-- Icon Font -->
-    <link rel="stylesheet" href="{{ asset('login/fonts/ionicons/css/ionicons.css') }}">
-    <!-- Text Font -->
-    <link rel="stylesheet" href="{{ asset('login/fonts/font.css') }}">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="{{ asset('login/css/bootstrap.css') }}">
-    <!-- Normal style CSS -->
-    <link rel="stylesheet" href="{{ asset('login/css/style.css') }}">
-    <!-- Normal media CSS -->
-    <link rel="stylesheet" href="{{ asset('login/css/media.css') }}">
-    <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ asset('css/toastr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/toastify.min.css') }}">
+    <link rel="shortcut icon" href="{{ asset('image/logo.png') }}">
+    <title>Bayu Sulaksana System</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <style>
-        /* Add animation styles here */
-        .fadeIn {
-            animation: fadeInAnimation 1s ease forwards;
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #ececec;
         }
-        @keyframes fadeInAnimation {
-            0% {
-                opacity: 0;
-                transform: translateY(-20px);
+
+        .box-area {
+            width: 930px;
+        }
+
+        .right-box {
+            padding: 40px 30px 40px 40px;
+        }
+
+        ::placeholder {
+            font-size: 16px;
+        }
+
+        .rounded-4 {
+            border-radius: 20px;
+        }
+
+        .rounded-5 {
+            border-radius: 30px;
+        }
+
+        @media only screen and (max-width: 768px) {
+            .box-area {
+                margin: 0 10px;
             }
-            100% {
+            .left-box {
+                height: 100px;
+                overflow: hidden;
+            }
+            .right-box {
+                padding: 20px;
+            }
+        }
+
+        .rounded-image-container {
+            border-radius: 50%;
+            overflow: hidden;
+            width: 350px;
+            height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .rounded-image {
+            border-radius: 50%;
+            width: 80%;
+            height: 80%;
+            object-fit: cover;
+            position: absolute;
+        }
+
+        .left-box-content {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUp 1.5s forwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
                 opacity: 1;
                 transform: translateY(0);
+            }
+        }
+
+        .spacing {
+            margin-bottom: 2rem;
+        }
+
+        .text-animate {
+            opacity: 0;
+            animation: fadeIn 2s forwards, slideUp 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
             }
         }
     </style>
 </head>
 <body>
-    <main class="cd-main">
-        <section class="cd-section index visible ">
-            <div class="cd-content style1">
-                <div class="login-box d-md-flex align-items-center">
-                    <h1 class="title" id="greeting">Good Morning</h1>
-                    <h3 class="subtitle">Have a great journey ahead!</h3>
-                    <div class="login-form-box fadeIn">
-                        <div class="login-form-slider">
-                            <!-- login slide start -->
-                            <div class="login-slide slide login-style1">
-                                <form method="POST" action="{{ route('formlogin.check_login') }}" id="sign_in_form">
-                                    @csrf
-                                    <div class="form-group">
-                                        <label class="label">User name</label>
-                                        <input type="text" class="form-control bg-dark text-light" name="username" id="username" placeholder="test ..." required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="label">Password</label>
-                                        <input type="password" class="form-control bg-dark text-light" name="password" id="password" placeholder="12345" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                            <label class="custom-control-label" for="customCheck1">Remember me</label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="submit" class="submit" value="Sign In">
-                                    </div>
-                                </form>
-                                <div class="sign-up-txt">
-                                    Don't have an account? <a href="javascript:;" class="sign-up-click">Sign Up</a>
-                                </div>
-                                <div class="forgot-txt">
-                                    <a href="javascript:;" class="forgot-password-click">Forgot Password</a>
-                                </div>
-                                <div class="login-with">
-                                    <h3>Login with social</h3>
-                                    <ul class="social-login-btn">
-                                        <li class="facebook-btn"><a href="#"><i class="ion-social-facebook"></i></a></li>
-                                        <li class="twitter-btn"><a href="#"><i class="ion-social-twitter"></i></a></li>
-                                        <li class="google-btn"><a href="#"><img src="images/google.svg"></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- login slide end -->
-                            <!-- signup slide start -->
-                            <div class="signup-slide slide login-style1">
-                                <div class="d-flex height-100-percentage">
-                                    <div class="align-self-center width-100-percentage">
-                                        <form>
-                                            <div class="form-group">
-                                                <label class="label">Name</label>
-                                                <input type="text" class="form-control">
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="label">Email</label>
-                                                <input type="email" class="form-control">
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="label">Password</label>
-                                                <input type="password" class="form-control">
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="label">Confirm Password</label>
-                                                <input type="password" class="form-control">
-                                            </div>
-                                            <div class="form-group padding-top-15px">
-                                                <input type="submit" class="submit" value="Sign Up">
-                                            </div>
-                                        </form>
-                                        <div class="sign-up-txt">
-                                            if you have an account? <a href="javascript:;" class="login-click">login</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- signup slide end -->
-                            <!-- forgot password slide start -->
-                            <div class="forgot-password-slide slide login-style1">
-                                <div class="d-flex height-100-percentage">
-                                    <div class="align-self-center width-100-percentage">
-                                        <form>
-                                            <div class="form-group">
-                                                <label class="label">Enter your email address to reset your password</label>
-                                                <input type="email" class="form-control">
-                                            </div>
-                                            <div class="form-group">
-                                                <input type="submit" class="submit" value="Submit">
-                                            </div>
-                                        </form>
-                                        <div class="sign-up-txt">
-                                            if you remember your password? <a href="javascript:;" class="login-click">login</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- forgot password slide end -->
-                        </div>
+
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="row border rounded-5 p-3 bg-white shadow box-area">
+            <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #103cbe;">
+                <div class="rounded-image-container left-box-content">
+                    <img src="{{ asset('image/logo.png') }}" class="rounded-image">
+                </div>
+                <p class="text-white fs-2 text-animate" style="font-family: 'Courier New', Courier, monospace; font-weight: 600;">Bayu Sulaksana System</p>
+                {{-- <small class="text-white text-wrap text-center text-animate" style="width: 17rem; font-family: 'Courier New', Courier, monospace;">
+                    Sistem Informasi Ujian Online Madrasah Aliyah Al Furqan
+                </small> --}}
+            </div>
+
+            <div class="col-md-6 right-box">
+                <div class="row align-items-center">
+                    <div class="header-text mb-4 spacing">
+                        <h2>Hello Again</h2>
+                        <p>We are happy to have you back.</p>
+                        <p class="fs-5">Welcome to our system</p>
                     </div>
+                    <form method="POST" action="{{ route('formlogin.check_login') }}" id="sign_in_form">
+                        @csrf
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Please Insert NIP Or NIS" name="username" id="username" required>
+                        </div>
+                        <div class="input-group mb-1">
+                            <input type="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password" name="password" id="password" required>
+                        </div>
+                        <div class="g-recaptcha" data-sitekey="6LdVDSAqAAAAABHtK30oRyrlBLabcghRCeLoY_py" data-action="LOGIN"></div>
+                        <div class="input-group mb-3">
+                            <input type="submit" class="submit btn btn-lg btn-primary w-100 fs-6" value="LOGIN">
+                        </div>
+                    </form>
                 </div>
             </div>
-        </section>
-    </main>
-    <div id="cd-loading-bar" data-scale="1"></div>
-    <!-- JS File -->
-    <script src="js/modernizr.js"></script>
-    <script type="text/javascript" src="{{ asset('login/js/jquery.js')}}"></script>
-    <script type="text/javascript" src="{{ asset('login/js/popper.min.js')}}"></script>
-    <script type="text/javascript" src="{{ asset('login/js/bootstrap.js')}}"></script>
-    <script src="{{ asset('login/js/velocity.min.js')}}"></script>
-    <script type="text/javascript" src="{{ asset('login/js/script.js')}}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="{{ asset('js/toastr.min.js') }}"></script>
     <script src="{{ asset('js/toastify-js.js') }}"></script>
-    <script src="https://www.google.com/recaptcha/api.js?render={{ env('GOOGLE_RECAPTCHA_KEY') }}"></script>
-
     <script>
-        @if (session('toast'))
-            toastr.{{ session('toast.type') }}("{{ session('toast.message') }}", "{{ session('toast.title') }}");
-        @endif
-    </script>
-       <script>
-        document.addEventListener('DOMContentLoaded', function() {
-    var greetingElement = document.getElementById('greeting');
-    var hour = new Date().getHours();
+    $(document).ready(function() {
+        $("#sign_in_form").submit(function(event) {
+            event.preventDefault(); // Prevent the default form submission
 
-    if (hour >= 5 && hour < 12) {
-        greetingElement.textContent = 'Good Morning';
-    } else if (hour >= 12 && hour < 18) {
-        greetingElement.textContent = 'Good Afternoon';
-    } else {
-        greetingElement.textContent = 'Good Evening';
-    }
-});
-    </script>
-    <script>
-        $(document).ready(function() {
-            $("#sign_in_form").submit(function(event) {
-                event.preventDefault(); // Prevent the default form submission
-                grecaptcha.ready(function() {
-                    grecaptcha.execute("{{ env('GOOGLE_RECAPTCHA_KEY') }}", {action: 'subscribe_newsletter'}).then(function(token) {
-                        $('#contactUSForm').prepend('<input type="hidden" name="g-recaptcha-response" value="' + token + '">');
-                        $('#contactUSForm').unbind('submit').submit();
-                    });;
-                });
-                var username = $("#username").val();
-                var password = $("#password").val();
-                var remember_me = $("#remember_me").val();
+            var username = $("#username").val();
+            var password = $("#password").val();
+            var token = $("meta[name='csrf-token']").attr("content");
 
-                var token = $("meta[name='csrf-token']").attr("content");
+            var recaptchaResponse = grecaptcha.getResponse(); // Get reCAPTCHA response
 
-                if (username.length == "") {
-                    Toastify({
-                        text: "Alamat Username Wajib Diisi !",
-                        duration: 3000,
-                        gravity: "top", // `top` or `bottom`
-                        position: "right", // `left`, `center` or `right`
-                        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                        close: true
-                    }).showToast();
-                } else if (password.length == "") {
-                    Toastify({
-                        text: "Password Wajib Diisi !",
-                        duration: 3000,
-                        gravity: "top", // `top` or `bottom`
-                        position: "right", // `left`, `center` or `right`
-                        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                        close: true
-                    }).showToast();
-                } else {
-                    $.ajax({
-                        url: "{{ route('formlogin.check_login') }}",
-                        type: "POST",
-                        dataType: "JSON",
-                        cache: false,
-                        headers: {
-                            'X-CSRF-TOKEN': token, // Include CSRF token in request headers
-                            'Content-Type': 'application/json' // Set Content-Type to JSON
-                        },
-                        data: JSON.stringify({
-                            "username": username,
-                            "password": password,
-                        }),
-                        success: function(response) {
-                            // Check if the login was successful
-                            if (response.success) {
-                                // Show success message
-                                Toastify({
-                                    text: response.message,
-                                    duration: 3000,
-                                    gravity: "top", // `top` or `bottom`
-                                    position: "right", // `left`, `center` or `right`
-                                    backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
-                                    close: true
-                                }).showToast();
-                                setTimeout(function() {
-                                    window.location.href = "{{ route('home') }}";
-                                }, 3000); // Redirect after 3 seconds
-                            } else {
-                                // Show error message
-                                Toastify({
-                                    text: response.message,
-                                    duration: 3000,
-                                    gravity: "top", // `top` or `bottom`
-                                    position: "right", // `left`, `center` or `right`
-                                    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                                    close: true
-                                }).showToast();
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.log(xhr, status, error, 'masuk sini');
-                            // Show error message
+            if (username.length === 0) {
+                Toastify({
+                    text: 'Alamat Username Wajib Diisi !',
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                    close: true,
+                    className: "toastify-error",
+                    escapeMarkup: false,
+                    onClick: function() {},
+                    callback: function() {
+                        document.querySelector('.toastify').innerHTML = `
+                            <div style="display: flex; align-items: center;">
+                                <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
+                                <span>Alamat Username Wajib Diisi !</span>
+                            </div>`;
+                    }
+                }).showToast();
+            } else if (password.length === 0) {
+                Toastify({
+                    text: 'Password Wajib Diisi !',
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                    close: true,
+                    className: "toastify-error",
+                    escapeMarkup: false,
+                    onClick: function() {},
+                    callback: function() {
+                        document.querySelector('.toastify').innerHTML = `
+                            <div style="display: flex; align-items: center;">
+                                <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
+                                <span>Password Wajib Diisi !</span>
+                            </div>`;
+                    }
+                }).showToast();
+            } else if (recaptchaResponse.length === 0) {
+                Toastify({
+                    text: 'Please complete the reCAPTCHA!',
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                    close: true,
+                    className: "toastify-error",
+                    escapeMarkup: false,
+                    onClick: function() {},
+                    callback: function() {
+                        document.querySelector('.toastify').innerHTML = `
+                            <div style="display: flex; align-items: center;">
+                                <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
+                                <span>Please complete the reCAPTCHA!</span>
+                            </div>`;
+                    }
+                }).showToast();
+            } else {
+                $.ajax({
+                    url: "{{ route('formlogin.check_login') }}",
+                    type: "POST",
+                    dataType: "JSON",
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify({
+                        "username": username,
+                        "password": password,
+                        "g-recaptcha-response": recaptchaResponse // Include reCAPTCHA response
+                    }),
+                    success: function(response) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                            setTimeout(function() {
+                                window.location.href = '/home';
+                            }, 2000);
+                        } else {
                             Toastify({
-                                text: `<strong>Server Error</strong><br>${xhr.responseJSON.message}`,
+                                text: response.message,
                                 duration: 3000,
-                                gravity: "top", // `top` or `bottom`
-                                position: "right", // `left`, `center` or `right`
+                                gravity: "top",
+                                position: "right",
                                 backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
                                 close: true,
-                                escapeMarkup: false // Allows HTML content in the text
+                                className: "toastify-error",
+                                escapeMarkup: false,
+                                onClick: function() {},
+                                callback: function() {
+                                    document.querySelector('.toastify').innerHTML = `
+                                        <div style="display: flex; align-items: center;">
+                                            <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
+                                            <span>${response.message}</span>
+                                        </div>`;
+                                }
                             }).showToast();
                         }
-                    });
-                }
-            });
-
+                    },
+                    error: function(xhr, status, error) {
+                        Toastify({
+                            text: error,
+                            duration: 3000,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                            close: true,
+                            className: "toastify-error",
+                            escapeMarkup: false,
+                            onClick: function() {},
+                            callback: function() {
+                                document.querySelector('.toastify').innerHTML = `
+                                    <div style="display: flex; align-items: center;">
+                                        <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
+                                        <span>${error}</span>
+                                    </div>`;
+                            }
+                        }).showToast();
+                    }
+                });
+            }
         });
+    });
     </script>
 </body>
 </html>

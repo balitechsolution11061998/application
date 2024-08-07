@@ -8,9 +8,35 @@
 //     }
 // });
 
-// Function to populate the table with fetched data
 document.getElementById('syncButton').addEventListener('click', async function () {
-    // Create the progressContainer element with enhanced styling
+    const date = document.getElementById('date').value;
+    if (!date) {
+        Swal.fire({
+            title: 'Error!',
+            text: 'Please select a date before syncing.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+    await syncData('https://supplier.m-mart.co.id/api/po/getData', '/po/store', 'Syncing Data PO', date, '/po/progress');
+});
+
+document.getElementById('syncRcvButton').addEventListener('click', async function () {
+    const date = document.getElementById('date').value;
+    if (!date) {
+        Swal.fire({
+            title: 'Error!',
+            text: 'Please select a date before syncing.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+    await syncData('https://supplier.m-mart.co.id/api/rcv/getData', '/rcv/store', 'Syncing Data Receiving', date, '/rcv/progress');
+});
+
+async function syncData(apiUrl, storeUrl, syncTitle, date, progressUrl) {
     const progressContainer = document.createElement('div');
     progressContainer.id = 'progressContainer';
 
@@ -21,9 +47,8 @@ document.getElementById('syncButton').addEventListener('click', async function (
         <div id="progressText" style="margin-top: 10px; font-weight: bold; text-align: center; color: #555;">Inserting data... 0%</div>
     `;
 
-    // Show loading spinner with progress bar in Swal
     const swalLoading = Swal.fire({
-        title: '<div style="font-size: 24px; font-weight: bold; color: #333;">Syncing Data</div>',
+        title: `<div style="font-size: 24px; font-weight: bold; color: #333;">${syncTitle}</div>`,
         html: `
             <div style="font-size: 16px; color: #666;">Please wait while data is being synced...</div>
             ${progressContainer.outerHTML}
@@ -32,7 +57,9 @@ document.getElementById('syncButton').addEventListener('click', async function (
         allowOutsideClick: false,
         showConfirmButton: false,
         customClass: {
-            popup: 'swal2-popup-custom'
+            popup: 'swal2-popup-custom',
+            title: 'swal2-title-custom',
+            content: 'swal2-content-custom'
         },
         didOpen: () => {
             Swal.showLoading();
@@ -40,31 +67,29 @@ document.getElementById('syncButton').addEventListener('click', async function (
     });
 
     try {
-        // Perform AJAX request to fetch data from API
-        const response = await fetch('https://supplier.m-mart.co.id/api/po/getData', {
+        const response = await fetch(`${apiUrl}?filterDate=${date}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // For Laravel CSRF token
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             }
         });
 
         const result = await response.json();
-        console.log(result, 'data');
-
         if (response.ok && result.success) {
             const dataToInsert = result.data;
+            if (!dataToInsert || dataToInsert.length === 0) {
+                throw new Error('No data to sync for the selected date.');
+            }
 
-            // Show progress bar by updating the Swal content
             const progressBar = Swal.getHtmlContainer().querySelector('.progress-bar');
             const progressText = Swal.getHtmlContainer().querySelector('#progressText');
 
-            // Insert data into the database via Laravel endpoint
-            const insertResponse = await fetch('/po/store', {
+            const insertResponse = await fetch(storeUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // For Laravel CSRF token
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
                 body: JSON.stringify({ data: dataToInsert })
             });
@@ -72,56 +97,69 @@ document.getElementById('syncButton').addEventListener('click', async function (
             const insertResult = await insertResponse.json();
 
             if (insertResponse.ok) {
-                // Periodically fetch progress from the server
                 const progressInterval = setInterval(async () => {
-                    const progressResponse = await fetch('/po/progress', {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // For Laravel CSRF token
-                        }
-                    });
+                    try {
+                        console.log(progressUrl,"masuk");
 
-                    const progress = await progressResponse.json();
-                    const percentage = Math.round(progress.processed_count / result.data.length * 100);
-
-                    // Update the progress bar with smooth animation
-                    progressBar.style.width = `${percentage}%`;
-                    progressBar.setAttribute('aria-valuenow', percentage);
-
-                    // Update the progress text
-                    progressText.textContent = `Inserting data... ${percentage}%`;
-
-                    if (percentage >= 100) {
-                        clearInterval(progressInterval);
-
-                        // Close the loading spinner
-                        Swal.close();
-
-                        // Show success message with detailed counts and animation
-                        await Swal.fire({
-                            title: '<div style="font-size: 24px; font-weight: bold; color: #4caf50;">Success!</div>',
-                            html: `
-                                <ul style="list-style: none; padding: 0; font-size: 16px; color: #555;">
-                                    <li><strong style="color: #4caf50;">Success Count:</strong> ${progress.success_count}</li>
-                                    <li><strong style="color: #4caf50;">Processed Count:</strong> ${progress.processed_count}</li>
-                                    <li><strong style="color: #f44336;">Failed Count:</strong> ${progress.fail_count}</li>
-                                    <li><strong style="color: #333;">Total Count:</strong> ${progress.total_count}</li>
-                                </ul>
-                                <p style="font-size: 16px; color: #666;">Data has been successfully synced.</p>
-                            `,
-                            icon: 'success',
-                            confirmButtonText: 'OK',
-                            customClass: {
-                                popup: 'swal2-popup-custom',
-                                title: 'swal2-title-custom'
+                        const progressResponse = await fetch(progressUrl, {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             }
                         });
 
-                        // Optionally, refresh your data table or perform any other post-sync actions
-                        poTable();
+                        const progress = await progressResponse.json();
+                        console.log(progress,"masuk");
+                        const processedCount = progress.processed_count || 0;
+                        const totalCount = progress.total_count || 1; // Default to 1 to avoid division by zero
+
+                        const percentage = Math.round((processedCount / totalCount) * 100);
+
+                        progressBar.style.width = `${percentage}%`;
+                        progressBar.setAttribute('aria-valuenow', percentage);
+                        progressText.textContent = `Inserting data... ${percentage}%`;
+
+                        if (percentage >= 100) {
+                            clearInterval(progressInterval);
+                            Swal.close();
+
+                            await Swal.fire({
+                                title: '<div style="font-size: 24px; font-weight: bold; color: #4caf50;">Success!</div>',
+                                html: `
+                                    <ul style="list-style: none; padding: 0; font-size: 16px; color: #555;">
+                                        <li><strong style="color: #4caf50;">Success Count:</strong> ${progress.success_count}</li>
+                                        <li><strong style="color: #4caf50;">Processed Count:</strong> ${progress.processed_count}</li>
+                                        <li><strong style="color: #f44336;">Failed Count:</strong> ${progress.fail_count}</li>
+                                        <li><strong style="color: #333;">Total Count:</strong> ${progress.total_count}</li>
+                                    </ul>
+                                    <p style="font-size: 16px; color: #666;">Data has been successfully synced.</p>
+                                `,
+                                icon: 'success',
+                                confirmButtonText: 'OK',
+                                customClass: {
+                                    popup: 'swal2-popup-custom',
+                                    title: 'swal2-title-custom',
+                                    content: 'swal2-content-custom'
+                                }
+                            });
+
+                            poTable();
+                        }
+                    } catch (progressError) {
+                        clearInterval(progressInterval);
+                        Swal.close();
+                        await Swal.fire({
+                            title: 'Error!',
+                            text: progressError.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                            customClass: {
+                                popup: 'swal2-popup-custom'
+                            }
+                        });
                     }
-                }, 1000); // Update every second
+                }, 2000); // Increased interval to 2 seconds
             } else {
                 throw new Error(insertResult.message || 'An error occurred during data insertion');
             }
@@ -129,10 +167,7 @@ document.getElementById('syncButton').addEventListener('click', async function (
             throw new Error(result.message || 'An error occurred while fetching data');
         }
     } catch (error) {
-        // Close the loading spinner
         Swal.close();
-
-        // Show error message
         await Swal.fire({
             title: 'Error!',
             text: error.message,
@@ -143,9 +178,30 @@ document.getElementById('syncButton').addEventListener('click', async function (
             }
         });
     }
-});
+}
 
 
+
+
+// Add custom CSS for Swal popups
+const style = document.createElement('style');
+style.innerHTML = `
+    .swal2-popup-custom {
+        background-color: white;
+        color: black;
+        border-radius: 20px;
+        padding: 20px;
+    }
+
+    .swal2-title-custom {
+        color: black;
+    }
+
+    .swal2-content-custom {
+        color: black;
+    }
+`;
+document.head.appendChild(style);
 
 
 function poTable(data) {

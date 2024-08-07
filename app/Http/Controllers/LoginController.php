@@ -23,10 +23,10 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
-    public function index1()
-    {
-        return view('auth.login1');
-    }
+    // public function index()
+    // {
+    //     return view('auth.login1');
+    // }
 
 
 

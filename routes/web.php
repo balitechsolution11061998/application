@@ -207,6 +207,11 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
 
     });
 
+    Route::prefix('rcv')->name('rcv.')->namespace('App\Http\Controllers')->group(function () {
+        Route::post('/store', 'RcvController@store')->name('store');
+        Route::get('/progress', 'OrdHeadController@getProgress')->name('getProgress');
+    });
+
     Route::prefix('kelas')->name('kelas.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/index', 'KelasController@index')->name('index');
         Route::get('/data', 'KelasController@data')->name('data');

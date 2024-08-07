@@ -239,7 +239,7 @@
                         if (response.success) {
                             toastr.success(response.message);
                             setTimeout(function() {
-                                window.location.href = response.redirect_url;
+                                window.location.href = '/home';
                             }, 2000);
                         } else {
                             Toastify({

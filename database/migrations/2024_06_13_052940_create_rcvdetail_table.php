@@ -14,19 +14,18 @@ return new class extends Migration
         Schema::create('rcvdetail', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('rcvhead_id');
-            $table->foreign('rcvhead_id')->references('id')->on('rcvhead')->onDelete('cascade');
             $table->integer('receive_no');
-            $table->integer('store');
-            $table->integer('sku');
-            $table->string('upc', 20);
-            $table->string('sku_desc', 191);
-            $table->integer('qty_expected');
-            $table->integer('qty_received');
-            $table->integer('unit_cost');
-            $table->integer('unit_retail');
-            $table->double('vat_cost', 8, 2);
-            $table->integer('service_level');
-            $table->integer('unit_cost_disc');
+            $table->integer('store')->nullable();
+            $table->integer('sku')->nullable();
+            $table->string('upc', 20)->nullable();
+            $table->string('sku_desc', 191)->nullable();
+            $table->integer('qty_expected')->nullable();
+            $table->integer('qty_received')->nullable();
+            $table->integer('unit_cost')->nullable();
+            $table->integer('unit_retail')->nullable();
+            $table->double('vat_cost', 8, 2)->nullable();
+            $table->integer('service_level')->nullable();
+            $table->integer('unit_cost_disc')->nullable();
             $table->timestamps();
         });
     }
