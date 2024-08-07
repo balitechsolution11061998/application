@@ -64,29 +64,25 @@ class LoginController extends Controller
     {
         try {
             $user = Socialite::driver('google')->stateless()->user();
-            dd($user);
-
             $findUser = User::where('google_id', $user->id)->first();
             if ($findUser) {
                 Auth::login($findUser);
-
                 return redirect()->intended('home');
             } else {
                 $newUser = User::create([
                     'name' => $user->name,
                     'email' => $user->email,
                     'google_id' => $user->id,
-                    'password' => encrypt('123456dummy') // Create a dummy password
+                    'password' => Hash::make('123456dummy')
                 ]);
-
                 Auth::login($newUser);
-
                 return redirect()->intended('home');
             }
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            dd('Exception caught', $e->getMessage());
             return redirect()->route('login')->with('error', 'Something went wrong. Please try again.');
         }
+
     }
 
 
