@@ -64,9 +64,9 @@ class LoginController extends Controller
     {
         try {
             $user = Socialite::driver('google')->stateless()->user();
+            dd($user);
 
             $findUser = User::where('google_id', $user->id)->first();
-            dd($findUser);
             if ($findUser) {
                 Auth::login($findUser);
 
@@ -84,6 +84,7 @@ class LoginController extends Controller
                 return redirect()->intended('home');
             }
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return redirect()->route('login')->with('error', 'Something went wrong. Please try again.');
         }
     }
