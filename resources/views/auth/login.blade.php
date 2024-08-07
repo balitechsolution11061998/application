@@ -145,6 +145,11 @@
                             <input type="submit" class="submit btn btn-lg btn-primary w-100 fs-6" value="LOGIN">
                         </div>
                     </form>
+                    <div class="input-group mb-3">
+                        <a href="{{ route('google.login') }}" class="btn btn-danger w-100 fs-6">
+                            <i class="fab fa-google me-2"></i> Sign in with Google
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

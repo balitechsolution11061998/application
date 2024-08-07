@@ -1,12 +1,31 @@
-// Handle screen size change
-// $(window).resize(function () {
-//     if ($(window).width() == 1035 && $(window).height() == 846) {
-//         $("*").hide();
-//         alert("masuk sini");
-//     }else{
-//         alert("masuk sini1");
-//     }
-// });
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Flatpickr
+    const datePicker = flatpickr("#datePicker", {
+        dateFormat: "Y-m-d",
+        onChange: function(selectedDates, dateStr, instance) {
+            // Handle the date change if needed
+            console.log('Selected date:', dateStr);
+        }
+    });
+
+    // Store the Flatpickr instance for later use
+    window.datePickerInstance = datePicker;
+});
+
+function openDatePicker(date) {
+    const datePickerElement = document.getElementById('datePicker');
+
+    if (datePickerElement) {
+        // Set the date in the hidden input field
+        datePickerElement.value = date;
+
+        // Use the stored instance to open the Flatpickr date picker
+        window.datePickerInstance.open();
+    } else {
+        console.error("Date picker element not found");
+    }
+}
+
 
 document.getElementById('syncButton').addEventListener('click', async function () {
     const date = document.getElementById('date').value;
@@ -20,13 +39,7 @@ document.getElementById('syncButton').addEventListener('click', async function (
         return;
     }
     await syncData('https://supplier.m-mart.co.id/api/po/getData', '/po/store', 'Syncing Data PO', date, '/po/progress');
-    flatpickr("#datePicker", {
-        dateFormat: "Y-m-d",
-        onChange: function(selectedDates, dateStr, instance) {
-            // Handle the date change if needed
-            console.log('Selected date:', dateStr);
-        }
-    });
+
 });
 
 document.getElementById('syncRcvButton').addEventListener('click', async function () {
@@ -425,12 +438,66 @@ function poTable() {
 }
 
 function openDatePicker(date) {
-    // Set the date in the hidden input field
-    document.getElementById('datePicker').value = date;
+    // Use SweetAlert to create a modal with a spinner initially
+    const swalLoading = Swal.fire({
+        title: `<div style="font-size: 24px; font-weight: bold; color: #333;">Loading Date Picker...</div>`,
+        html: `
+            <div style="font-size: 16px; color: #666;">Please wait while the date picker is being prepared...</div>
+            <div id="spinner" class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        `,
+        icon: 'info',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        customClass: {
+            popup: 'swal2-popup-custom',
+            title: 'swal2-title-custom',
+            content: 'swal2-content-custom'
+        },
+        didOpen: () => {
+            Swal.showLoading();
 
-    // Open the Flatpickr date picker
-    flatpickr("#datePicker").open();
+            // Simulate a short delay to mimic loading process
+            setTimeout(() => {
+                // Update SweetAlert content with the full calendar and hide buttons
+                Swal.fire({
+                    title: `<div style="font-size: 24px; font-weight: bold; color: #333;">Select a Date</div>`,
+                    html: '<input type="text" id="datePicker" class="form-control">',
+                    showCancelButton: false,  // Hide the Cancel button
+                    showConfirmButton: false, // Hide the Save button
+                    customClass: {
+                        popup: 'swal2-popup-custom',
+                        title: 'swal2-title-custom',
+                        content: 'swal2-content-custom'
+                    },
+                    didOpen: () => {
+                        // Initialize Flatpickr on the input inside SweetAlert
+                        flatpickr("#datePicker", {
+                            defaultDate: date,
+                            inline: true, // Display the full calendar inline
+                            dateFormat: "Y-m-d", // Adjust this format based on your requirements
+                            onReady: () => {
+                                // Hide the spinner once the date picker is ready
+                                Swal.hideLoading();
+                                // Focus on the date input to automatically show the calendar
+                                document.getElementById('datePicker').focus();
+                            },
+                            onChange: function(selectedDates, dateStr, instance) {
+                                instance.input.value = dateStr; // Update the input value when the date changes
+                            }
+                        });
+                    }
+                });
+            }, 500); // Adjust the delay as needed (500ms is an example)
+        }
+    });
+
+    return swalLoading;
 }
+
+
+
 
 
 function showInfo(event) {

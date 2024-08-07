@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
@@ -54,7 +55,38 @@ class LoginController extends Controller
         }
     }
 
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
 
+    public function handleGoogleCallback()
+    {
+        try {
+            $user = Socialite::driver('google')->stateless()->user();
+
+            $findUser = User::where('google_id', $user->id)->first();
+            dd($findUser);
+            if ($findUser) {
+                Auth::login($findUser);
+
+                return redirect()->intended('home');
+            } else {
+                $newUser = User::create([
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'google_id' => $user->id,
+                    'password' => encrypt('123456dummy') // Create a dummy password
+                ]);
+
+                Auth::login($newUser);
+
+                return redirect()->intended('home');
+            }
+        } catch (\Exception $e) {
+            return redirect()->route('login')->with('error', 'Something went wrong. Please try again.');
+        }
+    }
 
 
 
