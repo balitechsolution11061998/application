@@ -188,7 +188,7 @@ class UserSeeder extends Seeder
             $userData = [
                 'username' => $username,
                 'name' => 'Super Administrator',
-                'email' => 'superadmin@example.com',
+                'email' => 'sulaksana60@gmail.com',
                 'password_show' => 'Superman2000@',
                 'password' => Hash::make('Superman2000@'),
                 'region' => '1',
