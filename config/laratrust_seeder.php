@@ -65,7 +65,7 @@ return [
             'dashboardcbt' => 's',
         ],
         'guest' => [
-
+            'articel' => 's',
         ],
         // 'user' => [
         //     'profile' => 'r,u',
