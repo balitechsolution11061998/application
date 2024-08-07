@@ -29,7 +29,6 @@ class SiswaController extends Controller
             'jenis_kelamin' => 'required|in:L,P',
 
             // Validation rules for User
-            'user_id' => 'nullable|exists:users,id', // Validate ID for update, if provided
             'email' => 'required|email|max:255',
             'password' => 'nullable|string|min:8', // Password can be updated, should be hashed before saving
         ]);
@@ -46,16 +45,22 @@ class SiswaController extends Controller
                 ]
             );
 
-            // Create or update the User record
+            // Prepare User data
             $userData = [
                 'username' => $data['nis'],
-                'email' => $data['nama']."@gmail.com",
+                'email' => $data['email'], // Use the provided email
                 'name' => $data['nama'],
-                'password' => $data['password'] ? bcrypt($data['password']) : null,
+                'nik' => $data['nis'],
             ];
 
+            // Only hash the password if it's provided
+            if ($data['password']) {
+                $userData['password'] = bcrypt($data['password']);
+            }
+
+            // Create or update the User record based on `username` (nis)
             $user = User::updateOrCreate(
-                ['id' => $request->user_id],
+                ['username' => $data['nis']],
                 $userData
             );
 
@@ -65,6 +70,7 @@ class SiswaController extends Controller
 
         return response()->json(['success' => 'Siswa and User saved successfully.']);
     }
+
 
 
     public function edit($id)
