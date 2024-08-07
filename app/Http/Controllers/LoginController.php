@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Str;
+use Laratrust\Models\Role;
 
 class LoginController extends Controller
 {
@@ -65,16 +67,23 @@ class LoginController extends Controller
         try {
             $user = Socialite::driver('google')->stateless()->user();
             $findUser = User::where('google_id', $user->id)->first();
+
             if ($findUser) {
                 Auth::login($findUser);
                 return redirect()->intended('home');
             } else {
+                // Membuat user baru
                 $newUser = User::create([
                     'name' => $user->name,
                     'email' => $user->email,
                     'google_id' => $user->id,
+                    'username' => $this->generateUniqueUsername($user->name),
                     'password' => Hash::make('123456dummy')
                 ]);
+
+                // Set role 'guest' menggunakan Laratrust
+                $newUser->attachRole('guest');
+
                 Auth::login($newUser);
                 return redirect()->intended('home');
             }
@@ -82,7 +91,6 @@ class LoginController extends Controller
             dd('Exception caught', $e->getMessage());
             return redirect()->route('login')->with('error', 'Something went wrong. Please try again.');
         }
-
     }
 
 
