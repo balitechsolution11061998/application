@@ -82,8 +82,10 @@ class LoginController extends Controller
                 ]);
 
                 // Set role 'guest' menggunakan Laratrust
-                $newUser->attachRole('guest');
-
+                $role = Role::where('name', 'guest')->first();
+                if ($role) {
+                    $newUser->attachRole($role);
+                }
                 Auth::login($newUser);
                 return redirect()->intended('home');
             }
