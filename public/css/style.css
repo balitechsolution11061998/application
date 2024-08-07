@@ -2113,3 +2113,35 @@ nav ul li a.active {
         border-radius: 3px;
         padding: 0 4px;
     }
+    .badge-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+        font-weight: bold;
+        color: white;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .badge-warning.button {
+        background-color: #ffc107;
+    }
+
+    .badge-success.button {
+        background-color: #28a745;
+    }
+
+    .badge-danger.button {
+        background-color: #dc3545;
+    }
+
+    .badge-info.button {
+        background-color: #17a2b8;
+    }
+
+    .badge-secondary.button {
+        background-color: #6c757d;
+    }

@@ -35,8 +35,7 @@ document.getElementById('syncRcvButton').addEventListener('click', async functio
     }
     await syncData('https://supplier.m-mart.co.id/api/rcv/getData', '/rcv/store', 'Syncing Data Receiving', date, '/rcv/progress');
 });
-
-async function syncData(apiUrl, storeUrl, syncTitle, date, progressUrl) {
+async function syncData(apiUrl, storeUrl, syncTitle, date) {
     const progressContainer = document.createElement('div');
     progressContainer.id = 'progressContainer';
 
@@ -67,17 +66,27 @@ async function syncData(apiUrl, storeUrl, syncTitle, date, progressUrl) {
     });
 
     try {
-        const response = await fetch(`${apiUrl}?filterDate=${date}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
+        // Fetch data from apiUrl
+        const response = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `${apiUrl}?filterDate=${date}`);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    resolve(JSON.parse(xhr.responseText));
+                } else {
+                    reject(new Error(`Error: ${xhr.status} ${xhr.statusText}`));
+                }
+            };
+
+            xhr.onerror = () => reject(new Error('Network error occurred.'));
+            xhr.send();
         });
 
-        const result = await response.json();
-        if (response.ok && result.success) {
-            const dataToInsert = result.data;
+        if (response.success) {
+            const dataToInsert = response.data;
             if (!dataToInsert || dataToInsert.length === 0) {
                 throw new Error('No data to sync for the selected date.');
             }
@@ -85,86 +94,81 @@ async function syncData(apiUrl, storeUrl, syncTitle, date, progressUrl) {
             const progressBar = Swal.getHtmlContainer().querySelector('.progress-bar');
             const progressText = Swal.getHtmlContainer().querySelector('#progressText');
 
-            const insertResponse = await fetch(storeUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            let processedCount = 0;
+            const totalData = dataToInsert.length;
+
+            // Helper function to send a chunk of data and update progress
+            const sendChunk = async (chunk) => {
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', storeUrl);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+
+                    xhr.onload = () => {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            resolve();
+                        } else {
+                            reject(new Error(`Error: ${xhr.status} ${xhr.statusText}`));
+                        }
+                    };
+
+                    xhr.onerror = () => reject(new Error('Network error occurred.'));
+                    xhr.send(JSON.stringify({ data: chunk }));
+                });
+            };
+
+            // Process data in chunks
+            const chunkSize = 10; // Number of records per chunk
+            for (let i = 0; i < totalData; i += chunkSize) {
+                const chunk = dataToInsert.slice(i, i + chunkSize);
+                await sendChunk(chunk);
+
+                processedCount += chunk.length;
+                const percentage = Math.round((processedCount / totalData) * 100);
+                progressBar.style.width = `${percentage}%`;
+                progressBar.setAttribute('aria-valuenow', percentage);
+                progressText.textContent = `Inserting data... ${percentage}%`;
+            }
+
+            // Show success Swal with a confirmation button and set timer
+            Swal.fire({
+                title: '<div style="font-size: 24px; font-weight: bold; color: #4caf50;">Success!</div>',
+                html: `
+                    <ul style="list-style: none; padding: 0; font-size: 16px; color: #555;">
+                        <li><strong style="color: #4caf50;">Success Count:</strong> ${response.data.length}</li>
+                        <li><strong style="color: #4caf50;">Processed Count:</strong> ${response.data.length}</li>
+                        <li><strong style="color: #333;">Total Count:</strong> ${response.data.length}</li>
+                    </ul>
+                    <p style="font-size: 16px; color: #666;">Data has been successfully synced.</p>
+                    <div id="countdown" style="font-size: 16px; color: #555; margin-top: 10px;">Closing in <span id="timer">5</span> seconds...</div>
+                `,
+                icon: 'success',
+                showConfirmButton: false, // Hide the confirmation button
+                customClass: {
+                    popup: 'swal2-popup-custom',
+                    title: 'swal2-title-custom',
+                    content: 'swal2-content-custom'
                 },
-                body: JSON.stringify({ data: dataToInsert })
+                didOpen: () => {
+                    let timer = 5;
+                    const timerElement = document.getElementById('timer');
+
+                    const interval = setInterval(() => {
+                        timer--;
+                        timerElement.textContent = timer;
+
+                        if (timer <= 0) {
+                            clearInterval(interval);
+                            Swal.close(); // Close Swal after countdown ends
+                            poTable(); // Refresh table or perform other success actions
+                        }
+                    }, 1000);
+                }
             });
 
-            const insertResult = await insertResponse.json();
-
-            if (insertResponse.ok) {
-                const progressInterval = setInterval(async () => {
-                    try {
-                        console.log(progressUrl,"masuk");
-
-                        const progressResponse = await fetch(progressUrl, {
-                            method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            }
-                        });
-
-                        const progress = await progressResponse.json();
-                        console.log(progress,"masuk");
-                        const processedCount = progress.processed_count || 0;
-                        const totalCount = progress.total_count || 1; // Default to 1 to avoid division by zero
-
-                        const percentage = Math.round((processedCount / totalCount) * 100);
-
-                        progressBar.style.width = `${percentage}%`;
-                        progressBar.setAttribute('aria-valuenow', percentage);
-                        progressText.textContent = `Inserting data... ${percentage}%`;
-
-                        if (percentage >= 100) {
-                            clearInterval(progressInterval);
-                            Swal.close();
-
-                            await Swal.fire({
-                                title: '<div style="font-size: 24px; font-weight: bold; color: #4caf50;">Success!</div>',
-                                html: `
-                                    <ul style="list-style: none; padding: 0; font-size: 16px; color: #555;">
-                                        <li><strong style="color: #4caf50;">Success Count:</strong> ${progress.success_count}</li>
-                                        <li><strong style="color: #4caf50;">Processed Count:</strong> ${progress.processed_count}</li>
-                                        <li><strong style="color: #f44336;">Failed Count:</strong> ${progress.fail_count}</li>
-                                        <li><strong style="color: #333;">Total Count:</strong> ${progress.total_count}</li>
-                                    </ul>
-                                    <p style="font-size: 16px; color: #666;">Data has been successfully synced.</p>
-                                `,
-                                icon: 'success',
-                                confirmButtonText: 'OK',
-                                customClass: {
-                                    popup: 'swal2-popup-custom',
-                                    title: 'swal2-title-custom',
-                                    content: 'swal2-content-custom'
-                                }
-                            });
-
-                            poTable();
-                        }
-                    } catch (progressError) {
-                        clearInterval(progressInterval);
-                        Swal.close();
-                        await Swal.fire({
-                            title: 'Error!',
-                            text: progressError.message,
-                            icon: 'error',
-                            confirmButtonText: 'OK',
-                            customClass: {
-                                popup: 'swal2-popup-custom'
-                            }
-                        });
-                    }
-                }, 2000); // Increased interval to 2 seconds
-            } else {
-                throw new Error(insertResult.message || 'An error occurred during data insertion');
-            }
         } else {
-            throw new Error(result.message || 'An error occurred while fetching data');
+            throw new Error(response.message || 'An error occurred while fetching data');
         }
     } catch (error) {
         Swal.close();
@@ -179,8 +183,6 @@ async function syncData(apiUrl, storeUrl, syncTitle, date, progressUrl) {
         });
     }
 }
-
-
 
 
 // Add custom CSS for Swal popups
@@ -203,8 +205,7 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-
-function poTable(data) {
+function poTable() {
     // Check if the DataTable is already initialized
     if ($.fn.DataTable.isDataTable('#po_table')) {
         // Destroy the existing instance before reinitializing
@@ -218,9 +219,10 @@ function poTable(data) {
         ajax: {
             url: '/po/data',
             type: 'GET',
-            data: function (d) {
+            data: function(d) {
                 d.filterDate = $('#filterDate').val(); // Assuming you have a date filter input
-                d.filterSupplier = $('#filterSupplier').val(); // Assuming you have a supplier filter input
+                d.filterSupplier = $('#filterSupplier').val();
+                d.filterOrderNo = $('#filterOrderNo').val();
             }
         },
         order: [[0, 'desc']],
@@ -230,7 +232,7 @@ function poTable(data) {
                 name: 'id',
                 orderable: false,
                 searchable: false,
-                render: function(data, type, row) {
+                render: function(data) {
                     return `
                         <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
                             <input class="form-check-input" type="checkbox" value="${data}" />
@@ -246,17 +248,15 @@ function poTable(data) {
 
                     if (row.status === 'Progress') {
                         icon = '<i class="fas fa-eye" title="In Progress"></i>';
-                        onclickAction = 'onclick=\'confirmPo(' + JSON.stringify(row) + ')\'';
+                        onclickAction = `onclick='confirmPo(${JSON.stringify(row)})'`;
                     } else {
                         icon = '<i class="fas fa-file-alt" title="Order No"></i>';
                     }
 
-                    let textColor = row.theme === 'dark' ? 'white' : 'black';
-
                     return `
-                        <span class="custom-font" data-intro="This is the order number" data-step="1">
+                        <span class="custom-font" data-intro="This is the order number" data-step="1" style="color: black; font-weight: bold; margin-left: 8px;">
                             ${icon}
-                            <span style="color: ${textColor};" ${onclickAction}>${row.order_no}</span>
+                            <span style="margin-left: 8px;" ${onclickAction}>${data}</span>
                         </span>`;
                 }
             },
@@ -267,32 +267,32 @@ function poTable(data) {
                     let receive_no = row.rcvHead && row.rcvHead.receive_no ? row.rcvHead.receive_no : '';
 
                     return `
-                        <span class="custom-font receiving" data-intro="This is the receive number" data-step="2">
+                        <span class="custom-font receiving" data-intro="This is the receive number" data-step="2" style="color: black; font-weight: bold; padding-left: 8px;">
                             <i class="fas fa-truck-loading" title="Receiving"></i>
-                            <span style="color: ${row.theme === 'dark' ? 'white' : 'black'};">${receive_no}</span>
-                            <i class="fas fa-info-circle ms-1 text-info" title="Info" onclick="showInfo(event)"></i>
+                            <span style="margin-left: 8px;">${receive_no}</span>
+                            <i class="fas fa-info-circle ms-1 text-info" title="Info" onclick="showInfo(event)" style="margin-left: 8px;"></i>
                         </span>`;
                 }
             },
             {
                 data: 'supp_name',
                 name: 'supp_name',
-                render: function(data, type, row) {
-                    return row.suppliers ? row.suppliers.supp_name : "Not Found Data";
+                render: function(data) {
+                    return data ? `<span style="color: black; font-weight: bold;">${data}</span>` : `<span style="color: black; font-weight: bold;">Not Found Data</span>`;
                 }
             },
             {
                 data: 'store_id',
                 name: 'store_id',
                 render: function(data, type, row) {
-                    if (row.stores != null) {
+                    if (row.stores) {
                         return `
                             <i class="fas fa-store" title="Store Found"></i>
-                            <span class="ms-2">${row.stores.store_name}</span>`;
+                            <span class="ms-2" style="color: black; font-weight: bold; margin-left: 8px;">${row.stores.store_name}</span>`;
                     } else {
                         return `
                             <i class="fas fa-store-alt-slash" title="Store Not Found"></i>
-                            <span class="ms-2">Store Not Found</span>`;
+                            <span class="ms-2" style="color: black; font-weight: bold; margin-left: 8px;">Store Not Found</span>`;
                     }
                 }
             },
@@ -300,25 +300,90 @@ function poTable(data) {
                 data: 'status',
                 name: 'status',
                 render: function(data, type, row) {
-                    if (row.status === 'Progress') {
-                        return `
-                            <span class="badge badge-warning"> <i class="fas fa-spinner fa-spin"></i> In Progress</span>
-                        `;
-                    } else {
-                        return `
-                            <i class="fas fa-barcode"></i>
-                            <span class="badge badge-warning">${row.status}</span>
-                        `;
+                    console.log(row);
+
+                    // Badge and button configurations
+                    let badgeClass = '';
+                    let iconClass = '';
+                    let iconTitle = '';
+                    let badgeText = '';
+                    let buttonHtml = '';
+
+                    // Set badge and button based on status
+                    switch (row.status) {
+                        case 'Progress':
+                            badgeClass = 'badge-warning';
+                            iconClass = 'fas fa-spinner fa-spin';
+                            iconTitle = 'In Progress';
+                            badgeText = 'In Progress';
+                            buttonHtml = `
+                                <button class="btn btn-sm btn-primary ms-2" onclick="confirmPo('${data}')" title="Confirm">
+                                    <i class="fas fa-check-circle" style="color: white;"></i> Confirm
+                                </button>
+                            `;
+                            break;
+                        case 'completed':
+                            badgeClass = 'badge-success';
+                            iconClass = 'fas fa-check-circle';
+                            iconTitle = 'Completed';
+                            badgeText = 'Completed';
+                            buttonHtml = `
+                                <button class="btn btn-sm btn-primary ms-2" onclick="printPdf('${data}')" title="Print PDF">
+                                    <i class="fas fa-print" style="color: white;"></i> Print PDF
+                                </button>
+                            `;
+                            break;
+                        case 'Expired':
+                            badgeClass = 'badge-danger';
+                            iconClass = 'fas fa-times-circle';
+                            iconTitle = 'Expired';
+                            badgeText = 'Expired';
+                            buttonHtml = `
+                                <button class="btn btn-sm btn-primary ms-2" onclick="printPdf('${data}')" title="Print PDF">
+                                    <i class="fas fa-print" style="color: white;"></i> Print PDF
+                                </button>
+                            `;
+                            break;
+                        case 'Confirmed':
+                            badgeClass = 'badge-info';
+                            iconClass = 'fas fa-thumbs-up';
+                            iconTitle = 'Confirmed';
+                            badgeText = 'Confirmed';
+                            buttonHtml = `
+                                <button class="btn btn-sm btn-primary ms-2" onclick="printPdf('${data}')" title="Print PDF">
+                                    <i class="fas fa-print" style="color: white;"></i> Print PDF
+                                </button>
+                            `;
+                            break;
+                        default:
+                            badgeClass = 'badge-secondary';
+                            iconClass = 'fas fa-file-alt';
+                            iconTitle = 'Status';
+                            badgeText = data;
+                            buttonHtml = `
+                                <button class="btn btn-sm btn-primary ms-2" onclick="printPdf('${data}')" title="Print PDF">
+                                    <i class="fas fa-print" style="color: white;"></i> Print PDF
+                                </button>
+                            `;
+                            break;
                     }
+
+                    // Return badge with padding and button
+                    return `
+                        <span class="badge badge-button ${badgeClass}" style="color: white; font-weight: bold; padding: 0.5rem 1rem; border-radius: 50px; font-size: 0.875rem; cursor: pointer;">
+                            <i class="${iconClass}" style="color: white; margin-right: 0.5rem;" title="${iconTitle}"></i> ${badgeText}
+                        </span>
+                        ${buttonHtml}
+                    `;
                 }
             },
             {
                 data: 'not_after_date',
                 name: 'not_after_date',
-                render: function(data, type, row) {
+                render: function(data) {
                     const formattedDate = new Date(data).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
-                    return `<i class="fas fa-calendar"></i> ${formattedDate}`;
+                    return `<i class="fas fa-calendar" style="color: black; font-weight: bold;"></i> <span style="color: black; font-weight: bold;">${formattedDate}</span>`;
                 }
             },
             {
@@ -326,13 +391,14 @@ function poTable(data) {
                 name: 'actions',
                 orderable: false,
                 searchable: false,
-                render: function(data, type, row) {
-                    return '<button class="btn btn-sm btn-primary">Action</button>';
+                render: function() {
+                    return '<button class="btn btn-sm btn-primary" style="margin: 5px; color: black; font-weight: bold;">Action</button>';
                 }
             }
         ]
     });
 }
+
 
 function showInfo(event) {
     // Show Intro.js step for receiving date confirmation

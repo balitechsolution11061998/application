@@ -209,7 +209,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
 
     Route::prefix('rcv')->name('rcv.')->namespace('App\Http\Controllers')->group(function () {
         Route::post('/store', 'RcvController@store')->name('store');
-        Route::get('/progress', 'OrdHeadController@getProgress')->name('getProgress');
+        Route::get('/progress', 'RcvController@getProgress')->name('getProgress');
     });
 
     Route::prefix('kelas')->name('kelas.')->namespace('App\Http\Controllers')->group(function () {

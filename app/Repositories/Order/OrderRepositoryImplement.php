@@ -129,7 +129,7 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
 
 
 
-    public function data($filterDate, $filterSupplier)
+    public function data($filterDate, $filterSupplier, $filterStatus)
     {
         // If filterDate is null, set it to the current date
         if ($filterDate == "null") {
@@ -148,33 +148,25 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
                 'ordDetail',
                 'rcvHead:receive_no',
                 'stores',
-
             ])
             ->orderBy('id', 'desc');
+
         // Filter based on supplier if provided
         if (!empty($filterSupplier)) {
             $query->whereIn('supplier_id', $filterSupplier);
         }
 
+        // Filter based on status if provided
+        if (!empty($filterStatus)) {
+            $query->whereIn('status', $filterStatus);
+        }
 
-        // Initialize an empty collection to store the results
-        // $dailyCounts = collect([]);
-
-        // // Chunk the data to process in smaller batches
-        // $query->chunk(2000, function ($orders) use ($dailyCounts) {
-        //     foreach ($orders as $order) {
-        //         // Convert the order to an array to reduce memory usage
-        //         $dailyCounts->push($order->toArray());
-        //     }
-        //     // Release memory after processing each chunk
-        //     unset($orders);
-        // });
-
-        // Flatten the collection to get a single collection of orders
-        // $dailyCounts = $dailyCounts->get();
+        // Retrieve the filtered results
         $dailyCounts = $query->get();
+
         return $dailyCounts;
     }
+
 
 
 

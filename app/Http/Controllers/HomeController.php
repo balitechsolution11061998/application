@@ -60,27 +60,51 @@ class HomeController extends Controller
     }
 
 
-    public function countDataPoPerDays(Request $request){
+    public function countDataPoPerDays(Request $request)
+    {
         $startTime = microtime(true);
         $startMemory = memory_get_usage();
 
         try {
+            // Capture filters from the request
             $filterDate = $request->filterDate;
             $filterSupplier = $request->filterSupplier;
+
+            // Fetch data from the service
             $data = $this->orderService->countDataPoPerDays($filterDate, $filterSupplier);
+
+            // Example: Assume $data is an array or collection
+            $totalCount = count($data);
+            $processedCount = $totalCount; // Assuming all records are processed, adjust if necessary
 
             // Calculate execution time and memory usage
             $executionTime = microtime(true) - $startTime;
             $memoryUsage = memory_get_usage() - $startMemory;
+
+            // Determine performance status based on execution time
+            $status = $executionTime > 1 ? 'slow' : 'fast'; // Example threshold of 1 second
+
+            // Create or update performance analysis record
+            $performanceAnalysis = \App\Models\PerformanceAnalysis::create([
+                'total_count' => $totalCount,
+                'processed_count' => $processedCount,
+                'success_count' => $processedCount, // Assuming all processed are successful, adjust if necessary
+                'fail_count' => 0, // Adjust if you have failure cases
+                'errors' => null,
+                'execution_time' => $executionTime,
+                'status' => $status
+            ]);
 
             // Log performance metrics
             QueryPerformanceLog::create([
                 'function_name' => 'Count Data PO Per Days',
                 'parameters' => json_encode(['filterDate' => $filterDate, 'filterSupplier' => $filterSupplier]),
                 'execution_time' => $executionTime,
-                'memory_usage' => $memoryUsage
+                'memory_usage' => $memoryUsage,
+                'performance_analysis_id' => $performanceAnalysis->id
             ]);
 
+            // Return the data as a JSON response
             return response()->json([
                 'success' => true,
                 'data' => $data,
@@ -88,12 +112,14 @@ class HomeController extends Controller
                 'memory_usage' => $memoryUsage
             ]);
         } catch (\Throwable $th) {
+            // Handle exceptions and return a JSON response
             return response()->json([
                 'success' => false,
                 'error' => $th->getMessage()
             ], 500);
         }
     }
+
 
     public function countDataPoPerDate(Request $request)
     {
