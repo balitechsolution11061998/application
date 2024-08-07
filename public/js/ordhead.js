@@ -20,6 +20,13 @@ document.getElementById('syncButton').addEventListener('click', async function (
         return;
     }
     await syncData('https://supplier.m-mart.co.id/api/po/getData', '/po/store', 'Syncing Data PO', date, '/po/progress');
+    flatpickr("#datePicker", {
+        dateFormat: "Y-m-d",
+        onChange: function(selectedDates, dateStr, instance) {
+            // Handle the date change if needed
+            console.log('Selected date:', dateStr);
+        }
+    });
 });
 
 document.getElementById('syncRcvButton').addEventListener('click', async function () {
@@ -381,9 +388,27 @@ function poTable() {
                 data: 'not_after_date',
                 name: 'not_after_date',
                 render: function(data) {
-                    const formattedDate = new Date(data).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                    const currentDate = new Date();
+                    const notAfterDate = new Date(data);
+                    const tomorrow = new Date();
+                    tomorrow.setDate(currentDate.getDate() + 1);
 
-                    return `<i class="fas fa-calendar" style="color: black; font-weight: bold;"></i> <span style="color: black; font-weight: bold;">${formattedDate}</span>`;
+                    const isExpired = notAfterDate < currentDate;
+                    const isExpiringTomorrow = notAfterDate.toDateString() === tomorrow.toDateString();
+
+                    const formattedDate = notAfterDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+                    const textColor = isExpired || isExpiringTomorrow ? 'red' : 'black';
+
+                    return `
+                        <i class="fas fa-calendar"
+                           style="color: ${textColor}; font-weight: bold; cursor: pointer;"
+                           onclick="openDatePicker('${data}')">
+                        </i>
+                        <span style="color: ${textColor}; font-weight: bold;">
+                            ${formattedDate}
+                        </span>
+                    `;
                 }
             },
             {
@@ -397,6 +422,14 @@ function poTable() {
             }
         ]
     });
+}
+
+function openDatePicker(date) {
+    // Set the date in the hidden input field
+    document.getElementById('datePicker').value = date;
+
+    // Open the Flatpickr date picker
+    flatpickr("#datePicker").open();
 }
 
 
