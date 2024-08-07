@@ -93,6 +93,13 @@ class LoginController extends Controller
         }
     }
 
+    protected function generateUniqueUsername($name)
+{
+    $username = Str::slug($name);
+    $count = User::where('username', 'LIKE', "{$username}%")->count();
+    return $count ? "{$username}-" . ($count + 1) : $username;
+}
+
 
 
     public function check_login(Request $request)
