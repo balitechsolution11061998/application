@@ -24,7 +24,7 @@ Auth::routes();
 Route::get('/scanbarcode', function(){
     return view('auth.scanbarcode');
 });
-Route::get('/', [LoginController::class, 'index1'])->name('logincbt');
+Route::get('/', [LoginController::class, 'index'])->name('logincbt');
 // Route::get('/logincbt', [LoginController::class, 'index1'])->name('logincbt');
 
 Route::post('/formlogin/check_login', [LoginController::class, 'check_login'])->name('formlogin.check_login');
