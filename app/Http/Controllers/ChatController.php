@@ -120,24 +120,35 @@ class ChatController extends Controller
     public function sendMessage(Request $request)
     {
         try {
-            $message = new Message();
-            $message->sender_id = auth()->id();
-            $message->receiver_id = $request->input('user_id');
-            $message->text = $request->input('message');
-            $message->save();
+            // Validate the incoming request data
+            $validatedData = $request->validate([
+                'user_id' => 'required|exists:users,id', // Ensure the user exists
+                'message' => 'required|string|max:1000' // Ensure the message is a string with a max length
+            ]);
 
+            // Create a new message instance
+            $message = new Message();
+            $message->sender_id = auth()->id(); // Set the sender as the logged-in user
+            $message->receiver_id = $validatedData['user_id']; // Set the receiver ID
+            $message->text = $validatedData['message']; // Set the message text
+            $message->save(); // Save the message to the database
+
+            // Return a JSON response indicating success
             return response()->json([
                 'success' => true,
-                'status' => 'Message sent'
+                'status' => 'Message sent',
+                'message' => $message // Optional: Include the saved message in the response
             ]);
         } catch (\Exception $e) {
             // Log the exception for debugging
             \Log::error('Message sending failed: ' . $e->getMessage());
 
+            // Return a JSON response indicating failure
             return response()->json([
                 'success' => false,
                 'status' => 'Failed to send message'
             ], 500);
         }
     }
+
 }

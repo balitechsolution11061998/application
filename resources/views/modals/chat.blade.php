@@ -106,10 +106,23 @@
             color: white;
         }
 
+        #message-input-container {
+            display: flex;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
         #message-input {
             border-radius: 20px;
             border: 1px solid #dee2e6;
             transition: border-color 0.3s ease;
+            flex: 1;
+            padding: 10px;
         }
 
         #message-input:focus {
@@ -120,6 +133,7 @@
         #send-message {
             border-radius: 20px;
             border: none;
+            margin-left: 10px;
             transition: background-color 0.3s ease;
         }
 
@@ -212,8 +226,8 @@
                         <div id="chat-messages">
                             <!-- Chat messages will be dynamically added here -->
                         </div>
-                        <div class="d-flex">
-                            <input type="text" id="message-input" class="form-control me-2"
+                        <div id="message-input-container">
+                            <input type="text" id="message-input" class="form-control"
                                 placeholder="Type a message">
                             <button id="send-message" class="btn btn-primary"><i
                                     class="fas fa-paper-plane"></i></button>
@@ -231,6 +245,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
     <script>
     let selectedUserId = null;
+    const loggedInUserId = {{ auth()->user()->id }};
 
 $(document).ready(function() {
     function hideChatArea() {
@@ -289,12 +304,12 @@ $(document).ready(function() {
                         const messageContent = `
                             <div class="message sent">
                                 <div class="d-inline-block p-2 bg-primary rounded">
-                                    ${response.message}
+                                    ${response.message.text}
                                 </div>
                             </div>`;
                         $('#chat-messages').append(messageContent);
                         $('#message-input').val('');
-                        $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+                        scrollToBottom();
                     } else {
                         alert('Failed to send message. Please try again.');
                     }
@@ -346,48 +361,51 @@ $(document).ready(function() {
     });
 
     $('#search-results').on('click', '.list-group-item', function(event) {
-    event.preventDefault();
+        event.preventDefault();
 
-    const selectedUserId = $(this).data('user-id');
+        selectedUserId = $(this).data('user-id');
+        console.log('Message to send:', selectedUserId);  // Debugging line
 
-    // Make the AJAX request to get the chat messages
-    $.ajax({
-        url: `/chat/${selectedUserId}`,
-        method: 'GET',
-        success: function(response) {
-            const messages = response.messages;
-            let messagesHtml = '';
+        // Make the AJAX request to get the chat messages
+        $.ajax({
+            url: `/chat/${selectedUserId}`,
+            method: 'GET',
+            success: function(response) {
+                const messages = response.messages;
+                let messagesHtml = '';
 
-            messages.forEach(message => {
-                // Check if the sender is the logged-in user
-                const messageClass = message.sender_id === loggedInUserId ? 'sent' : 'received';
-                const messageContent = `
-                    <div class="message ${messageClass}">
-                        <div class="d-inline-block p-2 ${messageClass === 'sent' ? 'bg-primary' : 'bg-light'} rounded">
-                            ${message.text}
-                        </div>
-                    </div>`;
-                messagesHtml += messageContent;
-            });
+                messages.forEach(message => {
+                    // Check if the sender is the logged-in user
+                    const messageClass = message.sender_id === loggedInUserId ? 'sent' : 'received';
+                    const messageContent = `
+                        <div class="message ${messageClass}">
+                            <div class="d-inline-block p-2 ${messageClass === 'sent' ? 'bg-primary' : 'bg-light'} rounded">
+                                ${message.text}
+                            </div>
+                        </div>`;
+                    messagesHtml += messageContent;
+                });
 
-            // Update the chat messages HTML
-            $('#chat-messages').html(messagesHtml);
+                // Update the chat messages HTML
+                $('#chat-messages').html(messagesHtml);
+                scrollToBottom();  // Scroll to the bottom after loading messages
+                // Show the chat area after messages are loaded
+                showChatArea();
+            }
+        });
 
-            // Show the chat area after messages are loaded
-            showChatArea();
-        }
+        // Update the profile section with the selected contact's information
+        const selectedContact = $(this).find('.contact-name').text();
+        const profilePic = $(this).find('img').attr('src');
+
+        $('#profile-section .profile-info .name').text(selectedContact);
+        $('#profile-section .profile-pic img').attr('src', profilePic);
     });
 
-    // Update the profile section with the selected contact's information
-    const selectedContact = $(this).find('.contact-name').text();
-    const profilePic = $(this).find('img').attr('src');
-
-    $('#profile-section .profile-info .name').text(selectedContact);
-    $('#profile-section .profile-pic img').attr('src', profilePic);
+    function scrollToBottom() {
+        $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+    }
 });
-
-});
-
     </script>
 </body>
 
