@@ -82,7 +82,7 @@ class LoginController extends Controller
                 ]);
 
                 // Set role 'guest' menggunakan Laratrust
-              
+
                 Auth::login($newUser);
                 return redirect()->intended('home');
             }

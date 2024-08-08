@@ -58,7 +58,7 @@ class HomeController extends Controller
                 ]);
             } else {
                 // Handle cases where the user role does not match any predefined roles
-                return view('home.default', [ // Adjust this as needed
+                return view('website', [ // Adjust this as needed
                     'id' => $id,
                     'messengerColor' => $messengerColor,
                     'dark_mode' => $dark_mode,
