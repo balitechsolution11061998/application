@@ -967,10 +967,11 @@ async function fetchData(type) {
             throw new Error("Network response was not ok");
         }
         const data = await response.json();
+        console.log('response', data);
 
-        // Extract data
-        const totalValue = data.data[dataFields.totalKey];
-        const totalCost = data.data[dataFields.costKey];
+        // Extract data using dataFields
+        const totalValue = data[dataFields.totalKey]; // Access the value from the response
+        const totalCost = data[dataFields.costKey]; // Access the value from the response
 
         // Get the current month and year
         const now = new Date();
@@ -978,7 +979,7 @@ async function fetchData(type) {
         const currentYear = now.getFullYear();
 
         // Get the selected toggle
-        const selectedToggle = document.querySelector('input[name="options"]:checked').id;
+        const selectedToggle = document.querySelector('input[name="options"]:checked')?.id;
 
         let contentHtml = '';
         let titleHtml = '';
@@ -1308,14 +1309,13 @@ async function fetchCountRcvDays(status, filterDate) {
     const categories = []; // Array to store categories (x-axis labels)
     const seriesData = []; // Array to store series data (y-axis values)
     // Populate categories and seriesData arrays based on the fetched data
-    // Example: Assuming your data contains objects with 'date' and 'count' properties
     if (status == "rupiah") {
         data.total.dailyCounts.forEach((item) => {
             categories.push(item.tanggal); // Push date to categories array
             seriesData.push(formatRupiah(item.totalCostRcv)); // Push count to seriesData array
         });
     } else if (status == "qty") {
-        console.log("masuk sini ya");
+        console.log("masuk sini ya",totalRcv);
         data.total.dailyCounts.forEach((item) => {
             categories.push(item.tanggal); // Push date to categories array
             seriesData.push(formatRupiah(item.totalRcv)); // Push count to seriesData array

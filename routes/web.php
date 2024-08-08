@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
@@ -200,6 +201,16 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
 
     });
 
+    Route::prefix('store')->name('store.')->namespace('App\Http\Controllers')->group(function () {
+        Route::post('/store', 'StoreController@store')->name('store');
+
+    });
+
+    Route::prefix('supplier')->name('supplier.')->namespace('App\Http\Controllers')->group(function () {
+        Route::post('/store', 'SupplierController@store')->name('store');
+
+    });
+
 
     Route::prefix('jam_kerja')->name('jam_kerja.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/index', 'JamKerjaController@index')->name('index');
@@ -303,6 +314,10 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     Route::get('/notifications', [NotificationController::class, 'fetchNotifications'])->name('notifications.fetch');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 
+    Route::get('/get-existing-chats', [ChatController::class, 'getExistingChats'])->name('get-existing-chats');
+    Route::get('/search-users', [ChatController::class, 'searchUsers'])->name('search.users');
+    Route::get('/chat/{user}', [ChatController::class, 'getChat'])->name('get.chat');
+    Route::post('/send-message', [ChatController::class, 'sendMessage'])->name('send.message');
 
 });
 

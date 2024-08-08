@@ -159,17 +159,17 @@
     </div>
 
 
+    <button type="button" class="btn btn-primary chat-button" data-bs-toggle="modal" data-bs-target="#chatifyModal">
+        <i class="fas fa-comments"></i> <!-- Font Awesome chat icon -->
+    </button>
 
 
 
 
-    {{-- <div class="notification-button-container" style="margin: 20px;">
-            <button id="notify-btn" class="btn btn-primary">
-                <i class="fas fa-bell"></i> Show Notification
-            </button>
-        </div> --}}
 
-    @include('modals.modal')
+    {{-- @include('modals.modal') --}}
+    @include('modals.chat')
+
     @push('scripts')
         <script src="{{ asset('js/home2.js') }}"></script>
         <script src="{{ asset('js/formatRupiah.js') }}"></script>

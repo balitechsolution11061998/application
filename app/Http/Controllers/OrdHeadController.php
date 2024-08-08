@@ -9,6 +9,7 @@ use App\Models\PerformanceAnalysis;
 use App\Models\QueryPerformanceLog;
 use App\Models\User;
 use App\Services\Order\OrderService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,38 +35,101 @@ class OrdHeadController extends Controller
         return view('order.index');
     }
 
-    public function count(Request $request)
+
+
+public function count(Request $request)
 {
     $startTime = microtime(true);
     $startMemory = memory_get_usage();
 
     try {
-        // Get filter parameters from the request
         $filterDate = $request->filterDate;
         $filterSupplier = $request->filterSupplier;
+        // If filterDate is null or an empty string, set it to the current year and month
+        if (is_null($filterDate) || $filterDate == "null" || empty($filterDate)) {
+            $currentDate = Carbon::now();
+            $filterYear = $currentDate->year;
+            $filterMonth = $currentDate->month;
+        } else {
+            // Extract year and month from the provided filterDate
+            $filterYear = Carbon::parse($filterDate)->year;
+            $filterMonth = Carbon::parse($filterDate)->month;
+        }
 
-        // Use the orderService to get the query builder with filters applied
-        $query = $this->orderService->countDataPo($filterDate, $filterSupplier);
+        // Calculate the start and end date of the given month
+        $startDate = Carbon::create($filterYear, $filterMonth, 1)->startOfMonth()->toDateString();
+        $endDate = Carbon::create($filterYear, $filterMonth, 1)->endOfMonth()->toDateString();
 
-        // Count total records before pagination
+        // Get the supplier user and filter supplier from the request
+        $supplierUser = auth()->user();
+        $filterSupplier = request()->input('filterSupplier');
 
+        // Build the query
+        $dailyCountsQuery = OrdHead::with('suppliers')
+            ->select([
+                DB::raw('DATE(approval_date) as tanggal'),
+                DB::raw('COUNT(DISTINCT ordhead.id) as jumlah'),
+                DB::raw('SUM(ordsku.unit_cost * ordsku.qty_ordered + ordsku.vat_cost * ordsku.qty_ordered) as total_cost'),
+            ])
+            ->leftJoin('ordsku', 'ordhead.id', '=', 'ordsku.ordhead_id')
+            ->whereBetween('approval_date', [$startDate, $endDate])
+            ->groupBy('tanggal')
+            ->when(optional($supplierUser)->hasRole('supplier'), function ($query) use ($supplierUser) {
+                $query->where('ordhead.supplier', $supplierUser->username);
+            })
+            ->when(!empty($filterSupplier), function ($query) use ($filterSupplier) {
+                $query->whereIn('ordhead.supplier', (array) $filterSupplier);
+            });
+
+        // Execute the query and get the results
+        $dailyCounts = $dailyCountsQuery->get();
+
+        // Calculate totals
+        $totalCount = $dailyCounts->count(); // Total number of records
+        $processedCount = $totalCount; // Assuming all fetched records are processed
+        $successCount = $processedCount; // Assuming all processed records are successful
+        $failCount = 0; // Assuming no failed records in this context
+
+        $totals = $dailyCounts->reduce(function ($carry, $item) {
+            $carry['totalPo'] += $item->jumlah;
+            $carry['totalCost'] += $item->total_cost;
+            return $carry;
+        }, ['totalPo' => 0, 'totalCost' => 0]);
 
         // Calculate execution time and memory usage
         $executionTime = microtime(true) - $startTime;
         $memoryUsage = memory_get_usage() - $startMemory;
+
+        // Create or update performance analysis record
+        $performanceAnalysis = \App\Models\PerformanceAnalysis::create([
+            'total_count' => $totalCount,
+            'processed_count' => $processedCount,
+            'success_count' => $successCount,
+            'fail_count' => $failCount,
+            'errors' => null,
+            'execution_time' => $executionTime,
+            'status' => $executionTime > 1 ? 'slow' : 'fast' // Example status based on execution time
+        ]);
 
         // Log performance metrics
         QueryPerformanceLog::create([
             'function_name' => 'Count Data PO',
             'parameters' => json_encode(['filterDate' => $filterDate, 'filterSupplier' => $filterSupplier]),
             'execution_time' => $executionTime,
-            'memory_usage' => $memoryUsage
+            'memory_usage' => $memoryUsage,
+            'performance_analysis_id' => $performanceAnalysis->id
         ]);
 
-        return response()->json([
-            'draw' => $request->input('draw'),
-            'data' => $query,
-        ]);
+        return [
+            'totalPo' => $totals['totalPo'],
+            'totalCost' => $totals['totalCost'],
+            'month' => str_pad($filterMonth, 2, '0', STR_PAD_LEFT), // Ensure month is two digits
+            'year' => (string)$filterYear, // Convert year to string
+            'total_count' => $totalCount,
+            'processed_count' => $processedCount,
+            'success_count' => $successCount,
+            'fail_count' => $failCount
+        ];
     } catch (\Throwable $th) {
         return response()->json([
             'success' => false,
@@ -73,6 +137,7 @@ class OrdHeadController extends Controller
         ], 500);
     }
 }
+
 
 
 
@@ -253,16 +318,52 @@ public function data(Request $request)
 
     try {
         // Capture filters from request
-        $filterDate = $request->filterDate;
-        $filterSupplier = $request->filterSupplier;
-        $filterOrderNo = $request->filterOrderNo;
+        $filterDate = $request->input('filterDate');
+        $filterSupplier = $request->input('filterSupplier');
+        $filterOrderNo = $request->input('filterOrderNo');
 
-        // Fetch data from the service
-        $data = $this->orderService->data($filterDate, $filterSupplier, $filterOrderNo);
+        // Default filter date to current date if null
+        if ($filterDate === null) {
+            $filterDate = date('Y-m');
+        }
 
-        // Example: Assume that $data is a collection or array
-        $totalCount = count($data);
-        $processedCount = $totalCount; // Assuming all records are processed, modify as needed
+        // Extract the year and month from the filter date
+        $filterYear = date('Y', strtotime($filterDate));
+        $filterMonth = date('m', strtotime($filterDate));
+
+        // Initialize the query builder
+        $query = DB::table('ordhead') // Assuming the table name is 'ord_heads'
+        ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code') // Adjust join columns
+        ->leftJoin('ordsku', 'ordhead.order_no', '=', 'ordsku.order_no') // Adjust join columns
+        ->leftJoin('rcvhead', 'ordhead.order_no', '=', 'rcvhead.order_no') // Adjust join columns
+        ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store') // Adjust join columns
+        ->select([
+            'ordhead.*', // Select all columns from ord_heads
+            'supplier.supp_code', 'supplier.supp_name',
+            'ordsku.order_no',
+            'rcvhead.receive_date',
+            'rcvhead.receive_no',
+            'store.store', 'store.store_name',
+        ])
+        ->orderBy('ordhead.id', 'desc');
+
+        // Apply filters if provided
+        if ($filterSupplier !== null) {
+            $query->where('ordhead.supplier', $filterSupplier);
+        }
+
+        if ($filterOrderNo !== null) {
+            $query->where('ordhead.order_no', $filterOrderNo);
+        }
+
+        // Optionally filter by date if needed
+        if ($filterDate !== null) {
+            $query->whereYear('ordhead.approval_date', $filterYear)
+                  ->whereMonth('ordhead.approval_date', $filterMonth);
+        }
+
+        // Execute the query and get the results
+        $data = $query->get(); // This returns a Collection
 
         // Calculate execution time and memory usage
         $executionTime = microtime(true) - $startTime;
@@ -272,10 +373,10 @@ public function data(Request $request)
         $status = $executionTime > 1 ? 'slow' : 'fast'; // Example threshold of 1 second
 
         // Create or update performance analysis record
-        $performanceAnalysis = \App\Models\PerformanceAnalysis::create([
-            'total_count' => $totalCount,
-            'processed_count' => $processedCount,
-            'success_count' => $processedCount, // Assuming all processed are successful, modify as needed
+        $performanceAnalysis = PerformanceAnalysis::create([
+            'total_count' => $data->count(),
+            'processed_count' => $data->count(), // Assuming all records are processed, modify as needed
+            'success_count' => $data->count(), // Assuming all processed are successful, modify as needed
             'fail_count' => 0, // Update as needed
             'errors' => null,
             'execution_time' => $executionTime,
@@ -312,59 +413,104 @@ public function data(Request $request)
 }
 
 
-    public function delivery(Request $request)
-    {
-        $startTime = microtime(true);
-        $startMemory = memory_get_usage();
+public function delivery(Request $request)
+{
+    $startTime = microtime(true);
+    $startMemory = memory_get_usage();
 
-        try {
-            $filterDate = $request->filterDate;
-            $filterSupplier = $request->filterSupplier;
+    try {
+        $filterDate = $request->filterDate;
+        $filterSupplier = $request->filterSupplier;
 
-            // Initialize the query with eager loading
-            $query = OrdHead::with('stores')
-                ->whereIn('status', ['confirmed', 'printed'])
-                ->where('estimated_delivery_date', '>', now());
+        // Initialize the query with eager loading
+        $query = OrdHead::with('stores')
+            ->whereIn('status', ['confirmed', 'printed'])
+            ->where('estimated_delivery_date', '>', now());
 
-            // Apply filters if provided
-            if ($filterDate) {
-                $query->whereDate('created_at', $filterDate);
-            }
-
-            if ($filterSupplier) {
-                $query->where('supplier_id', $filterSupplier);
-            }
-
-            // Execute the query and get the results
-            $data = $query->get();
-
-            // Calculate execution time and memory usage
-            $executionTime = microtime(true) - $startTime;
-            $memoryUsage = memory_get_usage() - $startMemory;
-
-            // Log performance metrics
-            QueryPerformanceLog::create([
-                'function_name' => 'Show Confirmed PO',
-                'parameters' => json_encode(['filterDate' => $filterDate, 'filterSupplier' => $filterSupplier]),
-                'execution_time' => $executionTime,
-                'memory_usage' => $memoryUsage
-            ]);
-
-            return DataTables::of($data)
-                ->addColumn('actions', function($row) {
-                    return '<button class="btn btn-sm btn-primary">Action</button>';
-                })
-                ->rawColumns(['actions'])
-                ->toJson();
-        } catch (\Throwable $th) {
-            // Log the error for debugging purposes
-
-            return response()->json([
-                'success' => false,
-                'error' => 'An error occurred while processing your request. Please try again later.'
-            ], 500);
+        // Apply filters if provided
+        if ($filterDate) {
+            $query->whereDate('created_at', $filterDate);
         }
+
+        if ($filterSupplier) {
+            $query->where('supplier_id', $filterSupplier);
+        }
+
+        // Execute the query and get the results
+        $data = $query->get();
+
+        // Calculate execution time and memory usage
+        $executionTime = microtime(true) - $startTime;
+        $memoryUsage = memory_get_usage() - $startMemory;
+
+        // Determine the status of the operation
+        $status = 'success';
+
+        // Create or update performance analysis record
+        $performanceAnalysis = PerformanceAnalysis::create([
+            'total_count' => $data->count(),
+            'processed_count' => $data->count(), // Assuming all records are processed, modify as needed
+            'success_count' => $data->count(), // Assuming all processed are successful, modify as needed
+            'fail_count' => 0, // Update as needed based on actual processing
+            'errors' => null, // Log any errors here if needed
+            'execution_time' => $executionTime,
+            'status' => $status
+        ]);
+
+        // Log performance metrics
+        QueryPerformanceLog::create([
+            'function_name' => 'Data PO',
+            'parameters' => json_encode([
+                'filterDate' => $filterDate,
+                'filterSupplier' => $filterSupplier,
+            ]),
+            'execution_time' => $executionTime,
+            'memory_usage' => $memoryUsage,
+            'performance_analysis_id' => $performanceAnalysis->id // Link to the performance analysis record
+        ]);
+
+        return DataTables::of($data)
+            ->addColumn('actions', function($row) {
+                return '<button class="btn btn-sm btn-primary">Action</button>';
+            })
+            ->rawColumns(['actions'])
+            ->toJson();
+    } catch (\Throwable $th) {
+        // Log the error for debugging purposes
+        $status = 'failure';
+        $errorMessage = $th->getMessage();
+
+        // Create or update performance analysis record in case of failure
+        $performanceAnalysis = PerformanceAnalysis::create([
+            'total_count' => 0,
+            'processed_count' => 0,
+            'success_count' => 0,
+            'fail_count' => 1, // Since the operation failed
+            'errors' => $errorMessage,
+            'execution_time' => microtime(true) - $startTime, // Calculate up to the error point
+            'status' => $status
+        ]);
+
+        // Log performance metrics with error information
+        QueryPerformanceLog::create([
+            'function_name' => 'Data PO',
+            'parameters' => json_encode([
+                'filterDate' => $filterDate,
+                'filterSupplier' => $filterSupplier,
+            ]),
+            'execution_time' => microtime(true) - $startTime,
+            'memory_usage' => memory_get_usage() - $startMemory,
+            'performance_analysis_id' => $performanceAnalysis->id,
+            'error_message' => $errorMessage
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'error' => 'An error occurred while processing your request. Please try again later.'
+        ], 500);
     }
+}
+
 
 
 }

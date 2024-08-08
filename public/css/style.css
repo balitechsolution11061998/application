@@ -122,6 +122,7 @@
 .introjs-tooltip-title {
     font-weight: bold; /* Bold title text */
     margin-bottom: 8px; /* Bottom margin */
+    color:black;
 }
 
 /* Styling for Intro.js tooltip content */
@@ -2145,3 +2146,102 @@ nav ul li a.active {
     .badge-secondary.button {
         background-color: #6c757d;
     }
+/* Full-screen Modal */
+.modal-dialog.fullscreen {
+    max-width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.modal-dialog.fullscreen .modal-content {
+    height: 100%;
+    border-radius: 0;
+}
+
+.modal-dialog.fullscreen .modal-body {
+    overflow-y: auto;
+    height: calc(100% - 56px); /* Adjust based on header/footer height */
+}
+
+
+/* Dropdown Button */
+.dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Space between icon and text */
+    transition: background-color 0.3s ease; /* Smooth background color transition */
+}
+
+.dropdown-toggle:hover {
+    background-color: #0056b3; /* Darker background on hover */
+}
+
+/* Dropdown Items */
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Space between checkbox and label */
+    transition: background-color 0.3s ease; /* Smooth background color transition */
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa; /* Lighter background on hover */
+}
+
+/* Sync Button */
+#syncActionButton {
+    display: none; /* Initially hide the button */
+    transition: opacity 0.3s ease; /* Smooth opacity transition */
+}
+
+#syncActionButton.show {
+    display: block; /* Show button when needed */
+    opacity: 1;
+}
+
+#syncActionButton.hide {
+    opacity: 0;
+}
+
+
+
+.chat-button {
+    position: fixed; /* Fixed positioning to keep the button in place */
+    bottom: 20px; /* Distance from the bottom of the viewport */
+    right: 20px; /* Distance from the right side of the viewport */
+    border-radius: 50%; /* Makes the button round */
+    width: 60px; /* Width of the button */
+    height: 60px; /* Height of the button */
+    display: flex; /* Flexbox for centering the icon */
+    align-items: center; /* Centering vertically */
+    justify-content: center; /* Centering horizontally */
+    font-size: 24px; /* Size of the icon */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Optional shadow for better visibility */
+    z-index: 1000; /* Ensures the button is above other content */
+}
+
+
+/* Custom Intro.js tooltip styling */
+.custom-intro-tooltip {
+    background-color: #f8f9fa; /* Light background color */
+    color: #333; /* Dark text color for contrast */
+    border-radius: 8px; /* Rounded corners */
+    padding: 12px; /* Padding inside the tooltip */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+    font-size: 14px; /* Font size for readability */
+    line-height: 1.5; /* Line height for spacing */
+}
+
+/* Styling for the tooltip title */
+.introjs-tooltip .introjs-tooltiptitle {
+    color: #000; /* Set title color to black */
+    font-weight: bold; /* Bold font for emphasis */
+    font-size: 16px; /* Adjust font size for title */
+    margin-bottom: 8px; /* Spacing below the title */
+}
+
+/* Optional: Adjust the position of the tooltip arrow */
+.introjs-tooltip-arrow {
+    border-top-color: #f8f9fa; /* Arrow color matches tooltip background */
+}

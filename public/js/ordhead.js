@@ -10,6 +10,217 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Store the Flatpickr instance for later use
     window.datePickerInstance = datePicker;
+
+    const syncActionButton = document.getElementById('syncActionButton');
+    const checkboxes = document.querySelectorAll('.dropdown-menu input[type="checkbox"]');
+
+    // Show or hide the sync action button based on checkbox selections
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            let anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+            syncActionButton.classList.toggle('show', anyChecked);
+            syncActionButton.classList.toggle('hide', !anyChecked);
+        });
+    });
+
+    // Handle click event on the sync action button
+    syncActionButton.addEventListener('click', async () => {
+        const date = document.getElementById('date').value;
+        if (!date) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please select a date before syncing.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        const selectedOptions = [];
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                selectedOptions.push(checkbox.id);
+            }
+        });
+
+        if (selectedOptions.length === 0) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please select at least one option to sync.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        for (const option of selectedOptions) {
+            switch (option) {
+                case 'syncPO':
+                    await syncData('https://supplier.m-mart.co.id/api/po/getData', '/po/store', 'Syncing Data PO', date, '/po/progress');
+                    break;
+                case 'syncRcv':
+                    await syncData('https://supplier.m-mart.co.id/api/rcv/getData', '/rcv/store', 'Syncing Data Receiving', date, '/rcv/progress');
+                    break;
+                case 'syncStore':
+                    await syncData('https://supplier.m-mart.co.id/api/stores/get', '/store/store', 'Syncing Store Data', date, '/store/progress');
+                    break;
+                case 'syncSupplier':
+                    await syncData('https://supplier.m-mart.co.id/api/supplier/get', '/supplier/store', 'Syncing Supplier Data', date, '/supplier/progress');
+                    break;
+            }
+        }
+    });
+
+    async function syncData(apiUrl, storeUrl, syncTitle, date) {
+        const progressContainer = document.createElement('div');
+        progressContainer.id = 'progressContainer';
+
+        progressContainer.innerHTML = `
+            <div class="progress" style="height: 20px; background-color: #f3f3f3; border-radius: 10px; overflow: hidden; margin-top: 20px;">
+                <div class="progress-bar" role="progressbar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #4caf50, #81c784); transition: width 0.5s ease-in-out;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div id="progressText" style="margin-top: 10px; font-weight: bold; text-align: center; color: #555;">Inserting data... 0%</div>
+        `;
+
+        const swalLoading = Swal.fire({
+            title: `<div style="font-size: 24px; font-weight: bold; color: #333;">${syncTitle}</div>`,
+            html: `
+                <div style="font-size: 16px; color: #666;">Please wait while data is being synced...</div>
+                ${progressContainer.outerHTML}
+            `,
+            icon: 'info',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            customClass: {
+                popup: 'swal2-popup-custom',
+                title: 'swal2-title-custom',
+                content: 'swal2-content-custom'
+            },
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        try {
+            // Fetch data from apiUrl
+            const response = await new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', `${apiUrl}?filterDate=${date}`);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        resolve(JSON.parse(xhr.responseText));
+                    } else {
+                        reject(new Error(`Error: ${xhr.status} ${xhr.statusText}`));
+                    }
+                };
+
+                xhr.onerror = () => reject(new Error('Network error occurred.'));
+                xhr.send();
+            });
+
+            if (response.success) {
+                const dataToInsert = response.data;
+                if (!dataToInsert || dataToInsert.length === 0) {
+                    throw new Error('No data to sync for the selected date.');
+                }
+
+                const progressBar = Swal.getHtmlContainer().querySelector('.progress-bar');
+                const progressText = Swal.getHtmlContainer().querySelector('#progressText');
+
+                let processedCount = 0;
+                const totalData = dataToInsert.length;
+
+                // Helper function to send a chunk of data and update progress
+                const sendChunk = async (chunk) => {
+                    return new Promise((resolve, reject) => {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('POST', storeUrl);
+                        xhr.setRequestHeader('Content-Type', 'application/json');
+                        xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+
+                        xhr.onload = () => {
+                            if (xhr.status >= 200 && xhr.status < 300) {
+                                resolve();
+                            } else {
+                                reject(new Error(`Error: ${xhr.status} ${xhr.statusText}`));
+                            }
+                        };
+
+                        xhr.onerror = () => reject(new Error('Network error occurred.'));
+                        xhr.send(JSON.stringify({ data: chunk }));
+                    });
+                };
+
+                // Process data in chunks
+                const chunkSize = 10; // Number of records per chunk
+                for (let i = 0; i < totalData; i += chunkSize) {
+                    const chunk = dataToInsert.slice(i, i + chunkSize);
+                    await sendChunk(chunk);
+
+                    processedCount += chunk.length;
+                    const percentage = Math.round((processedCount / totalData) * 100);
+                    progressBar.style.width = `${percentage}%`;
+                    progressBar.setAttribute('aria-valuenow', percentage);
+                    progressText.textContent = `Inserting data... ${percentage}%`;
+                }
+
+                // Show success Swal with a confirmation button and set timer
+                Swal.fire({
+                    title: '<div style="font-size: 24px; font-weight: bold; color: #4caf50;">Success!</div>',
+                    html: `
+                        <ul style="list-style: none; padding: 0; font-size: 16px; color: #555;">
+                            <li><strong style="color: #4caf50;">Success Count:</strong> ${response.data.length}</li>
+                            <li><strong style="color: #4caf50;">Processed Count:</strong> ${response.data.length}</li>
+                            <li><strong style="color: #333;">Total Count:</strong> ${response.data.length}</li>
+                        </ul>
+                        <p style="font-size: 16px; color: #666;">Data has been successfully synced.</p>
+                        <div id="countdown" style="font-size: 16px; color: #555; margin-top: 10px;">Closing in <span id="timer">5</span> seconds...</div>
+                    `,
+                    icon: 'success',
+                    showConfirmButton: false, // Hide the confirmation button
+                    customClass: {
+                        popup: 'swal2-popup-custom',
+                        title: 'swal2-title-custom',
+                        content: 'swal2-content-custom'
+                    },
+                    didOpen: () => {
+                        let timer = 5;
+                        const timerElement = document.getElementById('timer');
+
+                        const interval = setInterval(() => {
+                            timer--;
+                            timerElement.textContent = timer;
+
+                            if (timer <= 0) {
+                                clearInterval(interval);
+                                Swal.close(); // Close Swal after countdown ends
+                                poTable(); // Refresh table or perform other success actions
+                            }
+                        }, 1000);
+                    }
+                });
+
+            } else {
+                throw new Error(response.message || 'An error occurred while fetching data');
+            }
+        } catch (error) {
+            Swal.close();
+            await Swal.fire({
+                title: 'Error!',
+                text: error.message,
+                icon: 'error',
+                confirmButtonText: 'OK',
+                customClass: {
+                    popup: 'swal2-popup-custom'
+                }
+            });
+        }
+    }
+
+
 });
 
 function openDatePicker(date) {
@@ -27,182 +238,7 @@ function openDatePicker(date) {
 }
 
 
-document.getElementById('syncButton').addEventListener('click', async function () {
-    const date = document.getElementById('date').value;
-    if (!date) {
-        Swal.fire({
-            title: 'Error!',
-            text: 'Please select a date before syncing.',
-            icon: 'error',
-            confirmButtonText: 'OK'
-        });
-        return;
-    }
-    await syncData('https://supplier.m-mart.co.id/api/po/getData', '/po/store', 'Syncing Data PO', date, '/po/progress');
 
-});
-
-document.getElementById('syncRcvButton').addEventListener('click', async function () {
-    const date = document.getElementById('date').value;
-    if (!date) {
-        Swal.fire({
-            title: 'Error!',
-            text: 'Please select a date before syncing.',
-            icon: 'error',
-            confirmButtonText: 'OK'
-        });
-        return;
-    }
-    await syncData('https://supplier.m-mart.co.id/api/rcv/getData', '/rcv/store', 'Syncing Data Receiving', date, '/rcv/progress');
-});
-async function syncData(apiUrl, storeUrl, syncTitle, date) {
-    const progressContainer = document.createElement('div');
-    progressContainer.id = 'progressContainer';
-
-    progressContainer.innerHTML = `
-        <div class="progress" style="height: 20px; background-color: #f3f3f3; border-radius: 10px; overflow: hidden; margin-top: 20px;">
-            <div class="progress-bar" role="progressbar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #4caf50, #81c784); transition: width 0.5s ease-in-out;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
-        <div id="progressText" style="margin-top: 10px; font-weight: bold; text-align: center; color: #555;">Inserting data... 0%</div>
-    `;
-
-    const swalLoading = Swal.fire({
-        title: `<div style="font-size: 24px; font-weight: bold; color: #333;">${syncTitle}</div>`,
-        html: `
-            <div style="font-size: 16px; color: #666;">Please wait while data is being synced...</div>
-            ${progressContainer.outerHTML}
-        `,
-        icon: 'info',
-        allowOutsideClick: false,
-        showConfirmButton: false,
-        customClass: {
-            popup: 'swal2-popup-custom',
-            title: 'swal2-title-custom',
-            content: 'swal2-content-custom'
-        },
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
-
-    try {
-        // Fetch data from apiUrl
-        const response = await new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', `${apiUrl}?filterDate=${date}`);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-
-            xhr.onload = () => {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    resolve(JSON.parse(xhr.responseText));
-                } else {
-                    reject(new Error(`Error: ${xhr.status} ${xhr.statusText}`));
-                }
-            };
-
-            xhr.onerror = () => reject(new Error('Network error occurred.'));
-            xhr.send();
-        });
-
-        if (response.success) {
-            const dataToInsert = response.data;
-            if (!dataToInsert || dataToInsert.length === 0) {
-                throw new Error('No data to sync for the selected date.');
-            }
-
-            const progressBar = Swal.getHtmlContainer().querySelector('.progress-bar');
-            const progressText = Swal.getHtmlContainer().querySelector('#progressText');
-
-            let processedCount = 0;
-            const totalData = dataToInsert.length;
-
-            // Helper function to send a chunk of data and update progress
-            const sendChunk = async (chunk) => {
-                return new Promise((resolve, reject) => {
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', storeUrl);
-                    xhr.setRequestHeader('Content-Type', 'application/json');
-                    xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-
-                    xhr.onload = () => {
-                        if (xhr.status >= 200 && xhr.status < 300) {
-                            resolve();
-                        } else {
-                            reject(new Error(`Error: ${xhr.status} ${xhr.statusText}`));
-                        }
-                    };
-
-                    xhr.onerror = () => reject(new Error('Network error occurred.'));
-                    xhr.send(JSON.stringify({ data: chunk }));
-                });
-            };
-
-            // Process data in chunks
-            const chunkSize = 10; // Number of records per chunk
-            for (let i = 0; i < totalData; i += chunkSize) {
-                const chunk = dataToInsert.slice(i, i + chunkSize);
-                await sendChunk(chunk);
-
-                processedCount += chunk.length;
-                const percentage = Math.round((processedCount / totalData) * 100);
-                progressBar.style.width = `${percentage}%`;
-                progressBar.setAttribute('aria-valuenow', percentage);
-                progressText.textContent = `Inserting data... ${percentage}%`;
-            }
-
-            // Show success Swal with a confirmation button and set timer
-            Swal.fire({
-                title: '<div style="font-size: 24px; font-weight: bold; color: #4caf50;">Success!</div>',
-                html: `
-                    <ul style="list-style: none; padding: 0; font-size: 16px; color: #555;">
-                        <li><strong style="color: #4caf50;">Success Count:</strong> ${response.data.length}</li>
-                        <li><strong style="color: #4caf50;">Processed Count:</strong> ${response.data.length}</li>
-                        <li><strong style="color: #333;">Total Count:</strong> ${response.data.length}</li>
-                    </ul>
-                    <p style="font-size: 16px; color: #666;">Data has been successfully synced.</p>
-                    <div id="countdown" style="font-size: 16px; color: #555; margin-top: 10px;">Closing in <span id="timer">5</span> seconds...</div>
-                `,
-                icon: 'success',
-                showConfirmButton: false, // Hide the confirmation button
-                customClass: {
-                    popup: 'swal2-popup-custom',
-                    title: 'swal2-title-custom',
-                    content: 'swal2-content-custom'
-                },
-                didOpen: () => {
-                    let timer = 5;
-                    const timerElement = document.getElementById('timer');
-
-                    const interval = setInterval(() => {
-                        timer--;
-                        timerElement.textContent = timer;
-
-                        if (timer <= 0) {
-                            clearInterval(interval);
-                            Swal.close(); // Close Swal after countdown ends
-                            poTable(); // Refresh table or perform other success actions
-                        }
-                    }, 1000);
-                }
-            });
-
-        } else {
-            throw new Error(response.message || 'An error occurred while fetching data');
-        }
-    } catch (error) {
-        Swal.close();
-        await Swal.fire({
-            title: 'Error!',
-            text: error.message,
-            icon: 'error',
-            confirmButtonText: 'OK',
-            customClass: {
-                popup: 'swal2-popup-custom'
-            }
-        });
-    }
-}
 
 
 // Add custom CSS for Swal popups
@@ -242,7 +278,7 @@ function poTable() {
             data: function(d) {
                 d.filterDate = $('#filterDate').val(); // Assuming you have a date filter input
                 d.filterSupplier = $('#filterSupplier').val();
-                d.filterOrderNo = $('#filterOrderNo').val();
+                d.filterOrderNo = $('#orderNoFilter').val();
             }
         },
         order: [[0, 'desc']],
@@ -284,8 +320,7 @@ function poTable() {
                 data: 'receive_no',
                 name: 'receive_no',
                 render: function(data, type, row) {
-                    let receive_no = row.rcvHead && row.rcvHead.receive_no ? row.rcvHead.receive_no : '';
-
+                    let receive_no = row.receive_no ? row.receive_no : 'Data Not Found';
                     return `
                         <span class="custom-font receiving" data-intro="This is the receive number" data-step="2" style="color: black; font-weight: bold; padding-left: 8px;">
                             <i class="fas fa-truck-loading" title="Receiving"></i>
@@ -305,10 +340,15 @@ function poTable() {
                 data: 'store_id',
                 name: 'store_id',
                 render: function(data, type, row) {
-                    if (row.stores) {
+                    console.log(row.store_id,'store_id');
+                    if (row.store_id === 40) {
+                        return `
+                            <i class="fas fa-warehouse" title="Warehouse"></i>
+                            <span class="ms-2" style="color: black; font-weight: bold; margin-left: 8px;">${row.store_name}</span>`;
+                    } else if (row.store_name) {
                         return `
                             <i class="fas fa-store" title="Store Found"></i>
-                            <span class="ms-2" style="color: black; font-weight: bold; margin-left: 8px;">${row.stores.store_name}</span>`;
+                            <span class="ms-2" style="color: black; font-weight: bold; margin-left: 8px;">${row.store_name}</span>`;
                     } else {
                         return `
                             <i class="fas fa-store-alt-slash" title="Store Not Found"></i>
@@ -437,6 +477,10 @@ function poTable() {
     });
 }
 
+function searchOrderNo(){
+    poTable();
+}
+
 function openDatePicker(date) {
     // Use SweetAlert to create a modal with a spinner initially
     const swalLoading = Swal.fire({
@@ -501,21 +545,36 @@ function openDatePicker(date) {
 
 
 function showInfo(event) {
-    // Show Intro.js step for receiving date confirmation
+    event.preventDefault(); // Prevent default action of the event
+
+    // Get the element that triggered the event
+    const element = event.currentTarget.closest('.receiving');
+
+    // Retrieve detailed data if needed
+    const detailedInfo = `
+        <div class="info-content">
+            <strong>Receive Number:</strong> ${element.querySelector('span').innerText}<br>
+            <strong>Additional Information:</strong> The receiving date is not available for this entry. Please check other details or contact support for more information.
+        </div>
+    `;
+
+    // Initialize Intro.js
     introJs().setOptions({
         tooltipClass: 'custom-intro-tooltip', // Apply custom tooltip class
         tooltipPosition: 'auto', // Position of the tooltip
         steps: [
             {
-                element: document.querySelector('.receiving'),
-                title: 'Receiving Not Found',
-                intro: 'The receiving date is not available for this entry.',
+                element: element, // Target the clicked element
+                title: 'Information',
+                intro: detailedInfo, // Set the detailed content here
                 tooltipClass: 'custom-intro-tooltip',
                 position: 'top'
             }
         ]
     }).start();
 }
+
+
 
 function confirmPo(event) {
     // Get the order number from the clicked element

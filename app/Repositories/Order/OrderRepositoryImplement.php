@@ -129,43 +129,65 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
 
 
 
-    public function data($filterDate, $filterSupplier, $filterStatus)
+    public function datas($filterDate, $filterSupplier, $filterOrderNo)
     {
-        // If filterDate is null, set it to the current date
-        if ($filterDate == "null") {
+        // Default filter date to current date if null
+        if ($filterDate === null) {
             $filterDate = date('Y-m');
-            $filterYear = date('Y', strtotime($filterDate));
-            $filterMonth = date('m', strtotime($filterDate));
-        } else {
-            $filterYear = date('Y', strtotime($filterDate));
-            $filterMonth = date('m', strtotime($filterDate));
         }
 
-        // Initialize query with eager loading and specify columns to select
-        $query = OrdHead::query()
-            ->with([
-                'suppliers:supp_code,supp_name,address_1',
-                'ordDetail',
-                'rcvHead:receive_no',
-                'stores',
+        // Extract the year and month from the filter date
+        $filterYear = date('Y', strtotime($filterDate));
+        $filterMonth = date('m', strtotime($filterDate));
+
+        // Initialize the query builder
+        $query = DB::table('ordhead') // Assuming the table name is 'ord_heads'
+            ->leftJoin('suppliers', 'ordhead.supplier', '=', 'suppliers.supp_code') // Adjust join columns
+            ->leftJoin('ordsku', 'ordhead.order_no', '=', 'ordsku.order_no') // Adjust join columns
+            ->leftJoin('rcvhead', 'ordhead.order_no', '=', 'rcvhead.order_no') // Adjust join columns
+            ->leftJoin('stores', 'ordhead.ship_to', '=', 'stores.store') // Adjust join columns
+            ->select([
+                'ordhead.*', // Select all columns from ord_heads
+                'suppliers.supp_code', 'suppliers.name',
+                'ordsku.product_id', 'ordsku.quantity',
+                'rcvhead.received_date',
+                'stores.store', 'stores.name',
             ])
-            ->orderBy('id', 'desc');
+            ->orderBy('ordhead.id', 'desc');
 
-        // Filter based on supplier if provided
-        if (!empty($filterSupplier)) {
-            $query->whereIn('supplier_id', $filterSupplier);
+        // Apply filters if provided
+        if ($filterSupplier !== null) {
+            $query->where('ordhead.supplier', $filterSupplier);
         }
 
-        // Filter based on status if provided
-        if (!empty($filterStatus)) {
-            $query->whereIn('status', $filterStatus);
+        if ($filterOrderNo !== null) {
+            $query->where('ordhead.order_no', $filterOrderNo);
         }
 
-        // Retrieve the filtered results
-        $dailyCounts = $query->get();
+        // Optionally filter by date if needed
+        if ($filterDate !== null) {
+            $query->whereYear('ordhead.created_at', $filterYear)
+                  ->whereMonth('ordhead.created_at', $filterMonth);
+        }
 
-        return $dailyCounts;
+        // Execute the query and get the results
+        $results = $query->get(); // This returns a Collection
+
+        // Check if results are empty or not
+        if ($results->isEmpty()) {
+            // Debugging: Log or print a message if no results are found
+            // dd('No results found.');
+        }
+
+        // Safely handle results
+        $itemCount = $results->count(); // Collection method
+        dd($results);
+        // Return item count and results
+        return $results;
     }
+
+
+
 
 
 

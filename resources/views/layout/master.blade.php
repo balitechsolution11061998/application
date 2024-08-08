@@ -65,6 +65,7 @@
     @include('partials/theme-mode/_init')
 
     @yield('content')
+
 <!-- Notification Detail Modal -->
 <div class="modal fade" id="notificationDetailModal" tabindex="-1" aria-labelledby="notificationDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog">

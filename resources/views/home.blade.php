@@ -466,10 +466,17 @@
 
 
             </div>
+
+            <!-- Modal HTML -->
+
             <!-- PO Data Card -->
         @endcan
-    </div>
 
+
+    </div>
+    <button type="button" class="btn btn-primary chat-button" data-bs-toggle="modal" data-bs-target="#chatifyModal">
+        <i class="fas fa-comments"></i> <!-- Font Awesome chat icon -->
+    </button>
     <!-- Modal Structure -->
     <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
         <div class="modal-dialog">
@@ -489,6 +496,8 @@
         </div>
     </div>
 
+    @include('modals.chat')
+
 
 
 
@@ -499,6 +508,8 @@
         </div> --}}
 
     @include('modals.modal')
+
+
     @push('scripts')
         <script src="{{ asset('js/home.js') }}"></script>
         <script src="{{ asset('js/formatRupiah.js') }}"></script>
