@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PerformanceController;
 use App\Http\Controllers\QueryPerformanceLogController;
+use App\Http\Controllers\WebsiteController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Gate;
 
@@ -33,8 +34,9 @@ Route::post('/login-with-qr', [LoginController::class, 'loginWithQrCode']);
 
 Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('/callback/google', [LoginController::class, 'handleGoogleCallback']);
+Route::get('/website', [WebsiteController::class, 'index'])->name('website');
 
-Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.access']], function () {
+Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.access', 'online']], function () {
 
 // Route::group(['middleware' => ['verifiedmiddleware','twostep','verified','auth','log.user.access']], function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -58,6 +60,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/delivery', 'OrdHeadController@delivery')->name('delivery');
         Route::post('/store', 'OrdHeadController@store')->name('store');
         Route::get('/progress', 'OrdHeadController@getProgress')->name('getProgress');
+        Route::get('/getOrderDetails', 'OrdHeadController@getOrderDetails')->name('getProgress');
 
     });
 

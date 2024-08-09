@@ -109,10 +109,11 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
         return DB::table('ordhead')
             ->select([
                 DB::raw('DATE(approval_date) as tanggal'),
+                DB::raw('COUNT(CASE WHEN status = "Reject" THEN 1 END) as reject_count'),
                 DB::raw('COUNT(CASE WHEN status = "Expired" THEN 1 END) as expired_count'),
                 DB::raw('COUNT(CASE WHEN status = "Completed" THEN 1 END) as completed_count'),
                 DB::raw('COUNT(CASE WHEN status = "Progress" AND estimated_delivery_date IS NULL THEN 1 END) as in_progress_count'),
-                DB::raw('COUNT(CASE WHEN status = "Confirmed" AND estimated_delivery_date IS NOT NULL THEN 1 END) as confirmed_count'),
+                DB::raw('COUNT(CASE WHEN status = "Confirmed" OR status = "printed" THEN 1 END) as confirmed_count'),
                 DB::raw('SUM(total_cost) as total_cost')
             ])
             ->whereBetween('approval_date', [$startDate, $endDate])
@@ -181,11 +182,53 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
 
         // Safely handle results
         $itemCount = $results->count(); // Collection method
-        dd($results);
         // Return item count and results
         return $results;
     }
 
+
+    public function getOrderData($filterYear, $filterMonth)
+    {
+        return $this->model
+            ->select([
+                'ordhead.id',
+                'ordhead.order_no',
+                'supplier.supp_code',
+                'supplier.supp_name',
+                'store.store',
+                'store.store_name',
+                'ordhead.approval_date',
+                'ordhead.status',
+                'rcvhead.receive_no',
+                'ordhead.estimated_delivery_date',
+                'ordhead.not_after_date',
+                'rcvhead.receive_date',
+                DB::raw('SUM(ordsku.qty_ordered) as qty_ordered'),
+                DB::raw('MAX(rcvhead.receive_date) as last_receive_date'),
+                DB::raw('COUNT(CASE WHEN ordhead.status = "confirmed" THEN 1 END) as confirmed_count')
+            ])
+            ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code')
+            ->leftJoin('ordsku', 'ordhead.order_no', '=', 'ordsku.order_no')
+            ->leftJoin('rcvhead', 'ordhead.order_no', '=', 'rcvhead.order_no')
+            ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store')
+            ->groupBy([
+                'ordhead.order_no',
+                'ordhead.id',
+                'rcvhead.receive_no',
+                'supplier.supp_code',
+                'supplier.supp_name',
+                'store.store',
+                'store.store_name',
+                'ordhead.approval_date',
+                'ordhead.status',
+                'ordhead.not_after_date',
+                'rcvhead.receive_date',
+                'ordhead.estimated_delivery_date',
+            ])
+            ->whereYear('ordhead.approval_date', $filterYear)
+            ->whereMonth('ordhead.approval_date', $filterMonth)
+            ->orderBy(DB::raw('MAX(ordhead.approval_date)'), 'desc');  // Use an aggregate function for ordering
+    }
 
 
 

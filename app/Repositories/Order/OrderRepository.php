@@ -11,5 +11,5 @@ interface OrderRepository extends Repository{
     public function getDailyCounts($startDate,$endDate,$filterSupplier,$user);
     public function datas($filterDate, $filterSupplier,$filterOrderNo);
     public function updateStatus();
-
+    public function getOrderData($filterYear, $filterMonth);
 }

@@ -4,6 +4,7 @@ namespace App\Services\Order;
 
 use LaravelEasyRepository\ServiceApi;
 use App\Repositories\Order\OrderRepository;
+use App\Services\PerformanceLogger\PerformanceLoggerService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -27,10 +28,12 @@ class OrderServiceImplement extends ServiceApi implements OrderService{
      * because used in extends service class
      */
      protected $mainRepository;
+     protected $performanceLogger;
 
-    public function __construct(OrderRepository $mainRepository)
+    public function __construct(OrderRepository $mainRepository,PerformanceLoggerService $performanceLogger)
     {
       $this->mainRepository = $mainRepository;
+      $this->performanceLogger = $performanceLogger;
     }
 
     public function countDataPo($filterDate, $filterSupplier)
@@ -85,8 +88,9 @@ class OrderServiceImplement extends ServiceApi implements OrderService{
     {
         $allDates = [];
         $currentDate = Carbon::create($filterYear, $filterMonth, 1);
-        while ($currentDate->format('Y-m') === $filterYear . '-' . str_pad($filterMonth, 2, '0', STR_PAD_LEFT)) {
+        while ($currentDate->month === $filterMonth && $currentDate->year === $filterYear) {
             $allDates[$currentDate->toDateString()] = [
+                'reject_count' => 0,
                 'expired_count' => 0,
                 'completed_count' => 0,
                 'confirmed_count' => 0,
@@ -103,18 +107,22 @@ class OrderServiceImplement extends ServiceApi implements OrderService{
     {
         foreach ($dailyCounts as $item) {
             $date = $item->tanggal;
-            $allDates[$date] = [
-                'expired_count' => $item->expired_count,
-                'completed_count' => $item->completed_count,
-                'confirmed_count' => $item->confirmed_count,
-                'in_progress_count' => $item->in_progress_count,
-                'confirmed_mismatch_count' => 0,
-                'total_cost' => $item->total_cost,
-            ];
+            if (isset($allDates[$date])) {
+                $allDates[$date] = [
+                    'reject_count' => $item->reject_count ?? 0,
+                    'expired_count' => $item->expired_count,
+                    'completed_count' => $item->completed_count,
+                    'confirmed_count' => $item->confirmed_count,
+                    'in_progress_count' => $item->in_progress_count,
+                    'confirmed_mismatch_count' => $item->confirmed_mismatch_count ?? 0,
+                    'total_cost' => $item->total_cost,
+                ];
+            }
         }
 
         $totals = array_reduce($allDates, function ($carry, $item) {
-            $carry['totalPo'] += $item['expired_count'] + $item['completed_count'] + $item['confirmed_count'] + $item['in_progress_count'];
+            $carry['totalPo'] += $item['reject_count'] + $item['expired_count'] + $item['completed_count'] + $item['confirmed_count'] + $item['in_progress_count'];
+            $carry['reject'] += $item['reject_count'];
             $carry['expired'] += $item['expired_count'];
             $carry['completed'] += $item['completed_count'];
             $carry['confirmed'] += $item['confirmed_count'];
@@ -124,6 +132,7 @@ class OrderServiceImplement extends ServiceApi implements OrderService{
             return $carry;
         }, [
             'totalPo' => 0,
+            'reject' => 0,
             'expired' => 0,
             'completed' => 0,
             'confirmed' => 0,
@@ -135,6 +144,7 @@ class OrderServiceImplement extends ServiceApi implements OrderService{
         $dailyData = array_map(function ($item, $date) {
             return [
                 'date' => $date,
+                'reject' => $item['reject_count'],
                 'expired' => $item['expired_count'],
                 'completed' => $item['completed_count'],
                 'confirmed' => $item['confirmed_count'],
@@ -146,6 +156,7 @@ class OrderServiceImplement extends ServiceApi implements OrderService{
 
         return [
             'totalPo' => $totals['totalPo'],
+            'reject' => $totals['reject'],
             'expired' => $totals['expired'],
             'completed' => $totals['completed'],
             'confirmed' => $totals['confirmed'],
@@ -158,6 +169,7 @@ class OrderServiceImplement extends ServiceApi implements OrderService{
         ];
     }
 
+
     public function datas($filterDate,$filterSupplier,$filterOrderNo){
         try {
             return $this->mainRepository->datas($filterDate, $filterSupplier,$filterOrderNo);
@@ -167,5 +179,29 @@ class OrderServiceImplement extends ServiceApi implements OrderService{
         }
     }
 
-    // Define your custom methods :)
+    public function getOrderData($filterDate, $filterSupplier, $filterOrderNo)
+    {
+        $filterDate = $filterDate ?? date('Y-m');
+        $filterYear = date('Y', strtotime($filterDate));
+        $filterMonth = date('m', strtotime($filterDate));
+
+        // Get the base query
+        $query = $this->mainRepository->getOrderData($filterYear, $filterMonth);
+
+        // Apply additional filters
+        if ($filterSupplier) {
+            $query->where('ordhead.supplier', $filterSupplier);
+        }
+
+        if ($filterOrderNo) {
+            $query->where('ordhead.order_no', $filterOrderNo);
+        }
+
+        return $query->get();
+    }
+
+    public function logPerformanceData($data, $executionTime, $memoryUsage)
+    {
+        $this->performanceLogger->logPerformanceData($data, $executionTime, $memoryUsage);
+    }
 }

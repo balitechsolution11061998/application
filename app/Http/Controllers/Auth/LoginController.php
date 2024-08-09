@@ -273,4 +273,35 @@ class LoginController extends Controller
 
 	// 	// return $request->only($this->username(), 'password');
 	// }
+
+
+    protected function logout(Request $request)
+    {
+        try {
+            // Check if the user is authenticated
+            if (Auth::check()) {
+                // Attempt to update the user's active_status
+                $updateSuccess = User::where('id', Auth::user()->id)->update([
+                    'active_status' => 0,
+                ]);
+
+                // If the update was successful, log the user out
+                if ($updateSuccess) {
+                    Auth::logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+
+                    return redirect('/'); // Redirect to the desired route after logout
+                } else {
+                    return redirect()->back()->withErrors('Failed to update status. Please try again.');
+                }
+            } else {
+                return redirect('/login')->withErrors('User is not authenticated.');
+            }
+        } catch (\Exception $e) {
+
+            return redirect()->back()->withErrors('An error occurred. Please try again.');
+        }
+    }
+
 }

@@ -23,111 +23,158 @@
                 </div>
             </div>
 
-
-
-            <!-- Row with PO, Receiving, Tanda Terima, RTV, and Cost Cards -->
+            <!-- Row with PO, Receiving, Tanda Terima, RTV Cards -->
             <div class="row">
+                <!-- Kolom untuk Kartu di Kolom Kanan -->
+                <div class="col-md-8 d-flex flex-wrap justify-content-start">
+                    <!-- Total POs Card -->
+                    <div class="col-12 col-sm-6 col-md-6 col-lg-3 mb-4">
+                        <div class="card h-100 shadow-sm rounded-lg border-0 d-flex flex-column align-items-center"
+                            style="background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);">
+                            <div class="card-body text-center p-3 d-flex flex-column justify-content-center">
+                                <h3 class="section-title font-weight-bold text-dark">
+                                    <i class="fas fa-file-invoice"></i>
+                                    <span id="po-title">Total POs</span>
+                                    <span class="badge badge-light ml-2 text-white fw-bold" id="po-month-year">Aug
+                                        2024</span>
+                                </h3>
+                                <div id="spinner-po" style="display: none;">
+                                    <i class="fas fa-spinner fa-spin text-primary" style="font-size: 20px;"></i>
+                                </div>
+                                <div class="chart-container my-3">
+                                    <i class="fas fa-chart-bar icon-animate text-primary" style="font-size: 40px;"></i>
+                                    <span class="chart-number custom-font d-block text-primary display-4"
+                                        id="po-content">0</span>
+                                </div>
+                                <a href="/po" class="btn btn-primary btn-sm rounded-pill mt-3">
+                                    <i class="fas fa-file-invoice"></i> View POs
+                                </a>
+                            </div>
+                        </div>
+                    </div>
 
-                <!-- Total POs Card -->
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
-                    <div class="card h-100 shadow-sm rounded border-0">
-                        <div class="card-body text-center">
-                            <h3 class="section-title">
-                                <i class="fas fa-file-invoice"></i> <!-- Updated Icon -->
-                                <span id="po-title">Total POs</span>
-                                <span class="badge badge-info ml-2" id="po-month-year">Aug 2024</span>
-                            </h3>
-                            <div id="spinner-po" style="display: none;">
-                                <i class="fas fa-spinner fa-spin" style="font-size: 20px;"></i>
+                    <!-- Total Receivings Card -->
+                    <div class="col-12 col-sm-6 col-md-6 col-lg-3 mb-4">
+                        <div class="card h-100 shadow-sm rounded-lg border-0 d-flex flex-column align-items-center"
+                            style="background: linear-gradient(135deg, #fff1eb 0%, #ace0f9 100%);">
+                            <div class="card-body text-center p-3 d-flex flex-column justify-content-center">
+                                <h3 class="section-title font-weight-bold text-dark">
+                                    <i class="fas fa-box"></i>
+                                    <span id="receiving-title">Total Receivings</span>
+                                    <span class="badge badge-light ml-2 text-white fw-bold"
+                                        id="receiving-month-year">Aug 2024</span>
+                                </h3>
+                                <div id="spinner-receiving" style="display: none;">
+                                    <i class="fas fa-spinner fa-spin text-primary" style="font-size: 20px;"></i>
+                                </div>
+                                <div class="chart-container my-3">
+                                    <i class="fas fa-cube icon-animate text-primary" style="font-size: 40px;"></i>
+                                    <span class="chart-number custom-font d-block text-primary display-4"
+                                        id="receiving-content">0</span>
+                                </div>
+                                <a href="/receivings" class="btn btn-primary btn-sm rounded-pill mt-3">
+                                    <i class="fas fa-box"></i> View Receivings
+                                </a>
                             </div>
-                            <div class="chart-container my-2">
-                                <i class="fas fa-chart-bar icon-animate" style="font-size: 40px; color: #9b59b6;"></i>
-                                <span class="chart-number custom-font d-block" id="po-content">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Total Tanda Terima Card -->
+                    <div class="col-12 col-sm-6 col-md-6 col-lg-3 mb-4">
+                        <div class="card h-100 shadow-sm rounded-lg border-0 d-flex flex-column align-items-center"
+                            style="background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);">
+                            <div class="card-body text-center p-3 d-flex flex-column justify-content-center">
+                                <h3 class="section-title font-weight-bold text-dark">
+                                    <i class="fas fa-handshake"></i>
+                                    Total Tanda Terima
+                                    <span class="badge badge-light ml-2 text-white fw-bold"
+                                        id="tanda-terima-month-year">Aug 2024</span>
+                                </h3>
+                                <div id="spinner-tanda-terima" style="display: none;">
+                                    <i class="fas fa-spinner fa-spin text-primary" style="font-size: 20px;"></i>
+                                </div>
+                                <div class="chart-container my-3">
+                                    <i class="fas fa-handshake-alt icon-animate text-primary"
+                                        style="font-size: 40px;"></i>
+                                    <span class="chart-number custom-font d-block text-primary display-4"
+                                        id="tanda-terima-content">0</span>
+                                </div>
+                                <a href="/tanda-terima" class="btn btn-primary btn-sm rounded-pill mt-3">
+                                    <i class="fas fa-handshake"></i> View Tanda Terima
+                                </a>
                             </div>
-                            <a href="/po" class="btn btn-sm btn-primary mt-2">
-                                <i class="fas fa-file-invoice"></i> View POs
-                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Total RTV Card -->
+                    <div class="col-12 col-sm-6 col-md-6 col-lg-3 mb-4">
+                        <div class="card h-100 shadow-sm rounded-lg border-0 d-flex flex-column align-items-center"
+                            style="background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);">
+                            <div class="card-body text-center p-3 d-flex flex-column justify-content-center">
+                                <h3 class="section-title font-weight-bold text-dark">
+                                    <i class="fas fa-box-open"></i>
+                                    Total RTV
+                                    <span class="badge badge-light ml-2 text-white fw-bold" id="rtv-month-year">Aug
+                                        2024</span>
+                                </h3>
+                                <div id="spinner-rtv" style="display: none;">
+                                    <i class="fas fa-spinner fa-spin text-primary" style="font-size: 20px;"></i>
+                                </div>
+                                <div class="chart-container my-3">
+                                    <i class="fas fa-box-open icon-animate text-primary" style="font-size: 40px;"></i>
+                                    <span class="chart-number custom-font d-block text-primary display-4"
+                                        id="rtv-content">0</span>
+                                </div>
+                                <a href="/rtv" class="btn btn-primary btn-sm rounded-pill mt-3">
+                                    <i class="fas fa-box-open"></i> View RTV
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Total Receivings Card -->
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
-                    <div class="card h-100 shadow-sm rounded border-0">
-                        <div class="card-body text-center">
-                            <h3 class="section-title">
-                                <i class="fas fa-box"></i> <!-- Updated Icon -->
-                                <span id="receiving-title">Total Receivings</span>
-                                <span class="badge badge-info ml-2" id="receiving-month-year">Aug 2024</span>
-                            </h3>
-                            <div id="spinner-receiving" style="display: none;">
-                                <i class="fas fa-spinner fa-spin" style="font-size: 20px;"></i>
+                <!-- Kolom untuk Total Stores dan Total Suppliers -->
+                <div class="col-md-4 d-flex flex-column">
+                    <!-- Total Stores & Suppliers Card -->
+                    <div class="col-12 mb-4">
+                        <div class="card h-100 shadow-sm rounded-lg border-0 d-flex flex-column align-items-center"
+                            style="background: linear-gradient(135deg, #cfd9df 0%, #e2ebf0 100%);">
+                            <div class="card-body text-center p-3 d-flex flex-column justify-content-center">
+                                <h3 class="section-title font-weight-bold text-dark">
+                                    <i class="fas fa-store"></i>
+                                    <span id="total-title">Total Stores & Suppliers</span>
+                                    <span class="badge badge-light ml-2 text-white fw-bold" id="total-month-year">Aug
+                                        2024</span>
+                                </h3>
+                                <div id="spinner-total" style="display: none;">
+                                    <i class="fas fa-spinner fa-spin text-primary" style="font-size: 20px;"></i>
+                                </div>
+                                <div class="chart-container my-3">
+                                    <i class="fas fa-store-alt icon-animate text-primary"
+                                        style="font-size: 40px;"></i>
+                                    <span class="chart-number custom-font d-block text-primary display-4"
+                                        id="total-stores-content">0</span>
+                                    <i class="fas fa-truck-loading icon-animate text-primary"
+                                        style="font-size: 40px;"></i>
+                                    <span class="chart-number custom-font d-block text-primary display-4"
+                                        id="total-suppliers-content">0</span>
+                                </div>
+                                <a href="/stores-suppliers" class="btn btn-primary btn-sm rounded-pill mt-3">
+                                    <i class="fas fa-store"></i> View Details
+                                </a>
                             </div>
-                            <div class="chart-container my-2">
-                                <i class="fas fa-cube icon-animate" style="font-size: 40px; color: #3498db;"></i>
-                                <span class="chart-number custom-font d-block" id="receiving-content">0</span>
-                            </div>
-                            <a href="/receivings" class="btn btn-sm btn-primary mt-2">
-                                <i class="fas fa-box"></i> View Receivings
-                            </a>
                         </div>
                     </div>
                 </div>
-
-                <!-- Total Tanda Terima Card -->
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
-                    <div class="card h-100 shadow-sm rounded border-0">
-                        <div class="card-body text-center">
-                            <h3 class="section-title">
-                                <i class="fas fa-handshake"></i> <!-- Updated Icon -->
-                                Total Tanda Terima
-                                <span class="badge badge-info ml-2" id="tanda-terima-month-year">Aug 2024</span>
-                                <!-- Badge for month and year -->
-                            </h3>
-                            <div id="spinner-tanda-terima" style="display: none;">
-                                <i class="fas fa-spinner fa-spin" style="font-size: 20px;"></i>
-                            </div>
-                            <div class="chart-container my-2">
-                                <i class="fas fa-handshake-alt icon-animate"
-                                    style="font-size: 40px; color: #3498db;"></i> <!-- Updated Icon -->
-                                <span class="chart-number custom-font d-block" id="tanda-terima-content">0</span>
-                            </div>
-                            <a href="/tanda-terima" class="btn btn-sm btn-primary mt-2">
-                                <i class="fas fa-handshake"></i> View Tanda Terima
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Total RTV Card -->
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
-                    <div class="card h-100 shadow-sm rounded border-0">
-                        <div class="card-body text-center">
-                            <h3 class="section-title">
-                                <i class="fas fa-box-open"></i> <!-- Updated Icon -->
-                                Total RTV
-                                <span class="badge badge-info ml-2" id="rtv-month-year">Aug 2024</span>
-                                <!-- Badge for month and year -->
-                            </h3>
-                            <div id="spinner-rtv" style="display: none;">
-                                <i class="fas fa-spinner fa-spin" style="font-size: 20px;"></i>
-                            </div>
-                            <div class="chart-container my-2">
-                                <i class="fas fa-box-open icon-animate" style="font-size: 40px; color: #3498db;"></i>
-                                <!-- Updated Icon -->
-                                <span class="chart-number custom-font d-block" id="rtv-content">0</span>
-                            </div>
-                            <a href="/rtv" class="btn btn-sm btn-primary mt-2">
-                                <i class="fas fa-box-open"></i> View RTV
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Total Cost Card -->
-
             </div>
+
+
+
+
+
         </div>
+
+
 
 
 
@@ -149,14 +196,17 @@
                     <div class="card-body">
                         <!-- Dropdown Button -->
                         <div class="dropdown mb-4">
-                            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                                 Show Data Series
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-average-query" aria-labelledby="dropdownMenuButton">
+                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-average-query"
+                                aria-labelledby="dropdownMenuButton">
                                 <li>
                                     <div class="dropdown-item form-check">
                                         <input class="form-check-input" type="checkbox" id="showExecutionTime">
-                                        <label class="form-check-label" for="showExecutionTime">Average Execution Time</label>
+                                        <label class="form-check-label" for="showExecutionTime">Average Execution
+                                            Time</label>
                                     </div>
                                 </li>
                                 <li>
@@ -423,6 +473,13 @@
                                         <li class="dropdown-item"
                                             data-intro="Expired: Purchase Orders that have passed their valid date.">
                                             <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="show-reject" checked>
+                                                <label class="form-check-label" for="show-reject">Reject</label>
+                                            </div>
+                                        </li>
+                                        <li class="dropdown-item"
+                                            data-intro="Expired: Purchase Orders that have passed their valid date.">
+                                            <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" id="show-expired"
                                                     checked>
                                                 <label class="form-check-label" for="show-expired">Expired</label>
@@ -474,7 +531,8 @@
 
 
     </div>
-    <button type="button" class="btn btn-primary chat-button" data-bs-toggle="modal" data-bs-target="#chatifyModal">
+    <button type="button" class="btn btn-primary chat-button" data-bs-toggle="modal"
+        data-bs-target="#chatifyModal">
         <i class="fas fa-comments"></i> <!-- Font Awesome chat icon -->
     </button>
     <!-- Modal Structure -->

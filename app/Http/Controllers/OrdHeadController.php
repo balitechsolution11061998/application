@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\LogQueryPerformance;
 use App\Jobs\ProcessOrdersJob;
 use App\Models\DiffCostPo;
 use App\Models\OrdHead;
@@ -33,6 +34,48 @@ class OrdHeadController extends Controller
     }
     public function index(){
         return view('order.index');
+    }
+
+    public function getOrderDetails(Request $request) {
+        try {
+            // Validate the request
+            $validated = $request->validate([
+                'order_no' => 'required|string',
+            ]);
+
+            $orderNo = $validated['order_no'];
+
+            // Fetch order details including related ordskus
+            $orderDetails = OrdHead::with('ordDetail')->where('order_no', $orderNo)->first();
+
+            if ($orderDetails) {
+                // Return the order details and associated ordskus as JSON response
+                return response()->json([
+                    'status' => 'success',
+                    'details' => $orderDetails
+                ]);
+            } else {
+                // Handle case where order details are not found
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Order details not found'
+                ]);
+            }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Handle validation exceptions
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid request parameters',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            // Handle general exceptions
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An unexpected error occurred',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
 
@@ -189,6 +232,7 @@ public function store(Request $request)
                         "comment_desc" => $dataItem['comment_desc'] ?? null,
                         "buyer" => $dataItem['buyer'] ?? null,
                         "status" => $dataItem['status'] ?? "Progress",
+                        "estimated_delivery_date" => $dataItem['estimated_delivery_date'] ?? null,
                     ];
 
                     // Handle ordhead data
@@ -311,106 +355,147 @@ public function store(Request $request)
     ]);
 }
 
+// public function data(Request $request)
+// {
+//     $startTime = microtime(true);
+//     $startMemory = memory_get_usage();
+
+//     try {
+//         // Capture filters from request
+//         $filterDate = $request->input('filterDate');
+//         $filterSupplier = $request->input('filterSupplier');
+//         $filterOrderNo = $request->input('filterOrderNo');
+
+//         // Default filter date to current date if null
+//         $filterDate = $filterDate ?? date('Y-m');
+
+//         // Extract the year and month from the filter date
+//         $filterYear = date('Y', strtotime($filterDate));
+//         $filterMonth = date('m', strtotime($filterDate));
+
+//         // Initialize the query builder
+//         $query = DB::table('ordhead')
+//             ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code')
+//             ->leftJoin('ordsku', 'ordhead.order_no', '=', 'ordsku.order_no')
+//             ->leftJoin('rcvhead', 'ordhead.order_no', '=', 'rcvhead.order_no')
+//             ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store')
+//             ->select([
+//                 'ordhead.id',
+//                 'ordhead.order_no',
+//                 'supplier.supp_code',
+//                 'supplier.supp_name',
+//                 'store.store',
+//                 'store.store_name',
+//                 'ordhead.approval_date',
+//                 'ordhead.status',
+//                 'ordhead.estimated_delivery_date',
+//                 DB::raw('SUM(ordsku.qty_ordered) as qty_ordered'),
+//                 DB::raw('MAX(rcvhead.receive_date) as last_receive_date'),
+//                 DB::raw('COUNT(CASE WHEN ordhead.status = "confirmed" THEN 1 END) as confirmed_count'),
+//                 DB::raw('MAX(ordhead.id) as max_id'),
+//             ])
+//             ->groupBy([
+//                 'ordhead.order_no',
+//                 'supplier.supp_code',
+//                 'supplier.supp_name',
+//                 'store.store',
+//                 'store.store_name',
+//                 'ordhead.approval_date',
+//                 'ordhead.status',
+//                 'ordhead.estimated_delivery_date',
+//             ])
+//             ->orderByDesc('max_id');
+
+//         // Apply filters if provided
+//         if ($filterSupplier) {
+//             $query->where('ordhead.supplier', $filterSupplier);
+//         }
+
+//         if ($filterOrderNo) {
+//             $query->where('ordhead.order_no', $filterOrderNo);
+//         }
+
+//         // Apply date filter
+//         $query->whereYear('ordhead.approval_date', $filterYear)
+//               ->whereMonth('ordhead.approval_date', $filterMonth);
+
+//         // Execute the query and get the results
+//         $data = $query->get();
+
+//         // Calculate execution time and memory usage
+//         $executionTime = microtime(true) - $startTime;
+//         $memoryUsage = memory_get_usage() - $startMemory;
+
+//         // Determine performance status based on execution time
+//         $status = $executionTime > 1 ? 'slow' : 'fast';
+
+//         // Prepare performance data
+//         $performanceData = [
+//             'total_count' => $data->count(),
+//             'processed_count' => $data->count(),
+//             'success_count' => $data->count(),
+//             'fail_count' => 0,
+//             'errors' => null,
+//             'execution_time' => $executionTime,
+//             'status' => $status,
+//             'memory_usage' => $memoryUsage,
+//             'performance_analysis_id' => null // Placeholder, to be updated by job if needed
+//         ];
+
+//         // Dispatch job with performance data and query parameters
+//         LogQueryPerformance::dispatch($performanceData, [
+//             'filterDate' => $filterDate,
+//             'filterSupplier' => $filterSupplier,
+//             'filterOrderNo' => $filterOrderNo
+//         ]);
+
+//         // Return the data as a DataTable JSON response
+//         return DataTables::of($data)
+//             ->addColumn('actions', function($row) {
+//                 return '<button class="btn btn-sm btn-primary">Action</button>';
+//             })
+//             ->rawColumns(['actions'])
+//             ->toJson();
+//     } catch (\Throwable $th) {
+//         // Handle exceptions and return a JSON response
+//         return response()->json([
+//             'success' => false,
+//             'error' => 'An error occurred while fetching data: ' . $th->getMessage(),
+//         ], 500);
+//     }
+// }
+
 public function data(Request $request)
-{
-    $startTime = microtime(true);
-    $startMemory = memory_get_usage();
+    {
+        $startTime = microtime(true);
+        $startMemory = memory_get_usage();
 
-    try {
-        // Capture filters from request
-        $filterDate = $request->input('filterDate');
-        $filterSupplier = $request->input('filterSupplier');
-        $filterOrderNo = $request->input('filterOrderNo');
+        try {
+            $filterDate = $request->input('filterDate');
+            $filterSupplier = $request->input('filterSupplier');
+            $filterOrderNo = $request->input('filterOrderNo');
 
-        // Default filter date to current date if null
-        if ($filterDate === null) {
-            $filterDate = date('Y-m');
+            $data = $this->orderService->getOrderData($filterDate, $filterSupplier, $filterOrderNo);
+
+            $executionTime = microtime(true) - $startTime;
+            $memoryUsage = memory_get_usage() - $startMemory;
+
+            $this->orderService->logPerformanceData($data, $executionTime, $memoryUsage);
+
+            return DataTables::of($data)
+                ->addColumn('actions', function ($row) {
+                    return '<button class="btn btn-sm btn-primary">Action</button>';
+                })
+                ->rawColumns(['actions'])
+                ->toJson();
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'error' => 'An error occurred while fetching data: ' . $th->getMessage(),
+            ], 500);
         }
-
-        // Extract the year and month from the filter date
-        $filterYear = date('Y', strtotime($filterDate));
-        $filterMonth = date('m', strtotime($filterDate));
-
-        // Initialize the query builder
-        $query = DB::table('ordhead') // Assuming the table name is 'ord_heads'
-        ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code') // Adjust join columns
-        ->leftJoin('ordsku', 'ordhead.order_no', '=', 'ordsku.order_no') // Adjust join columns
-        ->leftJoin('rcvhead', 'ordhead.order_no', '=', 'rcvhead.order_no') // Adjust join columns
-        ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store') // Adjust join columns
-        ->select([
-            'ordhead.*', // Select all columns from ord_heads
-            'supplier.supp_code', 'supplier.supp_name',
-            'ordsku.order_no',
-            'rcvhead.receive_date',
-            'rcvhead.receive_no',
-            'store.store', 'store.store_name',
-        ])
-        ->orderBy('ordhead.id', 'desc');
-
-        // Apply filters if provided
-        if ($filterSupplier !== null) {
-            $query->where('ordhead.supplier', $filterSupplier);
-        }
-
-        if ($filterOrderNo !== null) {
-            $query->where('ordhead.order_no', $filterOrderNo);
-        }
-
-        // Optionally filter by date if needed
-        if ($filterDate !== null) {
-            $query->whereYear('ordhead.approval_date', $filterYear)
-                  ->whereMonth('ordhead.approval_date', $filterMonth);
-        }
-
-        // Execute the query and get the results
-        $data = $query->get(); // This returns a Collection
-
-        // Calculate execution time and memory usage
-        $executionTime = microtime(true) - $startTime;
-        $memoryUsage = memory_get_usage() - $startMemory;
-
-        // Determine performance status based on execution time
-        $status = $executionTime > 1 ? 'slow' : 'fast'; // Example threshold of 1 second
-
-        // Create or update performance analysis record
-        $performanceAnalysis = PerformanceAnalysis::create([
-            'total_count' => $data->count(),
-            'processed_count' => $data->count(), // Assuming all records are processed, modify as needed
-            'success_count' => $data->count(), // Assuming all processed are successful, modify as needed
-            'fail_count' => 0, // Update as needed
-            'errors' => null,
-            'execution_time' => $executionTime,
-            'status' => $status
-        ]);
-
-        // Log performance metrics
-        QueryPerformanceLog::create([
-            'function_name' => 'Data PO',
-            'parameters' => json_encode([
-                'filterDate' => $filterDate,
-                'filterSupplier' => $filterSupplier,
-                'filterOrderNo' => $filterOrderNo // Include all filters in the log
-            ]),
-            'execution_time' => $executionTime,
-            'memory_usage' => $memoryUsage,
-            'performance_analysis_id' => $performanceAnalysis->id
-        ]);
-
-        // Return the data as a DataTable JSON response
-        return DataTables::of($data)
-            ->addColumn('actions', function($row) {
-                return '<button class="btn btn-sm btn-primary">Action</button>';
-            })
-            ->rawColumns(['actions'])
-            ->toJson();
-    } catch (\Throwable $th) {
-        // Handle exceptions and return a JSON response
-        return response()->json([
-            'success' => false,
-            'error' => $th->getMessage()
-        ], 500);
     }
-}
+
 
 
 public function delivery(Request $request)

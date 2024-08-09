@@ -127,7 +127,6 @@ class HomeController extends Controller
                 'memory_usage' => $memoryUsage,
                 'performance_analysis_id' => $performanceAnalysis->id
             ]);
-
             // Return the data as a JSON response
             return response()->json([
                 'success' => true,
@@ -184,15 +183,15 @@ class HomeController extends Controller
 
                 if ($existsInReceiving) {
                     // Update the status to 'completed'
-                    $record->status = 'completed';
+                    $record->status = 'Completed';
                     $record->save();
                 } elseif ($record->estimated_delivery_date !== null) {
                     // Update the status to 'confirmed' if estimated_delivery_date is not null
-                    $record->status = 'confirmed';
+                    $record->status = 'Confirmed';
                     $record->save();
                 } elseif (!$existsInReceiving && $record->not_after_date && Carbon::parse($record->not_after_date)->isPast()) {
                     // Update the status to 'expired' if not_after_date is past and no receiving records
-                    $record->status = 'expired';
+                    $record->status = 'Expired';
                     $record->save();
                 }
 

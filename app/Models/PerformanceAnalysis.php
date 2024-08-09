@@ -9,5 +9,19 @@ class PerformanceAnalysis extends Model
 {
     use HasFactory;
     protected $table = 'performance_analysis';
-    public $guarded = [];
+    protected $fillable = [
+        'total_count',
+        'processed_count',
+        'success_count',
+        'fail_count',
+        'errors',
+        'execution_time',
+        'status'
+    ];
+
+
+    public function queryPerformanceLogs()
+    {
+        return $this->hasMany(QueryPerformanceLog::class);
+    }
 }

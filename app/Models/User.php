@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -66,6 +67,11 @@ class User extends Authenticatable implements LaratrustUser,JWTSubject
     public static $rules = array(
         'username' => 'username|required|unique:users,id'
     );
+
+    public function isOnline()
+    {
+        return $this->last_seen_at && $this->last_seen_at->gt(Carbon::now()->subMinutes(5));
+    }
 
     /**
      * The attributes that should be cast.

@@ -55,6 +55,7 @@ $(document).ready(function () {
 
 });
 
+
 document.querySelectorAll('.toggle-checkbox').forEach(checkbox => {
     checkbox.addEventListener('change', function() {
         if (this.checked) {
@@ -75,6 +76,22 @@ document.querySelectorAll('.toggle-checkbox').forEach(checkbox => {
 document
     .getElementById("filter-date")
     .addEventListener("change", fetchPoDataPerDays);
+    const indonesianHolidays2024 = [
+        { title: 'Tahun Baru Masehi', start: '2024-01-01' },
+        { title: 'Tahun Baru Imlek', start: '2024-02-10' },
+        { title: 'Hari Raya Nyepi', start: '2024-03-11' },
+        { title: 'Waisak', start: '2024-05-23' },
+        { title: 'Kenaikan Isa Almasih', start: '2024-05-09' },
+        { title: 'Hari Lahir Pancasila', start: '2024-06-01' },
+        { title: 'Hari Raya Idul Fitri', start: '2024-04-10' },
+        { title: 'Hari Raya Idul Fitri', start: '2024-04-11' },
+        { title: 'Hari Buruh', start: '2024-05-01' },
+        { title: 'Hari Raya Idul Adha', start: '2024-06-17' },
+        { title: 'Tahun Baru Hijriah', start: '2024-07-07' },
+        { title: 'Hari Kemerdekaan Indonesia', start: '2024-08-17' },
+        { title: 'Maulid Nabi', start: '2024-09-15' },
+        { title: 'Hari Natal', start: '2024-12-25' },
+    ];
 
     function initializeCalendar(events) {
         var calendarEl = document.getElementById("calendar");
@@ -84,12 +101,12 @@ document
             return;
         }
 
-        if (calendar) {
-            calendar.destroy(); // Destroy existing calendar instance if it exists
+        if (window.calendar) {
+            window.calendar.destroy(); // Destroy existing calendar instance if it exists
         }
 
         try {
-            calendar = new FullCalendar.Calendar(calendarEl, {
+            window.calendar = new FullCalendar.Calendar(calendarEl, {
                 headerToolbar: {
                     left: "prev,next today",
                     center: "title",
@@ -100,20 +117,28 @@ document
                 initialView: "dayGridMonth",
                 editable: false,
                 dayMaxEvents: true,
-                events: events.map(event => {
+                events: events.concat(indonesianHolidays2024).map(event => {
                     const eventDate = moment(event.start).format('YYYY-MM-DD');
                     const todayDate = moment().format('YYYY-MM-DD');
 
+                    // Check if the event is an Indonesian holiday
+                    const isHoliday = indonesianHolidays2024.some(holiday => holiday.start === event.start);
+
                     return {
                         ...event,
-                        classNames: eventDate === todayDate ? 'bg-warning' : 'bg-purple', // Conditional styling
+                        title: isHoliday ? `${event.title} (Public Holiday)` : event.title,
+                        classNames: eventDate === todayDate ? 'bg-warning' : isHoliday ? 'bg-danger' : 'bg-purple',
+                        backgroundColor: isHoliday ? '#ff4c4c' : event.backgroundColor || '',
+                        borderColor: isHoliday ? '#ff4c4c' : event.borderColor || '',
+                        textColor: isHoliday ? '#ffffff' : event.textColor || '',
                         extendedProps: {
                             htmlContent: `
-                                <div class="event-content d-flex align-items-center">
-                                    <i class="fas fa-truck text-white fs-4 me-2"></i>
-                                    <span class="text-black">${event.title}</span>
+                                <div class="event-content">
+                                    <i class="fas fa-calendar-day"></i>
+                                    <span>${event.title}</span>
+                                    ${isHoliday ? '<div class="holiday-text">Public Holiday</div>' : ''}
                                 </div>
-                            ` // FontAwesome truck icon with title
+                            ` // FontAwesome calendar icon with title and "Public Holiday" text
                         }
                     };
                 }),
@@ -122,15 +147,18 @@ document
                     return { html: info.event.extendedProps.htmlContent };
                 },
                 eventsSet: function() {
-                    // Add any additional logic if needed
+                    // Any additional logic can be added here if needed
                 }
             });
 
-            calendar.render();
+            window.calendar.render();
         } catch (error) {
             console.error("Error initializing calendar:", error);
         }
     }
+    // Initialize the calendar with events including Indonesian holidays
+
+
 
 
 
@@ -543,7 +571,6 @@ function renderChart(labels, executionTimes, pings, memoryUsages) {
 
 
 
-
 async function fetchPoDataPerDays() {
     const spinner = document.getElementById("spinner-po");
     const filterSelect = document.getElementById("filter-select");
@@ -552,6 +579,7 @@ async function fetchPoDataPerDays() {
     const showCompleted = document.getElementById("show-completed");
     const showConfirmed = document.getElementById("show-confirmed");
     const showInProgress = document.getElementById("show-in-progress");
+    const showReject = document.getElementById("show-reject");
 
     spinner.style.display = "block";
 
@@ -562,10 +590,16 @@ async function fetchPoDataPerDays() {
             ? `/home/countDataPoPerDays?filterDate=${selectedMonth}`
             : "/home/countDataPoPerDays";
         const response = await fetch(apiUrl);
+
         if (!response.ok) {
-            throw new Error("Network response was not ok");
+            throw new Error("Failed to fetch PO data.");
         }
+
         const data = await response.json();
+
+        if (!data || !data.data || data.data.dailyData.length === 0) {
+            throw new Error("No data available for the selected period.");
+        }
 
         const dates = data.data.dailyData.map((item) => item.date);
         const expired = data.data.dailyData.map((item) => item.expired);
@@ -573,6 +607,9 @@ async function fetchPoDataPerDays() {
         const confirmed = data.data.dailyData.map((item) => item.confirmed);
         const inProgress = data.data.dailyData.map((item) => item.in_progress);
         const totalCost = data.data.dailyData.map((item) => item.total_cost);
+        const totalReject = data.data.dailyData.map((item) => item.reject);
+
+        let chart = null;
 
         function formatRupiah(value) {
             return new Intl.NumberFormat("id-ID", {
@@ -607,6 +644,11 @@ async function fetchPoDataPerDays() {
                 seriesData.push(inProgress);
                 seriesColors.push("#ffc107");
             }
+            if (showReject.checked) {
+                seriesName.push("Reject");
+                seriesData.push(totalReject);
+                seriesColors.push("#dc3545");
+            }
 
             if (chart) {
                 chart.destroy();
@@ -625,14 +667,10 @@ async function fetchPoDataPerDays() {
                         show: true,
                     },
                     events: {
-                        dataPointSelection: function (
-                            event,
-                            chartContext,
-                            config
-                        ) {
+                        dataPointSelection: function (event, chartContext, config) {
                             const selectedDate = dates[config.dataPointIndex];
                             const selectedStatus = seriesName[config.seriesIndex];
-                            openModal(selectedDate,selectedStatus);
+                            openModal(selectedDate, selectedStatus);
                         },
                     },
                     title: {
@@ -690,17 +728,14 @@ async function fetchPoDataPerDays() {
                 },
             };
 
-            chart = new ApexCharts(
-                document.querySelector("#kt_apexcharts_1"),
-                options
-            );
+            chart = new ApexCharts(document.querySelector("#kt_apexcharts_1"), options);
             chart.render();
         }
+
         function openModal(date, status) {
             const modal = new bootstrap.Modal(document.getElementById("detailModal"));
             document.getElementById("modalTitle").textContent = `Details for ${date} - ${status}`;
 
-            // Clear any existing content in the modal body
             const modalBody = document.getElementById("modalBody");
             modalBody.innerHTML = `
                 <form id="searchForm" class="mb-3">
@@ -717,21 +752,17 @@ async function fetchPoDataPerDays() {
                 <div id="tableContainer"></div>
             `;
 
-            // Fetch and display additional details for the selected date and status
             fetch(`/home/countDataPoPerDate?date=${date}&status=${status}`)
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.data.length > 0) {
-                        // Create a table element
                         const table = document.createElement("table");
                         table.id = "detailsTable";
                         table.classList.add("table", "table-striped", "table-bordered");
 
-                        // Create the table header
                         const thead = document.createElement("thead");
                         let estimatedDeliveryDateHeader = 'Estimated Delivery Date';
 
-                        // Change the header text if status is 'In Progress'
                         if (status === 'In Progress') {
                             estimatedDeliveryDateHeader = 'Expired Date';
                         }
@@ -745,13 +776,11 @@ async function fetchPoDataPerDays() {
                         `;
                         table.appendChild(thead);
 
-                        // Create the table body
                         const tbody = document.createElement("tbody");
 
                         data.data.forEach((item) => {
                             const tr = document.createElement("tr");
 
-                            // Determine the text for the 'Estimated Delivery Date' based on the status
                             let estimatedDeliveryDate;
                             if (status === 'In Progress') {
                                 estimatedDeliveryDate = item.not_after_date;
@@ -768,11 +797,8 @@ async function fetchPoDataPerDays() {
                         });
 
                         table.appendChild(tbody);
-
-                        // Append the table to the container
                         document.getElementById("tableContainer").appendChild(table);
 
-                        // Initialize DataTables on the created table
                         $(document).ready(function () {
                             const dataTable = $('#detailsTable').DataTable({
                                 paging: true,
@@ -781,23 +807,19 @@ async function fetchPoDataPerDays() {
                                 responsive: true
                             });
 
-                            // Add a search marker to indicate the search input
                             $('#detailsTable_filter input').attr('placeholder', 'Search...').addClass('search-marker');
 
-                            // Handle form submission for searching
                             document.getElementById("searchForm").addEventListener("submit", function (event) {
                                 event.preventDefault();
                                 const searchValue = document.getElementById("searchInput").value;
                                 document.getElementById("searchSpinner").classList.remove("d-none");
 
-                                // Highlight the search terms in the table
                                 dataTable.search(searchValue).draw();
                                 highlightSearchTerms(searchValue);
 
                                 document.getElementById("searchSpinner").classList.add("d-none");
                             });
                         });
-
                     } else {
                         document.getElementById("tableContainer").textContent = "No data available for this date and status.";
                     }
@@ -810,7 +832,6 @@ async function fetchPoDataPerDays() {
                 });
         }
 
-        // Function to highlight search terms in the table
         function highlightSearchTerms(term) {
             const table = document.getElementById("detailsTable");
             if (term) {
@@ -821,119 +842,37 @@ async function fetchPoDataPerDays() {
             }
         }
 
-
-
-
         initializeChart();
 
         filterSelect.addEventListener("change", function () {
-            const selectedValue = filterSelect.value;
-            if (selectedValue === "qty") {
-                initializeChart();
-            } else if (selectedValue === "cost") {
-                const options = {
-                    series: [
-                        {
-                            name: "Total Cost",
-                            data: totalCost,
-                            color: "#17a2b8",
-                        },
-                    ],
-                    chart: {
-                        height: 350,
-                        type: "bar",
-                        toolbar: {
-                            show: true,
-                        },
-                        events: {
-                            dataPointSelection: function (
-                                event,
-                                chartContext,
-                                config
-                            ) {
-                                const selectedDate =
-                                    dates[config.dataPointIndex];
-                                openModal(selectedDate);
-                            },
-                        },
-                        title: {
-                            text: "Data Total Cost Per Tanggal",
-                            align: "left",
-                            margin: 10,
-                            offsetX: 0,
-                            offsetY: 0,
-                            floating: false,
-                            style: {
-                                fontSize: "16px",
-                                fontWeight: "bold",
-                                color: "#263238",
-                            },
-                        },
-                    },
-                    plotOptions: {
-                        bar: {
-                            horizontal: false,
-                            columnWidth: "55%",
-                            endingShape: "rounded",
-                            borderRadius: 9,
-                        },
-                    },
-                    dataLabels: {
-                        enabled: false,
-                    },
-                    stroke: {
-                        show: true,
-                        width: 2,
-                        colors: ["transparent"],
-                    },
-                    xaxis: {
-                        categories: dates,
-                    },
-                    yaxis: {
-                        title: {
-                            text: "Total Cost",
-                        },
-                        labels: {
-                            formatter: function (value) {
-                                return formatRupiah(value);
-                            },
-                        },
-                    },
-                    fill: {
-                        opacity: 1,
-                    },
-                    tooltip: {
-                        y: {
-                            formatter: function (val) {
-                                return formatRupiah(val);
-                            },
-                        },
-                    },
-                };
-
-                if (chart) {
-                    chart.destroy();
-                }
-
-                chart = new ApexCharts(
-                    document.querySelector("#kt_apexcharts_1"),
-                    options
-                );
-                chart.render();
-            }
+            initializeChart();
         });
-
-        [showExpired, showCompleted, showConfirmed, showInProgress].forEach(
-            (checkbox) => {
-                checkbox.addEventListener("change", initializeChart);
-            }
-        );
+        filterDate.addEventListener("change", function () {
+            initializeChart();
+        });
+        showExpired.addEventListener("change", function () {
+            initializeChart();
+        });
+        showCompleted.addEventListener("change", function () {
+            initializeChart();
+        });
+        showConfirmed.addEventListener("change", function () {
+            initializeChart();
+        });
+        showInProgress.addEventListener("change", function () {
+            initializeChart();
+        });
+        showReject.addEventListener("change", function () {
+            initializeChart();
+        });
     } catch (error) {
-        console.error("Error fetching PO data:", error);
+        console.error("Error:", error);
     } finally {
         spinner.style.display = "none";
     }
 }
+
+
 
 async function fetchData(type) {
     const spinner = document.getElementById(`spinner-${type}`);

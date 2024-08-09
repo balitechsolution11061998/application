@@ -10,14 +10,21 @@ use App\Services\Order\OrderService;
 use App\Services\Order\OrderServiceImplement;
 use Illuminate\Database\Schema\Builder;
 use App\Jobs\ExampleJob;
+use App\Jobs\LogQueryPerformance;
+use App\Models\PerformanceAnalysis;
 use App\Models\Permission;
 use App\Models\QueryLog;
+use App\Models\QueryPerformanceLog;
+use App\Repositories\Order\OrderRepository;
 use App\Repositories\Permissions\PermissionsRepositoryImplement;
+use App\Services\PerformanceLogger\PerformanceLoggerService;
 use App\Services\Permissions\PermissionsService;
 use App\Services\Permissions\PermissionsServiceImplement;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inspector\Laravel\Facades\Inspector;
+use Illuminate\Support\Facades\Queue;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,9 +34,11 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
-        $this->app->extend(OrderService::class, function ($service, $app) {
-            $orderRepository = new OrderRepositoryImplement(new OrdHead());
-            return new OrderServiceImplement($orderRepository);
+        $this->app->bind(OrderServiceImplement::class, function ($app) {
+            return new OrderServiceImplement(
+                $app->make(OrderRepository::class),
+                $app->make(PerformanceLoggerService::class)
+            );
         });
 
         $this->app->extend(PermissionsService::class, function ($service, $app) {
@@ -47,8 +56,6 @@ class AppServiceProvider extends ServiceProvider
         //
         Builder::defaultStringLength(191);
         KTBootstrap::init();
-
-
 
     }
 }

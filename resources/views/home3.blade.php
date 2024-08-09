@@ -63,7 +63,23 @@
                         </div>
                     </div>
                 @endcan
-
+                @can('karyawan-show')
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <h2 class="section-title"><i class="fas fa-calendar-day"></i> Jumlah Karyawan</h2>
+                            <div id="spinner-leave" style="display: none;">
+                                <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+                            </div>
+                            <div class="chart-container">
+                                <i class="fas fa-calendar-check icon-animate" style="font-size: 48px; color: #2ecc71;"></i>
+                                <span class="chart-number custom-font" id="leave-content">0</span>
+                            </div>
+                            <a href="/leaves" class="btn btn-sm btn-primary">
+                                <i class="fas fa-calendar-check"></i> View Leaves
+                            </a>
+                        </div>
+                    </div>
+                @endcan
             </div>
         </div>
 

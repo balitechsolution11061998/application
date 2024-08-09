@@ -13,9 +13,13 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sender_id')->constrained('users');
-            $table->foreignId('receiver_id')->constrained('users');
+            $table->foreignId('sender_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('receiver_id')->constrained('users')->onDelete('cascade');
             $table->text('text');
+            $table->enum('status', ['sent', 'delivered', 'read'])->default('sent'); // Status of the message
+            $table->boolean('receiver_online')->default(false); // Indicates if the receiver is online
+            $table->boolean('received')->default(false); // Indicates if the message has been received
+            $table->timestamp('sent_at')->nullable(); // Timestamp of when the message was sent
             $table->timestamps();
         });
     }

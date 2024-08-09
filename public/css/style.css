@@ -2245,3 +2245,135 @@ nav ul li a.active {
 .introjs-tooltip-arrow {
     border-top-color: #f8f9fa; /* Arrow color matches tooltip background */
 }
+@keyframes numberAnimation {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.chart-number {
+    animation: numberAnimation 0.5s ease-in-out;
+}
+
+.icon-animate {
+    transition: transform 0.3s ease;
+}
+
+.icon-animate:hover {
+    transform: scale(1.2);
+}
+/* Style the calendar container */
+#calendar {
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    background-color: #ffffff;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 1200px;
+    width:100%;
+}
+
+/* Style the calendar toolbar */
+.fc .fc-toolbar {
+    margin-bottom: 20px;
+}
+
+/* Style individual events */
+.fc .fc-daygrid-event {
+    border: none;
+    border-radius: 8px;
+    padding: 4px 6px;
+    font-size: 0.85rem;
+    color: white;
+    background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+}
+
+/* Style for today's events */
+.fc .bg-warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+    color: white;
+}
+
+/* Style for other events */
+.fc .bg-purple {
+    background: linear-gradient(135deg, #a8c0ff 0%, #3f2b96 100%) !important;
+    color: white;
+}
+
+/* Style the event content */
+.event-content {
+    display: flex;
+    align-items: center;
+}
+
+.event-content i {
+    font-size: 18px;
+    margin-right: 5px;
+}
+
+.event-content span {
+    font-size: 14px;
+}
+/* Style for public holidays */
+.fc .bg-danger {
+    background-color: #ff4c4c !important;
+    color: white;
+    font-weight: bold;
+}
+/* General calendar styles */
+#calendar {
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Event content styling */
+.event-content {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border-radius: 4px;
+    color: #000; /* Default text color */
+}
+
+/* Icon styling inside the event content */
+.event-content i {
+    font-size: 1.2em;
+    margin-right: 5px;
+}
+
+/* Holiday event styling */
+.bg-danger {
+    background-color: #ff4c4c !important; /* Red background for holidays */
+    color: #ffffff !important; /* White text for contrast */
+    border-color: #ff4c4c !important; /* Red border for holidays */
+}
+
+/* Today’s event styling */
+.bg-warning {
+    background-color: #ffc107 !important; /* Yellow background for today's events */
+    color: #000 !important; /* Black text for contrast */
+}
+
+/* Regular event styling */
+.bg-purple {
+    background-color: #6f42c1 !important; /* Purple background for regular events */
+    color: #ffffff !important; /* White text for contrast */
+}
+
+/* Additional styling for the "Public Holiday" text */
+.holiday-text {
+    font-size: 0.9em;
+    color: #ffffff; /* White text for the public holiday label */
+    margin-top: 5px;
+    display: block;
+}
+
+/* Adjustments for event titles */
+.event-content span {
+    font-weight: bold;
+    font-size: 1em;
+}
