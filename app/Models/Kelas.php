@@ -7,10 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Kelas extends Model
 {
-    use HasFactory;
+    protected $fillable = ['paket_id', 'name', 'guru_id'];
+    public function guru()
+    {
+        return $this->belongsTo('App\Models\Guru')->withDefault();
+    }
+
+    public function paket()
+    {
+        return $this->belongsTo('App\Models\Paket')->withDefault();
+    }
+
     protected $table = 'kelas';
-    protected $fillable = [
-        'id',
-        'name',
-        'description',
-    ];}
+}

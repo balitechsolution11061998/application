@@ -91,6 +91,39 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/getPermissionsByRole', 'PermissionsController@getPermissionsByRole')->name('getPermissionsByRole');
     });
 
+    Route::prefix('jadwal')->name('jadwal.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/', 'JadwalController@index')->name('index');
+        Route::get('/export_excel', 'JadwalController@export_excel')->name('export_excel');
+        Route::get('/import_excel', 'JadwalController@import_excel')->name('import_excel');
+        Route::delete('/deleteAll', 'JadwalController@deleteAll')->name('deleteAll');
+        Route::get('/{id}', 'JadwalController@show')->name('show');
+        Route::post('/store', 'JadwalController@store')->name('store');
+        Route::delete('/destroy/{id}', 'JadwalController@destroy')->name('destroy');
+        Route::get('/edit/{id}', 'JadwalController@edit')->name('edit');
+
+    });
+
+    Route::prefix('guru')->name('guru.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'GuruController@index')->name('index');
+        Route::get('/absensi', 'GuruController@absensi')->name('absensi');
+        Route::get('/kehadiran/{id}', 'GuruController@kehadiran')->name('kehadiran');
+        Route::get('/absen/json', 'GuruController@json');
+        Route::get('/mapel/{id}', 'GuruController@mapel')->name('mapel');
+        Route::get('/ubah-foto/{id}', 'GuruController@ubah_foto')->name('ubah-foto');
+        Route::post('/update-foto/{id}', 'GuruController@update_foto')->name('update-foto');
+        Route::post('/upload', 'GuruController@upload')->name('upload');
+        Route::get('/export_excel', 'GuruController@export_excel')->name('export_excel');
+        Route::post('/import_excel', 'GuruController@import_excel')->name('import_excel');
+        Route::delete('/deleteAll', 'GuruController@deleteAll')->name('deleteAll');
+        Route::post('/store', 'GuruController@store')->name('store');
+        Route::delete('/destroy/{id}', 'GuruController@destroy')->name('destroy');
+        Route::get('/show/{id}', 'GuruController@show')->name('show');
+        Route::get('/edit/{id}', 'GuruController@edit')->name('edit');
+        Route::post('/update/{id}', 'GuruController@update')->name('update');
+
+    });
+
+
     Route::prefix('roles')->name('roles.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/', 'RoleController@index')->name('index');
         Route::get('/data', 'RoleController@data')->name('data');
@@ -104,6 +137,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
 
     Route::prefix('users')->name('users.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/', 'UserController@index')->name('index');
+        Route::get('/cbt', 'UserController@cbt')->name('cbt');
         Route::get('/create', 'UserController@create')->name('create');
         Route::post('/store','UserController@store')->name('store');
         Route::get('/data', 'UserController@data')->name('data');
@@ -118,6 +152,10 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/{userId}/generate-qr-code', 'UserController@generateQRCode');
         Route::get('/profile', 'UserController@profile')->name('dataEdit');
         Route::get('/{userId}/download-qr-code-pdf', 'UserController@downloadQRCodePDF');
+        Route::get('/{id}', 'UserController@show')->name('cbt.show');
+        Route::post('/storecbt', 'UserController@storecbt')->name('cbt.storecbt');
+        Route::delete('/cbt/destroy/{id}', 'UserController@destroy')->name('cbt.destroy');
+
 
 
     });
@@ -131,6 +169,13 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/{id}/edit', 'DepartmentController@edit')->name('edit');
         Route::delete('/{id}/delete', 'DepartmentController@delete')->name('delete');
         Route::get('/getDepartments', 'DepartmentController@getDepartments')->name('getDepartments');
+    });
+
+    Route::prefix('ulangan')->name('ulangan.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/ulangan-kelas', 'UlanganController@create')->name('create');
+        Route::get('/ulangan-siswa/{id}', 'UlanganController@edit')->name('ulangan-siswa');
+        Route::get('/ulangan-show/{id}', 'UlanganController@ulangan')->name('ulangan-show');
+
 
 
     });
@@ -237,6 +282,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::delete('/delete/{id}', 'KelasController@destroy')->name('destroy');
         Route::get('/options', 'KelasController@dataoptions')->name('options');
         Route::get('/getKelasData', 'KelasController@getKelasData');
+        Route::get('/edit/json', 'KelasController@getEdit')->name('getEdit');
 
     });
 

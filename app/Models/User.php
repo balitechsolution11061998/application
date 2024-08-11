@@ -49,7 +49,8 @@ class User extends Authenticatable implements LaratrustUser,JWTSubject
         'rating',
         'nik',
         'last_activity',
-        'google_id'
+        'google_id',
+        'id_card',
     ];
 
     /**

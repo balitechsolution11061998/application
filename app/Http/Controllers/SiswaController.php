@@ -88,14 +88,14 @@ class SiswaController extends Controller
     public function getStudentData()
     {
         $total = Siswa::count();
-        $male = Siswa::where('jenis_kelamin', 'L')->count();
-        $female = Siswa::where('jenis_kelamin', 'P')->count();
+        $male = Siswa::where('jk', 'L')->count();
+        $female = Siswa::where('jk', 'P')->count();
 
         $students = Siswa::with('rombel.kelas')->get();
 
-        // Group students by rombel and kelas and count the number of students in each group
-        $rombelKelasCounts = $students->groupBy(function($student) {
-            return $student->rombel->nama_rombel . ' - ' . $student->rombel->kelas->name;
+        // Group students by kelas only and count the number of students in each group
+        $kelasCounts = $students->groupBy(function($student) {
+            return $student->rombel->kelas->name;
         })->map(function ($group) {
             return $group->count();
         });
@@ -104,7 +104,7 @@ class SiswaController extends Controller
             'total' => $total,
             'male' => $male,
             'female' => $female,
-            'rombelKelasCounts' => $rombelKelasCounts,
+            'kelasCounts' => $kelasCounts,
         ]);
     }
 

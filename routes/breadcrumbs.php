@@ -89,4 +89,10 @@ Breadcrumbs::for('izin', function (BreadcrumbTrail $trail) {
     $trail->push('izin', route('izin.index'));
 });
 
+Breadcrumbs::for('jadwal', function (BreadcrumbTrail $trail) {
+    $trail->push('jadwal', route('jadwal.index'));
+});
 
+Breadcrumbs::for('guru', function (BreadcrumbTrail $trail) {
+    $trail->push('guru', route('guru.index'));
+});

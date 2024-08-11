@@ -21,8 +21,11 @@ use Illuminate\Support\Facades\Response;
 use QrCode;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\HashHelper;
+use App\Models\Guru;
 use App\Models\Siswa;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
 class UserController extends Controller
 {
@@ -40,6 +43,88 @@ class UserController extends Controller
     {
         return view('users.index');
     }
+
+    public function cbt(){
+        // Mengambil semua pengguna dan memuat relasi 'roles'
+        $users = User::with('roles')->get();
+
+        // Mengelompokkan pengguna berdasarkan peran mereka
+        $usersGroupedByRole = $users->groupBy(function ($user) {
+            return $user->roles->pluck('name')->first(); // Mengambil nama peran pertama yang dimiliki pengguna
+        });
+
+        return view('users.cbt', compact('usersGroupedByRole'));
+    }
+
+    public function storecbt(Request $request)
+    {
+
+        // Validate the incoming request
+        // $this->validate($request, [
+        //     'name' => 'required|string|max:255',
+        //     'username' => 'required|string|max:255|unique:users',
+        //     'email' => 'required|string|email|max:255|unique:users',
+        //     'password' => 'required|string|min:8|confirmed',
+        //     'role' => 'required',
+        // ]);
+
+        try {
+            $user = null;
+            if ($request->role == 'guru') {
+                $user = $this->createUserBasedOnRole('guru', 'id_card', $request->nomer, $request->username, $request->email, $request->password);
+
+            } elseif ($request->role == 'siswa') {
+                $user = $this->createUserBasedOnRole('siswa', 'no_induk', $request->nomer, $request->username, $request->email, $request->password);
+
+            } else {
+                $user = User::create([
+                    'name' => $request->name,
+                    'username' => $request->username,
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                ]);
+            }
+            if ($user) {
+                $role = $request->role;
+                $user->attachRole($role);
+                if ($user->hasRole($role)) {
+                    return redirect()->back()->with('success', 'Berhasil menambahkan user baru dan role berhasil di-attach!');
+                } else {
+                    return redirect()->back()->with('error', 'User berhasil dibuat tetapi role tidak berhasil di-attach.');
+                }
+            } else {
+                return redirect()->back()->with('error', 'Maaf, User tidak dapat dibuat.');
+            }
+
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menambahkan user. Silakan coba lagi.');
+        }
+    }
+
+    private function createUserBasedOnRole($role, $identifierField, $identifierValue, $username, $email, $password)
+    {
+        try {
+            $model = $role == 'guru' ? Guru::class : Siswa::class;
+            $record = $model::where($identifierField, $identifierValue)->first();
+
+            if ($record) {
+                return User::create([
+                    'name' => $role == 'guru' ? $record->nama_guru : strtolower($record->nama_siswa),
+                    'username' => $username,
+                    'email' => $email,
+                    'password' => Hash::make($password),
+                    $identifierField => $identifierValue,
+                ]);
+            } else {
+                return null;
+            }
+        } catch (\Exception $e) {
+            return $e->getMessage(); // Return null to indicate failure
+        }
+    }
+
+
 
     public function data(Request $request)
     {
@@ -90,6 +175,29 @@ class UserController extends Controller
         return view('users.create');
     }
 
+    public function show($id)
+    {
+        // Decrypt the ID
+        $id = Crypt::decrypt($id);
+
+        // Check if the user is an Operator and trying to access the Admin's data
+        if ($id == "Admin" && Auth::user()->hasRole('operator')) {
+            return redirect()->back()->with('warning', 'Maaf halaman ini hanya bisa di akses oleh Admin!');
+        } else {
+            // Fetch the users with the specified role
+            $user = User::whereHas('roles', function ($query) use ($id) {
+                $query->where('name', $id);
+            })->get();
+
+            // Group users by their role
+            $role = $user->groupBy(function ($item) {
+                return $item->roles->pluck('name')->first();
+            });
+
+            return view('users.show', compact('user', 'role'));
+        }
+    }
+
     public function dataEdit($id)
     {
         $user = User::findOrFail($id);
@@ -109,6 +217,37 @@ class UserController extends Controller
             $this->logError('An error occurred while accessing the create page', $e);
 
             return $e->getMessage();
+        }
+    }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+
+        // Check if the user to be deleted has the 'admin' role
+        if ($user->hasRole('superadministrator')) {
+            if ($user->id == Auth::user()->id) {
+                $user->delete();
+                return redirect()->back()->with('warning', 'Data user berhasil dihapus! (Silahkan cek trash data user)');
+            } else {
+                return redirect()->back()->with('error', 'Maaf user ini bukan milik anda!');
+            }
+        }
+
+        // Check if the user to be deleted has the 'operator' role
+        elseif ($user->hasRole('admin_cbt')) {
+            if ($user->id == Auth::user()->id || Auth::user()->hasRole('admin_cbt')) {
+                $user->delete();
+                return redirect()->back()->with('warning', 'Data user berhasil dihapus! (Silahkan cek trash data user)');
+            } else {
+                return redirect()->back()->with('error', 'Maaf user ini bukan milik anda!');
+            }
+        }
+
+        // If the user has any other role, delete the user
+        else {
+            $user->delete();
+            return redirect()->back()->with('warning', 'Data user berhasil dihapus! (Silahkan cek trash data user)');
         }
     }
 

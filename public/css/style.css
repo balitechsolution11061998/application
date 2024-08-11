@@ -2377,3 +2377,93 @@ nav ul li a.active {
     font-weight: bold;
     font-size: 1em;
 }
+.btn-custom {
+    background-color: black;
+    color: white; /* Text and icon color */
+    border: none; /* Remove default border */
+    border-radius: 25px; /* Rounded corners */
+    padding: 10px 20px; /* Adjust padding as needed */
+    font-size: 14px; /* Adjust font size if needed */
+    text-align: center; /* Center text */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.btn-custom:hover {
+    background-color: #333; /* Slightly lighter color on hover */
+    color: white; /* Ensure text color remains visible */
+}
+
+.rounded-btn {
+    border-radius: 25px; /* Ensures rounded corners */
+}
+.text-left {
+    text-align: left; /* Align text to the left */
+}
+
+.card-white {
+    background-color: #fff; /* White background for the card */
+    color: #000; /* Black text color */
+    border-radius: 15px; /* Rounded corners for the card */
+}
+
+.rounded-card {
+    border-radius: 15px; /* Ensure rounded corners for the card */
+}
+
+.rounded-btn {
+    border-radius: 25px; /* Rounded corners for buttons */
+}
+
+.btn-black {
+    background-color: #000; /* Black button color */
+    color: #fff; /* White text color */
+    border: none; /* Remove button border */
+}
+
+.btn-black:hover {
+    background-color: #333; /* Darker shade on hover */
+}
+
+.img-details {
+    border-radius: 15px; /* Rounded corners for images */
+}
+.small-box {
+    border-radius: 10px;
+}
+.small-box .icon {
+    color: #fff;
+    font-size: 50px;
+}
+.small-box-footer {
+    color: #fff;
+    text-align: right;
+    padding: 10px;
+    display: block;
+    background: rgba(0,0,0,0.1);
+    border-top: 1px solid rgba(0,0,0,0.125);
+    border-radius: 0 0 10px 10px;
+}
+.small-box-footer:hover {
+    background: rgba(0,0,0,0.2);
+}
+.nav-icon {
+    font-size: 40px;
+}
+.shadow-sm {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+.chart-legend {
+    list-style: none;
+    padding: 0;
+}
+
+.chart-legend li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.chart-legend i {
+    margin-right: 8px;
+    font-size: 14px;
+}
