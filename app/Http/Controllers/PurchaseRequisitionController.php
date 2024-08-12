@@ -94,7 +94,7 @@ class PurchaseRequisitionController extends Controller
 {
     try {
         // Retrieve the purchase requisition by ID
-        $purchaseRequisition = PurchaseRequisition::with(['details', 'images']) // Include related details and images
+        $purchaseRequisition = PurchaseRequisition::with(['PurchaseRequisitionDetail', 'PurchaseRequisitionImage']) // Include related details and images
             ->findOrFail($id);
 
         // Return a JSON response with the purchase requisition data
