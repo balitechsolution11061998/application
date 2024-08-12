@@ -90,4 +90,28 @@ class PurchaseRequisitionController extends Controller
         }
     }
 
+    public function show($id)
+{
+    try {
+        // Retrieve the purchase requisition by ID
+        $purchaseRequisition = PurchaseRequisition::with(['details', 'images']) // Include related details and images
+            ->findOrFail($id);
+
+        // Return a JSON response with the purchase requisition data
+        return response()->json([
+            'success' => true,
+            'message' => 'Purchase Requisition retrieved successfully.',
+            'data' => $purchaseRequisition
+        ]);
+
+    } catch (\Exception $e) {
+        // Handle the exception and return an error response
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occurred: ' . $e->getMessage(),
+        ], 500);
+    }
+}
+
+
 }
