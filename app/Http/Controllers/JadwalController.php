@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Auth;
 use App\Models\Jadwal;
-use App\Siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
@@ -17,6 +15,8 @@ use App\Models\Guru;
 use App\Models\Hari;
 use App\Models\Kelas;
 use App\Models\Ruang;
+use App\Models\Siswa;
+use Illuminate\Support\Facades\Auth;
 
 class JadwalController extends Controller
 {
@@ -230,7 +230,18 @@ class JadwalController extends Controller
     public function guru()
     {
         $guru = Guru::where('id_card', Auth::user()->id_card)->first();
-        $jadwal = Jadwal::orderBy('hari_id')->OrderBy('jam_mulai')->where('guru_id', $guru->id)->get();
+
+        // Check if $guru is null
+        if (!$guru) {
+            // Handle the case where the guru is not found
+            return redirect()->back()->with('error', 'Guru not found.');
+        }
+
+        $jadwal = Jadwal::orderBy('hari_id')
+                        ->orderBy('jam_mulai')
+                        ->where('guru_id', $guru->id)
+                        ->get();
+
         return view('guru.jadwal', compact('jadwal', 'guru'));
     }
 

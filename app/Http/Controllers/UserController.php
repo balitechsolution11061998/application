@@ -22,6 +22,7 @@ use QrCode;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\HashHelper;
 use App\Models\Guru;
+use App\Models\Role;
 use App\Models\Siswa;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
@@ -81,20 +82,35 @@ class UserController extends Controller
                     'name' => $request->name,
                     'username' => $request->username,
                     'email' => $request->email,
-                    'password' => Hash::make($request->password),
+                    'password' => bcrypt($request->password),
+                    'status' => 'y',
                 ]);
             }
+            $user = User::find($user->id); // Pastikan $user adalah objek User
             if ($user) {
                 $role = $request->role;
-                $user->attachRole($role);
-                if ($user->hasRole($role)) {
-                    return redirect()->back()->with('success', 'Berhasil menambahkan user baru dan role berhasil di-attach!');
+
+                if (is_string($role)) {
+                    $roleModel = Role::where('name', $role)->first(); // Mendapatkan objek Role berdasarkan nama
+                    if ($roleModel) {
+                        // Pastikan syncRoles menerima array, bukan objek tunggal
+                        $user->syncRoles([$roleModel->name]);
+
+                        if ($user->hasRole($roleModel->name)) {
+                            return redirect()->back()->with('success', 'Berhasil menambahkan user baru dan role berhasil di-attach!');
+                        } else {
+                            return redirect()->back()->with('error', 'User berhasil dibuat tetapi role tidak berhasil di-attach.');
+                        }
+                    } else {
+                        return redirect()->back()->with('error', 'Role tidak ditemukan.');
+                    }
                 } else {
-                    return redirect()->back()->with('error', 'User berhasil dibuat tetapi role tidak berhasil di-attach.');
+                    return redirect()->back()->with('error', 'Role tidak valid.');
                 }
             } else {
                 return redirect()->back()->with('error', 'Maaf, User tidak dapat dibuat.');
             }
+
 
 
         } catch (\Exception $e) {
@@ -113,7 +129,8 @@ class UserController extends Controller
                     'name' => $role == 'guru' ? $record->nama_guru : strtolower($record->nama_siswa),
                     'username' => $username,
                     'email' => $email,
-                    'password' => Hash::make($password),
+                    'password' => bcrypt($password),
+                    'status' => 'y',
                     $identifierField => $identifierValue,
                 ]);
             } else {

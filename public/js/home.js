@@ -1,175 +1,204 @@
 $(document).ready(function () {
-
     fetchPoDataPerDays();
     fetchTimelineConfirmedData();
 
+    fetchServiceLevelSupplier();
+    fetchItemDetails();
+    fetchTandaTerimaList();
+    fetchTotals();
 
-       // Automatically check the 'Average Execution Time' checkbox
-       document.getElementById('showExecutionTime').checked = true;
-
-       // Fetch and render chart data based on the default checkbox state
-       fetchQueryPerformanceLogs();
-
-       const checkboxes = document.querySelectorAll('.dropdown-item .form-check-input');
-
-       checkboxes.forEach(checkbox => {
-           checkbox.addEventListener('change', async function () {
-               if (this.checked) {
-                   checkboxes.forEach(cb => {
-                       if (cb !== this) {
-                           cb.checked = false; // Uncheck all other checkboxes
-                       }
-                   });
-               }
-
-               // Fetch and render chart data based on the selected checkbox
-               await fetchQueryPerformanceLogs();
-           });
-       });
-
-
-    document.getElementById('toggleView').addEventListener('change', function () {
-        const isChecked = this.checked;
-
-        // Show chart if checkbox is unchecked, otherwise show table
-        document.getElementById('chartContainer').style.display = isChecked ? 'none' : 'block';
-        document.getElementById('tableQueryPerformanceLog').style.display = isChecked ? 'block' : 'none';
-    });
-
-    document.getElementById('option2').checked = true;
-    document.getElementById('toggle-cost').classList.add('active');
-    fetchData('po');
-    fetchData('receiving');
+    document.getElementById("option2").checked = true;
+    document.getElementById("toggle-cost").classList.add("active");
+    fetchData("po");
+    fetchData("receiving");
 
     // Event listeners for the toggle buttons
     document.getElementById("toggle-quantity").addEventListener("click", () => {
-        fetchData('po');
-        fetchData('receiving');
-
+        fetchData("po");
+        fetchData("receiving");
     });
 
     document.getElementById("toggle-cost").addEventListener("click", () => {
-        fetchData('po');
-        fetchData('receiving');
+        fetchData("po");
+        fetchData("receiving");
     });
 
+    document
+        .querySelector('a[href="#kt_list_widget_16_tab_4"]')
+        .addEventListener("shown.bs.tab", function () {
+            const today = new Date().toISOString().split("T")[0];
+            fetchReceivingData(today);
+        });
 });
 
-
-document.querySelectorAll('.toggle-checkbox').forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
+document.querySelectorAll(".toggle-checkbox").forEach((checkbox) => {
+    checkbox.addEventListener("change", function () {
         if (this.checked) {
             // Uncheck all checkboxes
-            document.querySelectorAll('.toggle-checkbox').forEach(cb => cb.checked = false);
+            document
+                .querySelectorAll(".toggle-checkbox")
+                .forEach((cb) => (cb.checked = false));
             // Check the current one
             this.checked = true;
 
             // Remove active class from all labels
-            document.querySelectorAll('.btn-group-toggle .btn').forEach(btn => btn.classList.remove('active'));
+            document
+                .querySelectorAll(".btn-group-toggle .btn")
+                .forEach((btn) => btn.classList.remove("active"));
             // Add active class to the corresponding label
-            this.closest('label').classList.add('active');
+            this.closest("label").classList.add("active");
         }
     });
 });
 
+function fetchReceivingData(date) {
+    fetch(`/po/receiving?filterDate=${date}`)
+        .then((response) => response.json())
+        .then((data) => {
+            const container = document.querySelector(
+                "#kt_list_widget_16_tab_4 .timeline-container"
+            );
+            container.innerHTML = data
+                .map((item) => `<div class="item">${item.details}</div>`)
+                .join("");
+        })
+        .catch((error) => console.error("Error fetching data:", error));
+}
 
 document
     .getElementById("filter-date")
     .addEventListener("change", fetchPoDataPerDays);
-    const indonesianHolidays2024 = [
-        { title: 'Tahun Baru Masehi', start: '2024-01-01' },
-        { title: 'Tahun Baru Imlek', start: '2024-02-10' },
-        { title: 'Hari Raya Nyepi', start: '2024-03-11' },
-        { title: 'Waisak', start: '2024-05-23' },
-        { title: 'Kenaikan Isa Almasih', start: '2024-05-09' },
-        { title: 'Hari Lahir Pancasila', start: '2024-06-01' },
-        { title: 'Hari Raya Idul Fitri', start: '2024-04-10' },
-        { title: 'Hari Raya Idul Fitri', start: '2024-04-11' },
-        { title: 'Hari Buruh', start: '2024-05-01' },
-        { title: 'Hari Raya Idul Adha', start: '2024-06-17' },
-        { title: 'Tahun Baru Hijriah', start: '2024-07-07' },
-        { title: 'Hari Kemerdekaan Indonesia', start: '2024-08-17' },
-        { title: 'Maulid Nabi', start: '2024-09-15' },
-        { title: 'Hari Natal', start: '2024-12-25' },
-    ];
+const indonesianHolidays2024 = [
+    { title: "Tahun Baru Masehi", start: "2024-01-01" },
+    { title: "Tahun Baru Imlek", start: "2024-02-10" },
+    { title: "Hari Raya Nyepi", start: "2024-03-11" },
+    { title: "Waisak", start: "2024-05-23" },
+    { title: "Kenaikan Isa Almasih", start: "2024-05-09" },
+    { title: "Hari Lahir Pancasila", start: "2024-06-01" },
+    { title: "Hari Raya Idul Fitri", start: "2024-04-10" },
+    { title: "Hari Raya Idul Fitri", start: "2024-04-11" },
+    { title: "Hari Buruh", start: "2024-05-01" },
+    { title: "Hari Raya Idul Adha", start: "2024-06-17" },
+    { title: "Tahun Baru Hijriah", start: "2024-07-07" },
+    { title: "Hari Kemerdekaan Indonesia", start: "2024-08-17" },
+    { title: "Maulid Nabi", start: "2024-09-15" },
+    { title: "Hari Natal", start: "2024-12-25" },
+];
 
-    function initializeCalendar(events) {
-        var calendarEl = document.getElementById("calendar");
+function initializeCalendar(events) {
+    var calendarEl = document.getElementById("calendar");
 
-        if (!calendarEl) {
-            console.error("Calendar element not found.");
-            return;
-        }
+    if (!calendarEl) {
+        console.error("Calendar element not found.");
+        return;
+    }
 
-        if (window.calendar) {
-            window.calendar.destroy(); // Destroy existing calendar instance if it exists
-        }
+    if (window.calendar) {
+        window.calendar.destroy(); // Destroy existing calendar instance if it exists
+    }
 
-        try {
-            window.calendar = new FullCalendar.Calendar(calendarEl, {
-                headerToolbar: {
-                    left: "prev,next today",
-                    center: "title",
-                    right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
-                },
-                height: 600,
-                nowIndicator: true,
-                initialView: "dayGridMonth",
-                editable: false,
-                dayMaxEvents: true,
-                events: events.concat(indonesianHolidays2024).map(event => {
-                    const eventDate = moment(event.start).format('YYYY-MM-DD');
-                    const todayDate = moment().format('YYYY-MM-DD');
+    try {
+        window.calendar = new FullCalendar.Calendar(calendarEl, {
+            headerToolbar: {
+                left: "prev,next today",
+                center: "title",
+                right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
+            },
+            nowIndicator: true,
+            initialView: "dayGridMonth",
+            editable: false,
+            dayMaxEvents: true, // Enable "1 more" link for dayMaxEvents
+            events: events.concat(indonesianHolidays2024).map((event) => {
+                const eventDate = moment(event.start).format("YYYY-MM-DD");
+                const todayDate = moment().format("YYYY-MM-DD");
 
-                    // Check if the event is an Indonesian holiday
-                    const isHoliday = indonesianHolidays2024.some(holiday => holiday.start === event.start);
+                // Check if the event is an Indonesian holiday
+                const isHoliday = indonesianHolidays2024.some(
+                    (holiday) => holiday.start === event.start
+                );
 
-                    return {
-                        ...event,
-                        title: isHoliday ? `${event.title} (Public Holiday)` : event.title,
-                        classNames: eventDate === todayDate ? 'bg-warning' : isHoliday ? 'bg-danger' : 'bg-purple',
-                        backgroundColor: isHoliday ? '#ff4c4c' : event.backgroundColor || '',
-                        borderColor: isHoliday ? '#ff4c4c' : event.borderColor || '',
-                        textColor: isHoliday ? '#ffffff' : event.textColor || '',
-                        extendedProps: {
-                            htmlContent: `
+                // Set the title based on whether it's a holiday
+                const updatedTitle = isHoliday
+                    ? `Public Holiday: ${event.title}`
+                    : event.title;
+
+                // Return the updated event object
+                return {
+                    ...event, // Spread the original event properties
+                    title: updatedTitle, // Update the title with "Public Holiday" if applicable
+                    classNames:
+                        eventDate === todayDate
+                            ? "bg-warning"
+                            : isHoliday
+                            ? "bg-danger public-holiday"
+                            : "bg-purple",
+                    backgroundColor: isHoliday
+                        ? "#ff4c4c"
+                        : event.backgroundColor || "", // Set background color to red for holidays
+                    borderColor: isHoliday
+                        ? "#ff4c4c"
+                        : event.borderColor || "",
+                    textColor: isHoliday ? "#ffffff" : event.textColor || "",
+                    extendedProps: {
+                        ...event.extendedProps, // Preserve any existing extendedProps
+                        isHoliday: isHoliday, // Flag to indicate if the event is a public holiday
+                        htmlContent: `
                                 <div class="event-content">
                                     <i class="fas fa-calendar-day"></i>
-                                    <span>${event.title}</span>
-                                    ${isHoliday ? '<div class="holiday-text">Public Holiday</div>' : ''}
+                                    <span>${updatedTitle}</span>
                                 </div>
-                            ` // FontAwesome calendar icon with title and "Public Holiday" text
+                            `, // Display "Public Holiday" if it's a holiday
+                    },
+                };
+            }),
+
+            eventContent: function (info) {
+                // Render HTML content from extendedProps
+                return { html: info.event.extendedProps.htmlContent };
+            },
+            eventDidMount: function (info) {
+                // Override the default "1 more" text with custom text
+                info.el
+                    .querySelectorAll(".fc-daygrid-more-link")
+                    .forEach((link) => {
+                        if (info.event.extendedProps.isHoliday) {
+                            link.textContent = "1 public holiday";
+                        } else {
+                            link.textContent = "1 more event";
                         }
-                    };
-                }),
-                eventContent: function(info) {
-                    // Render HTML content from extendedProps
-                    return { html: info.event.extendedProps.htmlContent };
-                },
-                eventsSet: function() {
-                    // Any additional logic can be added here if needed
-                }
-            });
+                    });
+            },
+            // Use this callback to add classes after rendering
+            datesSet: function () {
+                setTimeout(() => {
+                    const holidayDates = indonesianHolidays2024.map((holiday) =>
+                        moment(holiday.start).format("YYYY-MM-DD")
+                    );
+                    document
+                        .querySelectorAll(".fc-daygrid-day")
+                        .forEach((dayCell) => {
+                            const date = dayCell.getAttribute("data-date");
+                            if (holidayDates.includes(date)) {
+                                dayCell.classList.add("public-holiday-day");
+                            }
+                        });
+                }, 0); // Delay execution to ensure elements are available
+            },
+        });
 
-            window.calendar.render();
-        } catch (error) {
-            console.error("Error initializing calendar:", error);
-        }
+        // Render the calendar
+        window.calendar.render();
+
+        // Add resize listener to adjust calendar height dynamically
+        window.addEventListener("resize", () => {
+            calendarEl.style.height = `${window.innerHeight - 100}px`;
+            window.calendar.render(); // Re-render to apply the new height
+        });
+    } catch (error) {
+        console.error("Error initializing calendar:", error);
     }
-    // Initialize the calendar with events including Indonesian holidays
+}
 
-
-
-
-
-
-
-
-
-
-
-
-// Button click to show modal and initialize calendar
 $("#deliveryModalBtn").on("click", function () {
     $("#mdlForm").modal("show");
     $("#mdlFormTitle").html("Delivery Schedule");
@@ -182,13 +211,9 @@ $("#deliveryModalBtn").on("click", function () {
     fetchTimelineConfirmedData(); // Fetch and display data when modal is shown
 });
 
-
-
-
-
 function fetchTimelineConfirmedData() {
     var apiUrl = "/po/delivery";
-    var timelineContainer = $(".timeline-container");
+    var timelineContainer = $("#kt_list_widget_16_tab_1 .timeline-container");
     var spinnerContainer = $(".spinner-container");
     var threshold = 10; // Set your threshold value here
     var todayDate = moment().startOf("day");
@@ -307,6 +332,14 @@ function fetchTimelineConfirmedData() {
                                             item.estimated_delivery_date
                                         }</span>
                                         <!--end::Title-->
+                                        <!--begin::Label-->
+                                        <span class="fs-7 fw-bolder text-info text-uppercase">Order</span>
+                                        <!--end::Label-->
+                                        <!--begin::Title-->
+                                        <a href="#" class="fs-5 text-gray-800 fw-bold d-block text-hover-primary">${
+                                            item.order_no
+                                        }</a>
+                                        <!--end::Title-->
                                     </div>
                                     <!--end::Timeline content-->
                                 </div>
@@ -316,264 +349,34 @@ function fetchTimelineConfirmedData() {
                         </div>
                         <!--end::Item-->
                     `;
+
                 timelineContainer.append(timelineItem);
             });
 
-            // Show alert if there are deliveries scheduled for tomorrow
-            if (deliveriesForTomorrowCount > 0) {
-                $("#deliveryAlert")
-                    .text(
-                        `Note: There are ${deliveriesForTomorrowCount} deliveries scheduled for tomorrow.`
-                    )
-                    .removeClass("d-none");
-            } else {
-                $("#deliveryAlert").addClass("d-none");
-            }
+            // Update deliveries for tomorrow count
+            $("#deliveries-for-tomorrow").text(deliveriesForTomorrowCount);
 
-            // Initialize and render the calendar with fetched events
+            // Hide the spinner
+            spinnerContainer.addClass("d-none");
+
+            // Initialize the calendar with fetched events
             initializeCalendar(events);
-
-            // Hide the spinner after data is loaded
-            spinnerContainer.addClass("d-none");
         },
-        error: function (error) {
-            console.error("Error fetching timeline data", error);
+        error: function (xhr, status, error) {
+            console.error("Error fetching data:", error);
 
-            // Hide the spinner if there is an error
+            // Hide the spinner in case of an error
             spinnerContainer.addClass("d-none");
+
+            timelineContainer.html(
+                "<p class='text-danger'>Failed to load data. Please try again later.</p>"
+            );
         },
     });
 }
-
-
-async function fetchQueryPerformanceLogs() {
-    try {
-        // Destroy existing DataTable instance if it exists
-        if ($.fn.DataTable.isDataTable('#queryPerformance-table')) {
-            $('#queryPerformance-table').DataTable().clear().destroy();
-        }
-
-        // Initialize DataTable
-        dataTable = $('#queryPerformance-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: '/query-performance-logs',
-                type: 'GET',
-                data: function (d) {
-                    d.function = $('#filterFunction').val(); // Add filter parameter
-                }
-            },
-            columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex' },
-                { data: 'function_name', name: 'function_name' },
-                { data: 'avg_execution_time', name: 'avg_execution_time' },
-                { data: 'avg_ping', name: 'avg_ping' },
-                { data: 'avg_download_speed', name: 'avg_download_speed' },
-                { data: 'avg_upload_speed', name: 'avg_upload_speed' }
-            ],
-            columnDefs: [
-                { targets: [0], orderable: false } // Disable ordering for the index column
-            ]
-        });
-
-        // Fetch chart data
-        const chartResponse = await fetch('/query-performance-logs/chart-data');
-        const chartData = await chartResponse.json();
-
-        // Check if chartData contains expected data
-        if (chartData && chartData.labels) {
-            const labels = chartData.labels;
-
-            // Convert milliseconds to seconds and format to 2 decimal places
-            const executionTimes = chartData.executionTimes.map(time => (time).toFixed(2)); // Convert ms to s
-            const pings = chartData.pings.map(ping => (ping / 1000).toFixed(2)); // Convert ms to s
-            const memoryUsages = chartData.memoryUsages.map(memory => (memory / 1024).toFixed(2)); // Convert bytes to MB
-
-            // Render chart with all data
-            renderChart(labels, executionTimes, pings, memoryUsages);
-        } else {
-            console.warn("Unexpected chart data format:", chartData);
-        }
-
-    } catch (error) {
-        console.error("Error fetching data:", error);
-    }
-}
-
-function renderChart(labels, executionTimes, pings, memoryUsages) {
-    console.log(labels, executionTimes, pings, memoryUsages);
-
-    // Destroy existing chart instance if it exists
-    if (chartInstance) {
-        chartInstance.destroy();
-    }
-
-    // Determine which series to include based on checkbox states
-    const series = [];
-
-    if (document.getElementById('showExecutionTime').checked) {
-        series.push({
-            name: 'Average Execution Time',
-            data: executionTimes,
-            color: '#1f77b4' // Blue color for execution times
-        });
-    }
-
-    if (document.getElementById('showPing').checked) {
-        series.push({
-            name: 'Average Ping',
-            data: pings,
-            color: '#ff7f0e' // Orange color for ping times
-        });
-    }
-
-    if (document.getElementById('showMemoryUsage').checked) {
-        // Convert memory usage values to MB
-        const memoryUsagesInMB = memoryUsages.map(memory => (memory / 1024).toFixed(2)); // Convert bytes to MB
-
-        series.push({
-            name: 'Memory Usage',
-            data: memoryUsagesInMB,
-            color: '#2ca02c' // Green color for memory usage
-        });
-    }
-
-    if (series.length === 0) {
-        // No series to show
-        return;
-    }
-
-    // Create a new chart
-    chartInstance = new ApexCharts(document.querySelector("#chartCanvas"), {
-        chart: {
-            type: 'bar', // Set to 'bar' for a bar chart
-            height: 350,
-            width: '100%',
-            animations: {
-                enabled: true,
-                easing: 'easeinout',
-                speed: 800
-            }
-        },
-        series: series,
-        xaxis: {
-            categories: labels, // Set categories for the x-axis
-            title: {
-                text: 'Function Names',
-                style: {
-                    fontSize: '14px'
-                }
-            },
-            labels: {
-                style: {
-                    fontSize: '12px'
-                }
-            }
-        },
-        yaxis: {
-            title: {
-                text: 'Values',
-                style: {
-                    fontSize: '14px'
-                }
-            },
-            labels: {
-                formatter: function (value) {
-                    // Determine if memory usage is being displayed
-                    const isMemoryUsage = series.some(s => s.name === 'Memory Usage');
-                    return isMemoryUsage ? `${value} MB` : value.toFixed(2); // Append 'MB' for memory usage
-                },
-                style: {
-                    fontSize: '12px'
-                }
-            }
-        },
-        plotOptions: {
-            bar: {
-                horizontal: false, // Set to true for horizontal bars
-                columnWidth: '35%', // Width of bars (adjusted for better spacing)
-                endingShape: 'rounded', // Rounded edges for bars
-                borderRadius: 5 // Radius for rounded corners
-            }
-        },
-        dataLabels: {
-            enabled: true,
-            style: {
-                fontSize: '10px' // Smaller font size for data labels
-            }
-        },
-        legend: {
-            position: 'top',
-            horizontalAlign: 'center',
-            labels: {
-                style: {
-                    fontSize: '12px'
-                }
-            }
-        },
-        tooltip: {
-            y: {
-                formatter: function (val) {
-                    // Determine if memory usage is being displayed
-                    const isMemoryUsage = series.some(s => s.name === 'Memory Usage');
-                    return isMemoryUsage ? `${val} MB` : `${val} ms`; // Append 'MB' or 'ms' based on the data
-                }
-            },
-            style: {
-                fontSize: '12px' // Smaller font size for tooltip
-            }
-        },
-        responsive: [{
-            breakpoint: 600,
-            options: {
-                chart: {
-                    height: 300
-                },
-                xaxis: {
-                    labels: {
-                        style: {
-                            fontSize: '10px'
-                        }
-                    }
-                },
-                yaxis: {
-                    labels: {
-                        style: {
-                            fontSize: '10px'
-                        }
-                    }
-                },
-                dataLabels: {
-                    style: {
-                        fontSize: '8px'
-                    }
-                },
-                legend: {
-                    labels: {
-                        style: {
-                            fontSize: '10px'
-                        }
-                    }
-                },
-                tooltip: {
-                    style: {
-                        fontSize: '10px'
-                    }
-                }
-            }
-        }]
-    });
-
-    // Render the chart
-    chartInstance.render();
-}
-
-
 
 async function fetchPoDataPerDays() {
     const spinner = document.getElementById("spinner-po");
-    const filterSelect = document.getElementById("filter-select");
     const filterDate = document.getElementById("filter-date");
     const showExpired = document.getElementById("show-expired");
     const showCompleted = document.getElementById("show-completed");
@@ -581,301 +384,563 @@ async function fetchPoDataPerDays() {
     const showInProgress = document.getElementById("show-in-progress");
     const showReject = document.getElementById("show-reject");
 
-    spinner.style.display = "block";
+    let chart = null;
 
-    const selectedMonth = filterDate.value;
+    async function loadData() {
+        spinner.style.display = "block";
 
-    try {
-        const apiUrl = selectedMonth
-            ? `/home/countDataPoPerDays?filterDate=${selectedMonth}`
-            : "/home/countDataPoPerDays";
-        const response = await fetch(apiUrl);
+        const selectedMonth = filterDate.value;
 
-        if (!response.ok) {
-            throw new Error("Failed to fetch PO data.");
-        }
+        try {
+            const apiUrl = selectedMonth
+                ? `/home/countDataPoPerDays?filterDate=${selectedMonth}`
+                : "/home/countDataPoPerDays";
+            const response = await fetch(apiUrl);
 
-        const data = await response.json();
-
-        if (!data || !data.data || data.data.dailyData.length === 0) {
-            throw new Error("No data available for the selected period.");
-        }
-
-        const dates = data.data.dailyData.map((item) => item.date);
-        const expired = data.data.dailyData.map((item) => item.expired);
-        const completed = data.data.dailyData.map((item) => item.completed);
-        const confirmed = data.data.dailyData.map((item) => item.confirmed);
-        const inProgress = data.data.dailyData.map((item) => item.in_progress);
-        const totalCost = data.data.dailyData.map((item) => item.total_cost);
-        const totalReject = data.data.dailyData.map((item) => item.reject);
-
-        let chart = null;
-
-        function formatRupiah(value) {
-            return new Intl.NumberFormat("id-ID", {
-                style: "currency",
-                currency: "IDR",
-                minimumFractionDigits: 0,
-            }).format(value);
-        }
-
-        function initializeChart() {
-            const seriesName = [];
-            const seriesData = [];
-            const seriesColors = [];
-
-            if (showExpired.checked) {
-                seriesName.push("Expired");
-                seriesData.push(expired);
-                seriesColors.push("#dc3545");
-            }
-            if (showCompleted.checked) {
-                seriesName.push("Completed");
-                seriesData.push(completed);
-                seriesColors.push("#28a745");
-            }
-            if (showConfirmed.checked) {
-                seriesName.push("Confirmed");
-                seriesData.push(confirmed);
-                seriesColors.push("#007bff");
-            }
-            if (showInProgress.checked) {
-                seriesName.push("In Progress");
-                seriesData.push(inProgress);
-                seriesColors.push("#ffc107");
-            }
-            if (showReject.checked) {
-                seriesName.push("Reject");
-                seriesData.push(totalReject);
-                seriesColors.push("#dc3545");
+            if (!response.ok) {
+                throw new Error("Failed to fetch PO data.");
             }
 
-            if (chart) {
-                chart.destroy();
+            const data = await response.json();
+
+            if (!data || !data.data || data.data.dailyData.length === 0) {
+                throw new Error("No data available for the selected period.");
             }
 
-            const options = {
-                series: seriesData.map((data, index) => ({
-                    name: seriesName[index],
-                    data: data,
-                    color: seriesColors[index],
-                })),
-                chart: {
-                    height: 350,
-                    type: "bar",
-                    toolbar: {
+            const dates = data.data.dailyData.map((item) => item.date);
+            const expired = data.data.dailyData.map((item) => item.expired);
+            const completed = data.data.dailyData.map((item) => item.completed);
+            const confirmed = data.data.dailyData.map((item) => item.confirmed);
+            const inProgress = data.data.dailyData.map(
+                (item) => item.in_progress
+            );
+            const totalReject = data.data.dailyData.map((item) => item.reject);
+
+            function formatRupiah(value) {
+                return new Intl.NumberFormat("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                    minimumFractionDigits: 0,
+                }).format(value);
+            }
+
+            function initializeChart() {
+                const seriesName = [];
+                const seriesData = [];
+                const seriesColors = [];
+
+                if (showExpired.checked) {
+                    seriesName.push("Expired");
+                    seriesData.push(expired);
+                    seriesColors.push("#dc3545");
+                }
+                if (showCompleted.checked) {
+                    seriesName.push("Completed");
+                    seriesData.push(completed);
+                    seriesColors.push("#28a745");
+                }
+                if (showConfirmed.checked) {
+                    seriesName.push("Confirmed");
+                    seriesData.push(confirmed);
+                    seriesColors.push("#007bff");
+                }
+                if (showInProgress.checked) {
+                    seriesName.push("In Progress");
+                    seriesData.push(inProgress);
+                    seriesColors.push("#ffc107");
+                }
+                if (showReject.checked) {
+                    seriesName.push("Reject");
+                    seriesData.push(totalReject);
+                    seriesColors.push("#dc3545");
+                }
+
+                if (chart) {
+                    chart.destroy();
+                }
+
+                const options = {
+                    series: seriesData.map((data, index) => ({
+                        name: seriesName[index],
+                        data: data,
+                        color: seriesColors[index],
+                    })),
+                    chart: {
+                        height: 350,
+                        type: "bar",
+                        toolbar: {
+                            show: true,
+                        },
+                        events: {
+                            dataPointSelection: function (
+                                event,
+                                chartContext,
+                                config
+                            ) {
+                                const selectedDate =
+                                    dates[config.dataPointIndex];
+                                const selectedStatus =
+                                    seriesName[config.seriesIndex];
+                                openModal(selectedDate, selectedStatus);
+                            },
+                        },
+                        title: {
+                            text: "Data Jumlah PO Per Tanggal",
+                            align: "left",
+                            margin: 10,
+                            offsetX: 0,
+                            offsetY: 0,
+                            floating: false,
+                            style: {
+                                fontSize: "16px",
+                                fontWeight: "bold",
+                                color: "#263238",
+                            },
+                        },
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: false,
+                            columnWidth: "55%",
+                            endingShape: "rounded",
+                            borderRadius: 9,
+                        },
+                    },
+                    dataLabels: {
+                        enabled: false,
+                    },
+                    stroke: {
                         show: true,
+                        width: 2,
+                        colors: ["transparent"],
                     },
-                    events: {
-                        dataPointSelection: function (event, chartContext, config) {
-                            const selectedDate = dates[config.dataPointIndex];
-                            const selectedStatus = seriesName[config.seriesIndex];
-                            openModal(selectedDate, selectedStatus);
+                    xaxis: {
+                        categories: dates,
+                    },
+                    yaxis: {
+                        title: {
+                            text: "Jumlah",
+                        },
+                        labels: {
+                            formatter: function (value) {
+                                return value;
+                            },
                         },
                     },
-                    title: {
-                        text: "Data Jumlah PO Per Tanggal",
-                        align: "left",
-                        margin: 10,
-                        offsetX: 0,
-                        offsetY: 0,
-                        floating: false,
-                        style: {
-                            fontSize: "16px",
-                            fontWeight: "bold",
-                            color: "#263238",
+                    fill: {
+                        opacity: 1,
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: function (val) {
+                                return val;
+                            },
                         },
                     },
-                },
-                plotOptions: {
-                    bar: {
-                        horizontal: false,
-                        columnWidth: "55%",
-                        endingShape: "rounded",
-                        borderRadius: 9,
-                    },
-                },
-                dataLabels: {
-                    enabled: false,
-                },
-                stroke: {
-                    show: true,
-                    width: 2,
-                    colors: ["transparent"],
-                },
-                xaxis: {
-                    categories: dates,
-                },
-                yaxis: {
-                    title: {
-                        text: "Jumlah",
-                    },
-                    labels: {
-                        formatter: function (value) {
-                            return value;
-                        },
-                    },
-                },
-                fill: {
-                    opacity: 1,
-                },
-                tooltip: {
-                    y: {
-                        formatter: function (val) {
-                            return val;
-                        },
-                    },
-                },
-            };
+                };
 
-            chart = new ApexCharts(document.querySelector("#kt_apexcharts_1"), options);
-            chart.render();
-        }
+                chart = new ApexCharts(
+                    document.querySelector("#kt_apexcharts_1"),
+                    options
+                );
+                chart.render();
+            }
 
-        function openModal(date, status) {
-            const modal = new bootstrap.Modal(document.getElementById("detailModal"));
-            document.getElementById("modalTitle").textContent = `Details for ${date} - ${status}`;
+            function openModal(date, status) {
+                const modal = document.getElementById("detailModal");
+                const modalTitle = document.getElementById("modalTitle");
+                const modalBody = document.getElementById("modalBody");
 
-            const modalBody = document.getElementById("modalBody");
-            modalBody.innerHTML = `
-                <form id="searchForm" class="mb-3">
-                    <div class="d-flex align-items-center">
-                        <input type="text" id="searchInput" class="form-control form-control-sm me-2" placeholder="Search...">
-                        <button type="submit" class="btn btn-sm btn-primary">
-                            <i class="fas fa-search"></i> Search
-                        </button>
-                        <span id="searchSpinner" class="d-none ms-2">
-                            <i class="fas fa-spinner fa-spin"></i>
-                        </span>
-                    </div>
-                </form>
-                <div id="tableContainer"></div>
-            `;
+                modalTitle.textContent = `Details for ${status} on ${formatDate(
+                    date
+                )}`;
 
-            fetch(`/home/countDataPoPerDate?date=${date}&status=${status}`)
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.data.length > 0) {
-                        const table = document.createElement("table");
-                        table.id = "detailsTable";
-                        table.classList.add("table", "table-striped", "table-bordered");
+                modalBody.innerHTML =
+                    '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
 
-                        const thead = document.createElement("thead");
-                        let estimatedDeliveryDateHeader = 'Estimated Delivery Date';
+                fetch(`/home/countDataPoPerDate?date=${date}&status=${status}`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.data && data.data.length > 0) {
+                            let tableHtml = `
+                                    <table id="poDetailsTable" class="table align-middle table-row-dashed fs-6 gy-5 mb-0" style="color:black">
+                                        <thead>
+                                            <tr>
+                                                <th>Order No</th>
+                                                <th>Expired Date</th>`;
 
-                        if (status === 'In Progress') {
-                            estimatedDeliveryDateHeader = 'Expired Date';
-                        }
-
-                        thead.innerHTML = `
-                            <tr>
-                                <th>PO Number</th>
-                                <th>Status</th>
-                                <th>${estimatedDeliveryDateHeader}</th>
-                            </tr>
-                        `;
-                        table.appendChild(thead);
-
-                        const tbody = document.createElement("tbody");
-
-                        data.data.forEach((item) => {
-                            const tr = document.createElement("tr");
-
-                            let estimatedDeliveryDate;
-                            if (status === 'In Progress') {
-                                estimatedDeliveryDate = item.not_after_date;
-                            } else {
-                                estimatedDeliveryDate = item.estimated_delivery_date;
+                            // Add the `Estimated Delivery Date` column if the status is `confirmed` or `printed`
+                            if (
+                                status === "Confirmed" ||
+                                status === "printed"
+                            ) {
+                                tableHtml += `<th>Estimated Delivery Date</th>`;
                             }
 
-                            tr.innerHTML = `
-                                <td>${item.order_no}</td>
-                                <td>${item.status}</td>
-                                <td>${estimatedDeliveryDate}</td>
-                            `;
-                            tbody.appendChild(tr);
-                        });
+                            if (status === "Completed") {
+                                tableHtml += `<th>Estimated Delivery Date</th>`;
+                                tableHtml += `<th>Receive Date</th>`;
+                            }
 
-                        table.appendChild(tbody);
-                        document.getElementById("tableContainer").appendChild(table);
+                            tableHtml += `</tr></thead><tbody>`;
 
-                        $(document).ready(function () {
-                            const dataTable = $('#detailsTable').DataTable({
-                                paging: true,
-                                searching: true,
+                            // Populate table rows with data
+                            data.data.forEach((item) => {
+                                tableHtml += `
+                                        <tr>
+                                            <td>${item.order_no}</td>
+                                            <td>${formatDate(
+                                                item.not_after_date
+                                            )}`;
+
+                                // Add the `Estimated Delivery Date` data if the status is `confirmed` or `printed`
+                                if (
+                                    item.status === "Confirmed" ||
+                                    item.status === "printed"
+                                ) {
+                                    tableHtml += `<td>${formatDate(
+                                        item.estimated_delivery_date
+                                    )}</td>`;
+                                }
+                                if (item.status === "Completed") {
+                                    tableHtml += `<td>${formatDate(
+                                        item.estimated_delivery_date
+                                    )}</td>`;
+                                    tableHtml += `<td>${formatDate(
+                                        item.rcv_head.receive_date
+                                    )}</td>`;
+                                }
+                                tableHtml += `</tr>`;
+                            });
+
+                            tableHtml += `
+                                    </tbody>
+                                </table>
+                                `;
+
+                            modalBody.innerHTML = tableHtml;
+
+                            // Initialize DataTables
+                            $("#poDetailsTable").DataTable({
+                                responsive: true,
+                                pageLength: 5,
+                                lengthChange: false,
+                                autoWidth: false,
                                 ordering: true,
-                                responsive: true
+                                order: [[0, "asc"]],
                             });
+                        } else {
+                            modalBody.innerHTML =
+                                '<div class="text-center">No details available for this date.</div>';
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching modal details:", error);
+                        modalBody.innerHTML =
+                            '<div class="text-center text-danger">Failed to load details.</div>';
+                    });
 
-                            $('#detailsTable_filter input').attr('placeholder', 'Search...').addClass('search-marker');
-
-                            document.getElementById("searchForm").addEventListener("submit", function (event) {
-                                event.preventDefault();
-                                const searchValue = document.getElementById("searchInput").value;
-                                document.getElementById("searchSpinner").classList.remove("d-none");
-
-                                dataTable.search(searchValue).draw();
-                                highlightSearchTerms(searchValue);
-
-                                document.getElementById("searchSpinner").classList.add("d-none");
-                            });
-                        });
-                    } else {
-                        document.getElementById("tableContainer").textContent = "No data available for this date and status.";
-                    }
-
-                    modal.show();
-                })
-                .catch((error) => {
-                    console.error("Error fetching details:", error);
-                    document.getElementById("tableContainer").textContent = "An error occurred while fetching data.";
-                });
-        }
-
-        function highlightSearchTerms(term) {
-            const table = document.getElementById("detailsTable");
-            if (term) {
-                const regex = new RegExp(`(${term})`, 'gi');
-                table.querySelectorAll('td').forEach(td => {
-                    td.innerHTML = td.textContent.replace(regex, '<span class="highlight">$1</span>');
-                });
+                // Show the modal
+                const bsModal = new bootstrap.Modal(modal);
+                bsModal.show();
             }
+
+            initializeChart();
+        } catch (error) {
+            console.error("Error:", error);
+        } finally {
+            spinner.style.display = "none";
         }
-
-        initializeChart();
-
-        filterSelect.addEventListener("change", function () {
-            initializeChart();
-        });
-        filterDate.addEventListener("change", function () {
-            initializeChart();
-        });
-        showExpired.addEventListener("change", function () {
-            initializeChart();
-        });
-        showCompleted.addEventListener("change", function () {
-            initializeChart();
-        });
-        showConfirmed.addEventListener("change", function () {
-            initializeChart();
-        });
-        showInProgress.addEventListener("change", function () {
-            initializeChart();
-        });
-        showReject.addEventListener("change", function () {
-            initializeChart();
-        });
-    } catch (error) {
-        console.error("Error:", error);
-    } finally {
-        spinner.style.display = "none";
     }
+
+    loadData();
+
+    filterDate.addEventListener("change", loadData);
+    showExpired.addEventListener("change", loadData);
+    showCompleted.addEventListener("change", loadData);
+    showConfirmed.addEventListener("change", loadData);
+    showInProgress.addEventListener("change", loadData);
+    showReject.addEventListener("change", loadData);
+}
+
+  // Function to show the modal with AJAX-loaded content
+  function showModal(title, url, type) {
+    document.getElementById('mdlFormTitle').textContent = title;
+    document.getElementById('mdlFormContent').style.display = 'none';
+    const modal = new bootstrap.Modal(document.getElementById('mdlForm'));
+    modal.show();
+
+    if (type === 'faq') {
+        loadFaqContent();
+    } else if (type === 'form') {
+        loadFormContent(url);
+    }
+}
+
+// Function to load FAQ content
+function loadFaqContent() {
+    const faqs = [
+        {
+            question: 'How do I reset my password?',
+            answer: 'To reset your password, go to the settings page and click on "Reset Password".',
+            image: 'https://example.com/images/password-reset.png' // Replace with your image URL
+        },
+        {
+            question: 'How do I update my profile?',
+            answer: 'You can update your profile by visiting the profile section in your account settings.',
+            image: 'https://example.com/images/update-profile.png' // Replace with your image URL
+        },
+        {
+            question: 'How do I contact support?',
+            answer: 'You can contact support via the "Contact Us" section on the website.',
+            image: 'https://example.com/images/contact-support.png' // Replace with your image URL
+        },
+        {
+            question: 'What is the refund policy?',
+            answer: 'Our refund policy allows you to request a refund within 30 days of purchase.',
+            image: 'https://example.com/images/refund-policy.png' // Replace with your image URL
+        },
+        {
+            question: 'How do I change my email address?',
+            answer: 'To change your email address, go to your account settings and update your email information.',
+            image: 'https://example.com/images/change-email.png' // Replace with your image URL
+        }
+        // Add more FAQs as needed
+    ];
+
+    document.getElementById('mdlFormContent').innerHTML = `
+        <div class="mb-3">
+            <input type="text" id="faqSearchInput" class="form-control" placeholder="Search FAQs...">
+        </div>
+        <div id="faqResults"></div>
+    `;
+    document.getElementById('mdlFormContent').style.display = 'block';
+
+    document.getElementById('faqSearchInput').addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        const faqResults = document.getElementById('faqResults');
+        faqResults.innerHTML = '';
+
+        if (query.length > 0) {
+            const filteredFaqs = faqs.filter(faq => faq.question.toLowerCase().includes(query));
+
+            if (filteredFaqs.length > 0) {
+                filteredFaqs.forEach(faq => {
+                    const faqItem = document.createElement('div');
+                    faqItem.className = 'faq-item mb-3 d-flex align-items-start';
+                    faqItem.innerHTML = `
+                        <img src="${faq.image || 'https://via.placeholder.com/50'}" alt="${faq.question}" class="me-3" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                        <div>
+                            <h6 class="fw-bold">${faq.question}</h6>
+                            <p class="text-muted">${faq.answer}</p>
+                            <hr>
+                        </div>
+                    `;
+                    faqResults.appendChild(faqItem);
+                });
+            } else {
+                faqResults.innerHTML = '<p class="text-muted">No FAQs found.</p>';
+            }
+        } else {
+            faqResults.innerHTML = '<p class="text-muted">Start typing to search for FAQs...</p>';
+        }
+    });
+}
+
+// Function to load form content via AJAX
+function loadFormContent(url) {
+    fetch(url)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('modalSpinner').style.display = 'none';
+            document.getElementById('mdlFormContent').style.display = 'block';
+            document.getElementById('mdlFormContent').innerHTML = data;
+        })
+        .catch(error => {
+            console.error('Error loading form content:', error);
+            document.getElementById('modalSpinner').style.display = 'none';
+            document.getElementById('mdlFormContent').style.display = 'block';
+            document.getElementById('mdlFormContent').innerHTML = '<p class="text-danger">Failed to load content. Please try again later.</p>';
+        });
+}
+
+// Example usage for showing the FAQ
+document.getElementById('help-btn').addEventListener('click', function() {
+    showModal('Search FAQ', '', 'faq');
+});
+
+// Example usage for showing a form
+document.getElementById('showFormBtn').addEventListener('click', function() {
+    showModal('Form Title', '/path/to/form-content', 'form');
+});
+
+
+
+
+function formatDate(dateString) {
+    // Define an array of month names in Indonesian
+    const months = [
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember",
+    ];
+
+    // Create a Date object from the provided date string
+    const date = new Date(dateString);
+
+    // Extract day, month, and year
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+
+    // Return formatted date as "23 Desember 2023"
+    return `${day} ${month} ${year}`;
+}
+
+// Function to animate progress bar
+function fetchServiceLevelSupplier() {
+    $.ajax({
+        url: "/home/service-level", // Adjust URL as necessary
+        method: "GET",
+        success: function (response) {
+            if (response.success) {
+                const data = response.data;
+                if (data.length > 0) {
+                    // Sort data by average_service_level in descending order and get the top 5
+                    const topSuppliers = data
+                        .sort(
+                            (a, b) =>
+                                b.average_service_level -
+                                a.average_service_level
+                        )
+                        .slice(0, 5);
+
+                    // Clear any existing content
+                    $("#supplier-list").empty();
+
+                    // Generate and append list items for each supplier
+                    topSuppliers.forEach((supplier) => {
+                        const supplierHtml = `
+                                <li class="list-group-item mb-3" style="color: black;">
+                                    <h6 class="mb-1" style="color: black;"><strong>${supplier.supplier_name}</strong></h6>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
+                                            style="width: 0%;"
+                                            aria-valuenow="${supplier.average_service_level}" aria-valuemin="0" aria-valuemax="100">
+                                            <span>${supplier.average_service_level}%</span>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 mt-1" style="color: black;">Service Level: <strong>${supplier.average_service_level}%</strong></p>
+                                </li>
+                            `;
+                        $("#supplier-list").append(supplierHtml);
+
+                        // Animate the progress bar
+                        $(".progress-bar")
+                            .last()
+                            .animate(
+                                { width: `${supplier.average_service_level}%` },
+                                1000
+                            );
+                    });
+                } else {
+                    // Handle case where there is no data
+                    $("#supplier-list").html(`
+                            <li class="list-group-item text-center" style="color: black;">No data available</li>
+                        `);
+                }
+            } else {
+                // Handle error case
+                console.error("Failed to fetch data:", response.error);
+                $("#supplier-list").html(`
+                        <li class="list-group-item text-center" style="color: black;">Error loading data</li>
+                    `);
+            }
+        },
+        error: function (xhr, status, error) {
+            // Handle AJAX error
+            console.error("AJAX error:", status, error);
+            $("#supplier-list").html(`
+                    <li class="list-group-item text-center" style="color: black;">Error loading data</li>
+                `);
+        },
+    });
+}
+function fetchItemDetails() {
+    const table = $('#item-details-table').DataTable({
+        responsive: true,
+        autoWidth: false, // Prevent automatic column width calculation for better responsiveness
+        pageLength: 3, // Set pagination to 3 entries per page
+        lengthMenu: [3], // Display only 3 entries per page, remove the default dropdown
+        columns: [
+            { title: "Description" },
+            { title: "SKU" },
+            { title: "Cost PO" },
+            { title: "Cost Supplier" }
+        ],
+        language: {
+            emptyTable: "Loading data..."
+        }
+    });
+
+    // Function to format numbers as Rupiah
+    const formatRupiah = (amount) => {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR'
+        }).format(amount);
+    };
+
+    $.ajax({
+        url: '/home/price-diff', // Adjust URL as necessary
+        method: 'GET',
+        success: function(response) {
+            console.log(response, 'response111');
+
+            const data = response.data;
+
+            if (data.length > 0) {
+                table.clear(); // Clear existing data
+
+                data.forEach(item => {
+                    table.row.add([
+                        item.sku_desc,
+                        item.sku,
+                        formatRupiah(item.cost_po),
+                        formatRupiah(item.cost_supplier)
+                    ]);
+                });
+
+                table.draw(); // Draw the table with new data
+            } else {
+                table.clear().draw();
+                $('#item-details-list').html('<tr><td colspan="4">No data available</td></tr>');
+            }
+
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX error:', status, error);
+            $('#item-details-list').html('<tr><td colspan="4">Error loading data</td></tr>');
+        }
+    });
 }
 
 
 
+// Call the function to fetch data when the page loads
+
+
 async function fetchData(type) {
-    const spinner = document.getElementById(`spinner-${type}`);
+    const spinner = document.getElementById(`${type}-spinner`);
     const content = document.getElementById(`${type}-content`);
     const title = document.getElementById(`${type}-title`);
 
@@ -889,15 +954,15 @@ async function fetchData(type) {
     spinner.style.display = "block";
     content.style.display = "none"; // Hide the content initially
 
-    let endpoint = '';
+    let endpoint = "";
     let dataFields = {};
 
-    if (type === 'po') {
+    if (type === "po") {
         endpoint = "/po/count";
-        dataFields = { totalKey: 'totalPo', costKey: 'totalCost' };
-    } else if (type === 'receiving') {
+        dataFields = { totalKey: "totalPo", costKey: "totalCost" };
+    } else if (type === "receiving") {
         endpoint = "/home/countDataRcv";
-        dataFields = { totalKey: 'totalRcv', costKey: 'totalCostRcv' };
+        dataFields = { totalKey: "totalRcv", costKey: "totalCostRcv" };
     }
 
     try {
@@ -906,7 +971,7 @@ async function fetchData(type) {
             throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        console.log('response', data);
+        console.log("response", data);
 
         // Extract data using dataFields
         const totalValue = data[dataFields.totalKey]; // Access the value from the response
@@ -914,14 +979,16 @@ async function fetchData(type) {
 
         // Get the current month and year
         const now = new Date();
-        const currentMonth = now.toLocaleString('default', { month: 'long' });
+        const currentMonth = now.toLocaleString("default", { month: "long" });
         const currentYear = now.getFullYear();
 
         // Get the selected toggle
-        const selectedToggle = document.querySelector('input[name="options"]:checked')?.id;
+        const selectedToggle = document.querySelector(
+            'input[name="options"]:checked'
+        )?.id;
 
-        let contentHtml = '';
-        let titleHtml = '';
+        let contentHtml = "";
+        let titleHtml = "";
         if (selectedToggle === "option1") {
             // Show Quantity
             contentHtml = `
@@ -931,7 +998,7 @@ async function fetchData(type) {
                     <strong>Year:</strong> ${currentYear}</div>
                 </div>
             `;
-            titleHtml = `Total ${type === 'po' ? 'PO' : 'Receiving'} Count: `;
+            titleHtml = `Total ${type === "po" ? "PO" : "Receiving"} Count: `;
         } else if (selectedToggle === "option2") {
             // Show Cost
             const formattedCost = formatRupiah(totalCost);
@@ -942,7 +1009,7 @@ async function fetchData(type) {
                     <strong>Year:</strong> ${currentYear}</div>
                 </div>
             `;
-            titleHtml = `Total ${type === 'po' ? 'PO' : 'Receiving'} Cost: `;
+            titleHtml = `Total ${type === "po" ? "PO" : "Receiving"} Cost: `;
         }
 
         // Update the content with fetched data
@@ -957,9 +1024,6 @@ async function fetchData(type) {
         spinner.style.display = "none";
     }
 }
-
-
-
 
 async function fetchCountPoDays(status, filterDate) {
     const url = `/home/countDataPoPerDays?filterDate=${filterDate}`;
@@ -1069,6 +1133,97 @@ async function fetchCountPoDays(status, filterDate) {
     const chart = new ApexCharts(document.querySelector("#chart-po"), options);
     chart.render();
 }
+
+async function fetchTotals() {
+    const url = '/home/getTotals'; // Adjust endpoint if needed
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.success) {
+            // Format numbers with thousand separators
+            const formatThousand = (amount) => {
+                return new Intl.NumberFormat('id-ID').format(amount);
+            };
+
+            document.getElementById('total-suppliers').textContent = formatThousand(data.totalSuppliers);
+            document.getElementById('total-stores').textContent = formatThousand(data.totalStores);
+        } else {
+            console.error('Error fetching totals:', data.error);
+        }
+    } catch (error) {
+        console.error('Error fetching totals:', error);
+    }
+}
+
+// Call the function on page load
+document.addEventListener('DOMContentLoaded', fetchTotals);
+
+
+async function fetchTandaTerimaList(page = 1) {
+    const url = `/home/tandaTerima?page=${page}`; // Adjust endpoint if needed
+
+    try {
+        const loadingSpinner = document.getElementById('loading-spinner');
+        loadingSpinner.classList.remove('d-none'); // Show spinner
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        const receiptList = document.getElementById('receipt-list');
+        const pagination = document.getElementById('pagination');
+        receiptList.innerHTML = ''; // Clear existing content
+        pagination.innerHTML = ''; // Clear pagination
+
+        loadingSpinner.classList.add('d-none'); // Hide spinner
+
+        if (data.data.length === 0) {
+            receiptList.innerHTML = '<p class="text-muted">No receipts found.</p>';
+            return;
+        }
+
+        // Display the list of Tanda Terima
+        data.data.forEach(item => {
+            const listItem = document.createElement('a');
+            listItem.href = `#`; // Placeholder link for further actions
+            listItem.className = 'list-group-item list-group-item-action';
+            listItem.innerHTML = `
+                <div class="d-flex w-100 justify-content-between" style="color:black;">
+                    <h5 class="mb-1" style="color:black;font-weight:bold;">${item.no_tt || 'No Order Number'}</h5>
+                    <small>${item.tanggal}</small>
+                </div>
+                <p class="mb-1">${item.sup_name}</p>
+                <small>Status: <span class="${item.status === 'n' ? 'badge bg-danger' : 'badge bg-success'}">
+                    ${item.status === 'n' ? 'Not Approved' : 'Approved'}
+                </span></small>
+            `;
+            receiptList.appendChild(listItem);
+        });
+
+        // Handle pagination
+        const totalPages = Math.ceil(data.recordsTotal / data.perPage); // Calculate total pages
+        for (let i = 1; i <= totalPages; i++) {
+            const pageItem = document.createElement('button');
+            pageItem.textContent = i;
+            pageItem.className = `btn btn-sm ${i === page ? 'btn-primary' : 'btn-outline-primary'} mx-1`;
+            pageItem.addEventListener('click', () => fetchTandaTerimaList(i));
+            pagination.appendChild(pageItem);
+        }
+    } catch (error) {
+        console.error('Error fetching Tanda Terima list:', error);
+        const receiptList = document.getElementById('receipt-list');
+        receiptList.innerHTML = '<p class="text-danger">Error fetching data. Please try again later.</p>';
+    }
+}
+
+
+
+
+
+
+
+
 
 function fetchPriceChangeData(id) {
     $.ajax({
@@ -1237,7 +1392,6 @@ function fetchPriceChangeData(id) {
 //     }
 // }
 
-
 async function fetchCountRcvDays(status, filterDate) {
     const url = `/home/countDataRcvPerDays?filterDate=${filterDate}`;
 
@@ -1254,7 +1408,7 @@ async function fetchCountRcvDays(status, filterDate) {
             seriesData.push(formatRupiah(item.totalCostRcv)); // Push count to seriesData array
         });
     } else if (status == "qty") {
-        console.log("masuk sini ya",totalRcv);
+        console.log("masuk sini ya", totalRcv);
         data.total.dailyCounts.forEach((item) => {
             categories.push(item.tanggal); // Push date to categories array
             seriesData.push(formatRupiah(item.totalRcv)); // Push count to seriesData array

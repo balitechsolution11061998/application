@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PerformanceHelper;
 use App\Jobs\LogQueryPerformance;
 use App\Jobs\ProcessOrdersJob;
 use App\Models\DiffCostPo;
@@ -466,36 +467,47 @@ public function store(Request $request)
 // }
 
 public function data(Request $request)
-    {
+{
+    $date = $request->query('date');
+
+
+    try {
         $startTime = microtime(true);
         $startMemory = memory_get_usage();
 
-        try {
-            $filterDate = $request->input('filterDate');
-            $filterSupplier = $request->input('filterSupplier');
-            $filterOrderNo = $request->input('filterOrderNo');
+        $filterDate = $request->input('filterDate');
+        $filterSupplier = $request->input('filterSupplier');
+        $filterOrderNo = $request->input('filterOrderNo');
 
-            $data = $this->orderService->getOrderData($filterDate, $filterSupplier, $filterOrderNo);
+        $data = $this->orderService->getOrderData($filterDate, $filterSupplier, $filterOrderNo);
 
-            $executionTime = microtime(true) - $startTime;
-            $memoryUsage = memory_get_usage() - $startMemory;
+        $executionTime = microtime(true) - $startTime;
+        $memoryUsage = memory_get_usage() - $startMemory;
 
-            $this->orderService->logPerformanceData($data, $executionTime, $memoryUsage);
+        // Use the helper function to log performance data
+        PerformanceHelper::logPerformanceMetrics(
+            'Data OrdHead', // Function name
+            $date,                        // Date parameter
+            $executionTime,               // Execution time
+            $memoryUsage,                 // Memory usage
+            count($data),              // Total count
+            count($data),              // Processed count
+            count($data)               // Success count (assuming all processed are successful)
+        );
 
-            return DataTables::of($data)
-                ->addColumn('actions', function ($row) {
-                    return '<button class="btn btn-sm btn-primary">Action</button>';
-                })
-                ->rawColumns(['actions'])
-                ->toJson();
-        } catch (\Throwable $th) {
-            return response()->json([
-                'success' => false,
-                'error' => 'An error occurred while fetching data: ' . $th->getMessage(),
-            ], 500);
-        }
+        return DataTables::of($data)
+            ->addColumn('actions', function ($row) {
+                return '<button class="btn btn-sm btn-primary">Action</button>';
+            })
+            ->rawColumns(['actions'])
+            ->toJson();
+    } catch (\Throwable $th) {
+        return response()->json([
+            'success' => false,
+            'error' => 'An error occurred while fetching data: ' . $th->getMessage(),
+        ], 500);
     }
-
+}
 
 
 public function delivery(Request $request)
@@ -561,6 +573,108 @@ public function delivery(Request $request)
             ->rawColumns(['actions'])
             ->toJson();
     } catch (\Throwable $th) {
+        // Log the error for debugging purposes
+        $status = 'failure';
+        $errorMessage = $th->getMessage();
+
+        // Create or update performance analysis record in case of failure
+        $performanceAnalysis = PerformanceAnalysis::create([
+            'total_count' => 0,
+            'processed_count' => 0,
+            'success_count' => 0,
+            'fail_count' => 1, // Since the operation failed
+            'errors' => $errorMessage,
+            'execution_time' => microtime(true) - $startTime, // Calculate up to the error point
+            'status' => $status
+        ]);
+
+        // Log performance metrics with error information
+        QueryPerformanceLog::create([
+            'function_name' => 'Data PO',
+            'parameters' => json_encode([
+                'filterDate' => $filterDate,
+                'filterSupplier' => $filterSupplier,
+            ]),
+            'execution_time' => microtime(true) - $startTime,
+            'memory_usage' => memory_get_usage() - $startMemory,
+            'performance_analysis_id' => $performanceAnalysis->id,
+            'error_message' => $errorMessage
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'error' => 'An error occurred while processing your request. Please try again later.'
+        ], 500);
+    }
+}
+
+public function receiving(Request $request)
+{
+    $startTime = microtime(true);
+    $startMemory = memory_get_usage();
+
+    try {
+        $filterDate = $request->filterDate;
+        $filterSupplier = $request->filterSupplier;
+        $now = now(); // Current date-time
+
+        // Initialize the query with eager loading
+        $query = OrdHead::with(['stores', 'rcvHead'])
+            ->where('status', 'completed')
+            ->whereHas('rcvHead', function ($q) use ($filterDate, $now) {
+                $q->whereDate('receive_date', $filterDate ?? $now);
+            });
+
+        // Apply additional filters if provided
+        if ($filterDate) {
+            $query->whereDate('created_at', $filterDate);
+        }
+
+        if ($filterSupplier) {
+            $query->where('supplier_id', $filterSupplier);
+        }
+
+        // Execute the query and get the results
+        $data = $query->get();
+
+        // Calculate execution time and memory usage
+        $executionTime = microtime(true) - $startTime;
+        $memoryUsage = memory_get_usage() - $startMemory;
+
+        // Determine the status of the operation
+        $status = 'success';
+
+        // Create or update performance analysis record
+        $performanceAnalysis = PerformanceAnalysis::create([
+            'total_count' => $data->count(),
+            'processed_count' => $data->count(), // Assuming all records are processed, modify as needed
+            'success_count' => $data->count(), // Assuming all processed are successful, modify as needed
+            'fail_count' => 0, // Update as needed based on actual processing
+            'errors' => null, // Log any errors here if needed
+            'execution_time' => $executionTime,
+            'status' => $status
+        ]);
+
+        // Log performance metrics
+        QueryPerformanceLog::create([
+            'function_name' => 'Data PO',
+            'parameters' => json_encode([
+                'filterDate' => $filterDate,
+                'filterSupplier' => $filterSupplier,
+            ]),
+            'execution_time' => $executionTime,
+            'memory_usage' => $memoryUsage,
+            'performance_analysis_id' => $performanceAnalysis->id // Link to the performance analysis record
+        ]);
+
+        return DataTables::of($data)
+            ->addColumn('actions', function($row) {
+                return '<button class="btn btn-sm btn-primary">Action</button>';
+            })
+            ->rawColumns(['actions'])
+            ->toJson();
+    } catch (\Exception $th) {
+        dd($th->getMessage());
         // Log the error for debugging purposes
         $status = 'failure';
         $errorMessage = $th->getMessage();

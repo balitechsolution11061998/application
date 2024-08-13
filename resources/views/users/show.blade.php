@@ -39,7 +39,7 @@
                   @foreach ($user as $data)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                      <td class="text-capitalize">{{ $data->name }}</td>
+                      <td class="text-capitalize">{{ $data->username }}</td>
                       <td>{{ $data->email }}</td>
                       @if ($data->role == 'Siswa')
                         <td>{{ $data->no_induk }}</td>

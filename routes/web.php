@@ -42,6 +42,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/home/epresensi', [HomeController::class, 'index3'])->name('home.epresensi');
     Route::get('/home/cbt', [HomeController::class, 'index2'])->name('home.cbt');
+    Route::get('/home/log', [HomeController::class, 'index4'])->name('home.log');
     Route::get('/performance-data', [PerformanceController::class, 'getPerformanceData']);
 
     Route::prefix('home')->name('home.')->namespace('App\Http\Controllers')->group(function () {
@@ -50,6 +51,10 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/countDataRcv', 'HomeController@countDataRcv')->name('countDataRcv');
         Route::get('/countDataRcvPerDays', 'HomeController@countDataRcvPerDays')->name('countDataRcvPerDays');
         Route::get('/countDataPoPerDate', 'HomeController@countDataPoPerDate')->name('countDataPoPerDate');
+        Route::get('/service-level', 'HomeController@serviceLevel')->name('service-level');
+        Route::get('/price-diff', 'HomeController@priceDiff')->name('price-diff');
+        Route::get('/tandaTerima', 'HomeController@tandaTerima')->name('tandaTerima');
+        Route::get('/getTotals', 'HomeController@getTotals')->name('getTotals');
     });
 
     Route::prefix('po')->name('po.')->namespace('App\Http\Controllers')->group(function () {
@@ -61,6 +66,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::post('/store', 'OrdHeadController@store')->name('store');
         Route::get('/progress', 'OrdHeadController@getProgress')->name('getProgress');
         Route::get('/getOrderDetails', 'OrdHeadController@getOrderDetails')->name('getProgress');
+        Route::get('/receiving', 'OrdHeadController@receiving')->name('receiving');
 
     });
 
@@ -121,8 +127,16 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/edit/{id}', 'GuruController@edit')->name('edit');
         Route::post('/update/{id}', 'GuruController@update')->name('update');
 
+        Route::get('/absen/harian', 'GuruController@absen')->name('absen.harian');
+        Route::post('/absen/simpan', 'GuruController@simpan')->name('absen.simpan');
+
+
+    });
+    Route::prefix('jadwal')->name('jadwal.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/guru/jadwal', 'JadwalController@guru')->name('guru.jadwal');
     });
 
+    Route::resource('/nilai', 'App\Http\Controllers\NilaiController');
 
     Route::prefix('roles')->name('roles.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/', 'RoleController@index')->name('index');
@@ -175,10 +189,19 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/ulangan-kelas', 'UlanganController@create')->name('create');
         Route::get('/ulangan-siswa/{id}', 'UlanganController@edit')->name('ulangan-siswa');
         Route::get('/ulangan-show/{id}', 'UlanganController@ulangan')->name('ulangan-show');
-
-
-
     });
+
+    Route::prefix('sikap')->name('sikap.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/sikap-kelas', 'SikapController@create')->name('sikap-kelas');
+        Route::get('/sikap-siswa/{id}', 'SikapController@edit')->name('sikap-siswa');
+        Route::get('/sikap-show/{id}', 'SikapController@sikap')->name('sikap-show');
+    });
+    Route::prefix('raport')->name('raport.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/rapot-kelas', 'RaportController@create')->name('rapot-kelas');
+        Route::get('/rapot-siswa/{id}', 'RaportController@edit')->name('rapot-siswa');
+        Route::get('/rapot-show/{id}', 'RaportController@rapot')->name('rapot-show');
+    });
+
 
     Route::prefix('kantor_cabang')->name('kantor_cabang.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/index', 'KantorCabangController@index')->name('index');
@@ -367,6 +390,9 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     Route::get('/search-users', [ChatController::class, 'searchUsers'])->name('search.users');
     Route::get('/chat/{user}', [ChatController::class, 'getChat'])->name('get.chat');
     Route::post('/send-message', [ChatController::class, 'sendMessage'])->name('send.message');
+    Route::get('/predikat', 'App\Http\Controllers\NilaiController@create')->name('predikat');
+    Route::get('/pengumuman', 'App\Http\Controllers\PengumumanController@index')->name('pengumuman');
+    Route::post('/pengumuman/simpan', 'App\Http\Controllers\PengumumanController@simpan')->name('pengumuman.simpan');
 
 });
 

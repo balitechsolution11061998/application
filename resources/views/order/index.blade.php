@@ -118,6 +118,7 @@
                         <th class="min-w-125px">EXPIRED DATE</th>
                         <th class="min-w-125px">ESTIMATED DELIVERY DATE</th>
                         <th class="min-w-125px">RECEIVE DATE</th>
+                        <th class="min-w-125px">SERVICE LEVEL</th>
                         <th class="text-end min-w-100px">Actions</th>
                     </tr>
                 </thead>

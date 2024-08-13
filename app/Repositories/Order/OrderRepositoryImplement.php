@@ -114,6 +114,7 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
                 DB::raw('COUNT(CASE WHEN status = "Completed" THEN 1 END) as completed_count'),
                 DB::raw('COUNT(CASE WHEN status = "Progress" AND estimated_delivery_date IS NULL THEN 1 END) as in_progress_count'),
                 DB::raw('COUNT(CASE WHEN status = "Confirmed" OR status = "printed" THEN 1 END) as confirmed_count'),
+
                 DB::raw('SUM(total_cost) as total_cost')
             ])
             ->whereBetween('approval_date', [$startDate, $endDate])
@@ -203,6 +204,7 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
                 'ordhead.estimated_delivery_date',
                 'ordhead.not_after_date',
                 'rcvhead.receive_date',
+                'rcvhead.average_service_level',
                 DB::raw('SUM(ordsku.qty_ordered) as qty_ordered'),
                 DB::raw('MAX(rcvhead.receive_date) as last_receive_date'),
                 DB::raw('COUNT(CASE WHEN ordhead.status = "confirmed" THEN 1 END) as confirmed_count')
@@ -223,6 +225,7 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
                 'ordhead.status',
                 'ordhead.not_after_date',
                 'rcvhead.receive_date',
+                'rcvhead.average_service_level',
                 'ordhead.estimated_delivery_date',
             ])
             ->whereYear('ordhead.approval_date', $filterYear)

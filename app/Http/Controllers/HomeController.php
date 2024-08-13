@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PerformanceHelper;
 use App\Models\Guru;
 use App\Models\Jadwal;
 use App\Models\Kehadiran;
@@ -10,6 +11,7 @@ use App\Models\MataPelajaran;
 use App\Models\OrdHead;
 use App\Models\PaketSoal;
 use App\Models\Pengumuman;
+use App\Models\PerformanceAnalysis;
 use App\Models\QueryPerformanceLog;
 use App\Models\RcvHead;
 use App\Models\Siswa;
@@ -21,6 +23,7 @@ use Illuminate\Support\Facades\Gate;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class HomeController extends Controller
 {
@@ -54,7 +57,7 @@ class HomeController extends Controller
                     'dark_mode' => $dark_mode,
                 ]);
             } elseif ($user->hasRole('admin_karyawan') || $user->hasRole('karyawan')) {
-                return view('home.home3', [
+                return view('home3', [
                     'id' => $id,
                     'messengerColor' => $messengerColor,
                     'dark_mode' => $dark_mode,
@@ -65,7 +68,7 @@ class HomeController extends Controller
                 $jadwal = Jadwal::OrderBy('jam_mulai')->OrderBy('jam_selesai')->OrderBy('kelas_id')->where('hari_id', $hari)->where('jam_mulai', '<=', $jam)->where('jam_selesai', '>=', $jam)->get();
                 $pengumuman = Pengumuman::first();
                 $kehadiran = Kehadiran::all();
-                return view('home.home2', compact('jadwal', 'pengumuman', 'kehadiran'));
+                return view('home2', compact('jadwal', 'pengumuman', 'kehadiran'));
 
             } else {
                 // Handle cases where the user role does not match any predefined roles
@@ -103,6 +106,12 @@ class HomeController extends Controller
         $mapel = MataPelajaran::count();
         $user = User::count();
         $paket = PaketSoal::all();
+
+        $hari = date('w');
+        $jam = date('H:i');
+        $jadwalGuru = Jadwal::OrderBy('jam_mulai')->OrderBy('jam_selesai')->OrderBy('kelas_id')->where('hari_id', $hari)->where('jam_mulai', '<=', $jam)->where('jam_selesai', '>=', $jam)->get();
+        $pengumuman = Pengumuman::first();
+        $kehadiran = Kehadiran::all();
         return view('home2', compact(
             'jadwal',
             'guru',
@@ -122,7 +131,8 @@ class HomeController extends Controller
             'las',
             'mapel',
             'user',
-            'paket'
+            'paket',
+            'jadwalGuru', 'pengumuman', 'kehadiran'
         ));
     }
 
@@ -132,7 +142,11 @@ class HomeController extends Controller
 
     }
 
+    public function index4()
+    {
+            return view('home4');
 
+    }
     public function countDataPoPerDays(Request $request)
     {
         $startTime = microtime(true);
@@ -142,6 +156,24 @@ class HomeController extends Controller
             // Capture filters from the request
             $filterDate = $request->filterDate;
             $filterSupplier = $request->filterSupplier;
+
+            DB::table('ordhead')
+            ->join('rcvhead', 'rcvhead.order_no', '=', 'ordhead.order_no')
+            ->whereNotNull('ordhead.estimated_delivery_date')
+            ->whereNull('rcvhead.receive_no')
+            ->where('ordhead.not_after_date', '>', now())
+            ->whereNotIn('ordhead.status', ['Confirmed', 'Progress'])
+            ->update(['ordhead.status' => 'Confirmed']);
+
+
+            DB::table('ordhead')
+            ->join('rcvhead', 'rcvhead.order_no', '=', 'ordhead.order_no')
+            ->whereNotNull('ordhead.estimated_delivery_date')
+            ->whereNull('rcvhead.receive_no')
+            ->where('ordhead.not_after_date', '<', now())
+            ->whereNotIn('ordhead.status', ['Confirmed', 'Progress'])
+            ->update(['ordhead.status' => 'Expired']);
+
 
             // Fetch data from the service
             $data = $this->orderService->countDataPoPerDays($filterDate, $filterSupplier);
@@ -202,7 +234,7 @@ class HomeController extends Controller
             $startTime = microtime(true); // Start timing
 
             // Fetch and process data for the specified date and status
-            $query = OrdHead::whereDate('approval_date', $date);
+            $query = OrdHead::with('rcvHead')->whereDate('approval_date', $date);
 
             if ($status) {
                 // Check if the status is 'In Progress', and if so, set it to 'progress'
@@ -213,15 +245,18 @@ class HomeController extends Controller
                         $q->whereNull('estimated_delivery_date')
                           ->where('status', 'progress');
                     });
+                } else if ($status === 'Confirmed') {
+                    // Filter by status 'Confirmed' or 'printed'
+                    $query->whereIn('status', ['Confirmed', 'printed']);
                 } else {
-                    // Filter by status if provided
+                    // Filter by any other status
                     $query->where('status', $status);
                 }
             }
 
+
             // Fetch the data
             $data = $query->get();
-
             // Process the data to update statuses
             $totalCount = $data->count(); // Total records fetched
             $processedCount = 0; // To track how many records are processed
@@ -288,6 +323,176 @@ class HomeController extends Controller
             ], 500);
         }
     }
+
+
+    public function serviceLevel(Request $request)
+    {
+        $date = $request->query('date'); // Get the date parameter from the request
+
+        try {
+            $startTime = microtime(true); // Start timing
+
+            // Fetch data for each supplier from rcvhead table
+            $results = RcvHead::select('supplier', 'sup_name', 'average_service_level')
+                ->when($date, function ($query, $date) {
+                    return $query->whereDate('created_at', $date); // Filter by date if provided
+                })
+                ->get()
+                ->groupBy('supplier')
+                ->map(function ($items) {
+                    $averageServiceLevel = $items->avg('average_service_level');
+                    $supplier = $items->first(); // Get the first item to access related data
+
+                    return [
+                        'supplier_id' => $supplier->supplier,
+                        'supplier_name' => $supplier->sup_name,
+                        'average_service_level' => round($averageServiceLevel, 2) // Round to 2 decimal places
+                    ];
+                })
+                ->sortByDesc('average_service_level') // Sort by average_service_level in descending order
+                ->take(5) // Take the top 5 results
+                ->values()
+                ->all();
+
+            $endTime = microtime(true); // End timing
+            $executionTime = $endTime - $startTime; // Calculate execution time
+            $memoryUsage = memory_get_usage(); // Get memory usage
+
+            // Determine performance status based on execution time
+            $performanceStatus = $executionTime > 1 ? 'slow' : 'fast'; // Example threshold of 1 second
+
+            // Create or update performance analysis record
+            $performanceAnalysis = PerformanceAnalysis::create([
+                'total_count' => count($results),
+                'processed_count' => count($results),
+                'success_count' => count($results), // Assuming all processed are successful
+                'fail_count' => 0,
+                'errors' => null,
+                'execution_time' => $executionTime,
+                'status' => $performanceStatus
+            ]);
+
+            // Log performance metrics
+            QueryPerformanceLog::create([
+                'function_name' => 'Calculate Average Service Level',
+                'parameters' => json_encode(['date' => $date]),
+                'execution_time' => $executionTime,
+                'memory_usage' => $memoryUsage,
+                'performance_analysis_id' => $performanceAnalysis->id
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => $results
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function priceDiff(Request $request)
+    {
+        $date = $request->query('date'); // Get the date parameter from the request
+
+        try {
+            $query = DB::table('diff_cost_po')
+                ->select('supplier', 'sup_name', 'sku', 'sku_desc', 'cost_po', 'cost_supplier')
+                ->when($date, function ($query, $date) {
+                    return $query->whereDate('created_at', $date); // Filter by date if provided
+                });
+
+            // Fetch data and process it
+            $data = $query->get()
+                ->map(function ($item) {
+                    return [
+                        'supplier_id' => $item->supplier,
+                        'supplier_name' => $item->sup_name,
+                        'sku' => $item->sku,
+                        'sku_desc' => $item->sku_desc,
+                        'cost_po' => $item->cost_po,
+                        'cost_supplier' => $item->cost_supplier,
+                        'price_difference' => $item->cost_supplier ? $item->cost_supplier - $item->cost_po : null // Calculate price difference
+                    ];
+                })
+                ->sortByDesc('price_difference'); // Sort by price difference in descending order
+                // Take the top 3 results
+
+            // Create a DataTable instance
+            return DataTables::of($data)
+                ->addColumn('formatted_cost_po', function ($item) {
+                    return number_format($item['cost_po'], 0, ',', '.'); // Format cost_po
+                })
+                ->addColumn('formatted_cost_supplier', function ($item) {
+                    return number_format($item['cost_supplier'], 0, ',', '.'); // Format cost_supplier
+                })
+                ->editColumn('price_difference', function ($item) {
+                    return number_format($item['price_difference'], 0, ',', '.'); // Format price difference
+                })
+                ->make(true);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // In your Controller
+public function getTotals()
+{
+    try {
+        // Fetch total suppliers and stores
+        $totalSuppliers = DB::table('supplier')->count(); // Adjust table name
+        $totalStores = DB::table('store')->count(); // Adjust table name
+
+        return response()->json([
+            'success' => true,
+            'totalSuppliers' => $totalSuppliers,
+            'totalStores' => $totalStores
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+
+public function tandaTerima(Request $request)
+{
+    $date = $request->query('date'); // Get the date parameter from the request
+
+    // Fetch data from tandaterima_head table
+    $query = DB::table('tandaterima_head')
+        ->when($date, function ($query, $date) {
+            return $query->whereDate('tanggal', $date)
+                         ->where('status', "n");
+        })
+        ->orderBy('tanggal', 'desc') // Order by date descending to get the latest records
+        ->limit(4); // Limit to 4 records
+
+    // Return DataTables instance
+    return DataTables::of($query)
+        ->addColumn('action', function ($item) {
+            // Define any actions or buttons here if needed
+            return '<a href="#" class="btn btn-info btn-sm">View</a>';
+        })
+        ->editColumn('status', function ($item) {
+            // Customize the status display
+            return $item->status === 'n'
+                ? '<span class="badge bg-danger">Not Received</span>'
+                : '<span class="badge bg-success">Received</span>';
+        })
+        ->rawColumns(['status', 'action']) // Allow HTML in columns
+        ->make(true);
+}
+
+
 
     public function countDataPo(Request $request)
     {

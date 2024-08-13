@@ -53,6 +53,9 @@ class RcvController extends Controller
                             "supplier" => $dataItem['supplier'] ?? null,
                             "sup_name" => $dataItem['sup_name'] ?? null,
                             "comment_desc" => $dataItem['comment_desc'] ?? null,
+                            "sub_total_vat_cost" => $dataItem['sub_total_vat_cost'] ?? null,
+                            "sub_total" => $dataItem['sub_total'] ?? null,
+                            "average_service_level" => $dataItem['average_service_level'] ?? null,
                         ];
 
                         // Process rcvhead

@@ -15,4 +15,5 @@ class RcvHead extends Model
     {
         return $this->belongsTo(Ordhead::class, 'order_no', 'order_no');
     }
+
 }

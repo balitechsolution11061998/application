@@ -608,7 +608,33 @@ function poTable() {
                     `;
                 },
             },
+            {
+                data: "average_service_level",
+                name: "average_service_level",
+                render: function (data, type, row) {
+                    // If the data is null or undefined, set it to 0%
+                    const serviceLevel = data ? data : 0;
+                    const percentage = `${serviceLevel}%`;
 
+                    // Set the progress bar color based on the percentage
+                    let progressBarClass = "bg-success"; // Default color
+                    if (serviceLevel < 50) {
+                        progressBarClass = "bg-danger"; // Red for less than 50%
+                    } else if (serviceLevel >= 50 && serviceLevel < 75) {
+                        progressBarClass = "bg-warning"; // Yellow for 50% to 74%
+                    } // Green for 75% and above remains as default
+
+                    // Return the custom progress bar HTML with animation
+                    return `
+                        <div class="custom-progress-bar">
+                            <div class="progress-bar progress-bar-animated ${progressBarClass}" role="progressbar" style="width: ${percentage};" aria-valuenow="${serviceLevel}" aria-valuemin="0" aria-valuemax="100">
+                                ${percentage}
+                            </div>
+                        </div>`;
+                },
+            }
+
+            ,
             {
                 data: "actions",
                 name: "actions",

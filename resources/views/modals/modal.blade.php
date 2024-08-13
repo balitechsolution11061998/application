@@ -21,6 +21,7 @@
             <!--begin::Modal body-->
             <div class="modal-body scroll-y" id="mdlFormContent">
                 <!--begin::Form-->
+
                 <div id="modalSpinner" class="d-flex justify-content-center" style="display: none;">
                     <i class="fas fa-spinner fa-spin fa-3x"></i>
                 </div>
