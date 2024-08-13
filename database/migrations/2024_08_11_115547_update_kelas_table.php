@@ -13,8 +13,8 @@ return new class extends Migration
     {
         //
         Schema::table('kelas', function (Blueprint $table) {
-            $table->integer('paket_id');
-            $table->integer('guru_id');
+            $table->integer('paket_id')->nullable();
+            $table->integer('guru_id')->nullable();
             $table->softDeletes();
         });
     }
