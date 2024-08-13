@@ -305,9 +305,11 @@ style.innerHTML = `
         color: black;
     }
 `;
-document.head.appendChild(style);
+
+
 
 function poTable() {
+
     // Check if the DataTable is already initialized
     if ($.fn.DataTable.isDataTable("#po_table")) {
         // Destroy the existing instance before reinitializing
@@ -656,7 +658,6 @@ function poTable() {
             },
         ],
     });
-
     // Apply hover effect to change color to black
     $("#po_table").on("mouseenter", ".dropdown-item", function () {
         $(this).css("color", "black");

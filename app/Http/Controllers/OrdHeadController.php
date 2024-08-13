@@ -492,7 +492,7 @@ public function data(Request $request)
             $memoryUsage,                 // Memory usage
             count($data),              // Total count
             count($data),              // Processed count
-            count($data)               // Success count (assuming all processed are successful)
+            count($data),               // Success count (assuming all processed are successful)
         );
 
         return DataTables::of($data)

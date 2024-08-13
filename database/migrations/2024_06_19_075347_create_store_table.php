@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('store', function (Blueprint $table) {
             $table->id(); // Auto-incrementing primary key
-            $table->integer('store');
-            $table->string('store_name');
-            $table->string('store_add1');
+            $table->integer('store')->nullable();
+            $table->string('store_name')->nullable();
+            $table->string('store_add1')->nullable();
             $table->string('store_add2')->nullable();
-            $table->string('store_city');
-            $table->string('region');
+            $table->string('store_city')->nullable();
+            $table->string('region')->nullable();
             $table->timestamps();
         });
     }

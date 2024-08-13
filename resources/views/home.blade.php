@@ -222,10 +222,10 @@
     </div>
 
     <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-4">
+        <div class="row d-flex">
+            <div class="col-md-4 d-flex">
                 <!-- Table for Item Details and Price Difference -->
-                <div class="card shadow-sm h-90">
+                <div class="card shadow-sm flex-fill">
                     <div class="card-body">
                         <h5 class="card-title text-center mb-4" style="color: black;">
                             <i class="fas fa-boxes text-success"></i> Item Details & Price Difference
@@ -248,13 +248,14 @@
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-4 d-flex flex-column">
                 <!-- Total Suppliers and Total Stores Card -->
-                <div class="card shadow-sm h-90">
+                <div class="card shadow-sm flex-fill mb-3">
                     <div class="card-body text-center">
                         <h5 class="card-title mb-4" style="color: black;">
                             <i class="fas fa-store text-primary"></i> Supplier & Store Totals
                         </h5>
+                        <hr>
                         <div class="total-info">
                             <p class="mb-3" style="font-size: 1.25rem; color: #333;">
                                 Total Suppliers: <strong id="total-suppliers" style="font-size: 1.5rem;">0</strong>
@@ -265,12 +266,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="card shadow-sm h-90">
+                <!-- Tanda Terima List Card -->
+                <div class="card shadow-sm flex-fill">
                     <div class="card-body text-center">
                         <h5 class="card-title mb-4" style="color: black;">
                             <i class="fas fa-receipt text-primary"></i> Tanda Terima List
                         </h5>
-
                         <hr>
                         <div id="receipt-list" class="list-group" style="max-height: 200px; overflow-y: auto;">
                             <!-- Receipt items will be injected here dynamically -->
@@ -283,15 +284,11 @@
                         </div>
                     </div>
                 </div>
-
-
-
-
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-4 d-flex">
                 <!-- Supplier Service Level Card -->
-                <div class="card shadow-sm h-90">
+                <div class="card shadow-sm flex-fill">
                     <div class="card-body">
                         <h5 class="card-title text-center mb-4" style="color: black;">
                             <i class="fas fa-trophy text-warning"></i> Top 5 Suppliers by Service Level
@@ -304,11 +301,6 @@
             </div>
         </div>
     </div>
-
-
-
-
-
 
 
     <div class="container mt-4">
