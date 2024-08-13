@@ -24,10 +24,12 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+use Binafy\LaravelUserMonitoring\Traits\Actionable;
 
 class HomeController extends Controller
 {
     //
+    use Actionable;
 
     protected $orderService;
     protected $rcvService;
@@ -144,7 +146,8 @@ class HomeController extends Controller
 
     public function index4()
     {
-            return view('home4');
+
+        return view('home4');
 
     }
     public function countDataPoPerDays(Request $request)

@@ -9,6 +9,7 @@ use App\Http\Controllers\QueryPerformanceLogController;
 use App\Http\Controllers\WebsiteController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Gate;
+use Laravel\Pulse\Pulse;
 
 /*
 |--------------------------------------------------------------------------
@@ -393,6 +394,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     Route::get('/predikat', 'App\Http\Controllers\NilaiController@create')->name('predikat');
     Route::get('/pengumuman', 'App\Http\Controllers\PengumumanController@index')->name('pengumuman');
     Route::post('/pengumuman/simpan', 'App\Http\Controllers\PengumumanController@simpan')->name('pengumuman.simpan');
+
 
 });
 

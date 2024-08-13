@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.1",
         "barryvdh/laravel-dompdf": "^2.2",
+        "binafy/laravel-user-monitoring": "^1.1",
         "fakerphp/faker": "^1.23",
         "giggsey/libphonenumber-for-php": "^8.13",
         "guzzlehttp/guzzle": "^7.2",
@@ -16,6 +17,7 @@
         "itmm/m-mart-skin": "^1.0",
         "jeremykenedy/laravel2step": "^3.1",
         "laravel/framework": "^10.0",
+        "laravel/pulse": "^1.2",
         "laravel/sanctum": "^3.2",
         "laravel/socialite": "^5.15",
         "laravel/tinker": "^2.8",

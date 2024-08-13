@@ -15,6 +15,7 @@ use App\Models\PerformanceAnalysis;
 use App\Models\Permission;
 use App\Models\QueryLog;
 use App\Models\QueryPerformanceLog;
+use App\Models\User;
 use App\Repositories\Order\OrderRepository;
 use App\Repositories\Permissions\PermissionsRepositoryImplement;
 use App\Services\PerformanceLogger\PerformanceLoggerService;
@@ -25,6 +26,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inspector\Laravel\Facades\Inspector;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -56,6 +58,10 @@ class AppServiceProvider extends ServiceProvider
         //
         Builder::defaultStringLength(191);
         KTBootstrap::init();
+
+        Gate::define('viewPulse', function (User $user) {
+            return $user->hasRole('superadministrator');
+        });
 
     }
 }
