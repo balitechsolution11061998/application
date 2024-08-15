@@ -3365,3 +3365,19 @@ input[type="number"]:hover {
         align-self: flex-end; /* Align delete icon to end */
     }
 }
+.filter-input {
+    width: 100%;
+}
+
+.dropdown-menu {
+    min-width: 200px;
+}
+
+.btn-primary {
+    border-radius: 0.25rem;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}

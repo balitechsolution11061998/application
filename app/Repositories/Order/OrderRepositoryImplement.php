@@ -162,6 +162,8 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
             $query->where('ordhead.supplier', $filterSupplier);
         }
 
+
+
         if ($filterOrderNo !== null) {
             $query->where('ordhead.order_no', $filterOrderNo);
         }
@@ -188,7 +190,7 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
     }
 
 
-    public function getOrderData($filterDate = null, $filterSupplier = null, $filterOrderNo = null)
+    public function getOrderData($filterDate = null, $filterSupplier = null, $filterOrderNo = null,$filterStatus = null)
     {
         $query = DB::table('ordhead')
             ->select([
@@ -237,6 +239,10 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
 
         if ($filterSupplier) {
             $query->where('ordhead.supplier', $filterSupplier);
+        }
+
+        if ($filterStatus) {
+            $query->where('ordhead.status', $filterStatus);
         }
 
         if ($filterOrderNo) {

@@ -319,6 +319,9 @@ style.innerHTML = `
 function filterDatePo() {
     poTable();
 }
+function filterDatePoByStatus(){
+    poTable();
+}
 
 function poTable() {
     // Check if the DataTable is already initialized
@@ -339,6 +342,7 @@ function poTable() {
                 d.filterDate = $("#filterDate").val(); // Assuming you have a date filter input
                 d.filterSupplier = $("#filterSupplier").val();
                 d.filterOrderNo = $("#orderNoFilter").val();
+                d.filterStatus = $("#statusFilter").val();
             },
         },
         order: [[0, "desc"]],
@@ -483,7 +487,7 @@ function poTable() {
             {
                 data: "approval_date",
                 name: "approval_date",
-                render: function (data) {
+                render: function (data, type, row) {
                     // Parse the date to a JavaScript Date object
                     const date = new Date(data);
 
@@ -495,10 +499,7 @@ function poTable() {
                     };
 
                     // Format the date according to the locale
-                    const formattedDate = date.toLocaleDateString(
-                        "id-ID",
-                        options
-                    );
+                    const formattedDate = date.toLocaleDateString("id-ID", options);
 
                     // Return the formatted date with the calendar icon
                     return `
@@ -510,45 +511,37 @@ function poTable() {
             {
                 data: "not_after_date",
                 name: "not_after_date",
-                render: function (data) {
+                render: function (data, type, row) {
                     const currentDate = new Date();
                     const notAfterDate = new Date(data);
                     const tomorrow = new Date();
                     tomorrow.setDate(currentDate.getDate() + 1);
 
                     const isExpired = notAfterDate < currentDate;
-                    const isExpiringTomorrow =
-                        notAfterDate.toDateString() === tomorrow.toDateString();
+                    const isExpiringTomorrow = notAfterDate.toDateString() === tomorrow.toDateString();
 
-                    const formattedDate = notAfterDate.toLocaleDateString(
-                        "id-ID",
-                        { day: "numeric", month: "long", year: "numeric" }
-                    );
+                    const formattedDate = notAfterDate.toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                    });
 
-                    const textColor =
-                        isExpired || isExpiringTomorrow ? "red" : "black";
+                    const textColor = (row.status === "Completed") ? "black" : (isExpired || isExpiringTomorrow ? "red" : "black");
 
                     return `
-                        <i class="fas fa-calendar"
-                           style="color: ${textColor}; font-weight: bold; cursor: pointer;"
-                           onclick="openDatePicker('${data}')">
-                        </i>
-                        <span style="color: ${textColor}; font-weight: bold;">
-                            ${formattedDate}
-                        </span>
+                        <i class="fas fa-calendar" style="color: ${textColor}; font-weight: bold; cursor: pointer;" onclick="openDatePicker('${data}')"></i>
+                        <span style="color: ${textColor}; font-weight: bold;">${formattedDate}</span>
                     `;
                 },
             },
             {
                 data: "estimated_delivery_date",
                 name: "estimated_delivery_date",
-                render: function (data) {
+                render: function (data, type, row) {
                     // Check if data is null or empty
                     if (!data) {
                         return `
-                            <span style="color: black; font-weight: bold;">
-                                No data available
-                            </span>
+                            <span style="color: black; font-weight: bold;">No data available</span>
                         `;
                     }
 
@@ -558,32 +551,26 @@ function poTable() {
                     tomorrow.setDate(currentDate.getDate() + 1);
 
                     const isExpired = notAfterDate < currentDate;
-                    const isExpiringTomorrow =
-                        notAfterDate.toDateString() === tomorrow.toDateString();
+                    const isExpiringTomorrow = notAfterDate.toDateString() === tomorrow.toDateString();
 
-                    const formattedDate = notAfterDate.toLocaleDateString(
-                        "id-ID",
-                        { day: "numeric", month: "long", year: "numeric" }
-                    );
+                    const formattedDate = notAfterDate.toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                    });
 
-                    const textColor =
-                        isExpired || isExpiringTomorrow ? "black" : "black";
+                    const textColor = (row.status === "Completed") ? "black" : (isExpired || isExpiringTomorrow ? "red" : "black");
 
                     return `
-                        <i class="fas fa-calendar"
-                           style="color: ${textColor}; font-weight: bold; cursor: pointer;"
-                           onclick="openDatePicker('${data}')">
-                        </i>
-                        <span style="color: ${textColor}; font-weight: bold;">
-                            ${formattedDate}
-                        </span>
+                        <i class="fas fa-calendar" style="color: ${textColor}; font-weight: bold; cursor: pointer;" onclick="openDatePicker('${data}')"></i>
+                        <span style="color: ${textColor}; font-weight: bold;">${formattedDate}</span>
                     `;
                 },
             },
             {
                 data: "receive_date",
                 name: "receive_date",
-                render: function (data) {
+                render: function (data, type, row) {
                     // Check if data is null or empty
                     if (!data) {
                         return `
@@ -607,8 +594,9 @@ function poTable() {
                         { day: "numeric", month: "long", year: "numeric" }
                     );
 
-                    const textColor =
-                        isExpired || isExpiringTomorrow ? "red" : "black";
+                    // Check the status field to determine the color
+                    const status = row.status; // Assuming the status field is in the same row object
+                    const textColor = (status === "Completed" || (!isExpired && !isExpiringTomorrow)) ? "black" : "red";
 
                     return `
                         <i class="fas fa-calendar"
@@ -740,22 +728,23 @@ function confirmPo(event) {
                             ppn += itemPpn;
 
                             return `
-<div class="cart-item d-flex justify-content-between align-items-center border-bottom py-2 bg-white text-black rounded mb-3">
-    <div class="item-details">
-        <p class="mb-1 font-weight-bold">${item.sku_desc}</p>
+<div class="cart-item d-flex flex-column flex-md-row justify-content-between align-items-center border-bottom py-2 bg-white text-black rounded mb-3">
+    <div class="item-details d-flex flex-column justify-content-center align-items-center align-items-md-start text-center text-md-left mb-2 mb-md-0">
+        <p class="mb-1 font-weight-bold">Descriptions : ${item.sku_desc}</p>
         <small class="text-muted">UPC: ${item.upc}</small><br>
         <small class="text-muted">Quantity Ordered: ${qtyOrdered}</small>
     </div>
-    <div class="item-cost-fulfillable d-flex align-items-center">
-        <div class="form-group qty-fulfillable-group d-flex align-items-center mr-3">
+    <div class="item-cost-fulfillable d-flex flex-column flex-md-row align-items-center justify-content-center">
+        <div class="form-group qty-fulfillable-group d-flex align-items-center justify-content-center mr-0 mr-md-3 mb-2 mb-md-0">
             <button type="button" class="btn btn-sm btn-secondary rounded-circle" onclick="decreaseQty(${item.upc})">-</button>
             <input type="number" id="qty-fulfillable-${item.upc}" class="form-control form-control-sm mx-2 text-center rounded" name="qty_fulfillable" value="${qtyOrdered}" min="0" max="${qtyOrdered}" data-unit-cost="${qtyOrdered}" style="width: 60px;"/>
             <button type="button" class="btn btn-sm btn-secondary rounded-circle" onclick="increaseQty(${item.upc})">+</button>
         </div>
         <span class="item-price font-weight-bold text-success">${formatsRupiah(unitCost)}</span>
     </div>
-    <i class="fas fa-trash-alt item-delete text-danger ml-3" style="cursor: pointer;"></i>
+    <i class="fas fa-trash-alt item-delete text-danger ml-0 ml-md-3 mt-3 mt-md-0" style="cursor: pointer;"></i>
 </div>
+
 
 
 

@@ -11,16 +11,19 @@ $(document).ready(function () {
     document.getElementById("toggle-cost").classList.add("active");
     fetchData("po");
     fetchData("receiving");
+    fetchData("tandaterima");
 
     // Event listeners for the toggle buttons
     document.getElementById("toggle-quantity").addEventListener("click", () => {
         fetchData("po");
         fetchData("receiving");
+        fetchData("tandaterima");
     });
 
     document.getElementById("toggle-cost").addEventListener("click", () => {
         fetchData("po");
         fetchData("receiving");
+        fetchData("tandaterima");
     });
 
     document
@@ -210,6 +213,9 @@ $("#deliveryModalBtn").on("click", function () {
         `);
     fetchTimelineConfirmedData(); // Fetch and display data when modal is shown
 });
+
+
+
 
 function fetchTimelineConfirmedData() {
     var apiUrl = "/po/delivery";
@@ -952,7 +958,11 @@ async function fetchData(type) {
     } else if (type === "receiving") {
         endpoint = "/home/countDataRcv";
         dataFields = { totalKey: "totalRcv", costKey: "totalCostRcv" };
+    } else if (type === "tandaterima") {
+        endpoint = "/home/countTandaTerima";
+        dataFields = { totalKey: "totalTandaTerima", costKey: "totalCostTandaTerima" };
     }
+
 
     try {
         const response = await fetch(endpoint);
@@ -987,7 +997,7 @@ async function fetchData(type) {
                     <strong>Year:</strong> ${currentYear}</div>
                 </div>
             `;
-            titleHtml = `Total ${type === "po" ? "PO" : "Receiving"} Count: `;
+            titleHtml = `Total ${type === "po" ? "PO" : type === "receiving" ? "Receiving" : "Tanda Terima"} Count`;
         } else if (selectedToggle === "option2") {
             // Show Cost
             const formattedCost = formatRupiah(totalCost);
@@ -998,7 +1008,7 @@ async function fetchData(type) {
                     <strong>Year:</strong> ${currentYear}</div>
                 </div>
             `;
-            titleHtml = `Total ${type === "po" ? "PO" : "Receiving"} Cost: `;
+            titleHtml = `Total ${type === "po" ? "PO" : type === "receiving" ? "Receiving" : "Tanda Terima"} Cost`;
         }
 
         // Update the content with fetched data
@@ -1184,7 +1194,7 @@ async function fetchTandaTerimaList(page = 1) {
                 </div>
                 <p class="mb-1">${item.sup_name}</p>
                 <small>Status: <span class="${item.status === 'n' ? 'badge bg-danger' : 'badge bg-success'}">
-                    ${item.status === 'n' ? 'Not Approved' : 'Approved'}
+                    ${item.status === 'pending' ? 'Not Approved' : 'Approved'}
                 </span></small>
             `;
             receiptList.appendChild(listItem);

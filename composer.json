@@ -25,6 +25,7 @@
         "maatwebsite/excel": "^3.1",
         "munafio/chatify": "^1.6",
         "pragmarx/countries": "^0.8.2",
+        "predis/predis": "^2.2",
         "propaganistas/laravel-phone": "^5.3",
         "protonemedia/laravel-splade": "^1.4",
         "pusher/pusher-php-server": "^7.2",

@@ -400,7 +400,7 @@ class Theme
         $type = config('settings.KT_THEME_ICONS', 'duotone');
 
         if ($type === 'duotone') {
-            $icons = cache()->remember('duotone-icons', 3600, function () {
+            $icons = cache()->remember('fas fa-icon', 1, function () {
                 return json_decode(file_get_contents(public_path('icons.json')), true);
             });
 

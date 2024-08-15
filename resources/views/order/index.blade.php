@@ -28,15 +28,17 @@
             <!--begin::Card toolbar-->
             <div class="card-toolbar">
                 <!--begin::Toolbar-->
-                <div class="d-flex align-items-center">
-                    <div class="me-3">
-                        <label for="date" class="form-label">Filter Date:</label>
+                <div class="d-flex flex-wrap align-items-center">
+                    <!-- Filter Date -->
+                    <div class="me-3 mb-3 mb-md-0">
+                        <label for="filterDate" class="form-label">Filter Date:</label>
                         <input type="date" id="filterDate" class="form-control form-control-sm filter-input" onchange="filterDatePo()">
                     </div>
 
-                    <div class="me-3">
+                    <!-- Filter Status -->
+                    <div class="me-3 mb-3 mb-md-0">
                         <label for="statusFilter" class="form-label">Filter Status:</label>
-                        <select id="statusFilter" class="form-select form-select-sm filter-input">
+                        <select id="statusFilter" class="form-select form-select-sm filter-input" onchange="filterDatePoByStatus()">
                             <option value="">All</option>
                             <option value="pending">Pending</option>
                             <option value="completed">Completed</option>
@@ -44,18 +46,18 @@
                         </select>
                     </div>
 
-                    <div class="me-3">
+                    <!-- Filter Order No -->
+                    <div class="me-3 mb-3 mb-md-0">
                         <label for="orderNoFilter" class="form-label">Filter Order No:</label>
                         <input type="text" id="orderNoFilter" class="form-control form-control-sm filter-input"
                             placeholder="Order No" onclick="searchOrderNo()">
                     </div>
 
-                    <!-- Container for the buttons -->
                     <!-- Dropdown Button with Checkboxes -->
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                    <div class="dropdown me-3 mb-3 mb-md-0">
+                        <button class="btn btn-primary dropdown-toggle d-flex align-items-center" type="button" id="dropdownMenuButton"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-sync fs-2"></i> Sync Data
+                            <i class="fas fa-sync fs-5 me-2"></i> Sync Data
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <li>
@@ -92,14 +94,13 @@
                     </div>
 
                     <!-- Sync Button -->
-                    <button type="button" class="btn btn-primary mt-3" id="syncActionButton">
-                        <i class="fas fa-sync fs-2"></i> Execute Sync
+                    <button type="button" class="btn btn-primary mt-3 mt-md-0" id="syncActionButton">
+                        <i class="fas fa-sync fs-5 me-2"></i> Execute Sync
                     </button>
-
-
                 </div>
                 <!--end::Toolbar-->
             </div>
+
             <!--end::Card toolbar-->
         </div>
         <!--end::Card header-->

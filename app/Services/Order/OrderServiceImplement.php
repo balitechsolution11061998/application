@@ -7,6 +7,7 @@ use App\Repositories\Order\OrderRepository;
 use App\Services\PerformanceLogger\PerformanceLoggerService;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class OrderServiceImplement extends ServiceApi implements OrderService{
@@ -180,21 +181,28 @@ class OrderServiceImplement extends ServiceApi implements OrderService{
     }
 
 
-    public function getOrderData($filterDate = null, $filterSupplier = null, $filterOrderNo = null)
+    public function getOrderData($filterDate = null, $filterSupplier = null, $filterOrderNo = null, $filterStatus = null)
     {
-        $query = $this->mainRepository->getOrderData($filterDate, $filterSupplier, $filterOrderNo);
+        // Membuat key untuk cache berdasarkan filter
+        $cacheKey = 'order_data_' . md5($filterDate . $filterSupplier . $filterOrderNo . $filterStatus);
 
-        $dataCollection = collect();
+        // Cek apakah hasil query sudah ada di cache
+        return Cache::remember($cacheKey, 3600, function () use ($filterDate, $filterSupplier, $filterOrderNo, $filterStatus) {
+            $query = $this->mainRepository->getOrderData($filterDate, $filterSupplier, $filterOrderNo, $filterStatus);
 
-        // Process data in chunks to reduce memory usage
-        $query->chunk(1000, function($rows) use ($dataCollection) {
-            foreach ($rows as $row) {
-                $dataCollection->push($row);
-            }
+            $dataCollection = collect();
+
+            // Process data in chunks to reduce memory usage
+            $query->chunk(1000, function($rows) use ($dataCollection) {
+                foreach ($rows as $row) {
+                    $dataCollection->push($row);
+                }
+            });
+
+            return $dataCollection;
         });
-
-        return $dataCollection;
     }
+
 
 
 

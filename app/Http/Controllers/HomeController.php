@@ -478,11 +478,11 @@ public function tandaTerima(Request $request)
 {
     $date = $request->query('date'); // Get the date parameter from the request
 
-    // Fetch data from tandaterima_head table
+    // Fetch data from tandaterima_head table where status is 'n'
     $query = DB::table('tandaterima_head')
+        ->where('status',"=","pending") // Ensure that only records with status 'n' are fetched
         ->when($date, function ($query, $date) {
-            return $query->whereDate('tanggal', $date)
-                         ->where('status', "n");
+            return $query->whereDate('tanggal', $date);
         })
         ->orderBy('tanggal', 'desc') // Order by date descending to get the latest records
         ->limit(4); // Limit to 4 records
@@ -502,6 +502,37 @@ public function tandaTerima(Request $request)
         ->rawColumns(['status', 'action']) // Allow HTML in columns
         ->make(true);
 }
+
+
+
+public function countTandaTerimaCurrentMonthYear()
+{
+    // Get the current month and year in 'Y-m' format
+    $currentMonthYear = date('Y-m');
+
+    // Query to count records and sum quantity for the entire current month and year
+    $result = DB::table('tandaterima_head as th')
+        ->leftJoin('tandaterima_detail as td', 'th.id', '=', 'td.tthead_id') // Left join with tandaterima_detail
+        ->select(
+            DB::raw('COUNT(DISTINCT th.no_tt) as total_count'),   // Count of unique no_tt in tandaterima_head
+            DB::raw('COALESCE(SUM(td.jumlah), 0) as total_quantity') // Sum of quantity from tandaterima_detail, defaulting to 0 if null
+        )
+        ->where('th.tanggal', 'like', $currentMonthYear . '%') // Match records with the current year-month
+        ->first(); // Get the first result
+
+    // Handle the case where no records are found
+    $totalCount = $result ? $result->total_count : 0;
+    $totalQuantity = $result ? $result->total_quantity : 0;
+
+    // Return the result as a JSON response
+    return response()->json([
+        'totalTandaTerima' => $totalCount,
+        'totalCostTandaTerima' => $totalQuantity
+    ]);
+}
+
+
+
 
 
 
@@ -561,71 +592,58 @@ public function tandaTerima(Request $request)
         }
     }
 
-    public function countDataRcv(Request $request){
-
+    public function countDataRcv(Request $request) {
         $startTime = microtime(true);
         $startMemory = memory_get_usage();
 
         try {
-            $filterDate = $request->input('filterDate'); // Ensure this is an array if required
+            $filterDate = $request->input('filterDate');
             $filterSupplier = $request->input('filterSupplier');
-            // Determine filter year and month
-            if (is_null($filterDate) || $filterDate == "null" || empty($filterDate)) {
-                $currentDate = Carbon::now();
-                $filterYear = $currentDate->year;
-                $filterMonth = $currentDate->month;
-            } else {
-                $filterYear = Carbon::parse($filterDate)->year;
-                $filterMonth = Carbon::parse($filterDate)->month;
-            }
 
-            // Calculate the start and end date of the given month
+            $currentDate = Carbon::now();
+            $filterYear = $filterDate ? Carbon::parse($filterDate)->year : $currentDate->year;
+            $filterMonth = $filterDate ? Carbon::parse($filterDate)->month : $currentDate->month;
+
             $startDate = Carbon::create($filterYear, $filterMonth, 1)->startOfMonth()->toDateString();
             $endDate = Carbon::create($filterYear, $filterMonth, 1)->endOfMonth()->toDateString();
 
             $supplierUser = Auth::user();
 
-            // Build the query
-            $dailyCountsQuery = RcvHead::join('rcvdetail', 'rcvhead.id', '=', 'rcvdetail.rcvhead_id')
-                ->join('ordhead', 'rcvhead.order_no', '=', 'ordhead.order_no')
-                ->select([
-                    'rcvhead.order_no',
-                    DB::raw('DATE(receive_date) as tanggal'),
-                    DB::raw('COUNT(DISTINCT rcvhead.id) as jumlah'),
-                    DB::raw('SUM(rcvdetail.unit_cost * rcvdetail.qty_received + rcvdetail.vat_cost * rcvdetail.qty_received) as total_cost'),
-                ])
-                ->whereBetween('receive_date', [$startDate, $endDate])
-                ->whereYear('ordhead.approval_date', $filterYear)
-                ->whereMonth('ordhead.approval_date', $filterMonth)
-                ->groupBy('rcvhead.order_no', 'tanggal')
-                ->when($supplierUser->hasRole('supplier'), function ($query) use ($supplierUser) {
-                    $query->where('rcvhead.supplier', $supplierUser->username);
-                })
-                ->when(!empty($filterSupplier), function ($query) use ($filterSupplier) {
-                    $query->whereIn('rcvhead.supplier', (array) $filterSupplier);
-                });
+            $totals = ['totalRcv' => 0, 'totalCostRcv' => 0];
 
-            // Get the results
-            $dailyCounts = $dailyCountsQuery->get();
+            RcvHead::select([
+                DB::raw('DATE(receive_date) as tanggal'),
+                DB::raw('COUNT(DISTINCT rcvhead.id) as jumlah'),
+                DB::raw('SUM(rcvdetail.unit_cost * rcvdetail.qty_received + rcvdetail.vat_cost * rcvdetail.qty_received) as total_cost'),
+            ])
+            ->leftJoin('ordhead', 'ordhead.order_no', '=', 'rcvhead.order_no')
+            ->join('rcvdetail', 'rcvhead.id', '=', 'rcvdetail.rcvhead_id')
+            ->whereBetween('receive_date', [$startDate, $endDate])
+            ->whereYear('ordhead.approval_date', $filterYear)
+            ->whereMonth('ordhead.approval_date', $filterMonth)
+            ->when($supplierUser->hasRole('supplier'), function ($query) use ($supplierUser) {
+                $query->where('rcvhead.supplier', $supplierUser->username);
+            })
+            ->when(!empty($filterSupplier), function ($query) use ($filterSupplier) {
+                $query->whereIn('rcvhead.supplier', (array) $filterSupplier);
+            })
+            ->groupBy('tanggal')
+            ->orderBy('tanggal', 'asc')  // Order by an aggregated column
+            ->chunk(100, function ($dailyCounts) use (&$totals) {
+                foreach ($dailyCounts as $item) {
+                    $totals['totalRcv'] += $item->jumlah;
+                    $totals['totalCostRcv'] += $item->total_cost;
+                }
+            });
 
-            // Calculate totals
-            $totals = $dailyCounts->reduce(function ($carry, $item) {
-                $carry['totalRcv'] += $item->jumlah;
-                $carry['totalCostRcv'] += $item->total_cost;
-                return $carry;
-            }, ['totalRcv' => 0, 'totalCostRcv' => 0]);
+            $totalCount = RcvHead::whereBetween('receive_date', [$startDate, $endDate])->count();
+            $processedCount = $totalCount;
+            $successCount = $processedCount;
+            $failCount = 0;
 
-            // Calculate performance metrics
-            $totalCount = $dailyCounts->count(); // Total number of records
-            $processedCount = $totalCount; // Assuming all fetched records are processed
-            $successCount = $processedCount; // Assuming all processed records are successful
-            $failCount = 0; // Assuming no failed records in this context
-
-            // Calculate execution time and memory usage
             $executionTime = microtime(true) - $startTime;
             $memoryUsage = memory_get_usage() - $startMemory;
 
-            // Create or update performance analysis record
             $performanceAnalysis = \App\Models\PerformanceAnalysis::create([
                 'total_count' => $totalCount,
                 'processed_count' => $processedCount,
@@ -633,10 +651,9 @@ public function tandaTerima(Request $request)
                 'fail_count' => $failCount,
                 'errors' => null,
                 'execution_time' => $executionTime,
-                'status' => $executionTime > 1 ? 'slow' : 'fast' // Example status based on execution time
+                'status' => $executionTime > 1 ? 'slow' : 'fast'
             ]);
 
-            // Log performance metrics
             QueryPerformanceLog::create([
                 'function_name' => 'Count Data RCV',
                 'parameters' => json_encode(['filterDate' => $filterDate, 'filterSupplier' => $filterSupplier]),
@@ -662,6 +679,7 @@ public function tandaTerima(Request $request)
             ], 500);
         }
     }
+
 
 
 

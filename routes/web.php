@@ -58,6 +58,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/tandaTerima', 'HomeController@tandaTerima')->name('tandaTerima');
         Route::get('/getTotals', 'HomeController@getTotals')->name('getTotals');
         Route::get('/dashboarduser', 'HomeController@dashboarduser')->name('dashboarduser');
+        Route::get('/countTandaTerima', 'HomeController@countTandaTerimaCurrentMonthYear')->name('countTandaTerimaCurrentMonthYear');
     });
 
     Route::prefix('po')->name('po.')->namespace('App\Http\Controllers')->group(function () {

@@ -478,8 +478,9 @@ public function data(Request $request)
         $filterDate = $request->input('filterDate');
         $filterSupplier = $request->input('filterSupplier');
         $filterOrderNo = $request->input('filterOrderNo');
+        $filterStatus = $request->input('filterStatus');
 
-        $data = $this->orderService->getOrderData($filterDate, $filterSupplier, $filterOrderNo);
+        $data = $this->orderService->getOrderData($filterDate, $filterSupplier, $filterOrderNo,$filterStatus);
 
         // Calculate execution time and memory usage
         $executionTime = microtime(true) - $startTime;
