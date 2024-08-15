@@ -83,20 +83,7 @@ class PoController extends Controller
             $totalPo = $datas->groupBy('order_no')->count();
 
             foreach ($datas->groupBy('order_no') as $data) {
-                // Retrieve cost differences
-                // $diffCost = DB::table('temp_po as a')
-                //     ->distinct()
-                //     ->select('a.order_no', 'a.supplier', 'b.sup_name', 'a.sku', 'a.sku_desc', 'a.unit_cost as cost_po', 'b.unit_cost as cost_supplier')
-                //     ->join('item_supplier as b', function ($join) {
-                //         $join->on('a.supplier', '=', 'b.supplier')
-                //             ->on('a.sku', '=', 'b.sku');
-                //     })
-                //     ->where(function ($query) use ($data) {
-                //         $query->whereRaw('FLOOR(a.unit_cost * 100) / 100 != FLOOR(b.unit_cost * 100) / 100')
-                //               ->orWhereNull('b.unit_cost');
-                //     })
-                //     ->where('a.order_no', $data[0]->order_no)
-                //     ->get();
+
                 $diffCost = DB::table('temp_po as a')
                         ->distinct()
                         ->select(
@@ -195,7 +182,7 @@ class PoController extends Controller
                         $dataOrder['download_link'] = env('APP_URL') . "/po/pdf?id=" . $data[0]->order_no;
                         $dataOrder['detail_link'] = env('APP_URL') . "/po/pdf?id=" . $data[0]->order_no;
 
-                        event(new OrderStoredEvent($dataOrder));
+                        // event(new OrderStoredEvent($dataOrder));
                     }
                 }
 
