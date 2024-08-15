@@ -27,6 +27,7 @@ $(document).ready(function () {
         document.getElementById('tableQueryPerformanceLog').style.display = isChecked ? 'block' : 'none';
     });
 
+
 });
 
 function renderChart(labels, executionTimes, pings, memoryUsages) {
@@ -82,6 +83,9 @@ function renderChart(labels, executionTimes, pings, memoryUsages) {
                 enabled: true,
                 easing: 'easeinout',
                 speed: 800
+            },
+            toolbar: {
+                show: true
             }
         },
         series: series,
@@ -90,12 +94,15 @@ function renderChart(labels, executionTimes, pings, memoryUsages) {
             title: {
                 text: 'Function Names',
                 style: {
-                    fontSize: '14px'
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    color: '#333'
                 }
             },
             labels: {
                 style: {
-                    fontSize: '12px'
+                    fontSize: '12px',
+                    colors: '#555'
                 }
             }
         },
@@ -103,7 +110,9 @@ function renderChart(labels, executionTimes, pings, memoryUsages) {
             title: {
                 text: 'Values',
                 style: {
-                    fontSize: '14px'
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    color: '#333'
                 }
             },
             labels: {
@@ -113,7 +122,8 @@ function renderChart(labels, executionTimes, pings, memoryUsages) {
                     return isMemoryUsage ? `${value} MB` : value.toFixed(2); // Append 'MB' for memory usage
                 },
                 style: {
-                    fontSize: '12px'
+                    fontSize: '12px',
+                    colors: '#555'
                 }
             }
         },
@@ -122,13 +132,21 @@ function renderChart(labels, executionTimes, pings, memoryUsages) {
                 horizontal: false, // Set to true for horizontal bars
                 columnWidth: '35%', // Width of bars (adjusted for better spacing)
                 endingShape: 'rounded', // Rounded edges for bars
-                borderRadius: 5 // Radius for rounded corners
+                borderRadius: 8 // Radius for rounded corners
             }
         },
         dataLabels: {
             enabled: true,
             style: {
-                fontSize: '10px' // Smaller font size for data labels
+                fontSize: '10px',
+                colors: ['#fff']
+            },
+            dropShadow: {
+                enabled: true,
+                top: 1,
+                left: 1,
+                blur: 1,
+                opacity: 0.5
             }
         },
         legend: {
@@ -136,7 +154,8 @@ function renderChart(labels, executionTimes, pings, memoryUsages) {
             horizontalAlign: 'center',
             labels: {
                 style: {
-                    fontSize: '12px'
+                    fontSize: '12px',
+                    colors: '#333'
                 }
             }
         },
@@ -149,7 +168,12 @@ function renderChart(labels, executionTimes, pings, memoryUsages) {
                 }
             },
             style: {
-                fontSize: '12px' // Smaller font size for tooltip
+                fontSize: '12px',
+                fontFamily: 'Arial, sans-serif'
+            },
+            theme: 'dark', // Dark theme for tooltip
+            marker: {
+                show: true
             }
         },
         responsive: [{
@@ -196,6 +220,7 @@ function renderChart(labels, executionTimes, pings, memoryUsages) {
     // Render the chart
     chartInstance.render();
 }
+
 async function fetchQueryPerformanceLogs() {
     try {
         // Destroy existing DataTable instance if it exists
@@ -220,7 +245,8 @@ async function fetchQueryPerformanceLogs() {
                 { data: 'avg_execution_time', name: 'avg_execution_time' },
                 { data: 'avg_ping', name: 'avg_ping' },
                 { data: 'avg_download_speed', name: 'avg_download_speed' },
-                { data: 'avg_upload_speed', name: 'avg_upload_speed' }
+                { data: 'avg_upload_speed', name: 'avg_upload_speed' },
+                { data: 'avg_memory_usage', name: 'avg_memory_usage' }
             ],
             columnDefs: [
                 { targets: [0], orderable: false } // Disable ordering for the index column

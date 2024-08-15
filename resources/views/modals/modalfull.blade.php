@@ -1,6 +1,6 @@
 <div class="modal fade" id="mdlForm" aria-hidden="true" role="dialog">
     <!--begin::Modal dialog-->
-    <div class="modal-dialog modal-dialog-centered modal-xl"> <!-- Added modal-lg class here -->
+    <div class="modal-dialog modal-fullscreen"> <!-- Added modal-lg class here -->
         <!--begin::Modal content-->
         <div class="modal-content">
             <!--begin::Modal header-->

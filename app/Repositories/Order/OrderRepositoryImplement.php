@@ -188,9 +188,9 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
     }
 
 
-    public function getOrderData($filterYear, $filterMonth)
+    public function getOrderData($filterDate = null, $filterSupplier = null, $filterOrderNo = null)
     {
-        return $this->model
+        $query = DB::table('ordhead')
             ->select([
                 'ordhead.id',
                 'ordhead.order_no',
@@ -209,8 +209,8 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
                 DB::raw('MAX(rcvhead.receive_date) as last_receive_date'),
                 DB::raw('COUNT(CASE WHEN ordhead.status = "confirmed" THEN 1 END) as confirmed_count')
             ])
-            ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code')
             ->leftJoin('ordsku', 'ordhead.order_no', '=', 'ordsku.order_no')
+            ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code')
             ->leftJoin('rcvhead', 'ordhead.order_no', '=', 'rcvhead.order_no')
             ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store')
             ->groupBy([
@@ -227,11 +227,28 @@ class OrderRepositoryImplement extends Eloquent implements OrderRepository
                 'rcvhead.receive_date',
                 'rcvhead.average_service_level',
                 'ordhead.estimated_delivery_date',
-            ])
-            ->whereYear('ordhead.approval_date', $filterYear)
-            ->whereMonth('ordhead.approval_date', $filterMonth)
-            ->orderBy(DB::raw('MAX(ordhead.approval_date)'), 'desc');  // Use an aggregate function for ordering
+            ]);
+
+        // Apply filters dynamically
+        if ($filterDate) {
+            $filterDate = Carbon::parse($filterDate)->format('Y-m-d');
+            $query->whereDate('ordhead.approval_date', $filterDate);
+        }
+
+        if ($filterSupplier) {
+            $query->where('ordhead.supplier', $filterSupplier);
+        }
+
+        if ($filterOrderNo) {
+            $query->where('ordhead.order_no', $filterOrderNo);
+        }
+
+        // Order by approval date
+        $query->orderBy('ordhead.approval_date', 'desc');
+
+        return $query;
     }
+
 
 
 

@@ -23,7 +23,7 @@ class RcvController extends Controller
         $failCount = 0;
         $errors = [];
 
-        $chunkSize = 10;
+        $chunkSize = 400;
         $delayInMicroseconds = 100000;
 
         try {

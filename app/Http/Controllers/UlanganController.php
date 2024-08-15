@@ -16,18 +16,35 @@ use Illuminate\Support\Facades\Crypt;
 class UlanganController extends Controller
 {
     //
-     /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
+        // Mendapatkan guru berdasarkan id_card dari pengguna yang terautentikasi
         $guru = Guru::where('id_card', Auth::user()->id_card)->first();
+
+        // Cek jika $guru adalah null
+        if (!$guru) {
+            // Tangani situasi ketika guru tidak ditemukan, misalnya dengan mengalihkan ke halaman error atau menampilkan pesan
+            return redirect()->route('error.page')->with('error', 'Guru tidak ditemukan.');
+        }
+
+        // Ambil jadwal yang sesuai dengan guru yang ditemukan
         $jadwal = Jadwal::where('guru_id', $guru->id)->orderBy('kelas_id')->get();
+
+        // Kelompokkan jadwal berdasarkan kelas_id
         $kelas = $jadwal->groupBy('kelas_id');
+
+        // Kembalikan tampilan dengan data yang telah diproses
         return view('guru.ulangan.kelas', compact('kelas', 'guru'));
     }
+
+
+
+
 
     /**
      * Show the form for creating a new resource.

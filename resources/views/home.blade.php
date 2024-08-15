@@ -21,7 +21,7 @@
                 </label>
             </div>
             <button id="help-btn" class="btn btn-info ms-auto"
-                    data-intro="Click here for help with using this section.">
+                data-intro="Click here for help with using this section.">
                 <i class="fas fa-info-circle me-1"></i> Help
             </button>
         </div>
@@ -375,6 +375,18 @@
                             <!--end::Bullet Wrapper-->
                         </ul>
                         <!--end::Nav-->
+                        <!-- Badge for deliveries tomorrow -->
+                        <div class="mt-2">
+                            <span id="deliveriesForTomorrowBadge" class="badge bg-warning text-dark d-none bounce" style="color:black;font-weight:bold;">
+                                <i class="fas fa-truck" ></i> Deliveries Tomorrow: <span id="deliveriesForTomorrowCount">0</span>
+                            </span>
+                        </div>
+
+                        <!-- Alert message container below the button -->
+                        <div class="mt-2">
+                            <span id="deliveryAlert" class="text-danger d-none"></span>
+                            <!-- Alert message container -->
+                        </div>
 
                         <!--begin::Tab Content-->
                         <div class="tab-content px-9 hover-scroll-overlay-y pe-7 me-3 mb-2" style="height: 454px">

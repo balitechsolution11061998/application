@@ -179,26 +179,24 @@ class OrderServiceImplement extends ServiceApi implements OrderService{
         }
     }
 
-    public function getOrderData($filterDate, $filterSupplier, $filterOrderNo)
+
+    public function getOrderData($filterDate = null, $filterSupplier = null, $filterOrderNo = null)
     {
-        $filterDate = $filterDate ?? date('Y-m');
-        $filterYear = date('Y', strtotime($filterDate));
-        $filterMonth = date('m', strtotime($filterDate));
+        $query = $this->mainRepository->getOrderData($filterDate, $filterSupplier, $filterOrderNo);
 
-        // Get the base query
-        $query = $this->mainRepository->getOrderData($filterYear, $filterMonth);
+        $dataCollection = collect();
 
-        // Apply additional filters
-        if ($filterSupplier) {
-            $query->where('ordhead.supplier', $filterSupplier);
-        }
+        // Process data in chunks to reduce memory usage
+        $query->chunk(1000, function($rows) use ($dataCollection) {
+            foreach ($rows as $row) {
+                $dataCollection->push($row);
+            }
+        });
 
-        if ($filterOrderNo) {
-            $query->where('ordhead.order_no', $filterOrderNo);
-        }
-
-        return $query->get();
+        return $dataCollection;
     }
+
+
 
     public function logPerformanceData($data, $executionTime, $memoryUsage)
     {

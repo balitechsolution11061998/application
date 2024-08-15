@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
@@ -56,6 +57,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/price-diff', 'HomeController@priceDiff')->name('price-diff');
         Route::get('/tandaTerima', 'HomeController@tandaTerima')->name('tandaTerima');
         Route::get('/getTotals', 'HomeController@getTotals')->name('getTotals');
+        Route::get('/dashboarduser', 'HomeController@dashboarduser')->name('dashboarduser');
     });
 
     Route::prefix('po')->name('po.')->namespace('App\Http\Controllers')->group(function () {
@@ -187,6 +189,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     });
 
     Route::prefix('ulangan')->name('ulangan.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/index', 'UlanganController@index')->name('index');
         Route::get('/ulangan-kelas', 'UlanganController@create')->name('create');
         Route::get('/ulangan-siswa/{id}', 'UlanganController@edit')->name('ulangan-siswa');
         Route::get('/ulangan-show/{id}', 'UlanganController@ulangan')->name('ulangan-show');
@@ -394,6 +397,7 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     Route::get('/predikat', 'App\Http\Controllers\NilaiController@create')->name('predikat');
     Route::get('/pengumuman', 'App\Http\Controllers\PengumumanController@index')->name('pengumuman');
     Route::post('/pengumuman/simpan', 'App\Http\Controllers\PengumumanController@simpan')->name('pengumuman.simpan');
+    Route::get('/faqs', [FaqController::class, 'index']);
 
 
 });

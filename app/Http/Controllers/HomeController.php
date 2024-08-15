@@ -146,10 +146,18 @@ class HomeController extends Controller
 
     public function index4()
     {
-
         return view('home4');
-
     }
+
+    public function dashboarduser(){
+        $hari = date('w');
+        $jam = date('H:i');
+        $jadwal = Jadwal::OrderBy('jam_mulai')->OrderBy('jam_selesai')->OrderBy('kelas_id')->where('hari_id', $hari)->where('jam_mulai', '<=', $jam)->where('jam_selesai', '>=', $jam)->get();
+        $pengumuman = Pengumuman::first();
+        $kehadiran = Kehadiran::all();
+        return view('home5', compact('jadwal', 'pengumuman', 'kehadiran'));
+    }
+
     public function countDataPoPerDays(Request $request)
     {
         $startTime = microtime(true);

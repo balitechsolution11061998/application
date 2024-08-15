@@ -51,6 +51,7 @@
     <link href="{{ asset('css/fullcalendar.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('css/fancybox.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
     <!--end::Javascript-->
 </head>
@@ -117,6 +118,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 
     <!--end::Custom Javascript-->

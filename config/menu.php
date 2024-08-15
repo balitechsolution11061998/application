@@ -2,72 +2,99 @@
 
 return [
     # Menus
-    'KT_MENU_MODE' => 'auto', /** 'manual' or 'auto' */
+    'KT_MENU_MODE' => 'auto',
+    /** 'manual' or 'auto' */
 
     'KT_MENUS' => [
         [
-            'label'          => 'Log Dashboard',
+            'label'          => 'Dasboard',
             'type'           => 'item',
             'permission'     => [],
             'permissionType' => 'gate',
             'icon'           => 'fas',
-            'iconName'       => 'fa-history', // Changed icon to reflect logging
-            'iconPath'       => 7,
-            'route'          => 'home.log',
-        ],
-        [
-            'label'          => 'Supplier Dashboard',
-            'type'           => 'item',
-            'permission'     => ['dashboardsupplier-show'],
-            'permissionType' => 'gate',
-            'icon'           => 'fas',
-            'iconName'       => 'fa-truck-loading', // Changed icon to reflect supplier operations
-            'iconPath'       => 8,
-            'route'          => 'home',
-        ],
-        [
-            'label'          => 'CBT Dashboard',
-            'type'           => 'item',
-            'permission'     => ['dashboardcbt-show'],
-            'permissionType' => 'gate',
-            'icon'           => 'fas',
-            'iconName'       => 'fa-laptop-code', // Changed icon to reflect CBT (Computer-Based Testing)
+            'iconName'       => 'fa-tachometer-alt',  // Font Awesome icon for database
             'iconPath'       => 9,
-            'route'          => 'home.cbt',
+            'url'            => '#',
+            'children'       => [
+                [
+                    'label'          => 'Log Dashboard',
+                    'type'           => 'item',
+                    'permission'     => [],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-history', // Changed icon to reflect logging
+                    'iconPath'       => 7,
+                    'route'          => 'home.log',
+                ],
+                [
+                    'label'          => 'Supplier Dashboard',
+                    'type'           => 'item',
+                    'permission'     => ['dashboardsupplier-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-truck-loading', // Changed icon to reflect supplier operations
+                    'iconPath'       => 8,
+                    'route'          => 'home',
+                ],
+                [
+                    'label'          => 'CBT Dashboard',
+                    'type'           => 'item',
+                    'permission'     => ['dashboardcbt-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-laptop-code', // Changed icon to reflect CBT (Computer-Based Testing)
+                    'iconPath'       => 9,
+                    'route'          => 'home.cbt',
+                ],
+                [
+                    'label'          => 'Presence Dashboard',
+                    'type'           => 'item',
+                    'permission'     => ['dashboardpresensi-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-user-check', // Changed icon to reflect presence/attendance
+                    'iconPath'       => 10,
+                    'route'          => 'home.epresensi',
+                ],
+                [
+                    'label'          => 'Dashboard',
+                    'type'           => 'item',
+                    'permission'     => [],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',                // Use Font Awesome solid icons
+                    'iconName'       => 'fa-user-check',      // Font Awesome icon for user check (presence/attendance)
+                    'iconPath'       => 10,                   // Adjust if needed
+                    'route'          => 'home.dashboarduser',
+                ],
+
+            ]
         ],
+
         [
-            'label'          => 'Presence Dashboard',
-            'type'           => 'item',
-            'permission'     => ['dashboardpresensi-show'],
-            'permissionType' => 'gate',
-            'icon'           => 'fas',
-            'iconName'       => 'fa-user-check', // Changed icon to reflect presence/attendance
-            'iconPath'       => 10,
-            'route'          => 'home.epresensi',
+            'label' => 'Menu SMS',
+            'type' => 'heading'
         ],
-
-
-
 
         [
             'label'          => 'Items',
             'type'           => 'item',
             'permission'     => ['items-show'],
             'permissionType' => 'gate',
-            'icon'           => 'ki',
-            'iconName'       => 'ki-element-11',
-            'iconPath'       => 7,
+            'icon'           => 'fas',                // Set to 'fas' for Font Awesome solid icons
+            'iconName'       => 'fa-box',             // Font Awesome icon for items
+            'iconPath'       => 7,                    // Adjust if needed
             'route'          => 'items.index',
         ],
+
 
         [
             'label'          => 'Price Change',
             'type'           => 'item',
             'permission'     => ['cost_change-show'],
             'permissionType' => 'gate',
-            'icon'           => 'ki',
-            'iconName'       => 'ki-element-11',
-            'iconPath'       => 6,
+            'icon'           => 'fas',                // Set to 'fas' for Font Awesome solid icons
+            'iconName'       => 'fa-tags',            // Font Awesome icon for price tags
+            'iconPath'       => 6,                    // Adjust if needed
             'route'          => 'price-change.index',
         ],
         [
@@ -75,10 +102,14 @@ return [
             'type'           => 'item',
             'permission'     => ['po-show'],
             'permissionType' => 'gate',
-            'icon'           => 'ki',
-            'iconName'       => 'ki-element-11',
+            'icon'           => 'fas',          // FontAwesome Solid
+            'iconName'       => 'fa-box',       // Example FontAwesome icon name
             'iconPath'       => 5,
             'route'          => 'po.index',
+        ],
+        [
+            'label' => 'Menu Presensi',
+            'type' => 'heading'
         ],
         [
             'label'          => 'Monitoring Presensi',
@@ -101,36 +132,9 @@ return [
             'route'          => 'izin.index',
         ],
         [
-            'label'          => 'Paket Soal',
-            'type'           => 'item',
-            'permission'     => ['paketsoal-show'],
-            'permissionType' => 'gate',
-            'icon'           => 'fas',
-            'iconName'       => 'fa-book',
-            'iconPath'       => '',
-            'route'          => 'paket-soal.index',
+            'label' => 'Menu Management User',
+            'type' => 'heading'
         ],
-        [
-            'label'          => 'Manajement Soal',
-            'type'           => 'item',
-            'permission'     => ['manajementsoal-show'],
-            'permissionType' => 'gate',
-            'icon'           => 'fas',
-            'iconName'       => 'fa-book',
-            'iconPath'       => '', // Usually not needed for Font Awesome icons
-            'route'          => 'soal.index', // Ensure this route exists in your web.php routes file
-        ],
-        [
-            'label'          => 'Ujian',
-            'type'           => 'item',
-            'permission'     => ['ujian-show'],
-            'permissionType' => 'gate',
-            'icon'           => 'fas',
-            'iconName'       => 'fa-book',
-            'iconPath'       => '', // Usually not needed for Font Awesome icons
-            'route'          => 'ujian.index', // Ensure this route exists in your web.php routes file
-        ],
-
 
         [
 
@@ -174,123 +178,15 @@ return [
             ]
         ],
 
-        [
-            'label'          => 'Settings',
-            'type'           => 'item',
-            'permission'     => ['settings-show'],
-            'permissionType' => 'gate',
-            'icon'           => 'ki',
-            'iconName'       => 'ki-wrench',
-            'iconPath'       => 7,
-            'route'          => 'settings.priceChange.index',
-        ],
-        [
-            'label'          => 'Jam Kerja',
-            'type'           => 'item',
-            'permission'     => ['jamkerja-show'],
-            'permissionType' => 'gate',
-            'icon'           => 'fas', // Combine icon type and name
-            'iconName'       => 'fa-clock', // Just the icon name
-            'iconPath'       => 7,
-            'route'          => 'jam_kerja.index',
-        ],
-        [
-            'label'          => 'Department',
-            'type'           => 'item',
-            'permission'     => ['department-show'],
-            'permissionType' => 'gate',
-            'icon'           => 'fas',
-            'iconName'       => 'fa-warehouse',
-            'iconPath'       => 7,
-            'route'          => 'departments.index',
-        ],
-        [
-            'label'          => 'Kantor Cabang',
-            'type'           => 'item',
-            'permission'     => ['kantorcabang-show'],
-            'permissionType' => 'gate',
-            'icon'           => 'fas',
-            'iconName'       => 'fa-building',
-            'iconPath'       => 7,
-            'route'          => 'kantor_cabang.index',
-        ],
-        [
-            'label'          => 'Cuti',
-            'type'           => 'item',
-            'permission'     => ['cuti-show'],
-            'permissionType' => 'gate',
-            'icon'           => 'fas',
-            'iconName'       => 'fa-clipboard-check',
-            'iconPath'       => 7,
-            'route'          => 'cuti.index',
-        ],
 
 
 
 
 
-        [
-            'label'          => 'Data Jadwal',
-            'type'           => 'item',
-            'permission'     => [],
-            'permissionType' => 'gate',
-            'icon'           => 'fas',
-            'iconName'       => 'fa-calendar-alt', // Ikon untuk Jadwal
-            'iconPath'       => 7,
-            'route'          => 'jadwal.index',
-        ],
-        [
-            'label'          => 'Data Guru',
-            'type'           => 'item',
-            'permission'     => [],
-            'permissionType' => 'gate',
-            'icon'           => 'fas',
-            'iconName'       => 'fa-chalkboard-teacher', // Ikon untuk Guru
-            'iconPath'       => 7,
-            'route'          => 'guru.index',
-        ],
-        [
-            'label'          => 'Kelas',
-            'type'           => 'item',
-            'permission'     => ['kelas-show'],
-            'permissionType' => 'gate',
-            'icon'           => 'fas',
-            'iconName'       => 'fa-chalkboard', // Ikon untuk Kelas (berbeda dari Guru)
-            'iconPath'       => 7,
-            'route'          => 'kelas.index',
-        ],
-        [
-            'label'          => 'Siswa',
-            'type'           => 'item',
-            'route'          => 'siswa.index',
-            'active'         => ['siswa-show'],
-            'permission'     => ['siswa-show'],
-            'permissionType' => 'gate',
-            'icon'           => 'fas',
-            'iconName'       => 'fa-user-graduate', // Ikon berbeda untuk Siswa
-            'iconPath'       => '',
-        ],
-        [
-            'label'          => 'Mata Pelajaran',
-            'type'           => 'item',
-            'permission'     => ['matapelajaran-show'],
-            'permissionType' => 'gate',
-            'icon'           => 'fas',
-            'iconName'       => 'fa-book-open', // Ikon berbeda untuk Mata Pelajaran
-            'iconPath'       => 7,
-            'route'          => 'mata-pelajaran.index',
-        ],
-        [
-            'label'          => 'User',
-            'type'           => 'item',
-            'route'          => 'users.cbt',
-            'active'         => [],
-            'permission'     => [],
-            'permissionType' => 'gate',
-            'icon'           => 'fas',
-            'iconName'       => 'fa-users-cog', // Ikon berbeda untuk User
-            'iconPath'       => '',
-        ],
+
+
+
+
         [
             'label'          => 'Absensi Guru',
             'type'           => 'item',
@@ -303,38 +199,75 @@ return [
             'iconPath'       => '',
         ],
         [
-            'label'          => 'Nilai Ulangan',             // Label for the menu item
-            'type'           => 'item',                      // Type of the menu
-            'route'          => 'ulangan.create',            // The route name for this menu item (replace with your actual route)
-            'active'         => [],                          // An array of routes or patterns to mark as active
-            'permission'     => [],                          // The permission(s) required to view this item (adjust as needed)
-            'permissionType' => 'gate',                      // Type of permission check
-            'icon'           => 'fas',                       // The icon set being used (e.g., 'fas' for Font Awesome Solid)
-            'iconName'       => 'fa-pencil-alt',             // The specific icon to display for "Nilai Ulangan"
-            'iconPath'       => '',                          // Path to custom icons, typically empty for Font Awesome
+            'label'          => 'Ulangan',
+            'type'           => 'item',
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',                  // Font Awesome solid icon
+            'iconName'       => 'fa-database',          // Font Awesome icon for database
+            'iconPath'       => 9,
+            'url'            => '/master-data',
+            'children'       => [
+                [
+                    'label'          => 'Nilai Ulangan',             // Label for the menu item
+                    'type'           => 'item',                      // Type of the menu
+                    'route'          => 'ulangan.create',            // The route name for this menu item (replace with your actual route)
+                    'active'         => [],                          // An array of routes or patterns to mark as active
+                    'permission'     => [],                          // The permission(s) required to view this item (adjust as needed)
+                    'permissionType' => 'gate',                      // Type of permission check
+                    'icon'           => 'fas',                       // The icon set being used (e.g., 'fas' for Font Awesome Solid)
+                    'iconName'       => 'fa-pencil-alt',             // The specific icon to display for "Nilai Ulangan"
+                    'iconPath'       => '',                          // Path to custom icons, typically empty for Font Awesome
+                ],
+                [
+                    'label'          => 'Entry Nilai Ulangan',             // Label for the menu item
+                    'type'           => 'item',                      // Type of the menu
+                    'route'          => 'ulangan.index',            // The route name for this menu item (replace with your actual route)
+                    'active'         => [],                          // An array of routes or patterns to mark as active
+                    'permission'     => [],                          // The permission(s) required to view this item (adjust as needed)
+                    'permissionType' => 'gate',                      // Type of permission check
+                    'icon'           => 'fas',                       // The icon set being used (e.g., 'fas' for Font Awesome Solid)
+                    'iconName'       => 'fa-pencil-alt',             // The specific icon to display for "Nilai Ulangan"
+                    'iconPath'       => '',                          // Path to custom icons, typically empty for Font Awesome
+                ],
+                [
+                    'label'          => 'Ulangan Sikap',             // Label for the menu item
+                    'type'           => 'item',                      // Type of the menu
+                    'route'          => 'sikap.sikap-kelas',            // The route name for this menu item (replace with your actual route)
+                    'active'         => [],                          // An array of routes or patterns to mark as active
+                    'permission'     => [],                          // The permission(s) required to view this item (adjust as needed)
+                    'permissionType' => 'gate',                      // Type of permission check
+                    'icon'           => 'fas',                       // The icon set being used (e.g., 'fas' for Font Awesome Solid)
+                    'iconName'       => 'fa-pencil-alt',             // The specific icon to display for "Nilai Ulangan"
+                    'iconPath'       => '',                          // Path to custom icons, typically empty for Font Awesome
+                ],
+                [
+                    'label'          => 'Nilai Raport',               // Label for the menu item
+                    'type'           => 'item',                       // Type of the menu
+                    'route'          => 'raport.rapot-kelas',              // The route name for this menu item (replace with your actual route)
+                    'active'         => ['nilairaport-show'],                           // An array of routes or patterns to mark as active
+                    'permission'     => ['nilairaport-show'],                           // The permission(s) required to view this item (adjust as needed)
+                    'permissionType' => 'gate',                       // Type of permission check
+                    'icon'           => 'fas',                        // The icon set being used (e.g., 'fas' for Font Awesome Solid)
+                    'iconName'       => 'fa-book',                    // The specific icon to display for "Nilai Raport"
+                    'iconPath'       => '',                           // Path to custom icons, typically empty for Font Awesome
+                ],
+                [
+                    'label'          => 'Deskripsi Predikat',                   // Label for the menu item
+                    'type'           => 'item',                       // Type of the menu
+                    'route'          => 'predikat',             // The route name for this menu item (replace with your actual route)
+                    'active'         => ['predikat-show'],                           // An array of routes or patterns to mark as active
+                    'permission'     => ['predikat-show'],                           // The permission(s) required to view this item (adjust as needed)
+                    'permissionType' => 'gate',                       // Type of permission check
+                    'icon'           => 'fas',                        // The icon set being used (e.g., 'fas' for Font Awesome Solid)
+                    'iconName'       => 'fa-star',                    // The specific icon to display for "Predikat"
+                    'iconPath'       => '',                           // Path to custom icons, typically empty for Font Awesome
+                ],
+            ]
         ],
-        [
-            'label'          => 'Nilai Raport',               // Label for the menu item
-            'type'           => 'item',                       // Type of the menu
-            'route'          => 'raport.rapot-kelas',              // The route name for this menu item (replace with your actual route)
-            'active'         => ['nilairaport-show'],                           // An array of routes or patterns to mark as active
-            'permission'     => ['nilairaport-show'],                           // The permission(s) required to view this item (adjust as needed)
-            'permissionType' => 'gate',                       // Type of permission check
-            'icon'           => 'fas',                        // The icon set being used (e.g., 'fas' for Font Awesome Solid)
-            'iconName'       => 'fa-book',                    // The specific icon to display for "Nilai Raport"
-            'iconPath'       => '',                           // Path to custom icons, typically empty for Font Awesome
-        ],
-        [
-            'label'          => 'Deskripsi Predikat',                   // Label for the menu item
-            'type'           => 'item',                       // Type of the menu
-            'route'          => 'predikat',             // The route name for this menu item (replace with your actual route)
-            'active'         => ['predikat-show'],                           // An array of routes or patterns to mark as active
-            'permission'     => ['predikat-show'],                           // The permission(s) required to view this item (adjust as needed)
-            'permissionType' => 'gate',                       // Type of permission check
-            'icon'           => 'fas',                        // The icon set being used (e.g., 'fas' for Font Awesome Solid)
-            'iconName'       => 'fa-star',                    // The specific icon to display for "Predikat"
-            'iconPath'       => '',                           // Path to custom icons, typically empty for Font Awesome
-        ],
+
+
+
         [
             'label'          => 'Pengumuman',                   // Label for the menu item
             'type'           => 'item',                         // Type of the menu
@@ -391,16 +324,163 @@ return [
             'iconPath'       => '',                            // Path to custom icons, typically empty for Font Awesome
         ],
 
-        // [
-        //     'label'          => 'Ruang Kelas',
-        //     'type'           => 'item',
-        //     'permission'     => [],
-        //     'permissionType' => 'gate',
-        //     'icon'           => 'fas',
-        //     'iconName'       => 'fa-user-tie', // Updated icon class
-        //     'iconPath'       => 7,
-        //     'route'          => 'ruang-kelas.index',
-        // ]
+        [
+            'label'          => 'Master Data',
+            'type'           => 'item',
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-database',  // Font Awesome icon for database
+            'iconPath'       => 9,
+            'url'            => '/master-data',
+            'children'       => [
+                [
+                    'label'          => 'Data Jadwal',
+                    'type'           => 'item',
+                    'permission'     => [],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-calendar-alt', // Ikon untuk Jadwal
+                    'iconPath'       => 7,
+                    'route'          => 'jadwal.index',
+                ],
+                [
+                    'label'          => 'Data Guru',
+                    'type'           => 'item',
+                    'permission'     => [],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-chalkboard-teacher', // Ikon untuk Guru
+                    'iconPath'       => 7,
+                    'route'          => 'guru.index',
+                ],
+                [
+                    'label'          => 'Kelas',
+                    'type'           => 'item',
+                    'permission'     => ['kelas-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-chalkboard', // Ikon untuk Kelas (berbeda dari Guru)
+                    'iconPath'       => 7,
+                    'route'          => 'kelas.index',
+                ],
+                [
+                    'label'          => 'Siswa',
+                    'type'           => 'item',
+                    'route'          => 'siswa.index',
+                    'active'         => ['siswa-show'],
+                    'permission'     => ['siswa-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-user-graduate', // Ikon berbeda untuk Siswa
+                    'iconPath'       => '',
+                ],
+                [
+                    'label'          => 'Mata Pelajaran',
+                    'type'           => 'item',
+                    'permission'     => ['matapelajaran-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-book-open', // Ikon berbeda untuk Mata Pelajaran
+                    'iconPath'       => 7,
+                    'route'          => 'mata-pelajaran.index',
+                ],
+                [
+                    'label'          => 'User',
+                    'type'           => 'item',
+                    'route'          => 'users.cbt',
+                    'active'         => [],
+                    'permission'     => [],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-users-cog', // Ikon berbeda untuk User
+                    'iconPath'       => '',
+                ],
+                [
+                    'label'          => 'Paket Soal',
+                    'type'           => 'item',
+                    'permission'     => ['paketsoal-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-book',
+                    'iconPath'       => '',
+                    'route'          => 'paket-soal.index',
+                ],
+                [
+                    'label'          => 'Manajement Soal',
+                    'type'           => 'item',
+                    'permission'     => ['manajementsoal-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-book',
+                    'iconPath'       => '', // Usually not needed for Font Awesome icons
+                    'route'          => 'soal.index', // Ensure this route exists in your web.php routes file
+                ],
+                [
+                    'label'          => 'Ujian',
+                    'type'           => 'item',
+                    'permission'     => ['ujian-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-book',
+                    'iconPath'       => '', // Usually not needed for Font Awesome icons
+                    'route'          => 'ujian.index', // Ensure this route exists in your web.php routes file
+                ],
+                [
+                    'label'          => 'Settings',
+                    'type'           => 'item',
+                    'permission'     => ['settings-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'ki',
+                    'iconName'       => 'ki-wrench',
+                    'iconPath'       => 7,
+                    'route'          => 'settings.priceChange.index',
+                ],
+                [
+                    'label'          => 'Jam Kerja',
+                    'type'           => 'item',
+                    'permission'     => ['jamkerja-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas', // Combine icon type and name
+                    'iconName'       => 'fa-clock', // Just the icon name
+                    'iconPath'       => 7,
+                    'route'          => 'jam_kerja.index',
+                ],
+                [
+                    'label'          => 'Department',
+                    'type'           => 'item',
+                    'permission'     => ['department-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-warehouse',
+                    'iconPath'       => 7,
+                    'route'          => 'departments.index',
+                ],
+                [
+                    'label'          => 'Kantor Cabang',
+                    'type'           => 'item',
+                    'permission'     => ['kantorcabang-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-building',
+                    'iconPath'       => 7,
+                    'route'          => 'kantor_cabang.index',
+                ],
+                [
+                    'label'          => 'Cuti',
+                    'type'           => 'item',
+                    'permission'     => ['cuti-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-clipboard-check',
+                    'iconPath'       => 7,
+                    'route'          => 'cuti.index',
+                ],
+
+
+            ]
+        ]
+
 
 
 

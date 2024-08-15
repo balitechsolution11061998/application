@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Handle click event on the sync action button
     syncActionButton.addEventListener("click", async () => {
-        const date = document.getElementById("date").value;
+        const date = document.getElementById("filterDate").value;
         if (!date) {
             Swal.fire({
                 title: "Error!",
@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         "/rcv/progress"
                     );
                     break;
+
                 case "syncStore":
                     await syncData(
                         "https://supplier.m-mart.co.id/api/stores/get",
@@ -93,6 +94,15 @@ document.addEventListener("DOMContentLoaded", function () {
                         "/supplier/progress"
                     );
                     break;
+                case "syncTt":
+                    await syncData(
+                        "https://supplier.m-mart.co.id/api/tandaterima/getData",
+                        "/tandaterima/store",
+                        "Syncing Data Tanda Terima",
+                        date,
+                        "/tandaterima/progress"
+                    );
+                    break;
             }
         }
     });
@@ -102,25 +112,25 @@ document.addEventListener("DOMContentLoaded", function () {
         progressContainer.id = "progressContainer";
 
         progressContainer.innerHTML = `
-            <div class="progress" style="height: 20px; background-color: #f3f3f3; border-radius: 10px; overflow: hidden; margin-top: 20px;">
+            <div class="progress" style="height: 20px; background-color: #e0e0e0; border-radius: 10px; overflow: hidden; margin-top: 20px;">
                 <div class="progress-bar" role="progressbar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #4caf50, #81c784); transition: width 0.5s ease-in-out;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            <div id="progressText" style="margin-top: 10px; font-weight: bold; text-align: center; color: #555;">Inserting data... 0%</div>
+            <div id="progressText" style="margin-top: 10px; font-weight: bold; text-align: center; color: #333;">Inserting data... 0%</div>
         `;
 
         const swalLoading = Swal.fire({
-            title: `<div style="font-size: 24px; font-weight: bold; color: #333;">${syncTitle}</div>`,
+            title: `<div class="swal-title">${syncTitle}</div>`,
             html: `
-                <div style="font-size: 16px; color: #666;">Please wait while data is being synced...</div>
+                <div class="swal-text">Please wait while data is being synced...</div>
                 ${progressContainer.outerHTML}
             `,
             icon: "info",
             allowOutsideClick: false,
             showConfirmButton: false,
             customClass: {
-                popup: "swal2-popup-custom",
-                title: "swal2-title-custom",
-                content: "swal2-content-custom",
+                popup: "swal-popup",
+                title: "swal-title",
+                content: "swal-content",
             },
             didOpen: () => {
                 Swal.showLoading();
@@ -220,22 +230,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // Show success Swal with a confirmation button and set timer
                 Swal.fire({
-                    title: '<div style="font-size: 24px; font-weight: bold; color: #4caf50;">Success!</div>',
+                    title: '<div class="swal-title success">Success!</div>',
                     html: `
-                        <ul style="list-style: none; padding: 0; font-size: 16px; color: #555;">
-                            <li><strong style="color: #4caf50;">Success Count:</strong> ${response.data.length}</li>
-                            <li><strong style="color: #4caf50;">Processed Count:</strong> ${response.data.length}</li>
-                            <li><strong style="color: #333;">Total Count:</strong> ${response.data.length}</li>
+                        <ul class="swal-success-list">
+                            <li><strong class="success-text">Success Count:</strong> ${response.data.length}</li>
+                            <li><strong class="success-text">Processed Count:</strong> ${response.data.length}</li>
+                            <li><strong class="success-text">Total Count:</strong> ${response.data.length}</li>
                         </ul>
-                        <p style="font-size: 16px; color: #666;">Data has been successfully synced.</p>
-                        <div id="countdown" style="font-size: 16px; color: #555; margin-top: 10px;">Closing in <span id="timer">5</span> seconds...</div>
+                        <p class="swal-text">Data has been successfully synced.</p>
+                        <div id="countdown" class="swal-countdown">Closing in <span id="timer">5</span> seconds...</div>
                     `,
                     icon: "success",
-                    showConfirmButton: false, // Hide the confirmation button
+                    showConfirmButton: false,
                     customClass: {
-                        popup: "swal2-popup-custom",
-                        title: "swal2-title-custom",
-                        content: "swal2-content-custom",
+                        popup: "swal-popup",
+                        title: "swal-title",
+                        content: "swal-content",
                     },
                     didOpen: () => {
                         let timer = 5;
@@ -266,7 +276,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 icon: "error",
                 confirmButtonText: "OK",
                 customClass: {
-                    popup: "swal2-popup-custom",
+                    popup: "swal-popup",
                 },
             });
         }
@@ -306,10 +316,11 @@ style.innerHTML = `
     }
 `;
 
-
+function filterDatePo() {
+    poTable();
+}
 
 function poTable() {
-
     // Check if the DataTable is already initialized
     if ($.fn.DataTable.isDataTable("#po_table")) {
         // Destroy the existing instance before reinitializing
@@ -634,9 +645,8 @@ function poTable() {
                             </div>
                         </div>`;
                 },
-            }
+            },
 
-            ,
             {
                 data: "actions",
                 name: "actions",
@@ -672,273 +682,205 @@ function searchOrderNo() {
     poTable();
 }
 
-// Function to handle the 'Order No' status
-function detailPo(rowData) {
-    const modalBody = document.getElementById("mdlFormContent");
-    const modalTitle = document.getElementById("mdlFormTitle");
-    const spinner = document.getElementById("modalSpinner");
-    const detailModal = new bootstrap.Modal(document.getElementById("mdlForm"));
-    spinner.innerHTML = "";
-    modalBody.innerHTML = ""; // Clear previous content
-    spinner.style.display = "block"; // Show spinner
-    modalTitle.textContent = "Order Details"; // Set the modal title
+function confirmPo(event) {
+    // Get the order number from the clicked element
+    let orderNo = event.order_no;
+    // Get the modal element using jQuery
+    let modal = $("#mdlForm");
 
-    // Fetch the details based on rowData (e.g., order_no)
-    fetch(`/po/getOrderDetails?order_no=${rowData.order_no}`)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            return response.json();
-        })
-        .then((data) => {
-            // Hide the spinner
-            spinner.style.display = "none";
+    // Inject content into the modal body
+    modal.find(".modal-body").html(""); // Clear previous content
 
-            if (data && data.details) {
-                const details = data.details;
+    // Show SweetAlert modal with confirmation question
+    Swal.fire({
+        title: "Confirm Order",
+        html: `Are you sure you want to confirm order ${orderNo}?`,
+        icon: "question",
+        showCancelButton: true,
+        cancelButtonText: "Cancel",
+        confirmButtonText: "Confirm",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        focusConfirm: false,
+        showLoaderOnConfirm: true,
+        preConfirm: () => {
+            return new Promise((resolve) => {
+                // Simulate API call or any asynchronous operation
+                setTimeout(resolve, 2000); // Simulated 2 seconds delay
+            });
+        },
+        didOpen: () => {
+            // Add a custom class to the modal
+            Swal.getPopup().classList.add("custom-modal");
+        },
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Fetch order details from the server
+            fetch(`/po/getOrderDetails?order_no=${orderNo}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    let subtotal = 0;
+                    let ppn = 0;
 
-                // Generate the details HTML
-                modalBody.innerHTML = generateOrderDetailsHTML(details);
-            } else {
-                modalBody.innerHTML = "<p>No details available.</p>";
-            }
-        })
-        .catch((error) => {
-            console.error("Error fetching order details:", error);
-            spinner.style.display = "none";
-            modalBody.innerHTML = "<p>Error fetching details. Please try again later.</p>";
-        });
+                    // Populate the modal content using jQuery
+                    $("#mdlFormTitle").html(
+                        `<i class="fas fa-file-alt"></i> Confirm PO - ${data.details.order_no}`
+                    );
 
-    // Show the modal
-    detailModal.show();
-}
+                    let cartHtml = data.details.ord_detail
+                        .map((item) => {
+                            let qtyOrdered = item.qty_ordered || 0;
+                            let unitCost = item.unit_cost || 0;
+                            let vatCost = item.vat_cost || 0;
 
-// Function to generate the HTML content for order details
-function generateOrderDetailsHTML(details) {
-    return `
-        <div class="card">
-            <!--begin::Body-->
-            <div class="card-body p-lg-20">
-                <!--begin::Layout-->
-                <div class="d-flex flex-column flex-xl-row">
-                    <!--begin::Content-->
-                    <div class="flex-lg-row-fluid me-xl-18 mb-10 mb-xl-0">
-                        <!--begin::Order details-->
-                        <div class="mt-n1">
-                            <!--begin::Top-->
-                            <div class="d-flex flex-stack pb-10">
-                                <!--begin::Logo-->
-                                <a href="#">
-                                    <img alt="Logo" src="/metronic8/demo1/assets/media/svg/brand-logos/code-lab.svg">
-                                </a>
-                                <!--end::Logo-->
-                                <!--begin::Action-->
-                                <a href="#" class="btn btn-sm btn-success">Pay Now</a>
-                                <!--end::Action-->
-                            </div>
-                            <!--end::Top-->
-                            <!--begin::Wrapper-->
-                            <div class="m-0">
-                                <!--begin::Label-->
-                                <div class="fw-bold fs-3 text-gray-800 mb-8">Order No: ${details.order_no || 'N/A'}</div>
-                                <!--end::Label-->
-                                <!--begin::Row-->
-                                <div class="row g-5 mb-11">
-                                    <div class="col-sm-6">
-                                        <div class="fw-semibold fs-7 text-gray-600 mb-1">Approval Date:</div>
-                                        <div class="fw-bold fs-6 text-gray-800">${details.approval_date || 'N/A'}</div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="fw-semibold fs-7 text-gray-600 mb-1">Estimated Delivery Date:</div>
-                                        <div class="fw-bold fs-6 text-gray-800">${details.estimated_delivery_date || 'N/A'}</div>
-                                    </div>
+                            let itemSubtotal = qtyOrdered * unitCost;
+                            subtotal += itemSubtotal;
+
+                            let itemPpn = qtyOrdered * vatCost;
+                            ppn += itemPpn;
+
+                            return `
+<div class="cart-item d-flex justify-content-between align-items-center border-bottom py-2 bg-white text-black rounded mb-3">
+    <div class="item-details">
+        <p class="mb-1 font-weight-bold">${item.sku_desc}</p>
+        <small class="text-muted">UPC: ${item.upc}</small><br>
+        <small class="text-muted">Quantity Ordered: ${qtyOrdered}</small>
+    </div>
+    <div class="item-cost-fulfillable d-flex align-items-center">
+        <div class="form-group qty-fulfillable-group d-flex align-items-center mr-3">
+            <button type="button" class="btn btn-sm btn-secondary rounded-circle" onclick="decreaseQty(${item.upc})">-</button>
+            <input type="number" id="qty-fulfillable-${item.upc}" class="form-control form-control-sm mx-2 text-center rounded" name="qty_fulfillable" value="${qtyOrdered}" min="0" max="${qtyOrdered}" data-unit-cost="${qtyOrdered}" style="width: 60px;"/>
+            <button type="button" class="btn btn-sm btn-secondary rounded-circle" onclick="increaseQty(${item.upc})">+</button>
+        </div>
+        <span class="item-price font-weight-bold text-success">${formatsRupiah(unitCost)}</span>
+    </div>
+    <i class="fas fa-trash-alt item-delete text-danger ml-3" style="cursor: pointer;"></i>
+</div>
+
+
+
+                            `;
+                        })
+                        .join("");
+
+                    let totalAfterPPN = subtotal + ppn;
+
+                    let cardDetailsHtml = `
+                        <div class="card-details">
+                            <form>
+                                <table class="table table-sm">
+                                    <tr>
+                                        <th><label for="deliveryDate" class="form-label" style="color:black">Delivery Date</label></th>
+                                        <td><input type="date" class="form-control" id="delivery_date" name="delivery_date" placeholder="Delivery Date ..."></td>
+                                    </tr>
+                                    <tr>
+                                        <th><label for="scheduleType" class="form-label" style="color:black">Schedule Type</label></th>
+                                        <td>
+                                            <select class="form-select" id="schedule_type" name="schedule_type" onchange="handleScheduleTypeChange()">
+                                                <option value="">Choose Schedule Type</option>
+                                                <option value="full">Full Delivery</option>
+                                                <option value="partials">Partials Delivery</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th><label for="expiredDate" class="form-label" style="color:black">Expired Date</label></th>
+                                        <td><input type="text" class="form-control" id="expiredDate" name="expired_date" disabled></td>
+                                    </tr>
+                                </table>
+                                <div class="d-flex flex-column">
+                                    <button type="button" class="btn btn-success w-100 mb-2">
+                                        <i class="fas fa-check"></i> Approve
+                                    </button>
+                                    <button type="button" class="btn btn-danger w-100">
+                                        <i class="fas fa-times"></i> Reject
+                                    </button>
                                 </div>
-                                <!--end::Row-->
-                                <!--begin::Row-->
-                                <div class="row g-5 mb-12">
-                                    <div class="col-sm-6">
-                                        <div class="fw-semibold fs-7 text-gray-600 mb-1">Ship To:</div>
-                                        <div class="fw-bold fs-6 text-gray-800">${details.ship_to || 'N/A'}</div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="fw-semibold fs-7 text-gray-600 mb-1">Status:</div>
-                                        <div class="fw-bold fs-6 text-gray-800">
-                                            ${getStatusBadgeClass(details.status)}
+                            </form>
+                        </div>
+                    `;
+
+                    let modalBodyHtml = `
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-8 col-sm-12">
+                                    <section class="main-banner card">
+                                        <h1>Purchase Order</h1>
+                                        <div class="illustration text-center">
+                                            <img src="/image/truck.jpg" alt="Parcel" class="img-fluid">
                                         </div>
+                                        <h6>List Item PO</h6>
+                                        <div id="cart-items">${cartHtml}</div>
+                                    </section>
+                                </div>
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="shipping-info">
+                                        <h2>Shipping</h2>
+                                        <img src="/image/store.png" alt="Parcel" class="img-fluid">
+                                        <div class="sender-receiver">
+                                            <div class="sender">
+                                                <h3>Sender</h3>
+                                                <p>${data.details.suppliers.supp_name}</p>
+                                                <p>${data.details.suppliers.address_1}</p>
+                                            </div>
+                                            <div class="receiver">
+                                                <h3>Receiver</h3>
+                                                <p>${data.details.stores.store_name}</p>
+                                                <p>${data.details.stores.store_add1}</p>
+                                            </div>
+                                        </div>
+                                        ${cardDetailsHtml}
                                     </div>
                                 </div>
-                                <!--end::Row-->
-                                <!--begin::Table-->
-                                <div class="table-responsive border-bottom mb-9">
-                                    <table class="table mb-3">
-                                        <thead>
-                                            <tr class="border-bottom fs-6 fw-bold text-muted">
-                                                <th class="min-w-300px pb-2">Description</th>
-                                                <th class="min-w-100px text-end pb-2">Quantity</th>
-                                                <th class="min-w-100px text-end pb-2">Unit Price</th>
-                                                <th class="min-w-120px text-end pb-2">Subtotal</th>
-
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            ${generateOrderItemsHTML(details.ord_detail)}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <!--end::Table-->
-                                <!--begin::Container-->
-                                <div class="d-flex justify-content-end">
-                                    <div class="mw-300px">
-                                        ${generateOrderSummaryHTML(details)}
-                                    </div>
-                                </div>
-                                <!--end::Container-->
-                            </div>
-                            <!--end::Wrapper-->
-                        </div>
-                        <!--end::Order details-->
-                    </div>
-                    <!--end::Content-->
-                    <!--begin::Sidebar-->
-                    <div class="m-0">
-                        <div class="d-print-none border border-dashed border-gray-300 card-rounded h-lg-100 min-w-md-350px p-9 bg-lighten">
-                            <div class="mb-8">
-                                <span class="badge badge-light-success me-2">${details.order_status || 'N/A'}</span>
-                            </div>
-                            <h6 class="mb-8 fw-bolder text-gray-600 text-hover-primary">PAYMENT DETAILS</h6>
-                            <div class="mb-6">
-                                <div class="fw-semibold text-gray-600 fs-7">Paypal:</div>
-                                <div class="fw-bold text-gray-800 fs-6">${details.paypal || 'N/A'}</div>
-                            </div>
-                            <div class="mb-6">
-                                <div class="fw-semibold text-gray-600 fs-7">Account:</div>
-                                <div class="fw-bold text-gray-800 fs-6">${details.account || 'N/A'}</div>
-                            </div>
-                            <div class="mb-15">
-                                <div class="fw-semibold text-gray-600 fs-7">Payment Term:</div>
-                                <div class="fw-bold fs-6 text-gray-800">${details.payment_term || 'N/A'}</div>
-                            </div>
-                            <h6 class="mb-8 fw-bolder text-gray-600 text-hover-primary">PROJECT OVERVIEW</h6>
-                            <div class="mb-6">
-                                <div class="fw-semibold text-gray-600 fs-7">Description:</div>
-                                <div class="fw-bold text-gray-800 fs-6">${details.description || 'N/A'}</div>
                             </div>
                         </div>
-                    </div>
-                    <!--end::Sidebar-->
-                </div>
-                <!--end::Layout-->
-            </div>
-            <!--end::Body-->
-        </div>
-    `;
+                    `;
+
+                    $("#mdlFormContent").html(modalBodyHtml);
+                    $("#mdlForm").modal("show");
+
+                    // Set delivery and expiration dates
+                    let notAfterDate = new Date(data.details.not_after_date);
+                    let approvalDate = new Date(data.details.approval_date);
+                    let releaseDate = new Date(data.details.release_date);
+
+                    let minDeliveryDate = new Date(approvalDate);
+                    minDeliveryDate.setDate(minDeliveryDate.getDate() + 1);
+
+                    let maxDeliveryDate = new Date(notAfterDate);
+                    maxDeliveryDate.setDate(maxDeliveryDate.getDate() - 2);
+
+                    let formattedMaxDate = maxDeliveryDate
+                        .toISOString()
+                        .split("T")[0];
+                    let formattedMinDate = minDeliveryDate
+                        .toISOString()
+                        .split("T")[0];
+                    let formattedExpiryDate = notAfterDate.toLocaleDateString(
+                        "id-ID",
+                        {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                        }
+                    );
+
+                    document.getElementById("delivery_date").min =
+                        formattedMinDate;
+                    document.getElementById("delivery_date").max =
+                        formattedMaxDate;
+                    document.getElementById("expiredDate").value =
+                        formattedExpiryDate;
+                })
+                .catch((error) => {
+                    console.error("Error fetching order details:", error);
+                    $("#mdlFormContent").html(
+                        "<p>Error fetching details. Please try again later.</p>"
+                    );
+                });
+        }
+    });
 }
-
-function getStatusBadgeClass(status) {
-    switch (status) {
-        case 'Completed':
-            return `
-                <span class="badge badge-light-success text-white fw-bold">
-                    <i class="fas fa-check-circle me-2"></i> Completed
-                </span>
-            `;
-        case 'Pending':
-            return `
-                <span class="badge badge-light-warning text-white fw-bold">
-                    <i class="fas fa-hourglass-half me-2"></i> Pending
-                </span>
-            `;
-        case 'Cancelled':
-            return `
-                <span class="badge badge-light-danger text-white fw-bold">
-                    <i class="fas fa-times-circle me-2"></i> Cancelled
-                </span>
-            `;
-        case 'Printed':
-            return `
-                <span class="badge badge-light-primary text-white fw-bold">
-                    <i class="fas fa-print me-2"></i> Printed
-                </span>
-            `;
-        default:
-            return `
-                <span class="badge badge-light-secondary text-white fw-bold">
-                    <i class="fas fa-question-circle me-2"></i> Unknown
-                </span>
-            `;
-    }
-}
-
-
-function generateOrderItemsHTML(ordskus) {
-    return ordskus.map(sku => {
-        // Calculate the total amount including VAT
-        const totalAmount = (sku.unit_cost * sku.qty_ordered) + (sku.qty_ordered * sku.vat_cost) ;
-        return `
-            <tr class="fw-bold text-gray-800 fs-6 text-end border-bottom">
-                <td class="d-flex align-items-center pt-4 pb-4">
-                    <i class="fa fa-box text-primary fs-3 me-3"></i>
-                    ${sku.sku_desc} (${sku.sku})
-                </td>
-                <td class="pt-4 pb-4">${sku.qty_ordered}</td>
-                <td class="pt-4 pb-4">${formatCurrency(sku.unit_cost)}</td>
-                <td class="pt-4 pb-4">${formatCurrency(totalAmount)}</td>
-            </tr>
-        `;
-    }).join('');
-}
-
-// Helper function to format currency
-function formatCurrency(value) {
-    return new Intl.NumberFormat("id-ID", {
-        style: "currency",
-        currency: "IDR",
-    }).format(value);
-}
-
-// Function to generate the HTML content for order summary
-// Function to generate the HTML content for order summary
-function generateOrderSummaryHTML(details) {
-    console.log(details.ord_detail);
-
-    // Calculate subtotal and total VAT
-    const { subtotal, totalVat } = details.ord_detail.reduce((acc, item) => {
-        const itemTotal = item.unit_cost * item.qty_ordered;
-        const itemVat = item.vat_cost * item.qty_ordered;
-
-        acc.subtotal += itemTotal;
-        acc.totalVat += itemVat;
-
-        return acc;
-    }, { subtotal: 0, totalVat: 0 });
-
-    // Calculate total
-    const total = subtotal + totalVat;
-
-    // Log calculated values for debugging
-    console.log('Subtotal:', subtotal);
-    console.log('Total VAT:', totalVat);
-    console.log('Total:', total);
-
-    // Return the formatted HTML for the order summary
-    return `
-        <div class="d-flex flex-stack mb-3">
-            <div class="fw-semibold pe-10 text-gray-600 fs-7">Subtotal:</div>
-            <div class="text-end fw-bold fs-6 text-gray-800">${formatCurrency(subtotal)}</div>
-        </div>
-        <div class="d-flex flex-stack mb-3">
-            <div class="fw-semibold pe-10 text-gray-600 fs-7">VAT:</div>
-            <div class="text-end fw-bold fs-6 text-gray-800">${formatCurrency(totalVat)}</div>
-        </div>
-        <div class="d-flex flex-stack mb-3">
-            <div class="fw-semibold pe-10 text-gray-600 fs-7">Total:</div>
-            <div class="text-end fw-bold fs-6 text-gray-800">${formatCurrency(total)}</div>
-        </div>
-    `;
-}
-
-
 
 function openDatePicker(date) {
     // Use SweetAlert to create a modal with a spinner initially
@@ -1035,236 +977,6 @@ function showInfo(event) {
             ],
         })
         .start();
-}
-
-function confirmPo(event) {
-    // Get the order number from the clicked element
-    let orderNo = event.order_no; // Assuming order number is within the clicked element
-
-    // Store event data in local storage
-    localStorage.setItem("orderData", JSON.stringify(event));
-
-    // Show SweetAlert modal with confirmation question
-    Swal.fire({
-        title: "Confirm Order",
-        html: `Are you sure you want to confirm order ${orderNo}?`,
-        icon: "question",
-        showCancelButton: true,
-        cancelButtonText: "Cancel",
-        confirmButtonText: "Confirm",
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        focusConfirm: false,
-        showLoaderOnConfirm: true,
-        preConfirm: () => {
-            return new Promise((resolve) => {
-                // Simulate API call or any asynchronous operation
-                setTimeout(resolve, 2000); // Simulated 2 seconds delay
-            });
-        },
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Close the current SweetAlert modal
-            Swal.close();
-
-            // Retrieve data from local storage
-            let storedData = JSON.parse(localStorage.getItem("orderData"));
-            let subtotal = 0;
-            let ppn = 0;
-
-            // Populate the modal content using jQuery
-            $("#mdlFormTitle").html(
-                '<i class="fas fa-file-alt"></i> Confirm PO - ' +
-                    storedData.order_no
-            );
-
-            let cartHtml = storedData.ord_detail
-                .map((item) => {
-                    let qtyOrdered = item.qty_ordered || 0;
-                    let unitCost = item.unit_cost || 0;
-                    let vatCost = item.vat_cost || 0;
-
-                    let itemSubtotal = qtyOrdered * unitCost;
-                    subtotal += itemSubtotal;
-
-                    let itemPpn = qtyOrdered * vatCost;
-                    ppn += itemPpn;
-
-                    return `
-                    <div class="cart-item">
-                        <div class="item-details">
-                            <div>
-                                <p>${item.sku_desc}</p>
-                                <span>UPC: ${item.upc}</span><br>
-                                <span>Quantity Ordered: ${qtyOrdered}</span>
-                            </div>
-                            <div class="item-cost-fulfillable">
-                                <div class="form-group qty-fulfillable-group" style="padding-right:10px;">
-                                    <button type="button" class="qty-decrease" onclick="decreaseQty(${
-                                        item.upc
-                                    })">-</button>
-                                    <input type="number" id="qty-fulfillable-${
-                                        item.upc
-                                    }" class="qty-fulfillable-input" name="qty_fulfillable" value="${qtyOrdered}" min="0" max="${qtyOrdered}" style="max-width: 200px;" data-unit-cost:"${qtyOrdered}"/>
-                                    <button type="button" class="qty-increase" onclick="increaseQty(${
-                                        item.upc
-                                    })">+</button>
-                                </div>
-                                <span class="item-price" id="subtotal-${
-                                    item.upc
-                                }">${formatRupiah(unitCost)}</span>
-                            </div>
-                            <i class="fas fa-trash-alt item-delete"></i>
-                        </div>
-                    </div>
-                `;
-                })
-                .join("");
-
-            let totalAfterPPN = subtotal + ppn;
-            let subtotalAfterPPNAndDiscount = totalAfterPPN;
-
-            let cardDetailsHtml = `
-            <div class="card-details">
-                <div class="card-types"></div>
-                <form>
-                    <table class="table">
-                        <tr>
-                            <th><label for="deliveryDate" class="form-label">Delivery Date</label></th>
-                            <td><input type="date" class="form-control" id="delivery_date" name="delivery_date" placeholder="Delivery Date ..."></td>
-                        </tr>
-                        <tr>
-                            <th><label for="deliveryStatus" class="form-label">Schedule Type</label></th>
-                            <td>
-                                <select class="form-select" id="schedule_type" name="schedule_type" onchange="handleScheduleTypeChange()">
-                                    <option value="">Choose Schedule Type</option>
-                                    <option value="full">Full Delivery</option>
-                                    <option value="partials">Partials Delivery</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th><label for="expiredDate" class="form-label">Expired Date</label></th>
-                            <td><input type="text" class="form-control" id="expiredDate" name="expired_date" disabled></td>
-                        </tr>
-
-                    </table>
-                     <div class="d-flex flex-column">
-                            <button type="button" class="btn btn-success w-100 mb-2">
-                                <i class="fas fa-check"></i> Approve
-                            </button>
-                            <button type="button" class="btn btn-danger w-100">
-                                <i class="fas fa-times"></i> Reject
-                            </button>
-                        </div>
-                </form>
-            </div>
-        `;
-
-            console.log(storedData, "result.data");
-
-            let modalBodyHtml = `
-                <body>
-                    <nav>
-                        <div class="nav-left">
-                            <div class="search-group">
-                                <i class="fas fa-search"></i>
-                                <input type="text" placeholder="Search by track number" class="search-bar">
-                            </div>
-                        </div>
-                        <ul>
-                            <li><a href="#"><i class="fas fa-file-alt"></i> Review PO</a></li>
-                            <li><a href="#"><i class="fas fa-calendar-check"></i> Schedule PO</a></li>
-                            <li><a href="#"><i class="fas fa-truck"></i> Delivery</a></li>
-                        </ul>
-                        <div class="nav-right">
-                            <i class="fas fa-bell icon"></i>
-                        </div>
-                    </nav>
-                    <div class="main-content">
-                        <section class="main-banner card">
-                            <h1>Purchase Order</h1>
-                            <div class="illustration">
-                                <img src="/image/truck.jpg" alt="Parcel">
-                            </div>
-                            <h6>List Item PO</h6>
-                            <div id="cart-items">${cartHtml}</div>
-                        </section>
-                        <aside class="sidebar">
-                            <div class="shipping-info">
-                                <h2>Shipping</h2>
-                                <div id="map" class="map"></div>
-                                <div class="sender-receiver">
-                                    <div class="sender">
-                                        <h3>Sender</h3>
-                                        <p>${storedData.suppliers.supp_name}</p>
-                                        <p>${storedData.suppliers.address_1}</p>
-                                    </div>
-                                    <div class="receiver">
-                                        <h3>${storedData.stores.store_name}</h3>
-                                        <p>${storedData.stores.store_add1}</p>
-                                    </div>
-                                </div>
-
-                                ${cardDetailsHtml}
-                            </div>
-                        </aside>
-                    </div>
-
-                </body>
-            `;
-
-            $("#mdlFormContent").html(modalBodyHtml);
-            $("#mdlForm").modal("show");
-
-            // Set delivery and expiration dates
-            let notAfterDate = new Date(storedData.not_after_date);
-            let options = { year: "numeric", month: "long", day: "numeric" };
-            let formattedDate = notAfterDate.toLocaleDateString(
-                "id-ID",
-                options
-            );
-            document.getElementById("expiredDate").value = formattedDate;
-
-            let releaseDate = new Date(storedData.release_date);
-            let minDeliveryDate = new Date(notAfterDate);
-            minDeliveryDate.setDate(notAfterDate.getDate() - 2);
-
-            document.getElementById("delivery_date").min = releaseDate
-                .toISOString()
-                .slice(0, 10);
-            document.getElementById("delivery_date").max = minDeliveryDate
-                .toISOString()
-                .slice(0, 10);
-
-            // Initialize the map
-            var senderCoords = [51.505, -0.09];
-            var receiverCoords = [55.9533, -3.1883];
-            var map = L.map("map").setView(
-                [
-                    (senderCoords[0] + receiverCoords[0]) / 2,
-                    (senderCoords[1] + receiverCoords[1]) / 2,
-                ],
-                6
-            );
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                attribution:
-                    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            }).addTo(map);
-            L.marker(senderCoords)
-                .addTo(map)
-                .bindPopup("Sender: Valera Meladze<br>Linkoln st. 34/a, London")
-                .openPopup();
-            L.marker(receiverCoords)
-                .addTo(map)
-                .bindPopup("Receiver: Tom Hardy<br>Milton st. 104, Edinburgh")
-                .openPopup();
-
-            handleScheduleTypeChange();
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-            Swal.fire("Cancelled", "The confirmation was cancelled.", "info");
-        }
-    });
 }
 
 function handleScheduleTypeChange() {

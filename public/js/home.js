@@ -354,7 +354,14 @@ function fetchTimelineConfirmedData() {
             });
 
             // Update deliveries for tomorrow count
-            $("#deliveries-for-tomorrow").text(deliveriesForTomorrowCount);
+            $("#deliveriesForTomorrowCount").text(deliveriesForTomorrowCount);
+
+            // Show or hide the badge based on the deliveries count
+            if (deliveriesForTomorrowCount > 0) {
+                $("#deliveriesForTomorrowBadge").removeClass("d-none");
+            } else {
+                $("#deliveriesForTomorrowBadge").addClass("d-none");
+            }
 
             // Hide the spinner
             spinnerContainer.addClass("d-none");
@@ -374,6 +381,8 @@ function fetchTimelineConfirmedData() {
         },
     });
 }
+
+
 
 async function fetchPoDataPerDays() {
     const spinner = document.getElementById("spinner-po");
@@ -679,73 +688,56 @@ async function fetchPoDataPerDays() {
 
 // Function to load FAQ content
 function loadFaqContent() {
-    const faqs = [
-        {
-            question: 'How do I reset my password?',
-            answer: 'To reset your password, go to the settings page and click on "Reset Password".',
-            image: 'https://example.com/images/password-reset.png' // Replace with your image URL
-        },
-        {
-            question: 'How do I update my profile?',
-            answer: 'You can update your profile by visiting the profile section in your account settings.',
-            image: 'https://example.com/images/update-profile.png' // Replace with your image URL
-        },
-        {
-            question: 'How do I contact support?',
-            answer: 'You can contact support via the "Contact Us" section on the website.',
-            image: 'https://example.com/images/contact-support.png' // Replace with your image URL
-        },
-        {
-            question: 'What is the refund policy?',
-            answer: 'Our refund policy allows you to request a refund within 30 days of purchase.',
-            image: 'https://example.com/images/refund-policy.png' // Replace with your image URL
-        },
-        {
-            question: 'How do I change my email address?',
-            answer: 'To change your email address, go to your account settings and update your email information.',
-            image: 'https://example.com/images/change-email.png' // Replace with your image URL
-        }
-        // Add more FAQs as needed
-    ];
-
     document.getElementById('mdlFormContent').innerHTML = `
         <div class="mb-3">
             <input type="text" id="faqSearchInput" class="form-control" placeholder="Search FAQs...">
         </div>
-        <div id="faqResults"></div>
+        <div id="faqResults"><p class="text-muted">Start typing to search for FAQs...</p></div>
     `;
     document.getElementById('mdlFormContent').style.display = 'block';
 
-    document.getElementById('faqSearchInput').addEventListener('input', function() {
-        const query = this.value.toLowerCase();
-        const faqResults = document.getElementById('faqResults');
-        faqResults.innerHTML = '';
+    let faqs = [];
 
-        if (query.length > 0) {
-            const filteredFaqs = faqs.filter(faq => faq.question.toLowerCase().includes(query));
+    // Fetch FAQs from the server
+    fetch('/faqs')
+        .then(response => response.json())
+        .then(data => {
+            faqs = data;
 
-            if (filteredFaqs.length > 0) {
-                filteredFaqs.forEach(faq => {
-                    const faqItem = document.createElement('div');
-                    faqItem.className = 'faq-item mb-3 d-flex align-items-start';
-                    faqItem.innerHTML = `
-                        <img src="${faq.image || 'https://via.placeholder.com/50'}" alt="${faq.question}" class="me-3" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
-                        <div>
-                            <h6 class="fw-bold">${faq.question}</h6>
-                            <p class="text-muted">${faq.answer}</p>
-                            <hr>
-                        </div>
-                    `;
-                    faqResults.appendChild(faqItem);
-                });
-            } else {
-                faqResults.innerHTML = '<p class="text-muted">No FAQs found.</p>';
-            }
-        } else {
-            faqResults.innerHTML = '<p class="text-muted">Start typing to search for FAQs...</p>';
-        }
-    });
+            // Event listener for search input
+            document.getElementById('faqSearchInput').addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                const faqResults = document.getElementById('faqResults');
+                faqResults.innerHTML = '';
+
+                if (query.length > 0) {
+                    const filteredFaqs = faqs.filter(faq => faq.question.toLowerCase().includes(query));
+
+                    if (filteredFaqs.length > 0) {
+                        filteredFaqs.forEach(faq => {
+                            const faqItem = document.createElement('div');
+                            faqItem.className = 'faq-item mb-3 d-flex align-items-start';
+                            faqItem.innerHTML = `
+                                <img src="${faq.image || 'https://via.placeholder.com/50'}" alt="${faq.question}" class="me-3" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                                <div>
+                                    <h6 class="fw-bold">${faq.question}</h6>
+                                    <p class="text-muted">${faq.answer}</p>
+                                    <hr>
+                                </div>
+                            `;
+                            faqResults.appendChild(faqItem);
+                        });
+                    } else {
+                        faqResults.innerHTML = '<p class="text-muted">No FAQs found.</p>';
+                    }
+                } else {
+                    faqResults.innerHTML = '<p class="text-muted">Start typing to search for FAQs...</p>';
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching FAQs:', error));
 }
+
 
 // Function to load form content via AJAX
 function loadFormContent(url) {
@@ -770,9 +762,6 @@ document.getElementById('help-btn').addEventListener('click', function() {
 });
 
 // Example usage for showing a form
-document.getElementById('showFormBtn').addEventListener('click', function() {
-    showModal('Form Title', '/path/to/form-content', 'form');
-});
 
 
 

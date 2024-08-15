@@ -18,9 +18,11 @@ class NilaiController extends Controller
     public function index()
     {
         $guru = Guru::where('id_card', Auth::user()->id_card)->first();
-        $nilai = Nilai::where('guru_id', $guru->id)->first();
+        $nilai = $guru ? Nilai::where('guru_id', $guru->id)->first() : null;
+
         return view('guru.nilai', compact('nilai', 'guru'));
     }
+
 
     /**
      * Show the form for creating a new resource.

@@ -47,7 +47,7 @@ class OrdHeadController extends Controller
             $orderNo = $validated['order_no'];
 
             // Fetch order details including related ordskus
-            $orderDetails = OrdHead::with('ordDetail')->where('order_no', $orderNo)->first();
+            $orderDetails = OrdHead::with('ordDetail','stores','suppliers','rcvHead','rcvHead.tandaTerimaDetail','rcvHead.rcvDetail')->where('order_no', $orderNo)->first();
 
             if ($orderDetails) {
                 // Return the order details and associated ordskus as JSON response
@@ -470,37 +470,40 @@ public function data(Request $request)
 {
     $date = $request->query('date');
 
-
     try {
         $startTime = microtime(true);
         $startMemory = memory_get_usage();
 
+        // Get filter inputs
         $filterDate = $request->input('filterDate');
         $filterSupplier = $request->input('filterSupplier');
         $filterOrderNo = $request->input('filterOrderNo');
 
         $data = $this->orderService->getOrderData($filterDate, $filterSupplier, $filterOrderNo);
 
+        // Calculate execution time and memory usage
         $executionTime = microtime(true) - $startTime;
         $memoryUsage = memory_get_usage() - $startMemory;
 
-        // Use the helper function to log performance data
+        // Log performance metrics
         PerformanceHelper::logPerformanceMetrics(
-            'Data OrdHead', // Function name
-            $date,                        // Date parameter
-            $executionTime,               // Execution time
-            $memoryUsage,                 // Memory usage
-            count($data),              // Total count
-            count($data),              // Processed count
-            count($data),               // Success count (assuming all processed are successful)
+            'Data PO',              // Function name
+            $date,                  // Date parameter
+            $executionTime,         // Execution time
+            $memoryUsage,           // Memory usage
+            $data->count(),         // Total count
+            $data->count(),         // Processed count
+            $data->count()          // Success count
         );
 
+        // Return the data in DataTables format
         return DataTables::of($data)
             ->addColumn('actions', function ($row) {
                 return '<button class="btn btn-sm btn-primary">Action</button>';
             })
             ->rawColumns(['actions'])
             ->toJson();
+
     } catch (\Throwable $th) {
         return response()->json([
             'success' => false,
@@ -508,6 +511,7 @@ public function data(Request $request)
         ], 500);
     }
 }
+
 
 
 public function delivery(Request $request)

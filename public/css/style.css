@@ -53,7 +53,7 @@
 }
 
 .card{
-    color:black;
+    color:white;
 }
 
 .card-loading {
@@ -184,8 +184,9 @@
 }
 
 [data-bs-theme="dark"] .modal-content {
-    background-color: #222;
-    color: #fff;
+    background-color: #ffffff;
+    color: #000000;
+    font-weight: bold;
 }
 
 [data-bs-theme="light"] .modal-content {
@@ -437,7 +438,7 @@ nav ul li a.active {
 }
 
 .illustration img {
-    width: 100%;
+    width: 40%;
 }
 
 .main-banner h6 {
@@ -1193,7 +1194,6 @@ nav ul li a.active {
 
 .btn-close {
     border: none;
-    background: none;
 }
 
 .btn-close:focus,
@@ -2924,10 +2924,444 @@ nav ul li a.active {
     border-radius: 1rem; /* Ensures the modal dialog itself has rounded corners */
 }
 
-.modal-header, .modal-footer {
-    border-radius: 1rem 1rem 0 0; /* Rounds only the top corners of the header and footer */
+.modal-header {
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
-.modal-body {
-    border-radius: 0 0 1rem 1rem; /* Rounds only the bottom corners of the body */
+.modal-footer {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
+
+
+.swal-popup {
+    background-color: white; /* White background */
+    border-radius: 10px; /* Rounded corners */
+    padding: 20px; /* Padding */
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+  }
+
+  .swal-title {
+    font-size: 24px; /* Title font size */
+    color: black; /* Title color */
+    font-weight: bold; /* Title font weight */
+  }
+
+  .swal-text {
+    font-size: 16px; /* Text font size */
+    color: black; /* Text color */
+    margin: 10px 0; /* Margin for spacing */
+  }
+
+  .swal-success-list {
+    list-style: none;
+    padding: 0;
+    font-size: 16px;
+    color: black;
+  }
+
+  .swal-success-list li {
+    margin-bottom: 10px; /* Spacing between list items */
+  }
+
+  .success-text {
+    color: #4caf50; /* Success color */
+  }
+
+  .swal-countdown {
+    font-size: 16px; /* Countdown font size */
+    color: black; /* Countdown color */
+    margin-top: 10px; /* Margin for spacing */
+  }
+
+  .progress {
+    height: 20px; /* Progress bar height */
+    background-color: #e0e0e0; /* Background color */
+    border-radius: 10px; /* Rounded corners */
+    overflow: hidden;
+    margin-top: 20px; /* Margin for spacing */
+  }
+
+  .progress-bar {
+    height: 100%; /* Full height */
+    background: linear-gradient(90deg, #4caf50, #81c784); /* Gradient background */
+    transition: width 0.5s ease-in-out; /* Smooth transition */
+  }
+  .badge {
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.badge.bg-warning {
+    background-color: #ffc107;
+    color: #343a40;
+}
+
+.badge.bg-warning:hover {
+    background-color: #e0a800;
+    color: #212529;
+}
+.bounce {
+    display: inline-block;
+    animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+/* Custom styles for the modal */
+.custom-modal .modal-content {
+    background-color: #ffffff; /* White background */
+    color: #000000; /* Black text color */
+    padding: 20px; /* Optional: Add some padding */
+}
+
+.custom-modal .modal-header,
+.custom-modal .modal-footer {
+
+    color:black;
+    font-weight: bold;
+}
+
+.custom-modal .modal-title {
+    color: #000000; /* Black title color */
+}
+
+#mdlFormTitle{
+    color:black;
+    font-weight: bold;
+}
+/* Modal Body Styling */
+.order-section {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
+    background-color: #ffffff; /* Set card background to white */
+    color: #000000; /* Set text color to black */
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.order-section h6 {
+    font-weight: 600;
+    color: #000000; /* Set heading color to black */
+    margin-bottom: 15px;
+}
+
+.order-section .row div {
+    padding: 5px 0;
+    color: #000000; /* Set row text color to black */
+}
+
+.order-section .row div strong {
+    color: #000000; /* Set strong text color to black */
+}
+
+.table {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    background-color: #ffffff; /* Set table background to white */
+    color: #000000; /* Set table text color to black */
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    color: #000000; /* Set table header text color to black */
+    text-align: center;
+    font-weight: bold;
+}
+
+.table tbody td {
+    text-align: center;
+    vertical-align: middle;
+    color: #000000; /* Set table body text color to black */
+}
+
+.table tbody tr:nth-child(odd) {
+    background-color: #f8f9fa;
+}
+
+#modalSpinner {
+    text-align: center;
+    margin: 20px 0;
+}
+
+#modalSpinner i {
+    font-size: 3rem;
+    color: #007bff;
+}
+
+/* Modal Footer Styling */
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+    background-color: #ffffff; /* Set footer background to white */
+}
+
+.modal-footer .btn {
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 4px;
+    padding: 6px 12px;
+}
+
+.modal-footer .btn:hover {
+    background-color: #0056b3;
+}
+.filter-input {
+    background-color: #f8f9fa;
+    /* Light gray background */
+    color: #495057;
+    /* Darker text color */
+    border-radius: .375rem;
+    /* Rounded corners */
+    border: 1px solid #ced4da;
+    /* Light border */
+    transition: all 0.3s ease;
+    /* Smooth transition */
+}
+
+.filter-input:focus {
+    border-color: #007bff;
+    /* Blue border on focus */
+    box-shadow: 0 0 0 .2rem rgba(38, 143, 255, .25);
+    /* Subtle blue shadow */
+}
+
+.filter-button {
+    background-color: #007bff;
+    /* Blue background */
+    color: #ffffff;
+    /* White text */
+    border: none;
+    border-radius: .375rem;
+    /* Rounded corners */
+    transition: all 0.3s ease;
+    /* Smooth transition */
+}
+
+.filter-button:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+    color: #ffffff;
+    /* White text on hover */
+}
+
+.filter-button:active {
+    background-color: #004085;
+    /* Even darker blue when active */
+    color: #ffffff;
+    /* White text when active */
+}
+
+.text-white {
+    color: #ffffff !important;
+}
+.steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.step-item {
+    flex-grow: 1;
+    text-align: center;
+    position: relative;
+}
+
+.step-item::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 4px;
+    background-color: #ddd;
+    z-index: -1;
+    transform: translateX(-50%);
+    transition: background-color 0.3s;
+}
+
+.step-item:last-child::after {
+    content: none;
+}
+
+.step-button {
+    background-color: #fff;
+    border: 2px solid #007bff;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    color: #007bff;
+    transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
+    outline: none;
+}
+
+.step-button.active {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.step-title {
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+}
+
+.step-content {
+    display: none;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.step-content.active {
+    display: block;
+}
+
+/* Progress Bar */
+#progress {
+    position: absolute;
+    top: 24px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: #007bff;
+    z-index: -1;
+    transition: width 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.progress-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+}
+progress {
+    width: 100%;
+    height: 20px;
+}
+.step-content {
+    display: none;
+}
+.step-content.active {
+    display: block;
+}
+/* Existing styles... */
+.modal-content{
+    background-color:white;
+}
+.modal-content img {
+    max-width: 40%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding: 0.5rem 1rem;
+}
+/* Initial styling for the input field */
+input[type="number"] {
+    background-color: white; /* Initial background color */
+    color: black; /* Initial text color */
+    border: 1px solid #ccc; /* Border styling */
+    padding: 10px; /* Padding for better appearance */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition effect */
+}
+
+/* Styling on hover */
+input[type="number"]:hover {
+    background-color: white; /* Background color on hover */
+    color: black; /* Text color on hover */
+}
+.qty-fulfillable-group input[type="number"] {
+    width: 80px; /* Adjust width as needed */
+}
+/* Default layout (horizontal) */
+.cart-item {
+    display: flex;
+    flex-direction: row; /* Horizontal layout */
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+}
+.item-cost-fulfillable {
+    display: flex;
+    align-items: center;
+}
+.qty-fulfillable-group {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+.form-control-sm {
+    width: 80px; /* Set a fixed width for number inputs */
+    text-align: center; /* Center-align text */
+}
+.btn-outline-secondary {
+    margin: 0 5px; /* Margin between buttons */
+}
+
+/* Mobile layout (vertical) */
+@media (max-width: 767.98px) {
+    .cart-item {
+        flex-direction: column; /* Change to vertical layout on mobile */
+        align-items: flex-start; /* Align items to the start for vertical layout */
+        padding: 10px; /* Add padding for better spacing on mobile */
+    }
+
+    .item-details {
+        margin-bottom: 10px; /* Add spacing between details and cost/fulfillable section */
+    }
+
+    .item-cost-fulfillable {
+        width: 100%; /* Ensure the cost section takes full width */
+        display: flex;
+        flex-direction: column; /* Stack buttons and price vertically */
+    }
+
+    .form-group.qty-fulfillable-group {
+        width: 100%; /* Make form-group full width for mobile */
+        margin-bottom: 10px; /* Add spacing between input and price */
+    }
+
+    .item-price {
+        margin-top: 10px; /* Add margin to price for spacing */
+    }
+
+    .item-delete {
+        margin-top: 10px; /* Add margin to delete icon for spacing */
+        align-self: flex-end; /* Align delete icon to end */
+    }
 }
