@@ -1,31 +1,35 @@
 $(document).ready(function () {
+    // Fetch all initial data on page load
     fetchPoDataPerDays();
     fetchTimelineConfirmedData();
-
     fetchServiceLevelSupplier();
     fetchItemDetails();
     fetchTandaTerimaList();
     fetchTotals();
 
+    // Set initial toggle states
     document.getElementById("option2").checked = true;
     document.getElementById("toggle-cost").classList.add("active");
-    fetchData("po");
-    fetchData("receiving");
-    fetchData("tandaterima");
+
+    // Fetch data for all sections
+    fetchDataPo();
+    fetchDataReceiving();
+    fetchDataTandaTerima();
 
     // Event listeners for the toggle buttons
     document.getElementById("toggle-quantity").addEventListener("click", () => {
-        fetchData("po");
-        fetchData("receiving");
-        fetchData("tandaterima");
+        fetchDataPo();
+        fetchDataReceiving();
+        fetchDataTandaTerima();
     });
 
     document.getElementById("toggle-cost").addEventListener("click", () => {
-        fetchData("po");
-        fetchData("receiving");
-        fetchData("tandaterima");
+        fetchDataPo();
+        fetchDataReceiving();
+        fetchDataTandaTerima();
     });
 
+    // Fetch data when tab is shown
     document
         .querySelector('a[href="#kt_list_widget_16_tab_4"]')
         .addEventListener("shown.bs.tab", function () {
@@ -33,6 +37,145 @@ $(document).ready(function () {
             fetchReceivingData(today);
         });
 });
+
+async function fetchDataPo() {
+    const spinner = document.getElementById("po-spinner");
+    const content = document.getElementById("po-content");
+    const title = document.getElementById("po-title");
+
+    if (!spinner || !content || !title) {
+        console.error("PO spinner, content, or title element not found");
+        return;
+    }
+
+    spinner.style.display = "block";
+    content.style.display = "none";
+
+    try {
+        const response = await fetch("/po/count");
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+
+        const totalValue = data.totalPo;
+        const totalCost = data.totalCost;
+
+        updateContent("po", totalValue, totalCost);
+    } catch (error) {
+        console.error("Error fetching PO data:", error);
+        content.innerHTML = "<p>Error fetching data</p>";
+    } finally {
+        spinner.style.display = "none";
+    }
+}
+
+async function fetchDataReceiving() {
+    const spinner = document.getElementById("receiving-spinner");
+    const content = document.getElementById("receiving-content");
+    const title = document.getElementById("receiving-title");
+
+    if (!spinner || !content || !title) {
+        console.error("Receiving spinner, content, or title element not found");
+        return;
+    }
+
+    spinner.style.display = "block";
+    content.style.display = "none";
+
+    try {
+        const response = await fetch("/home/countDataRcv");
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+
+        const totalValue = data.totalRcv;
+        const totalCost = data.totalCostRcv;
+
+        updateContent("receiving", totalValue, totalCost);
+    } catch (error) {
+        console.error("Error fetching Receiving data:", error);
+        content.innerHTML = "<p>Error fetching data</p>";
+    } finally {
+        spinner.style.display = "none";
+    }
+}
+
+async function fetchDataTandaTerima() {
+    const spinner = document.getElementById("tandaterima-spinner");
+    const content = document.getElementById("tandaterima-content");
+    const title = document.getElementById("tandaterima-title");
+
+    if (!spinner || !content || !title) {
+        console.error("Tanda Terima spinner, content, or title element not found");
+        return;
+    }
+
+    spinner.style.display = "block";
+    content.style.display = "none";
+
+    try {
+        const response = await fetch("/home/countTandaTerima");
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+
+        const totalValue = data.totalTandaTerima;
+        const totalCost = data.totalCostTandaTerima;
+
+        updateContent("tandaterima", totalValue, totalCost);
+    } catch (error) {
+        console.error("Error fetching Tanda Terima data:", error);
+        content.innerHTML = "<p>Error fetching data</p>";
+    } finally {
+        spinner.style.display = "none";
+    }
+}
+
+function updateContent(type, totalValue, totalCost) {
+    const content = document.getElementById(`${type}-content`);
+    const title = document.getElementById(`${type}-title`);
+
+    // Get the current month and year
+    const now = new Date();
+    const currentMonth = now.toLocaleString("default", { month: "long" });
+    const currentYear = now.getFullYear();
+
+    // Get the selected toggle
+    const selectedToggle = document.querySelector('input[name="options"]:checked')?.id;
+
+    let contentHtml = "";
+    let titleHtml = "";
+    if (selectedToggle === "option1") {
+        // Show Quantity
+        contentHtml = `
+            <div class="content-container">
+                <div class="data-value">${totalValue}</div>
+                <div class="small-text"><strong>Month:</strong> ${currentMonth}<br>
+                <strong>Year:</strong> ${currentYear}</div>
+            </div>
+        `;
+        titleHtml = `Total ${type === "po" ? "PO" : type === "receiving" ? "Receiving" : "Tanda Terima"} Count`;
+    } else if (selectedToggle === "option2") {
+        // Show Cost
+        const formattedCost = formatRupiah(totalCost);
+        contentHtml = `
+            <div class="content-container">
+                <div class="data-value">${formattedCost}</div>
+                <div class="small-text"><strong>Month:</strong> ${currentMonth}<br>
+                <strong>Year:</strong> ${currentYear}</div>
+            </div>
+        `;
+        titleHtml = `Total ${type === "po" ? "PO" : type === "receiving" ? "Receiving" : "Tanda Terima"} Cost`;
+    }
+
+    // Update the content with fetched data
+    content.innerHTML = contentHtml;
+    content.style.display = "block";
+    title.innerHTML = titleHtml;
+}
 
 document.querySelectorAll(".toggle-checkbox").forEach((checkbox) => {
     checkbox.addEventListener("change", function () {
@@ -934,95 +1077,7 @@ function fetchItemDetails() {
 // Call the function to fetch data when the page loads
 
 
-async function fetchData(type) {
-    const spinner = document.getElementById(`${type}-spinner`);
-    const content = document.getElementById(`${type}-content`);
-    const title = document.getElementById(`${type}-title`);
 
-    // Check if elements exist
-    if (!spinner || !content || !title) {
-        console.error(`${type} spinner, content, or title element not found`);
-        return;
-    }
-
-    // Show the spinner while fetching data
-    spinner.style.display = "block";
-    content.style.display = "none"; // Hide the content initially
-
-    let endpoint = "";
-    let dataFields = {};
-
-    if (type === "po") {
-        endpoint = "/po/count";
-        dataFields = { totalKey: "totalPo", costKey: "totalCost" };
-    } else if (type === "receiving") {
-        endpoint = "/home/countDataRcv";
-        dataFields = { totalKey: "totalRcv", costKey: "totalCostRcv" };
-    } else if (type === "tandaterima") {
-        endpoint = "/home/countTandaTerima";
-        dataFields = { totalKey: "totalTandaTerima", costKey: "totalCostTandaTerima" };
-    }
-
-
-    try {
-        const response = await fetch(endpoint);
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        console.log("response", data);
-
-        // Extract data using dataFields
-        const totalValue = data[dataFields.totalKey]; // Access the value from the response
-        const totalCost = data[dataFields.costKey]; // Access the value from the response
-
-        // Get the current month and year
-        const now = new Date();
-        const currentMonth = now.toLocaleString("default", { month: "long" });
-        const currentYear = now.getFullYear();
-
-        // Get the selected toggle
-        const selectedToggle = document.querySelector(
-            'input[name="options"]:checked'
-        )?.id;
-
-        let contentHtml = "";
-        let titleHtml = "";
-        if (selectedToggle === "option1") {
-            // Show Quantity
-            contentHtml = `
-                <div class="content-container">
-                    <div class="data-value">${totalValue}</div>
-                    <div class="small-text"><strong>Month:</strong> ${currentMonth}<br>
-                    <strong>Year:</strong> ${currentYear}</div>
-                </div>
-            `;
-            titleHtml = `Total ${type === "po" ? "PO" : type === "receiving" ? "Receiving" : "Tanda Terima"} Count`;
-        } else if (selectedToggle === "option2") {
-            // Show Cost
-            const formattedCost = formatRupiah(totalCost);
-            contentHtml = `
-                <div class="content-container">
-                    <div class="data-value">${formattedCost}</div>
-                    <div class="small-text"><strong>Month:</strong> ${currentMonth}<br>
-                    <strong>Year:</strong> ${currentYear}</div>
-                </div>
-            `;
-            titleHtml = `Total ${type === "po" ? "PO" : type === "receiving" ? "Receiving" : "Tanda Terima"} Cost`;
-        }
-
-        // Update the content with fetched data
-        content.innerHTML = contentHtml;
-        content.style.display = "block"; // Show the content if data is fetched successfully
-        title.innerHTML = titleHtml; // Update the title
-    } catch (error) {
-        console.error(`Error fetching ${type} data:`, error);
-        content.innerHTML = "<p>Error fetching data</p>"; // Show error message if needed
-    } finally {
-        // Hide the spinner after fetching data
-        spinner.style.display = "none";
-    }
-}
 
 async function fetchCountPoDays(status, filterDate) {
     const url = `/home/countDataPoPerDays?filterDate=${filterDate}`;
@@ -1157,7 +1212,6 @@ async function fetchTotals() {
 }
 
 // Call the function on page load
-document.addEventListener('DOMContentLoaded', fetchTotals);
 
 
 async function fetchTandaTerimaList(page = 1) {

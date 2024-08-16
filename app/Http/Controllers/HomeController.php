@@ -669,8 +669,8 @@ class HomeController extends Controller
             $cachedData = Cache::remember($cacheKey, 10, function () use ($startDate, $endDate, $filterYear, $filterMonth, $filterSupplier) {
                 $totals = DB::table('rcvhead')
                     ->selectRaw('COUNT(DISTINCT rcvhead.id) as totalRcv, SUM(rcvdetail.unit_cost * rcvdetail.qty_received + rcvdetail.vat_cost * rcvdetail.qty_received) as totalCostRcv')
-                    ->leftJoin('ordhead', 'ordhead.order_no', '=', 'rcvhead.order_no')
-                    ->join('rcvdetail', 'rcvhead.id', '=', 'rcvdetail.rcvhead_id')
+                    ->join('ordhead', 'ordhead.order_no', '=', 'rcvhead.order_no')
+                    ->leftJoin('rcvdetail', 'rcvhead.id', '=', 'rcvdetail.rcvhead_id')
                     ->whereBetween('receive_date', [$startDate, $endDate])
                     ->whereYear('ordhead.approval_date', $filterYear)
                     ->whereMonth('ordhead.approval_date', $filterMonth)
