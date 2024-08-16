@@ -19,7 +19,7 @@ return [
                 [
                     'label'          => 'Log Dashboard',
                     'type'           => 'item',
-                    'permission'     => [],
+                    'permission'     => ['logdashboard-show'],
                     'permissionType' => 'gate',
                     'icon'           => 'fas',
                     'iconName'       => 'fa-history', // Changed icon to reflect logging
