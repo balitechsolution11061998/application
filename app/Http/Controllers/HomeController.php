@@ -662,46 +662,34 @@ class HomeController extends Controller
             $startDate = Carbon::create($filterYear, $filterMonth, 1)->startOfMonth()->toDateString();
             $endDate = Carbon::create($filterYear, $filterMonth, 1)->endOfMonth()->toDateString();
 
-            // Generate a unique cache key based on filters
-            $cacheKey = 'countDataRcv_' . md5($filterDate . $filterSupplier);
+            // Generate a cache key
+            $cacheKey = "countDataRcv_{$filterYear}_{$filterMonth}_" . md5($filterSupplier);
 
-            // Attempt to retrieve cached data
-            $cachedData = Cache::remember($cacheKey, 20, function () use ($startDate, $endDate, $filterYear, $filterMonth, $filterSupplier) {
-                $totals = ['totalRcv' => 0, 'totalCostRcv' => 0];
+            // Retrieve cached data or compute it
+            $cachedData = Cache::remember($cacheKey, 10, function () use ($startDate, $endDate, $filterYear, $filterMonth, $filterSupplier) {
+                $totals = DB::table('rcvhead')
+                    ->selectRaw('COUNT(DISTINCT rcvhead.id) as totalRcv, SUM(rcvdetail.unit_cost * rcvdetail.qty_received + rcvdetail.vat_cost * rcvdetail.qty_received) as totalCostRcv')
+                    ->leftJoin('ordhead', 'ordhead.order_no', '=', 'rcvhead.order_no')
+                    ->join('rcvdetail', 'rcvhead.id', '=', 'rcvdetail.rcvhead_id')
+                    ->whereBetween('receive_date', [$startDate, $endDate])
+                    ->whereYear('ordhead.approval_date', $filterYear)
+                    ->whereMonth('ordhead.approval_date', $filterMonth)
+                    ->when(Auth::user()->hasRole('supplier'), function ($query) {
+                        $query->where('rcvhead.supplier', Auth::user()->username);
+                    })
+                    ->when(!empty($filterSupplier), function ($query) use ($filterSupplier) {
+                        $query->whereIn('rcvhead.supplier', (array) $filterSupplier);
+                    })
+                    ->first();
 
-                RcvHead::select([
-                    DB::raw('DATE(receive_date) as tanggal'),
-                    DB::raw('COUNT(DISTINCT rcvhead.id) as jumlah'),
-                    DB::raw('SUM(rcvdetail.unit_cost * rcvdetail.qty_received + rcvdetail.vat_cost * rcvdetail.qty_received) as total_cost'),
-                ])
-                ->leftJoin('ordhead', 'ordhead.order_no', '=', 'rcvhead.order_no')
-                ->join('rcvdetail', 'rcvhead.id', '=', 'rcvdetail.rcvhead_id')
-                ->whereBetween('receive_date', [$startDate, $endDate])
-                ->whereYear('ordhead.approval_date', $filterYear)
-                ->whereMonth('ordhead.approval_date', $filterMonth)
-                ->when(Auth::user()->hasRole('supplier'), function ($query) {
-                    $query->where('rcvhead.supplier', Auth::user()->username);
-                })
-                ->when(!empty($filterSupplier), function ($query) use ($filterSupplier) {
-                    $query->whereIn('rcvhead.supplier', (array) $filterSupplier);
-                })
-                ->groupBy('tanggal')
-                ->orderBy('tanggal', 'asc')
-                ->chunk(100, function ($dailyCounts) use (&$totals) {
-                    foreach ($dailyCounts as $item) {
-                        $totals['totalRcv'] += $item->jumlah;
-                        $totals['totalCostRcv'] += $item->total_cost;
-                    }
-                });
-
-                $totalCount = RcvHead::whereBetween('receive_date', [$startDate, $endDate])->count();
+                $totalCount = DB::table('rcvhead')->whereBetween('receive_date', [$startDate, $endDate])->count();
                 $processedCount = $totalCount;
                 $successCount = $processedCount;
                 $failCount = 0;
 
                 return [
-                    'totalRcv' => $totals['totalRcv'],
-                    'totalCostRcv' => $totals['totalCostRcv'],
+                    'totalRcv' => $totals->totalRcv ?? 0,
+                    'totalCostRcv' => $totals->totalCostRcv ?? 0,
                     'month' => str_pad($filterMonth, 2, '0', STR_PAD_LEFT),
                     'year' => (string)$filterYear,
                     'total_count' => $totalCount,
@@ -741,6 +729,7 @@ class HomeController extends Controller
             ], 500);
         }
     }
+
 
 
     public function countDataRcvPerDays(Request $request) {
