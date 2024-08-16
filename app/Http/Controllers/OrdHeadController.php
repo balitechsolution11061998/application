@@ -525,22 +525,28 @@ public function delivery(Request $request)
         $filterDate = $request->filterDate;
         $filterSupplier = $request->filterSupplier;
 
-        // Initialize the query with eager loading
-        $query = OrdHead::with('stores')
-            ->whereIn('status', ['confirmed', 'printed'])
-            ->where('estimated_delivery_date', '>', now());
+        // Create a unique cache key based on the filters
+        $cacheKey = 'delivery_data_' . md5($filterDate . '_' . $filterSupplier);
 
-        // Apply filters if provided
-        if ($filterDate) {
-            $query->whereDate('created_at', $filterDate);
-        }
+        // Check if the data is already cached
+        $data = Cache::remember($cacheKey, 10, function () use ($filterDate, $filterSupplier) {
+            // Initialize the query with eager loading
+            $query = OrdHead::with('stores')
+                ->whereIn('status', ['confirmed', 'printed'])
+                ->where('estimated_delivery_date', '>', now());
 
-        if ($filterSupplier) {
-            $query->where('supplier_id', $filterSupplier);
-        }
+            // Apply filters if provided
+            if ($filterDate) {
+                $query->whereDate('created_at', $filterDate);
+            }
 
-        // Execute the query and get the results
-        $data = $query->get();
+            if ($filterSupplier) {
+                $query->where('supplier_id', $filterSupplier);
+            }
+
+            // Execute the query and get the results
+            return $query->get();
+        });
 
         // Calculate execution time and memory usage
         $executionTime = microtime(true) - $startTime;
@@ -552,10 +558,10 @@ public function delivery(Request $request)
         // Create or update performance analysis record
         $performanceAnalysis = PerformanceAnalysis::create([
             'total_count' => $data->count(),
-            'processed_count' => $data->count(), // Assuming all records are processed, modify as needed
-            'success_count' => $data->count(), // Assuming all processed are successful, modify as needed
-            'fail_count' => 0, // Update as needed based on actual processing
-            'errors' => null, // Log any errors here if needed
+            'processed_count' => $data->count(),
+            'success_count' => $data->count(),
+            'fail_count' => 0,
+            'errors' => null,
             'execution_time' => $executionTime,
             'status' => $status
         ]);
@@ -569,7 +575,7 @@ public function delivery(Request $request)
             ]),
             'execution_time' => $executionTime,
             'memory_usage' => $memoryUsage,
-            'performance_analysis_id' => $performanceAnalysis->id // Link to the performance analysis record
+            'performance_analysis_id' => $performanceAnalysis->id
         ]);
 
         return DataTables::of($data)
@@ -588,9 +594,9 @@ public function delivery(Request $request)
             'total_count' => 0,
             'processed_count' => 0,
             'success_count' => 0,
-            'fail_count' => 1, // Since the operation failed
+            'fail_count' => 1,
             'errors' => $errorMessage,
-            'execution_time' => microtime(true) - $startTime, // Calculate up to the error point
+            'execution_time' => microtime(true) - $startTime,
             'status' => $status
         ]);
 
@@ -613,6 +619,7 @@ public function delivery(Request $request)
         ], 500);
     }
 }
+
 
 public function receiving(Request $request)
 {
