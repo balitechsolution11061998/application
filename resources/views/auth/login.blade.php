@@ -116,9 +116,8 @@
         <div class="row border rounded-5 p-3 bg-white shadow box-area">
             <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #103cbe;">
                 <div class="rounded-image-container left-box-content">
-                    <img src="{{ asset('image/logo.png') }}" class="rounded-image">
+                    <img src="{{ asset('image/sistem_information.png') }}" class="rounded-image">
                 </div>
-                <p class="text-white fs-2 text-animate" style="font-family: 'Courier New', Courier, monospace; font-weight: 600;">Bayu Sulaksana System</p>
                 {{-- <small class="text-white text-wrap text-center text-animate" style="width: 17rem; font-family: 'Courier New', Courier, monospace;">
                     Sistem Informasi Ujian Online Madrasah Aliyah Al Furqan
                 </small> --}}
