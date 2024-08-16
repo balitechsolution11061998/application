@@ -1724,11 +1724,7 @@ nav ul li a.active {
 }
 
 /* Dark mode styles */
-@media (prefers-color-scheme: dark) {
-    .form-label {
-        color: white;
-    }
-}
+
 
 .custom-dropdown-menu {
     background-color: white; /* Set the background color to white */
