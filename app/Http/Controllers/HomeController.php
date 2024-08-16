@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Binafy\LaravelUserMonitoring\Traits\Actionable;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
@@ -46,144 +47,43 @@ class HomeController extends Controller
     }
     public function index()
     {
-        if (Auth::check()) {
-            $user = Auth::user();
-            $id = $user->id;
-            $messengerColor = '#ff0000'; // Example color; replace with actual value
-            $dark_mode = 'dark'; // or 'light'
-
-            if ($user->hasRole('superadministrator')) {
-                return view('home', [
-                    'id' => $id,
-                    'messengerColor' => $messengerColor,
-                    'dark_mode' => $dark_mode,
-                ]);
-            } elseif ($user->hasRole('admin_karyawan') || $user->hasRole('karyawan')) {
-                return view('home3', [
-                    'id' => $id,
-                    'messengerColor' => $messengerColor,
-                    'dark_mode' => $dark_mode,
-                ]);
-            } elseif ($user->hasRole('admin_cbt') || $user->hasRole('siswa') || $user->hasRole('guru')) {
-                $jadwal = Jadwal::count();
-                $guru = Guru::count();
-                $gurulk = Guru::where('jk', 'L')->count();
-                $gurupr = Guru::where('jk', 'P')->count();
-                $siswa = Siswa::count();
-                $siswalk = Siswa::where('jk', 'L')->count();
-                $siswapr = Siswa::where('jk', 'P')->count();
-                $kelas = Kelas::count();
-                $bkp = Kelas::where('paket_id', '1')->count();
-                $dpib = Kelas::where('paket_id', '2')->count();
-                $ei = Kelas::where('paket_id', '3')->count();
-                $oi = Kelas::where('paket_id', '4')->count();
-                $tbsm = Kelas::where('paket_id', '6')->count();
-                $rpl = Kelas::where('paket_id', '7')->count();
-                $tpm = Kelas::where('paket_id', '5')->count();
-                $las = Kelas::where('paket_id', '8')->count();
-                $mapel = MataPelajaran::count();
-                $user = User::count();
-                $paket = PaketSoal::all();
-
-                $hari = date('w');
-                $jam = date('H:i');
-                $jadwalGuru = Jadwal::OrderBy('jam_mulai')->OrderBy('jam_selesai')->OrderBy('kelas_id')->where('hari_id', $hari)->where('jam_mulai', '<=', $jam)->where('jam_selesai', '>=', $jam)->get();
-                $pengumuman = Pengumuman::first();
-                $kehadiran = Kehadiran::all();
-                return view('home2', compact(
-                    'jadwal',
-                    'guru',
-                    'gurulk',
-                    'gurupr',
-                    'siswalk',
-                    'siswapr',
-                    'siswa',
-                    'kelas',
-                    'bkp',
-                    'dpib',
-                    'ei',
-                    'oi',
-                    'tbsm',
-                    'rpl',
-                    'tpm',
-                    'las',
-                    'mapel',
-                    'user',
-                    'paket',
-                    'jadwalGuru', 'pengumuman', 'kehadiran'
-                ));
-
-            } else {
-                // Handle cases where the user role does not match any predefined roles
-                return view('website', [ // Adjust this as needed
-                    'id' => $id,
-                    'messengerColor' => $messengerColor,
-                    'dark_mode' => $dark_mode,
-                ]);
-            }
+        if (!Auth::check()) {
+            // If the user is not authenticated, redirect to a login page
+            return redirect()->route('login');
         }
 
-        // If the user is not authenticated, redirect to a login page or an error page
-        return redirect()->route('login');
-    }
+        $user = Auth::user();
+        $id = $user->id;
+        $messengerColor = '#ff0000'; // Example color; replace with actual value
+        $dark_mode = 'dark'; // or 'light'
 
+        if ($user->hasRole('superadministrator')) {
+            return view('home', compact('id', 'messengerColor', 'dark_mode'));
+        }
+
+        if ($user->hasRole('admin_karyawan') || $user->hasRole('karyawan')) {
+            return view('home3', compact('id', 'messengerColor', 'dark_mode'));
+        }
+
+        if ($user->hasRole('admin_cbt') || $user->hasRole('siswa') || $user->hasRole('guru')) {
+            $dashboardData = $this->getDashboardData();
+            return view('home2', $dashboardData);
+        }
+
+        // Handle cases where the user role does not match any predefined roles
+        return view('website', compact('id', 'messengerColor', 'dark_mode'));
+    }
 
     public function index2()
     {
-
-        $jadwal = Jadwal::count();
-        $guru = Guru::count();
-        $gurulk = Guru::where('jk', 'L')->count();
-        $gurupr = Guru::where('jk', 'P')->count();
-        $siswa = Siswa::count();
-        $siswalk = Siswa::where('jk', 'L')->count();
-        $siswapr = Siswa::where('jk', 'P')->count();
-        $kelas = Kelas::count();
-        $bkp = Kelas::where('paket_id', '1')->count();
-        $dpib = Kelas::where('paket_id', '2')->count();
-        $ei = Kelas::where('paket_id', '3')->count();
-        $oi = Kelas::where('paket_id', '4')->count();
-        $tbsm = Kelas::where('paket_id', '6')->count();
-        $rpl = Kelas::where('paket_id', '7')->count();
-        $tpm = Kelas::where('paket_id', '5')->count();
-        $las = Kelas::where('paket_id', '8')->count();
-        $mapel = MataPelajaran::count();
-        $user = User::count();
-        $paket = PaketSoal::all();
-
-        $hari = date('w');
-        $jam = date('H:i');
-        $jadwalGuru = Jadwal::OrderBy('jam_mulai')->OrderBy('jam_selesai')->OrderBy('kelas_id')->where('hari_id', $hari)->where('jam_mulai', '<=', $jam)->where('jam_selesai', '>=', $jam)->get();
-        $pengumuman = Pengumuman::first();
-        $kehadiran = Kehadiran::all();
-        return view('home2', compact(
-            'jadwal',
-            'guru',
-            'gurulk',
-            'gurupr',
-            'siswalk',
-            'siswapr',
-            'siswa',
-            'kelas',
-            'bkp',
-            'dpib',
-            'ei',
-            'oi',
-            'tbsm',
-            'rpl',
-            'tpm',
-            'las',
-            'mapel',
-            'user',
-            'paket',
-            'jadwalGuru', 'pengumuman', 'kehadiran'
-        ));
+        // Use the shared dashboard data method for consistency
+        $dashboardData = $this->getDashboardData();
+        return view('home2', $dashboardData);
     }
 
     public function index3()
     {
-            return view('home3');
-
+        return view('home3');
     }
 
     public function index4()
@@ -191,6 +91,77 @@ class HomeController extends Controller
         return view('home4');
     }
 
+    /**
+     * Get shared dashboard data with caching.
+     *
+     * @return array
+     */
+    private function getDashboardData()
+    {
+        // Cache the dashboard data for 60 minutes
+        $cacheKey = 'dashboardData';
+        $cacheDuration = 20; // Cache duration in minutes
+
+        return Cache::remember($cacheKey, $cacheDuration, function () {
+            $jadwal = Jadwal::count();
+            $guru = Guru::count();
+            $gurulk = Guru::where('jk', 'L')->count();
+            $gurupr = Guru::where('jk', 'P')->count();
+            $siswa = Siswa::count();
+            $siswalk = Siswa::where('jk', 'L')->count();
+            $siswapr = Siswa::where('jk', 'P')->count();
+            $kelas = Kelas::count();
+            $bkp = Kelas::where('paket_id', 1)->count();
+            $dpib = Kelas::where('paket_id', 2)->count();
+            $ei = Kelas::where('paket_id', 3)->count();
+            $oi = Kelas::where('paket_id', 4)->count();
+            $tbsm = Kelas::where('paket_id', 6)->count();
+            $rpl = Kelas::where('paket_id', 7)->count();
+            $tpm = Kelas::where('paket_id', 5)->count();
+            $las = Kelas::where('paket_id', 8)->count();
+            $mapel = MataPelajaran::count();
+            $user = User::count();
+            $paket = PaketSoal::all();
+
+            $hari = date('w');
+            $jam = date('H:i');
+            $jadwalGuru = Jadwal::orderBy('jam_mulai')
+                ->orderBy('jam_selesai')
+                ->orderBy('kelas_id')
+                ->where('hari_id', $hari)
+                ->where('jam_mulai', '<=', $jam)
+                ->where('jam_selesai', '>=', $jam)
+                ->get();
+
+            $pengumuman = Pengumuman::first();
+            $kehadiran = Kehadiran::all();
+
+            return compact(
+                'jadwal',
+                'guru',
+                'gurulk',
+                'gurupr',
+                'siswalk',
+                'siswapr',
+                'siswa',
+                'kelas',
+                'bkp',
+                'dpib',
+                'ei',
+                'oi',
+                'tbsm',
+                'rpl',
+                'tpm',
+                'las',
+                'mapel',
+                'user',
+                'paket',
+                'jadwalGuru',
+                'pengumuman',
+                'kehadiran'
+            );
+        });
+    }
     public function dashboarduser(){
         $hari = date('w');
         $jam = date('H:i');
@@ -210,26 +181,32 @@ class HomeController extends Controller
             $filterDate = $request->filterDate;
             $filterSupplier = $request->filterSupplier;
 
-            DB::table('ordhead')
-            ->join('rcvhead', 'rcvhead.order_no', '=', 'ordhead.order_no')
-            ->whereNotNull('ordhead.estimated_delivery_date')
-            ->whereNull('rcvhead.receive_no')
-            ->where('ordhead.not_after_date', '>', now())
-            ->whereNotIn('ordhead.status', ['Confirmed', 'Progress'])
-            ->update(['ordhead.status' => 'Confirmed']);
+            // Define a cache key based on the filters
+            $cacheKey = "countDataPoPerDays_{$filterDate}_{$filterSupplier}";
+            $cacheDuration = 20; // Cache duration in minutes
 
+            // Check if the data is already cached
+            $data = Cache::remember($cacheKey, $cacheDuration, function () use ($filterDate, $filterSupplier) {
+                // Perform status updates
+                DB::table('ordhead')
+                    ->join('rcvhead', 'rcvhead.order_no', '=', 'ordhead.order_no')
+                    ->whereNotNull('ordhead.estimated_delivery_date')
+                    ->whereNull('rcvhead.receive_no')
+                    ->where('ordhead.not_after_date', '>', now())
+                    ->whereNotIn('ordhead.status', ['Confirmed', 'Progress'])
+                    ->update(['ordhead.status' => 'Confirmed']);
 
-            DB::table('ordhead')
-            ->join('rcvhead', 'rcvhead.order_no', '=', 'ordhead.order_no')
-            ->whereNotNull('ordhead.estimated_delivery_date')
-            ->whereNull('rcvhead.receive_no')
-            ->where('ordhead.not_after_date', '<', now())
-            ->whereNotIn('ordhead.status', ['Confirmed', 'Progress'])
-            ->update(['ordhead.status' => 'Expired']);
+                DB::table('ordhead')
+                    ->join('rcvhead', 'rcvhead.order_no', '=', 'ordhead.order_no')
+                    ->whereNotNull('ordhead.estimated_delivery_date')
+                    ->whereNull('rcvhead.receive_no')
+                    ->where('ordhead.not_after_date', '<', now())
+                    ->whereNotIn('ordhead.status', ['Confirmed', 'Progress'])
+                    ->update(['ordhead.status' => 'Expired']);
 
-
-            // Fetch data from the service
-            $data = $this->orderService->countDataPoPerDays($filterDate, $filterSupplier);
+                // Fetch data from the service
+                return $this->orderService->countDataPoPerDays($filterDate, $filterSupplier);
+            });
 
             // Example: Assume $data is an array or collection
             $totalCount = count($data);
@@ -261,6 +238,7 @@ class HomeController extends Controller
                 'memory_usage' => $memoryUsage,
                 'performance_analysis_id' => $performanceAnalysis->id
             ]);
+
             // Return the data as a JSON response
             return response()->json([
                 'success' => true,
@@ -286,68 +264,60 @@ class HomeController extends Controller
         try {
             $startTime = microtime(true); // Start timing
 
-            // Fetch and process data for the specified date and status
-            $query = OrdHead::with('rcvHead')->whereDate('approval_date', $date);
+            // Define a cache key based on the date and status
+            $cacheKey = "countDataPoPerDate_{$date}_{$status}";
+            $cacheDuration = 20; // Cache duration in minutes
 
-            if ($status) {
-                // Check if the status is 'In Progress', and if so, set it to 'progress'
-                if ($status === 'In Progress') {
-                    $status = 'progress';
-                    // Filter for status 'progress' where estimated_delivery_date is null
-                    $query->where(function ($q) {
-                        $q->whereNull('estimated_delivery_date')
-                          ->where('status', 'progress');
-                    });
-                } else if ($status === 'Confirmed') {
-                    // Filter by status 'Confirmed' or 'printed'
-                    $query->whereIn('status', ['Confirmed', 'printed']);
-                } else {
-                    // Filter by any other status
-                    $query->where('status', $status);
-                }
-            }
+            // Check if the data is already cached
+            $data = Cache::remember($cacheKey, $cacheDuration, function () use ($date, $status) {
+                // Fetch and process data for the specified date and status
+                $query = OrdHead::with('rcvHead')->whereDate('approval_date', $date);
 
-
-            // Fetch the data
-            $data = $query->get();
-            // Process the data to update statuses
-            $totalCount = $data->count(); // Total records fetched
-            $processedCount = 0; // To track how many records are processed
-
-            foreach ($data as $record) {
-                // Check if there is a related record in the receiving process
-                $existsInReceiving = RcvHead::where('order_no', $record->order_no)->exists();
-
-                if ($existsInReceiving) {
-                    // Update the status to 'completed'
-                    $record->status = 'Completed';
-                    $record->save();
-                } elseif ($record->estimated_delivery_date !== null) {
-                    // Update the status to 'confirmed' if estimated_delivery_date is not null
-                    $record->status = 'Confirmed';
-                    $record->save();
-                } elseif (!$existsInReceiving && $record->not_after_date && Carbon::parse($record->not_after_date)->isPast()) {
-                    // Update the status to 'expired' if not_after_date is past and no receiving records
-                    $record->status = 'Expired';
-                    $record->save();
+                if ($status) {
+                    if ($status === 'In Progress') {
+                        $status = 'progress';
+                        $query->where(function ($q) {
+                            $q->whereNull('estimated_delivery_date')
+                              ->where('status', 'progress');
+                        });
+                    } else if ($status === 'Confirmed') {
+                        $query->whereIn('status', ['Confirmed', 'printed']);
+                    } else {
+                        $query->where('status', $status);
+                    }
                 }
 
-                $processedCount++; // Increment processed count
-            }
+                // Fetch the data
+                $data = $query->get();
+                $processedCount = 0; // To track how many records are processed
 
-            // Fetch the updated data after status updates
-            $data = $query->get();
+                foreach ($data as $record) {
+                    $existsInReceiving = RcvHead::where('order_no', $record->order_no)->exists();
+
+                    if ($existsInReceiving) {
+                        $record->status = 'Completed';
+                    } elseif ($record->estimated_delivery_date !== null) {
+                        $record->status = 'Confirmed';
+                    } elseif (!$existsInReceiving && $record->not_after_date && Carbon::parse($record->not_after_date)->isPast()) {
+                        $record->status = 'Expired';
+                    }
+
+                    $record->save();
+                    $processedCount++; // Increment processed count
+                }
+
+                return $data;
+            });
 
             $endTime = microtime(true); // End timing
             $executionTime = $endTime - $startTime; // Calculate execution time
             $memoryUsage = memory_get_usage(); // Get memory usage
 
-            // Determine performance status based on execution time
             $status = $executionTime > 1 ? 'slow' : 'fast'; // Example threshold of 1 second
 
             // Create or update performance analysis record
             $performanceAnalysis = \App\Models\PerformanceAnalysis::create([
-                'total_count' => $totalCount,
+                'total_count' => $data->count(),
                 'processed_count' => $processedCount,
                 'success_count' => $processedCount, // Assuming all processed are successful, adjust if necessary
                 'fail_count' => 0, // Adjust if you have failure cases
@@ -382,7 +352,11 @@ class HomeController extends Controller
     {
         $date = $request->query('date'); // Get the date parameter from the request
 
-        try {
+        // Generate a unique cache key based on the date
+        $cacheKey = 'serviceLevel_' . ($date ? $date : 'all');
+
+        // Attempt to retrieve cached data
+        $cachedResults = Cache::remember($cacheKey, 20, function () use ($date) {
             $startTime = microtime(true); // Start timing
 
             // Fetch data for each supplier from rcvhead table
@@ -434,47 +408,52 @@ class HomeController extends Controller
                 'performance_analysis_id' => $performanceAnalysis->id
             ]);
 
-            return response()->json([
-                'success' => true,
-                'data' => $results
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => $e->getMessage()
-            ], 500);
-        }
+            return $results;
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $cachedResults
+        ]);
     }
+
 
     public function priceDiff(Request $request)
     {
         $date = $request->query('date'); // Get the date parameter from the request
 
-        try {
-            $query = DB::table('diff_cost_po')
-                ->select('supplier', 'sup_name', 'sku', 'sku_desc', 'cost_po', 'cost_supplier')
-                ->when($date, function ($query, $date) {
-                    return $query->whereDate('created_at', $date); // Filter by date if provided
-                });
+        // Generate a unique cache key based on the date
+        $cacheKey = 'priceDiff_' . ($date ? $date : 'all');
 
-            // Fetch data and process it
-            $data = $query->get()
-                ->map(function ($item) {
-                    return [
-                        'supplier_id' => $item->supplier,
-                        'supplier_name' => $item->sup_name,
-                        'sku' => $item->sku,
-                        'sku_desc' => $item->sku_desc,
-                        'cost_po' => $item->cost_po,
-                        'cost_supplier' => $item->cost_supplier,
-                        'price_difference' => $item->cost_supplier ? $item->cost_supplier - $item->cost_po : null // Calculate price difference
-                    ];
-                })
-                ->sortByDesc('price_difference'); // Sort by price difference in descending order
-                // Take the top 3 results
+        try {
+            // Attempt to retrieve cached data
+            $cachedData = Cache::remember($cacheKey, 20, function () use ($date) {
+                $query = DB::table('diff_cost_po')
+                    ->select('supplier', 'sup_name', 'sku', 'sku_desc', 'cost_po', 'cost_supplier')
+                    ->when($date, function ($query, $date) {
+                        return $query->whereDate('created_at', $date); // Filter by date if provided
+                    });
+
+                // Fetch data and process it
+                $data = $query->get()
+                    ->map(function ($item) {
+                        return [
+                            'supplier_id' => $item->supplier,
+                            'supplier_name' => $item->sup_name,
+                            'sku' => $item->sku,
+                            'sku_desc' => $item->sku_desc,
+                            'cost_po' => $item->cost_po,
+                            'cost_supplier' => $item->cost_supplier,
+                            'price_difference' => $item->cost_supplier ? $item->cost_supplier - $item->cost_po : null // Calculate price difference
+                        ];
+                    })
+                    ->sortByDesc('price_difference');
+
+                return $data;
+            });
 
             // Create a DataTable instance
-            return DataTables::of($data)
+            return DataTables::of($cachedData)
                 ->addColumn('formatted_cost_po', function ($item) {
                     return number_format($item['cost_po'], 0, ',', '.'); // Format cost_po
                 })
@@ -494,84 +473,112 @@ class HomeController extends Controller
         }
     }
 
+
     // In your Controller
-public function getTotals()
-{
-    try {
-        // Fetch total suppliers and stores
-        $totalSuppliers = DB::table('supplier')->count(); // Adjust table name
-        $totalStores = DB::table('store')->count(); // Adjust table name
+    public function getTotals()
+    {
+        // Generate a unique cache key
+        $cacheKey = 'totals';
 
-        return response()->json([
-            'success' => true,
-            'totalSuppliers' => $totalSuppliers,
-            'totalStores' => $totalStores
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'error' => $e->getMessage()
-        ], 500);
+        try {
+            // Attempt to retrieve cached data
+            $cachedData = Cache::remember($cacheKey, 20, function () {
+                // Fetch total suppliers and stores
+                $totalSuppliers = DB::table('supplier')->count(); // Adjust table name
+                $totalStores = DB::table('store')->count(); // Adjust table name
+
+                return [
+                    'totalSuppliers' => $totalSuppliers,
+                    'totalStores' => $totalStores
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'totalSuppliers' => $cachedData['totalSuppliers'],
+                'totalStores' => $cachedData['totalStores']
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
-
-
-public function tandaTerima(Request $request)
-{
-    $date = $request->query('date'); // Get the date parameter from the request
-
-    // Fetch data from tandaterima_head table where status is 'n'
-    $query = DB::table('tandaterima_head')
-        ->where('status',"=","pending") // Ensure that only records with status 'n' are fetched
-        ->when($date, function ($query, $date) {
-            return $query->whereDate('tanggal', $date);
-        })
-        ->orderBy('tanggal', 'desc') // Order by date descending to get the latest records
-        ->limit(4); // Limit to 4 records
-
-    // Return DataTables instance
-    return DataTables::of($query)
-        ->addColumn('action', function ($item) {
-            // Define any actions or buttons here if needed
-            return '<a href="#" class="btn btn-info btn-sm">View</a>';
-        })
-        ->editColumn('status', function ($item) {
-            // Customize the status display
-            return $item->status === 'n'
-                ? '<span class="badge bg-danger">Not Received</span>'
-                : '<span class="badge bg-success">Received</span>';
-        })
-        ->rawColumns(['status', 'action']) // Allow HTML in columns
-        ->make(true);
-}
 
 
 
-public function countTandaTerimaCurrentMonthYear()
-{
-    // Get the current month and year in 'Y-m' format
-    $currentMonthYear = date('Y-m');
+    public function tandaTerima(Request $request)
+    {
+        $date = $request->query('date'); // Get the date parameter from the request
 
-    // Query to count records and sum quantity for the entire current month and year
-    $result = DB::table('tandaterima_head as th')
-        ->leftJoin('tandaterima_detail as td', 'th.id', '=', 'td.tthead_id') // Left join with tandaterima_detail
-        ->select(
-            DB::raw('COUNT(DISTINCT th.no_tt) as total_count'),   // Count of unique no_tt in tandaterima_head
-            DB::raw('COALESCE(SUM(td.jumlah), 0) as total_quantity') // Sum of quantity from tandaterima_detail, defaulting to 0 if null
-        )
-        ->where('th.tanggal', 'like', $currentMonthYear . '%') // Match records with the current year-month
-        ->first(); // Get the first result
+        // Generate a unique cache key based on the date
+        $cacheKey = 'tandaTerima_' . ($date ? $date : 'all');
 
-    // Handle the case where no records are found
-    $totalCount = $result ? $result->total_count : 0;
-    $totalQuantity = $result ? $result->total_quantity : 0;
+        // Attempt to retrieve cached data
+        $cachedQuery = Cache::remember($cacheKey, 20, function () use ($date) {
+            // Fetch data from tandaterima_head table where status is 'pending'
+            return DB::table('tandaterima_head')
+                ->where('status', 'pending') // Ensure that only records with status 'pending' are fetched
+                ->when($date, function ($query, $date) {
+                    return $query->whereDate('tanggal', $date);
+                })
+                ->orderBy('tanggal', 'desc') // Order by date descending to get the latest records
+                ->limit(4) // Limit to 4 records
+                ->get();
+        });
 
-    // Return the result as a JSON response
-    return response()->json([
-        'totalTandaTerima' => $totalCount,
-        'totalCostTandaTerima' => $totalQuantity
-    ]);
-}
+        // Return DataTables instance
+        return DataTables::of($cachedQuery)
+            ->addColumn('action', function ($item) {
+                // Define any actions or buttons here if needed
+                return '<a href="#" class="btn btn-info btn-sm">View</a>';
+            })
+            ->editColumn('status', function ($item) {
+                // Customize the status display
+                return $item->status === 'n'
+                    ? '<span class="badge bg-danger">Not Received</span>'
+                    : '<span class="badge bg-success">Received</span>';
+            })
+            ->rawColumns(['status', 'action']) // Allow HTML in columns
+            ->make(true);
+    }
+
+
+
+    public function countTandaTerimaCurrentMonthYear()
+    {
+        // Get the current month and year in 'Y-m' format
+        $currentMonthYear = date('Y-m');
+
+        // Generate a unique cache key based on the current month and year
+        $cacheKey = 'countTandaTerima_' . $currentMonthYear;
+
+        // Attempt to retrieve cached data
+        $cachedResult = Cache::remember($cacheKey, 20, function () use ($currentMonthYear) {
+            // Query to count records and sum quantity for the entire current month and year
+            $result = DB::table('tandaterima_head as th')
+                ->leftJoin('tandaterima_detail as td', 'th.id', '=', 'td.tthead_id') // Left join with tandaterima_detail
+                ->select(
+                    DB::raw('COUNT(DISTINCT th.no_tt) as total_count'),   // Count of unique no_tt in tandaterima_head
+                    DB::raw('COALESCE(SUM(td.jumlah), 0) as total_quantity') // Sum of quantity from tandaterima_detail, defaulting to 0 if null
+                )
+                ->where('th.tanggal', 'like', $currentMonthYear . '%') // Match records with the current year-month
+                ->first(); // Get the first result
+
+            // Handle the case where no records are found
+            $totalCount = $result ? $result->total_count : 0;
+            $totalQuantity = $result ? $result->total_quantity : 0;
+
+            return [
+                'totalTandaTerima' => $totalCount,
+                'totalCostTandaTerima' => $totalQuantity
+            ];
+        });
+
+        // Return the result as a JSON response
+        return response()->json($cachedResult);
+    }
 
 
 
@@ -587,8 +594,14 @@ public function countTandaTerimaCurrentMonthYear()
             $filterDate = $request->filterDate;
             $filterSupplier = $request->filterSupplier;
 
-            // Fetch the total count of data
-            $total = $this->orderService->countDataPo($filterDate, $filterSupplier);
+            // Generate a unique cache key based on filters
+            $cacheKey = 'countDataPo_' . md5($filterDate . $filterSupplier);
+
+            // Attempt to retrieve cached data
+            $cachedTotal = Cache::remember($cacheKey, 20, function () use ($filterDate, $filterSupplier) {
+                // Fetch the total count of data
+                return $this->orderService->countDataPo($filterDate, $filterSupplier);
+            });
 
             // Calculate execution time and memory usage
             $executionTime = microtime(true) - $startTime;
@@ -599,9 +612,9 @@ public function countTandaTerimaCurrentMonthYear()
 
             // Create or update performance analysis record
             $performanceAnalysis = \App\Models\PerformanceAnalysis::create([
-                'total_count' => $total, // Assuming 'total' represents total_count
-                'processed_count' => $total, // Assuming all data counted are processed
-                'success_count' => $total, // Assuming all processed are successful
+                'total_count' => $cachedTotal, // Assuming 'cachedTotal' represents total_count
+                'processed_count' => $cachedTotal, // Assuming all data counted are processed
+                'success_count' => $cachedTotal, // Assuming all processed are successful
                 'fail_count' => 0, // Adjust if you have failure cases
                 'errors' => null,
                 'execution_time' => $executionTime,
@@ -619,7 +632,7 @@ public function countTandaTerimaCurrentMonthYear()
 
             return response()->json([
                 'success' => true,
-                'total' => $total,
+                'total' => $cachedTotal,
                 'execution_time' => $executionTime,
                 'memory_usage' => $memoryUsage
             ]);
@@ -649,48 +662,64 @@ public function countTandaTerimaCurrentMonthYear()
             $startDate = Carbon::create($filterYear, $filterMonth, 1)->startOfMonth()->toDateString();
             $endDate = Carbon::create($filterYear, $filterMonth, 1)->endOfMonth()->toDateString();
 
-            $supplierUser = Auth::user();
+            // Generate a unique cache key based on filters
+            $cacheKey = 'countDataRcv_' . md5($filterDate . $filterSupplier);
 
-            $totals = ['totalRcv' => 0, 'totalCostRcv' => 0];
+            // Attempt to retrieve cached data
+            $cachedData = Cache::remember($cacheKey, 20, function () use ($startDate, $endDate, $filterYear, $filterMonth, $filterSupplier) {
+                $totals = ['totalRcv' => 0, 'totalCostRcv' => 0];
 
-            RcvHead::select([
-                DB::raw('DATE(receive_date) as tanggal'),
-                DB::raw('COUNT(DISTINCT rcvhead.id) as jumlah'),
-                DB::raw('SUM(rcvdetail.unit_cost * rcvdetail.qty_received + rcvdetail.vat_cost * rcvdetail.qty_received) as total_cost'),
-            ])
-            ->leftJoin('ordhead', 'ordhead.order_no', '=', 'rcvhead.order_no')
-            ->join('rcvdetail', 'rcvhead.id', '=', 'rcvdetail.rcvhead_id')
-            ->whereBetween('receive_date', [$startDate, $endDate])
-            ->whereYear('ordhead.approval_date', $filterYear)
-            ->whereMonth('ordhead.approval_date', $filterMonth)
-            ->when($supplierUser->hasRole('supplier'), function ($query) use ($supplierUser) {
-                $query->where('rcvhead.supplier', $supplierUser->username);
-            })
-            ->when(!empty($filterSupplier), function ($query) use ($filterSupplier) {
-                $query->whereIn('rcvhead.supplier', (array) $filterSupplier);
-            })
-            ->groupBy('tanggal')
-            ->orderBy('tanggal', 'asc')  // Order by an aggregated column
-            ->chunk(100, function ($dailyCounts) use (&$totals) {
-                foreach ($dailyCounts as $item) {
-                    $totals['totalRcv'] += $item->jumlah;
-                    $totals['totalCostRcv'] += $item->total_cost;
-                }
+                RcvHead::select([
+                    DB::raw('DATE(receive_date) as tanggal'),
+                    DB::raw('COUNT(DISTINCT rcvhead.id) as jumlah'),
+                    DB::raw('SUM(rcvdetail.unit_cost * rcvdetail.qty_received + rcvdetail.vat_cost * rcvdetail.qty_received) as total_cost'),
+                ])
+                ->leftJoin('ordhead', 'ordhead.order_no', '=', 'rcvhead.order_no')
+                ->join('rcvdetail', 'rcvhead.id', '=', 'rcvdetail.rcvhead_id')
+                ->whereBetween('receive_date', [$startDate, $endDate])
+                ->whereYear('ordhead.approval_date', $filterYear)
+                ->whereMonth('ordhead.approval_date', $filterMonth)
+                ->when(Auth::user()->hasRole('supplier'), function ($query) {
+                    $query->where('rcvhead.supplier', Auth::user()->username);
+                })
+                ->when(!empty($filterSupplier), function ($query) use ($filterSupplier) {
+                    $query->whereIn('rcvhead.supplier', (array) $filterSupplier);
+                })
+                ->groupBy('tanggal')
+                ->orderBy('tanggal', 'asc')
+                ->chunk(100, function ($dailyCounts) use (&$totals) {
+                    foreach ($dailyCounts as $item) {
+                        $totals['totalRcv'] += $item->jumlah;
+                        $totals['totalCostRcv'] += $item->total_cost;
+                    }
+                });
+
+                $totalCount = RcvHead::whereBetween('receive_date', [$startDate, $endDate])->count();
+                $processedCount = $totalCount;
+                $successCount = $processedCount;
+                $failCount = 0;
+
+                return [
+                    'totalRcv' => $totals['totalRcv'],
+                    'totalCostRcv' => $totals['totalCostRcv'],
+                    'month' => str_pad($filterMonth, 2, '0', STR_PAD_LEFT),
+                    'year' => (string)$filterYear,
+                    'total_count' => $totalCount,
+                    'processed_count' => $processedCount,
+                    'success_count' => $successCount,
+                    'fail_count' => $failCount
+                ];
             });
-
-            $totalCount = RcvHead::whereBetween('receive_date', [$startDate, $endDate])->count();
-            $processedCount = $totalCount;
-            $successCount = $processedCount;
-            $failCount = 0;
 
             $executionTime = microtime(true) - $startTime;
             $memoryUsage = memory_get_usage() - $startMemory;
 
+            // Log performance metrics
             $performanceAnalysis = \App\Models\PerformanceAnalysis::create([
-                'total_count' => $totalCount,
-                'processed_count' => $processedCount,
-                'success_count' => $successCount,
-                'fail_count' => $failCount,
+                'total_count' => $cachedData['total_count'],
+                'processed_count' => $cachedData['processed_count'],
+                'success_count' => $cachedData['success_count'],
+                'fail_count' => $cachedData['fail_count'],
                 'errors' => null,
                 'execution_time' => $executionTime,
                 'status' => $executionTime > 1 ? 'slow' : 'fast'
@@ -704,16 +733,7 @@ public function countTandaTerimaCurrentMonthYear()
                 'performance_analysis_id' => $performanceAnalysis->id
             ]);
 
-            return [
-                'totalRcv' => $totals['totalRcv'],
-                'totalCostRcv' => $totals['totalCostRcv'],
-                'month' => str_pad($filterMonth, 2, '0', STR_PAD_LEFT),
-                'year' => (string)$filterYear,
-                'total_count' => $totalCount,
-                'processed_count' => $processedCount,
-                'success_count' => $successCount,
-                'fail_count' => $failCount
-            ];
+            return response()->json($cachedData);
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
@@ -723,27 +743,28 @@ public function countTandaTerimaCurrentMonthYear()
     }
 
 
-
-
-
-
-
-    public function countDataRcvPerDays(Request $request){
+    public function countDataRcvPerDays(Request $request) {
         $startTime = microtime(true);
         $startMemory = memory_get_usage();
 
         try {
             $filterDate = $request->filterDate;
             $filterSupplier = $request->filterSupplier;
-            $total = $this->rcvService->countDataRcvPerDays($filterDate, $filterSupplier);
 
-            // Calculate execution time and memory usage
+            // Generate a unique cache key based on filters
+            $cacheKey = 'countDataRcvPerDays_' . md5($filterDate . $filterSupplier);
+
+            // Attempt to retrieve cached data
+            $cachedTotal = Cache::remember($cacheKey, 20, function () use ($filterDate, $filterSupplier) {
+                return $this->rcvService->countDataRcvPerDays($filterDate, $filterSupplier);
+            });
+
             $executionTime = microtime(true) - $startTime;
             $memoryUsage = memory_get_usage() - $startMemory;
 
             // Log performance metrics
             QueryPerformanceLog::create([
-                'function_name' => 'countDataPo',
+                'function_name' => 'countDataRcvPerDays',
                 'parameters' => json_encode(['filterDate' => $filterDate, 'filterSupplier' => $filterSupplier]),
                 'execution_time' => $executionTime,
                 'memory_usage' => $memoryUsage
@@ -751,7 +772,7 @@ public function countTandaTerimaCurrentMonthYear()
 
             return response()->json([
                 'success' => true,
-                'total' => $total,
+                'total' => $cachedTotal,
                 'execution_time' => $executionTime,
                 'memory_usage' => $memoryUsage
             ]);
@@ -762,5 +783,6 @@ public function countTandaTerimaCurrentMonthYear()
             ], 500);
         }
     }
+
 
 }

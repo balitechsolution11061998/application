@@ -59,7 +59,7 @@ return [
                 [
                     'label'          => 'Dashboard',
                     'type'           => 'item',
-                    'permission'     => [],
+                    'permission'     => ['dashboard-user'],
                     'permissionType' => 'gate',
                     'icon'           => 'fas',                // Use Font Awesome solid icons
                     'iconName'       => 'fa-user-check',      // Font Awesome icon for user check (presence/attendance)
