@@ -70,10 +70,7 @@ return [
             ]
         ],
 
-        [
-            'label' => 'Menu SMS',
-            'type' => 'heading'
-        ],
+
 
         [
             'label'          => 'Items',
@@ -107,10 +104,10 @@ return [
             'iconPath'       => 5,
             'route'          => 'po.index',
         ],
-        [
-            'label' => 'Menu Presensi',
-            'type' => 'heading'
-        ],
+        // [
+        //     'label' => 'Menu Presensi',
+        //     'type' => 'heading'
+        // ],
         [
             'label'          => 'Monitoring Presensi',
             'type'           => 'item',
@@ -131,10 +128,7 @@ return [
             'iconPath'       => 5,
             'route'          => 'izin.index',
         ],
-        [
-            'label' => 'Menu Management User',
-            'type' => 'heading'
-        ],
+
 
         [
 
