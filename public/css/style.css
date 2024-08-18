@@ -3380,3 +3380,7 @@ input[type="number"]:hover {
 .h5{
     color:black;
 }
+.card-body{
+    color:black;
+    background-color:white;
+}

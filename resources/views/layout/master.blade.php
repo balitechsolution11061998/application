@@ -41,17 +41,7 @@
 
     <!--end::Custom Javascript-->
     @stack('styles')
-    <link rel="stylesheet" href="{{ asset('css/introjs.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/toastr.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/toastify.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/leaflet.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/jquery.fancybox.min.css') }}">
 
-    <link href="{{ asset('css/fullcalendar.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('css/fancybox.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
     <!--end::Javascript-->
 </head>
@@ -101,24 +91,7 @@
         var hostUrl = "{{ asset('/assets') }}/";
     </script>
 
-    {{-- custome js --}}
-    <script src="{{ asset('js/intro.min.js') }}"></script>
-    <script src="{{ asset('js/toastr.min.js') }}"></script>
-    <script src="{{ asset('js/toastify-js.js') }}"></script>
-    <script src="{{ asset('js/leaflet.js') }}"></script>
-    <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
-    <script src="{{ asset('js/jquery.fancybox.min.js') }}"></script>
-    {{-- <script src="{{ asset('js/tourguide.js') }}"></script> --}}
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
-    <script src="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 
     <!--end::Custom Javascript-->

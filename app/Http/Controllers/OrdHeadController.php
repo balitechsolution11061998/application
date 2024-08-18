@@ -552,31 +552,26 @@ public function delivery(Request $request)
         $executionTime = microtime(true) - $startTime;
         $memoryUsage = memory_get_usage() - $startMemory;
 
-        // Determine the status of the operation
-        $status = 'success';
-
-        // Create or update performance analysis record
-        $performanceAnalysis = PerformanceAnalysis::create([
+        // Prepare data for performance analysis
+        $performanceData = [
             'total_count' => $data->count(),
             'processed_count' => $data->count(),
             'success_count' => $data->count(),
             'fail_count' => 0,
             'errors' => null,
             'execution_time' => $executionTime,
-            'status' => $status
-        ]);
-
-        // Log performance metrics
-        QueryPerformanceLog::create([
-            'function_name' => 'Data PO',
-            'parameters' => json_encode([
-                'filterDate' => $filterDate,
-                'filterSupplier' => $filterSupplier,
-            ]),
-            'execution_time' => $executionTime,
+            'status' => 'success',
             'memory_usage' => $memoryUsage,
-            'performance_analysis_id' => $performanceAnalysis->id
-        ]);
+            'performance_analysis_id' => null // This can be updated if you have any linking requirements
+        ];
+
+        $queryParams = [
+            'filterDate' => $filterDate,
+            'filterSupplier' => $filterSupplier,
+        ];
+
+        // Dispatch the performance logging job
+        LogQueryPerformance::dispatch($performanceData, $queryParams);
 
         return DataTables::of($data)
             ->addColumn('actions', function($row) {
@@ -586,32 +581,29 @@ public function delivery(Request $request)
             ->toJson();
     } catch (\Throwable $th) {
         // Log the error for debugging purposes
-        $status = 'failure';
-        $errorMessage = $th->getMessage();
+        $executionTime = microtime(true) - $startTime;
+        $memoryUsage = memory_get_usage() - $startMemory;
 
-        // Create or update performance analysis record in case of failure
-        $performanceAnalysis = PerformanceAnalysis::create([
+        // Prepare data for performance analysis
+        $performanceData = [
             'total_count' => 0,
             'processed_count' => 0,
             'success_count' => 0,
             'fail_count' => 1,
-            'errors' => $errorMessage,
-            'execution_time' => microtime(true) - $startTime,
-            'status' => $status
-        ]);
+            'errors' => $th->getMessage(),
+            'execution_time' => $executionTime,
+            'status' => 'failure',
+            'memory_usage' => $memoryUsage,
+            'performance_analysis_id' => null
+        ];
 
-        // Log performance metrics with error information
-        QueryPerformanceLog::create([
-            'function_name' => 'Data PO',
-            'parameters' => json_encode([
-                'filterDate' => $filterDate,
-                'filterSupplier' => $filterSupplier,
-            ]),
-            'execution_time' => microtime(true) - $startTime,
-            'memory_usage' => memory_get_usage() - $startMemory,
-            'performance_analysis_id' => $performanceAnalysis->id,
-            'error_message' => $errorMessage
-        ]);
+        $queryParams = [
+            'filterDate' => $filterDate,
+            'filterSupplier' => $filterSupplier,
+        ];
+
+        // Dispatch the performance logging job
+        LogQueryPerformance::dispatch($performanceData, $queryParams);
 
         return response()->json([
             'success' => false,
@@ -619,6 +611,7 @@ public function delivery(Request $request)
         ], 500);
     }
 }
+
 
 
 public function receiving(Request $request)

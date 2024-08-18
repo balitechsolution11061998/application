@@ -1238,6 +1238,7 @@ async function fetchTandaTerimaList(page = 1) {
 
         // Display the list of Tanda Terima
         data.data.forEach(item => {
+            console.log(item,'item');
             const listItem = document.createElement('a');
             listItem.href = `#`; // Placeholder link for further actions
             listItem.className = 'list-group-item list-group-item-action';

@@ -534,12 +534,7 @@ class HomeController extends Controller
                 // Define any actions or buttons here if needed
                 return '<a href="#" class="btn btn-info btn-sm">View</a>';
             })
-            ->editColumn('status', function ($item) {
-                // Customize the status display
-                return $item->status === 'n'
-                    ? '<span class="badge bg-danger">Not Received</span>'
-                    : '<span class="badge bg-success">Received</span>';
-            })
+
             ->rawColumns(['status', 'action']) // Allow HTML in columns
             ->make(true);
     }

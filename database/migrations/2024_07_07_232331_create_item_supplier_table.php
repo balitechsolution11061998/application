@@ -11,20 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::create('item_supplier', function (Blueprint $table) {
-        //     $table->bigIncrements('id');
-        //     $table->integer('supplier')->unsigned();
-        //     $table->string('sup_name', 191)->nullable()->collation('utf8mb4_unicode_ci');
-        //     $table->integer('sku');
-        //     $table->string('sku_desc', 191)->nullable()->collation('utf8mb4_unicode_ci');
-        //     $table->string('upc', 191)->nullable()->collation('utf8mb4_unicode_ci');
-        //     $table->double('unit_cost')->nullable();
-        //     $table->string('create_id', 225)->nullable()->collation('utf8mb4_unicode_ci');
-        //     $table->string('create_date', 225)->nullable()->collation('utf8mb4_unicode_ci');
-        //     $table->string('last_update_id', 225)->nullable()->collation('utf8mb4_unicode_ci');
-        //     $table->string('last_update_date', 225)->nullable()->collation('utf8mb4_unicode_ci');
-        //     $table->timestamps();
-        // });
+        Schema::create('item_supplier', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->integer('supplier')->unsigned();
+            $table->string('sup_name', 191)->nullable()->collation('utf8mb4_unicode_ci');
+            $table->integer('sku');
+            $table->string('sku_desc', 191)->nullable()->collation('utf8mb4_unicode_ci');
+            $table->string('upc', 191)->nullable()->collation('utf8mb4_unicode_ci');
+            $table->double('unit_cost')->nullable();
+            $table->string('create_id', 225)->nullable()->collation('utf8mb4_unicode_ci');
+            $table->string('create_date', 225)->nullable()->collation('utf8mb4_unicode_ci');
+            $table->string('last_update_id', 225)->nullable()->collation('utf8mb4_unicode_ci');
+            $table->string('last_update_date', 225)->nullable()->collation('utf8mb4_unicode_ci');
+            $table->timestamps();
+        });
     }
 
     /**
