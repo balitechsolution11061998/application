@@ -319,7 +319,7 @@ style.innerHTML = `
 function filterDatePo() {
     poTable();
 }
-function filterDatePoByStatus(){
+function filterDatePoByStatus() {
     poTable();
 }
 
@@ -433,53 +433,51 @@ function poTable() {
                 data: "status",
                 name: "status",
                 render: function (data, type, row) {
-                    let badgeClass = "";
-                    let iconClass = "";
-                    let iconTitle = "";
-                    let badgeText = "";
+                    const statusConfig = {
+                        Progress: {
+                            badgeClass: "badge-warning",
+                            iconClass: "fas fa-spinner fa-spin",
+                            iconTitle: "In Progress",
+                            badgeText: "In Progress",
+                        },
+                        Completed: {
+                            badgeClass: "badge-success",
+                            iconClass: "fas fa-check-circle",
+                            iconTitle: "Completed",
+                            badgeText: "Completed",
+                        },
+                        Expired: {
+                            badgeClass: "badge-danger",
+                            iconClass: "fas fa-times-circle",
+                            iconTitle: "Expired",
+                            badgeText: "Expired",
+                        },
+                        Reject: {
+                            badgeClass: "badge-danger",
+                            iconClass: "fas fa-times-circle",
+                            iconTitle: "Rejected",
+                            badgeText: "Rejected",
+                        },
+                        Confirmed: {
+                            badgeClass: "badge-info",
+                            iconClass: "fas fa-thumbs-up",
+                            iconTitle: "Confirmed",
+                            badgeText: "Confirmed",
+                        },
+                        default: {
+                            badgeClass: "badge-secondary",
+                            iconClass: "fas fa-file-alt",
+                            iconTitle: "Status",
+                            badgeText: data,
+                        },
+                    };
 
-                    switch (row.status) {
-                        case "Progress":
-                            badgeClass = "badge-warning";
-                            iconClass = "fas fa-spinner fa-spin";
-                            iconTitle = "In Progress";
-                            badgeText = "In Progress";
-                            break;
-                        case "Completed":
-                            badgeClass = "badge-success";
-                            iconClass = "fas fa-check-circle";
-                            iconTitle = "Completed";
-                            badgeText = "Completed";
-                            break;
-                        case "Expired":
-                            badgeClass = "badge-danger";
-                            iconClass = "fas fa-times-circle";
-                            iconTitle = "Expired";
-                            badgeText = "Expired";
-                            break;
-                        case "Reject":
-                            badgeClass = "badge-danger";
-                            iconClass = "fas fa-times-circle";
-                            iconTitle = "Reject";
-                            badgeText = "Reject";
-                            break;
-                        case "Confirmed":
-                            badgeClass = "badge-info";
-                            iconClass = "fas fa-thumbs-up";
-                            iconTitle = "Confirmed";
-                            badgeText = "Confirmed";
-                            break;
-                        default:
-                            badgeClass = "badge-secondary";
-                            iconClass = "fas fa-file-alt";
-                            iconTitle = "Status";
-                            badgeText = data;
-                            break;
-                    }
+                    const config =
+                        statusConfig[row.status] || statusConfig["default"];
 
                     return `
-                        <span class="badge badge-button ${badgeClass}" style="color: white; font-weight: bold; padding: 0.5rem 1rem; border-radius: 50px; font-size: 0.875rem; cursor: pointer;">
-                            <i class="${iconClass}" style="color: white; margin-right: 0.5rem;" title="${iconTitle}"></i> ${badgeText}
+                        <span class="badge badge-button ${config.badgeClass}" style="color: white; font-weight: bold; padding: 0.5rem 1rem; border-radius: 50px; font-size: 0.875rem; cursor: pointer;">
+                            <i class="${config.iconClass}" style="color: white; margin-right: 0.5rem;" title="${config.iconTitle}"></i> ${config.badgeText}
                         </span>
                     `;
                 },
@@ -499,7 +497,10 @@ function poTable() {
                     };
 
                     // Format the date according to the locale
-                    const formattedDate = date.toLocaleDateString("id-ID", options);
+                    const formattedDate = date.toLocaleDateString(
+                        "id-ID",
+                        options
+                    );
 
                     // Return the formatted date with the calendar icon
                     return `
@@ -518,15 +519,24 @@ function poTable() {
                     tomorrow.setDate(currentDate.getDate() + 1);
 
                     const isExpired = notAfterDate < currentDate;
-                    const isExpiringTomorrow = notAfterDate.toDateString() === tomorrow.toDateString();
+                    const isExpiringTomorrow =
+                        notAfterDate.toDateString() === tomorrow.toDateString();
 
-                    const formattedDate = notAfterDate.toLocaleDateString("id-ID", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                    });
+                    const formattedDate = notAfterDate.toLocaleDateString(
+                        "id-ID",
+                        {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                        }
+                    );
 
-                    const textColor = (row.status === "Completed") ? "black" : (isExpired || isExpiringTomorrow ? "red" : "black");
+                    const textColor =
+                        row.status === "Completed"
+                            ? "black"
+                            : isExpired || isExpiringTomorrow
+                            ? "red"
+                            : "black";
 
                     return `
                         <i class="fas fa-calendar" style="color: ${textColor}; font-weight: bold; cursor: pointer;" onclick="openDatePicker('${data}')"></i>
@@ -551,15 +561,24 @@ function poTable() {
                     tomorrow.setDate(currentDate.getDate() + 1);
 
                     const isExpired = notAfterDate < currentDate;
-                    const isExpiringTomorrow = notAfterDate.toDateString() === tomorrow.toDateString();
+                    const isExpiringTomorrow =
+                        notAfterDate.toDateString() === tomorrow.toDateString();
 
-                    const formattedDate = notAfterDate.toLocaleDateString("id-ID", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                    });
+                    const formattedDate = notAfterDate.toLocaleDateString(
+                        "id-ID",
+                        {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                        }
+                    );
 
-                    const textColor = (row.status === "Completed") ? "black" : (isExpired || isExpiringTomorrow ? "red" : "black");
+                    const textColor =
+                        row.status === "Completed"
+                            ? "black"
+                            : isExpired || isExpiringTomorrow
+                            ? "red"
+                            : "black";
 
                     return `
                         <i class="fas fa-calendar" style="color: ${textColor}; font-weight: bold; cursor: pointer;" onclick="openDatePicker('${data}')"></i>
@@ -596,7 +615,11 @@ function poTable() {
 
                     // Check the status field to determine the color
                     const status = row.status; // Assuming the status field is in the same row object
-                    const textColor = (status === "Completed" || (!isExpired && !isExpiringTomorrow)) ? "black" : "red";
+                    const textColor =
+                        status === "Completed" ||
+                        (!isExpired && !isExpiringTomorrow)
+                            ? "black"
+                            : "red";
 
                     return `
                         <i class="fas fa-calendar"
@@ -656,14 +679,14 @@ function poTable() {
             },
         ],
     });
-    // Apply hover effect to change color to black
-    $("#po_table").on("mouseenter", ".dropdown-item", function () {
-        $(this).css("color", "black");
-    });
-
-    $("#po_table").on("mouseleave", ".dropdown-item", function () {
-        $(this).css("color", "");
-    });
+    // Apply hover effect to change text color to black for specific cells
+    $("#po_table tbody")
+        .on("mouseover", "td", function () {
+            $(this).css("color", "black");
+        })
+        .on("mouseout", "td", function () {
+            $(this).css("color", ""); // Reset color on mouseout
+        });
 }
 
 function searchOrderNo() {
@@ -736,11 +759,19 @@ function confirmPo(event) {
     </div>
     <div class="item-cost-fulfillable d-flex flex-column flex-md-row align-items-center justify-content-center">
         <div class="form-group qty-fulfillable-group d-flex align-items-center justify-content-center mr-0 mr-md-3 mb-2 mb-md-0">
-            <button type="button" class="btn btn-sm btn-secondary rounded-circle" onclick="decreaseQty(${item.upc})">-</button>
-            <input type="number" id="qty-fulfillable-${item.upc}" class="form-control form-control-sm mx-2 text-center rounded" name="qty_fulfillable" value="${qtyOrdered}" min="0" max="${qtyOrdered}" data-unit-cost="${qtyOrdered}" style="width: 60px;"/>
-            <button type="button" class="btn btn-sm btn-secondary rounded-circle" onclick="increaseQty(${item.upc})">+</button>
+            <button type="button" class="btn btn-sm btn-secondary rounded-circle" onclick="decreaseQty(${
+                item.upc
+            })">-</button>
+            <input type="number" id="qty-fulfillable-${
+                item.upc
+            }" class="form-control form-control-sm mx-2 text-center rounded" name="qty_fulfillable" value="${qtyOrdered}" min="0" max="${qtyOrdered}" data-unit-cost="${qtyOrdered}" style="width: 60px;"/>
+            <button type="button" class="btn btn-sm btn-secondary rounded-circle" onclick="increaseQty(${
+                item.upc
+            })">+</button>
         </div>
-        <span class="item-price font-weight-bold text-success">${formatsRupiah(unitCost)}</span>
+        <span class="item-price font-weight-bold text-success">${formatsRupiah(
+            unitCost
+        )}</span>
     </div>
     <i class="fas fa-trash-alt item-delete text-danger ml-0 ml-md-3 mt-3 mt-md-0" style="cursor: pointer;"></i>
 </div>
