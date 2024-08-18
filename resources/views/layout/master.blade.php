@@ -105,7 +105,6 @@
         let chartInstance = null;
         // Enable Pusher logging to console for debugging
            // Enable Pusher logging to console for debugging
-           Pusher.logToConsole = true;
 
 
         document.addEventListener('livewire:load', () => {

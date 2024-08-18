@@ -6,7 +6,12 @@
     @section('breadcrumbs')
         {{ Breadcrumbs::render('order') }}
     @endsection
-
+    @push('styles')
+        <!-- Preload Critical CSS -->
+        <link rel="preload" href="{{ asset('css/style.css') }}" as="style" onload="this.rel='stylesheet'">
+        <link rel="preload" href="{{ asset('css/animate.min.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="{{ asset('css/animate.min.css') }}"></noscript>
+    @endpush
     <!--begin::Card-->
     <div class="card">
         <!--begin::Card header-->
@@ -32,13 +37,15 @@
                     <!-- Filter Date -->
                     <div class="me-3 mb-3 mb-md-0">
                         <label for="filterDate" class="form-label">Filter Date:</label>
-                        <input type="date" id="filterDate" class="form-control form-control-sm filter-input" onchange="filterDatePo()">
+                        <input type="date" id="filterDate" class="form-control form-control-sm filter-input"
+                            onchange="filterDatePo()">
                     </div>
 
                     <!-- Filter Status -->
                     <div class="me-3 mb-3 mb-md-0">
                         <label for="statusFilter" class="form-label">Filter Status:</label>
-                        <select id="statusFilter" class="form-select form-select-sm filter-input" onchange="filterDatePoByStatus()">
+                        <select id="statusFilter" class="form-select form-select-sm filter-input"
+                            onchange="filterDatePoByStatus()">
                             <option value="">All</option>
                             <option value="pending">Pending</option>
                             <option value="completed">Completed</option>
@@ -55,8 +62,8 @@
 
                     <!-- Dropdown Button with Checkboxes -->
                     <div class="dropdown me-3 mb-3 mb-md-0">
-                        <button class="btn btn-primary dropdown-toggle d-flex align-items-center" type="button" id="dropdownMenuButton"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-primary dropdown-toggle d-flex align-items-center" type="button"
+                            id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-sync fs-5 me-2"></i> Sync Data
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -140,12 +147,13 @@
     @include('modals.modalfull')
     <!--end::Row-->
     @push('scripts')
-        <script src="{{ asset('js/ordhead.js') }}"></script>
-        <script src="{{ asset('js/formatRupiah.js') }}"></script>
+    <script src="{{ asset('js/ordhead.js') }}" defer></script>
+    <script src="{{ asset('js/formatRupiah.js') }}" defer></script>
+    <script src="{{ asset('js/pusher.min.js') }}" defer></script>
 
-        <!-- Add Animate.css for animation -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    @endpush
+    <!-- Load Animate.css asynchronously -->
+
+@endpush
 
 
 </x-default-layout>
