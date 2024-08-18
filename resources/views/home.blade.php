@@ -4,45 +4,32 @@
     @endsection
 
     @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/introjs.min.css') }}">
+
+
+    <!-- Preload Critical CSS -->
+<link rel="preload" href="{{ asset('css/style.css') }}" as="style" onload="this.rel='stylesheet'">
+<link rel="preload" href="{{ asset('css/toastr.min.css') }}" as="style" onload="this.rel='stylesheet'">
+<link rel="preload" href="{{ asset('css/toastify.min.css') }}" as="style" onload="this.rel='stylesheet'">
+<link rel="preload" href="{{ asset('css/leaflet.css') }}" as="style" onload="this.rel='stylesheet'">
+<noscript>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/toastr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/toastify.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/leaflet.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/jquery.fancybox.min.css') }}">
+</noscript>
 
-    <link href="{{ asset('css/fullcalendar.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('css/fancybox.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<!-- Load the rest of the CSS files -->
+<link rel="stylesheet" href="{{ asset('css/jquery.fancybox.min.css') }}">
+<link rel="stylesheet" href="{{ asset('css/fullcalendar.min.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css') }}">
+<link rel="stylesheet" href="{{ asset('css/fancybox.css') }}">
+
     @endpush
 
     @section('breadcrumbs')
         {{ Breadcrumbs::render('dashboard') }}
     @endsection
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header" style="color:black;">Dashboard</div>
 
-                    <div class="card-body" style="color:black;background-color:white;">
-                        @if (session('status'))
-                            <div class="alert alert-success">
-                                {{ session('status') }}
-                            </div>
-                        @endif
-
-                        @if(Auth::user()->active == "y")
-                        You are logged in!
-                        @else
-                        You are logged in but id is not activated! Please contact with admin.
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Dashboard Cards -->
     <div class="container mt-4">
@@ -608,24 +595,26 @@
 
     @push('scripts')
        {{-- custome js --}}
-       <script src="{{ asset('js/intro.min.js') }}"></script>
-       <script src="{{ asset('js/toastr.min.js') }}"></script>
-       <script src="{{ asset('js/toastify-js.js') }}"></script>
-       <script src="{{ asset('js/leaflet.js') }}"></script>
-       <script src="{{ asset('js/jquery.validate.min.js') }}"></script>
-       <script src="{{ asset('js/jquery.fancybox.min.js') }}"></script>
-       {{-- <script src="{{ asset('js/tourguide.js') }}"></script> --}}
+        <!-- Load essential scripts with defer -->
+        <script src="{{ asset('js/intro.min.js') }}" defer></script>
+        <script src="{{ asset('js/toastr.min.js') }}" defer></script>
+        <script src="{{ asset('js/toastify-js.js') }}" defer></script>
+        <script src="{{ asset('js/leaflet.js') }}" defer></script>
+        <script src="{{ asset('js/jquery.validate.min.js') }}" defer></script>
+        <script src="{{ asset('js/jquery.fancybox.min.js') }}" defer></script>
 
-       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-       <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
-       <script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
-       <script src="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.js') }}"></script>
-       <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+        <!-- Load additional scripts with defer or async -->
+        <script src="{{ asset('js/chart.js') }}" defer></script>
+        <script src="{{ asset('js/pusher.min.js') }}" defer></script>
+        <script src="{{ asset('js/apexcharts@latest.js') }}" defer></script>
+        <script src="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.js') }}" defer></script>
+        <script src="{{ asset('js/fullcalendar.main.min.js') }}" defer></script>
+        <script src="{{ asset('js/fancybox.umd.js') }}" defer></script>
+        <script src="{{ asset('js/apexcharts.js') }}" defer></script>
+        <script src="{{ asset('js/home.js') }}" defer></script>
+        <script src="{{ asset('js/formatRupiah.js') }}" defer></script>
 
-       <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
-       <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-       <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-        <script src="{{ asset('js/home.js') }}"></script>
-        <script src="{{ asset('js/formatRupiah.js') }}"></script>
+        <!-- You may want to combine and minify these scripts in production for further performance improvements -->
+
     @endpush
 </x-default-layout>
