@@ -10,7 +10,6 @@
     <link rel="shortcut icon" href="{{ asset('image/logo.png') }}">
     <title>Bayu Sulaksana System</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css" integrity="sha384-B4gt1jrGC7Jh4AgG1I10pVwxElp34I1LwztIMJxkmTZUt/6x5YFFK3sDd54mE1bA" crossorigin="anonymous">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
