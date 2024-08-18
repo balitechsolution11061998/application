@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ asset('css/toastr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/toastify.min.css') }}">
     <link rel="shortcut icon" href="{{ asset('image/logo.png') }}">
     <title>Bayu Sulaksana System</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css" integrity="sha384-B4gt1jrGC7Jh4AgG1I10pVwxElp34I1LwztIMJxkmTZUt/6x5YFFK3sDd54mE1bA" crossorigin="anonymous">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
@@ -159,117 +159,99 @@
     <script src="{{ asset('js/toastr.min.js') }}"></script>
     <script src="{{ asset('js/toastify-js.js') }}"></script>
     <script>
-    $(document).ready(function() {
-        $("#sign_in_form").submit(function(event) {
-            event.preventDefault(); // Prevent the default form submission
+$(document).ready(function() {
+    $("#sign_in_form").submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission
 
-            var username = $("#username").val();
-            var password = $("#password").val();
-            var token = $("meta[name='csrf-token']").attr("content");
+        var username = $("#username").val();
+        var password = $("#password").val();
+        var token = $("meta[name='csrf-token']").attr("content");
 
-            var recaptchaResponse = grecaptcha.getResponse(); // Get reCAPTCHA response
+        // Check if APP_DEBUG is true (this can be passed to your view from the backend)
+        var appDebug = "{{ config('app.debug') }}";
 
-            if (username.length === 0) {
-                Toastify({
-                    text: 'Alamat Username Wajib Diisi !',
-                    duration: 3000,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                    close: true,
-                    className: "toastify-error",
-                    escapeMarkup: false,
-                    onClick: function() {},
-                    callback: function() {
-                        document.querySelector('.toastify').innerHTML = `
-                            <div style="display: flex; align-items: center;">
-                                <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
-                                <span>Alamat Username Wajib Diisi !</span>
-                            </div>`;
-                    }
-                }).showToast();
-            } else if (password.length === 0) {
-                Toastify({
-                    text: 'Password Wajib Diisi !',
-                    duration: 3000,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                    close: true,
-                    className: "toastify-error",
-                    escapeMarkup: false,
-                    onClick: function() {},
-                    callback: function() {
-                        document.querySelector('.toastify').innerHTML = `
-                            <div style="display: flex; align-items: center;">
-                                <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
-                                <span>Password Wajib Diisi !</span>
-                            </div>`;
-                    }
-                }).showToast();
-            } else if (recaptchaResponse.length === 0) {
-                Toastify({
-                    text: 'Please complete the reCAPTCHA!',
-                    duration: 3000,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                    close: true,
-                    className: "toastify-error",
-                    escapeMarkup: false,
-                    onClick: function() {},
-                    callback: function() {
-                        document.querySelector('.toastify').innerHTML = `
-                            <div style="display: flex; align-items: center;">
-                                <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
-                                <span>Please complete the reCAPTCHA!</span>
-                            </div>`;
-                    }
-                }).showToast();
-            } else {
-                $.ajax({
-                    url: "{{ route('formlogin.check_login') }}",
-                    type: "POST",
-                    dataType: "JSON",
-                    headers: {
-                        'X-CSRF-TOKEN': token,
-                        'Content-Type': 'application/json'
-                    },
-                    data: JSON.stringify({
-                        "username": username,
-                        "password": password,
-                        "g-recaptcha-response": recaptchaResponse // Include reCAPTCHA response
-                    }),
-                    success: function(response) {
-                        if (response.success) {
-                            toastr.success(response.message);
-                            setTimeout(function() {
-                                window.location.href = '/home';
-                            }, 2000);
-                        } else {
-                            Toastify({
-                                text: response.message,
-                                duration: 3000,
-                                gravity: "top",
-                                position: "right",
-                                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                                close: true,
-                                className: "toastify-error",
-                                escapeMarkup: false,
-                                onClick: function() {},
-                                callback: function() {
-                                    document.querySelector('.toastify').innerHTML = `
-                                        <div style="display: flex; align-items: center;">
-                                            <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
-                                            <span>${response.message}</span>
-                                        </div>`;
-                                }
-                            }).showToast();
-                        }
-                    },
-                    error: function(xhr, status, error) {
+        var recaptchaResponse = appDebug == '1' ? "debug-bypass" : grecaptcha.getResponse(); // Bypass reCAPTCHA in debug mode
+
+        if (username.length === 0) {
+            Toastify({
+                text: 'Alamat Username Wajib Diisi !',
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                close: true,
+                className: "toastify-error",
+                escapeMarkup: false,
+                onClick: function() {},
+                callback: function() {
+                    document.querySelector('.toastify').innerHTML = `
+                        <div style="display: flex; align-items: center;">
+                            <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
+                            <span>Alamat Username Wajib Diisi !</span>
+                        </div>`;
+                }
+            }).showToast();
+        } else if (password.length === 0) {
+            Toastify({
+                text: 'Password Wajib Diisi !',
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                close: true,
+                className: "toastify-error",
+                escapeMarkup: false,
+                onClick: function() {},
+                callback: function() {
+                    document.querySelector('.toastify').innerHTML = `
+                        <div style="display: flex; align-items: center;">
+                            <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
+                            <span>Password Wajib Diisi !</span>
+                        </div>`;
+                }
+            }).showToast();
+        } else if (recaptchaResponse.length === 0 && appDebug != '1') {
+            Toastify({
+                text: 'Please complete the reCAPTCHA!',
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                close: true,
+                className: "toastify-error",
+                escapeMarkup: false,
+                onClick: function() {},
+                callback: function() {
+                    document.querySelector('.toastify').innerHTML = `
+                        <div style="display: flex; align-items: center;">
+                            <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
+                            <span>Please complete the reCAPTCHA!</span>
+                        </div>`;
+                }
+            }).showToast();
+        } else {
+            $.ajax({
+                url: "{{ route('formlogin.check_login') }}",
+                type: "POST",
+                dataType: "JSON",
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify({
+                    "username": username,
+                    "password": password,
+                    "g-recaptcha-response": recaptchaResponse // Include reCAPTCHA response
+                }),
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        setTimeout(function() {
+                            window.location.href = '/home';
+                        }, 2000);
+                    } else {
                         Toastify({
-                            text: error,
+                            text: response.message,
                             duration: 3000,
                             gravity: "top",
                             position: "right",
@@ -282,15 +264,37 @@
                                 document.querySelector('.toastify').innerHTML = `
                                     <div style="display: flex; align-items: center;">
                                         <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
-                                        <span>${error}</span>
+                                        <span>${response.message}</span>
                                     </div>`;
                             }
                         }).showToast();
                     }
-                });
-            }
-        });
+                },
+                error: function(xhr, status, error) {
+                    Toastify({
+                        text: error,
+                        duration: 3000,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                        close: true,
+                        className: "toastify-error",
+                        escapeMarkup: false,
+                        onClick: function() {},
+                        callback: function() {
+                            document.querySelector('.toastify').innerHTML = `
+                                <div style="display: flex; align-items: center;">
+                                    <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
+                                    <span>${error}</span>
+                                </div>`;
+                        }
+                    }).showToast();
+                }
+            });
+        }
     });
+});
+
     </script>
 </body>
 </html>
