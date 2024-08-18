@@ -192,7 +192,6 @@ class UjianController extends Controller
         $hasilUjian->jumlah_benar = $correctAnswers;
         $hasilUjian->jumlah_salah = $totalQuestions - $correctAnswers;
         $hasilUjian->nilai = $score;
-
         return $hasilUjian;
     }
 
