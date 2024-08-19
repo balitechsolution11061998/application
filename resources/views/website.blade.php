@@ -625,6 +625,122 @@
     color: #fff;
 }
 
+     /* Spinner Styles */
+     .spinner-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1050;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.5rem;
+        }
+
+        /* Card Styles */
+        .tutorial-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .tutorial-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .card-text {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+        .btn-action {
+            background-color: #007bff;
+            color: white;
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            text-align: center;
+            font-size: 0.875rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .btn-action:hover {
+            background-color: #0056b3;
+            text-decoration: none;
+            transform: scale(1.05);
+        }
+
+        .card-footer {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+        }
+
+        .category-tags {
+            margin-top: 1rem;
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .category-tag:hover {
+            transform: scale(1.1);
+        }
+
+        .category-html {
+            background-color: #ff5722; /* HTML */
+        }
+
+        .category-css {
+            background-color: #ff9800; /* CSS */
+        }
+
+        .category-js {
+            background-color: #03a9f4; /* JavaScript */
+        }
+
+        .category-python {
+            background-color: #4caf50; /* Python */
+        }
+
+        .category-php {
+            background-color: #9c27b0; /* PHP */
+        }
+
+        .category-advanced {
+            background-color: #673ab7; /* Advanced Programming */
+        }
+
     </style>
 </head>
 
@@ -688,17 +804,12 @@
         <button class="btn btn-outline-primary"><i class="fab fa-vuejs"></i> Vue.js</button>
     </div>
 
-
-    <!-- Tutorials Section -->
-    <div id="tutorials" class="container my-5">
-        <!-- Spinner -->
+    <div class="container mt-5">
         <div id="spinner" class="spinner-container d-none">
             <div class="spinner-border" role="status">
-                <span class="sr-only">Loading...</span>
+                <span class="visually-hidden">Loading...</span>
             </div>
         </div>
-
-        <!-- Data Container -->
         <div id="tutorials-content" class="row">
             <!-- Tutorial Card 1 -->
             <div class="col-md-4 mb-4 tutorial-card-wrapper">
@@ -707,6 +818,13 @@
                     <div class="card-body">
                         <h5 class="card-title">Learn HTML</h5>
                         <p class="card-text">Start from the basics of HTML and build your way up to advanced topics.</p>
+                        <div class="category-tags">
+                            <span class="category-tag category-html">HTML</span>
+                            <span class="category-tag category-web">Web Development</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn-action">Explore</a>
                     </div>
                 </div>
             </div>
@@ -717,6 +835,13 @@
                     <div class="card-body">
                         <h5 class="card-title">Master CSS</h5>
                         <p class="card-text">Style your web pages like a pro with our comprehensive CSS tutorials.</p>
+                        <div class="category-tags">
+                            <span class="category-tag category-css">CSS</span>
+                            <span class="category-tag category-style">Styling</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn-action">Explore</a>
                     </div>
                 </div>
             </div>
@@ -727,6 +852,13 @@
                     <div class="card-body">
                         <h5 class="card-title">JavaScript Essentials</h5>
                         <p class="card-text">Learn JavaScript from scratch and create dynamic, interactive web pages.</p>
+                        <div class="category-tags">
+                            <span class="category-tag category-js">JavaScript</span>
+                            <span class="category-tag category-programming">Programming</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn-action">Explore</a>
                     </div>
                 </div>
             </div>
@@ -737,6 +869,13 @@
                     <div class="card-body">
                         <h5 class="card-title">Python Basics</h5>
                         <p class="card-text">Discover the fundamentals of Python programming with hands-on examples.</p>
+                        <div class="category-tags">
+                            <span class="category-tag category-python">Python</span>
+                            <span class="category-tag category-programming">Programming</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn-action">Explore</a>
                     </div>
                 </div>
             </div>
@@ -747,6 +886,13 @@
                     <div class="card-body">
                         <h5 class="card-title">PHP for Beginners</h5>
                         <p class="card-text">Learn PHP from the ground up and start building dynamic web applications.</p>
+                        <div class="category-tags">
+                            <span class="category-tag category-php">PHP</span>
+                            <span class="category-tag category-web">Web Development</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn-action">Explore</a>
                     </div>
                 </div>
             </div>
@@ -757,30 +903,20 @@
                     <div class="card-body">
                         <h5 class="card-title">Advanced Programming</h5>
                         <p class="card-text">Take your coding skills to the next level with advanced programming concepts and techniques.</p>
+                        <div class="category-tags">
+                            <span class="category-tag category-advanced">Advanced</span>
+                            <span class="category-tag category-programming">Programming</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn-action">Explore</a>
                     </div>
                 </div>
             </div>
             <!-- Add more cards as needed -->
         </div>
-
-        <!-- Pagination -->
-        <nav aria-label="Tutorial pagination" class="mt-4">
-            <ul class="pagination justify-content-center">
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1">Previous</a>
-                </li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#">4</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">Next</a>
-                </li>
-            </ul>
-        </nav>
     </div>
+
 
 
 
@@ -872,6 +1008,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFyZWToLz5rnJM5I4bsM7qK/4FUjD5e78GkQ5Qx04p5O4NCKtrSYlTTO0" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+
 </body>
 
 </html>
