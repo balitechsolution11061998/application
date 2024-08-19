@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Str;
 use Laratrust\Models\Role;
@@ -93,11 +94,101 @@ class LoginController extends Controller
     }
 
     protected function generateUniqueUsername($name)
-{
-    $username = Str::slug($name);
-    $count = User::where('username', 'LIKE', "{$username}%")->count();
-    return $count ? "{$username}-" . ($count + 1) : $username;
-}
+    {
+        $username = Str::slug($name);
+        $count = User::where('username', 'LIKE', "{$username}%")->count();
+        return $count ? "{$username}-" . ($count + 1) : $username;
+    }
+
+    protected function register(Request $request)
+    {
+        try {
+            // Validate the incoming request data
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'username' => 'required|string|max:255|unique:users',
+                'password' => 'required|string|min:8',
+            ]);
+
+            // Generate a random 6-digit OTP code
+            $otpCode = Str::random(6);
+
+            // Create the user with default status 'n' (not active)
+            $user = User::create([
+                'name' => $request->input('name'),
+                'email' => $request->input('email'),
+                'username' => $request->input('username'),
+                'password' => bcrypt($request->input('password')),
+                'otp_code' => $otpCode,
+                'status' => 'n',
+            ]);
+
+            // Send OTP to the user via email, passing the user and OTP code
+            Mail::send('emails.otp', ['user' => $user, 'otpCode' => $otpCode], function ($message) use ($user) {
+                $message->to($user->email)
+                    ->subject('Your OTP Code');
+            });
+
+            // Redirect to OTP verification page with a success message
+            return redirect()->route('otp.verify')->with('message', 'User registered successfully. Please check your email for the OTP.');
+        } catch (\Exception $e) {
+            // Log the exception
+
+            // Return a generic error message
+            return redirect()->back()->withErrors(['error' => 'An error occurred during registration. Please try again later.']);
+        }
+    }
+
+    public function showOtpVerificationForm()
+    {
+        // Show the OTP verification form
+        return view('auth.otp-verify');
+    }
+
+    public function resendOtp(Request $request)
+    {
+        // Logic to resend the OTP, e.g., sending an SMS or email
+        // ...
+
+        return response()->json(['success' => true, 'message' => 'OTP resent successfully.']);
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        // Validate the OTP
+        $request->validate([
+            'otp_code' => 'required|string|min:6|max:6',
+        ]);
+
+        // Find the user by the OTP code
+        $user = User::where('otp_code', $request->input('otp_code'))->first();
+        if ($user) {
+            // Activate the user if the OTP matches
+            $user->update([
+                'status' => 'y',
+                'otp_code' => null, // Clear the OTP code after verification
+            ]);
+
+            // Log the user in
+            Auth::login($user);
+
+            // Return a success response in JSON
+            return response()->json([
+                'success' => true,
+                'message' => 'Your account has been activated.',
+                'redirect_url' => route('home')
+            ]);
+        } else {
+            // Return an error response in JSON
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid OTP code. Please try again.'
+            ], 422); // Unprocessable Entity status code
+        }
+    }
+
+
 
 
 
@@ -135,7 +226,4 @@ class LoginController extends Controller
             ], 500);
         }
     }
-
-
-
 }

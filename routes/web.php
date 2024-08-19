@@ -33,6 +33,11 @@ Route::get('/', [LoginController::class, 'index'])->name('logincbt');
 
 Route::post('/formlogin/check_login', [LoginController::class, 'check_login'])->name('formlogin.check_login');
 Route::post('/login-with-qr', [LoginController::class, 'loginWithQrCode']);
+Route::post('/register', [LoginController::class, 'register'])->name('formRegister');
+Route::get('/otp-verify', [LoginController::class, 'showOtpVerificationForm'])->name('otp.verify');
+Route::post('/post/otp-verify', [LoginController::class, 'verifyOtp'])->name('otp.verify.post');
+Route::post('/post/resend-otp', [LoginController::class, 'resendOtp'])->name('otp.resend');
+
 
 Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('/callback/google', [LoginController::class, 'handleGoogleCallback']);

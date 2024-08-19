@@ -51,6 +51,7 @@ class User extends Authenticatable implements LaratrustUser,JWTSubject
         'last_activity',
         'google_id',
         'id_card',
+        'otp_code',
     ];
 
     /**

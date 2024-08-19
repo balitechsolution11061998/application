@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -43,10 +44,12 @@
             .box-area {
                 margin: 0 10px;
             }
+
             .left-box {
                 height: 100px;
                 overflow: hidden;
             }
+
             .right-box {
                 padding: 20px;
             }
@@ -83,6 +86,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -103,6 +107,7 @@
                 opacity: 0;
                 transform: scale(0.8);
             }
+
             to {
                 opacity: 1;
                 transform: scale(1);
@@ -110,169 +115,125 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
         <div class="row border rounded-5 p-3 bg-white shadow box-area">
-            <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #103cbe;">
+            <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box"
+                style="background: #103cbe;">
                 <div class="rounded-image-container left-box-content">
                     <img src="{{ asset('image/sistem_information.png') }}" class="rounded-image">
                 </div>
-                {{-- <small class="text-white text-wrap text-center text-animate" style="width: 17rem; font-family: 'Courier New', Courier, monospace;">
-                    Sistem Informasi Ujian Online Madrasah Aliyah Al Furqan
-                </small> --}}
             </div>
 
             <div class="col-md-6 right-box">
                 <div class="row align-items-center">
                     <div class="header-text mb-4 spacing">
-                        <h2>Hello Again</h2>
-                        <p>We are happy to have you back.</p>
+                        <h2 id="form-title">Hello Again</h2>
+                        <p id="form-subtitle">We are happy to have you back.</p>
                         <p class="fs-5">Welcome to our system</p>
                     </div>
-                    <form method="POST" action="{{ route('formlogin.check_login') }}" id="sign_in_form">
+
+                    <!-- Login Form -->
+                    <form method="POST" action="{{ route('formlogin.check_login') }}" id="sign_in_form" class="form">
                         @csrf
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Please Insert NIP Or NIS" name="username" id="username" required>
+                            <input type="text" class="form-control form-control-lg bg-light fs-6"
+                                placeholder="Please Insert NIP Or NIS" name="username" id="username" required>
                         </div>
                         <div class="input-group mb-1">
-                            <input type="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password" name="password" id="password" required>
+                            <input type="password" class="form-control form-control-lg bg-light fs-6"
+                                placeholder="Password" name="password" id="password" required>
                         </div>
-                        {{-- <div class="g-recaptcha" data-sitekey="6LdVDSAqAAAAABHtK30oRyrlBLabcghRCeLoY_py" data-action="LOGIN"></div> --}}
-                        <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}" data-action="LOGIN"></div>
+                        <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"
+                            data-action="LOGIN"></div>
                         <div class="input-group mb-3">
                             <input type="submit" class="submit btn btn-lg btn-primary w-100 fs-6" value="LOGIN">
                         </div>
+                        <div class="input-group mb-3">
+                            <a href="{{ route('google.login') }}" class="btn btn-danger w-100 fs-6">
+                                <i class="fab fa-google me-2"></i> Sign in with Google
+                            </a>
+                        </div>
                     </form>
+
+                    <!-- Registration Form (Hidden by default) -->
+                    <form method="POST" action="{{ route('formRegister') }}" id="register_form" class="form d-none">
+                        @csrf
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control form-control-lg bg-light fs-6"
+                                placeholder="Full Name" name="name" id="name" required>
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control form-control-lg bg-light fs-6"
+                                placeholder="Email Address" name="email" id="email" required>
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control form-control-lg bg-light fs-6"
+                                placeholder="Username" name="username" id="reg-username" required>
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="password" class="form-control form-control-lg bg-light fs-6"
+                                placeholder="Password" name="password" id="reg-password" required>
+                        </div>
+                        <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"
+                            data-action="REGISTER"></div>
+                        <div class="input-group mb-3">
+                            <input type="submit" class="submit btn btn-lg btn-primary w-100 fs-6" value="REGISTER">
+                        </div>
+                    </form>
+
+                    <!-- Toggle Forms Links -->
                     <div class="input-group mb-3">
-                        <a href="{{ route('google.login') }}" class="btn btn-danger w-100 fs-6">
-                            <i class="fab fa-google me-2"></i> Sign in with Google
-                        </a>
+                        <button class="btn btn-link w-100 fs-6" id="toggle-register">Don't have an account? Register
+                            here</button>
+                        <button class="btn btn-link w-100 fs-6 d-none" id="toggle-login">Already have an account? Login
+                            here</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="{{ asset('js/toastr.min.js') }}"></script>
     <script src="{{ asset('js/toastify-js.js') }}"></script>
     <script>
-$(document).ready(function() {
-    $("#sign_in_form").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission
+        $(document).ready(function() {
+            $("#toggle-register").click(function() {
+                $("#sign_in_form").addClass("d-none");
+                $("#register_form").removeClass("d-none");
+                $("#toggle-register").addClass("d-none");
+                $("#toggle-login").removeClass("d-none");
+                $("#form-title").text("Register");
+                $("#form-subtitle").text("Create your account to get started.");
+            });
 
-        var username = $("#username").val();
-        var password = $("#password").val();
-        var token = $("meta[name='csrf-token']").attr("content");
+            $("#toggle-login").click(function() {
+                $("#register_form").addClass("d-none");
+                $("#sign_in_form").removeClass("d-none");
+                $("#toggle-login").addClass("d-none");
+                $("#toggle-register").removeClass("d-none");
+                $("#form-title").text("Hello Again");
+                $("#form-subtitle").text("We are happy to have you back.");
+            });
+            $("#sign_in_form").submit(function(event) {
+                event.preventDefault(); // Prevent the default form submission
 
-        // Check if APP_DEBUG is true (this can be passed to your view from the backend)
-        var appDebug = "{{ config('app.debug') }}";
+                var username = $("#username").val();
+                var password = $("#password").val();
+                var token = $("meta[name='csrf-token']").attr("content");
 
-        var recaptchaResponse = appDebug == '1' ? "debug-bypass" : grecaptcha.getResponse(); // Bypass reCAPTCHA in debug mode
+                // Check if APP_DEBUG is true (this can be passed to your view from the backend)
+                var appDebug = "{{ config('app.debug') }}";
 
-        if (username.length === 0) {
-            Toastify({
-                text: 'Alamat Username Wajib Diisi !',
-                duration: 3000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                close: true,
-                className: "toastify-error",
-                escapeMarkup: false,
-                onClick: function() {},
-                callback: function() {
-                    document.querySelector('.toastify').innerHTML = `
-                        <div style="display: flex; align-items: center;">
-                            <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
-                            <span>Alamat Username Wajib Diisi !</span>
-                        </div>`;
-                }
-            }).showToast();
-        } else if (password.length === 0) {
-            Toastify({
-                text: 'Password Wajib Diisi !',
-                duration: 3000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                close: true,
-                className: "toastify-error",
-                escapeMarkup: false,
-                onClick: function() {},
-                callback: function() {
-                    document.querySelector('.toastify').innerHTML = `
-                        <div style="display: flex; align-items: center;">
-                            <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
-                            <span>Password Wajib Diisi !</span>
-                        </div>`;
-                }
-            }).showToast();
-        } else if (recaptchaResponse.length === 0 && appDebug != '1') {
-            Toastify({
-                text: 'Please complete the reCAPTCHA!',
-                duration: 3000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                close: true,
-                className: "toastify-error",
-                escapeMarkup: false,
-                onClick: function() {},
-                callback: function() {
-                    document.querySelector('.toastify').innerHTML = `
-                        <div style="display: flex; align-items: center;">
-                            <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
-                            <span>Please complete the reCAPTCHA!</span>
-                        </div>`;
-                }
-            }).showToast();
-        } else {
-            $.ajax({
-                url: "{{ route('formlogin.check_login') }}",
-                type: "POST",
-                dataType: "JSON",
-                headers: {
-                    'X-CSRF-TOKEN': token,
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify({
-                    "username": username,
-                    "password": password,
-                    "g-recaptcha-response": recaptchaResponse // Include reCAPTCHA response
-                }),
-                success: function(response) {
-                    if (response.success) {
-                        toastr.success(response.message);
-                        setTimeout(function() {
-                            window.location.href = '/home';
-                        }, 2000);
-                    } else {
-                        Toastify({
-                            text: response.message,
-                            duration: 3000,
-                            gravity: "top",
-                            position: "right",
-                            backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                            close: true,
-                            className: "toastify-error",
-                            escapeMarkup: false,
-                            onClick: function() {},
-                            callback: function() {
-                                document.querySelector('.toastify').innerHTML = `
-                                    <div style="display: flex; align-items: center;">
-                                        <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
-                                        <span>${response.message}</span>
-                                    </div>`;
-                            }
-                        }).showToast();
-                    }
-                },
-                error: function(xhr, status, error) {
+                var recaptchaResponse = appDebug == '1' ? "debug-bypass" : grecaptcha
+            .getResponse(); // Bypass reCAPTCHA in debug mode
+
+                if (username.length === 0) {
                     Toastify({
-                        text: error,
+                        text: 'Alamat Username Wajib Diisi !',
                         duration: 3000,
                         gravity: "top",
                         position: "right",
@@ -283,18 +244,117 @@ $(document).ready(function() {
                         onClick: function() {},
                         callback: function() {
                             document.querySelector('.toastify').innerHTML = `
+                        <div style="display: flex; align-items: center;">
+                            <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
+                            <span>Alamat Username Wajib Diisi !</span>
+                        </div>`;
+                        }
+                    }).showToast();
+                } else if (password.length === 0) {
+                    Toastify({
+                        text: 'Password Wajib Diisi !',
+                        duration: 3000,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                        close: true,
+                        className: "toastify-error",
+                        escapeMarkup: false,
+                        onClick: function() {},
+                        callback: function() {
+                            document.querySelector('.toastify').innerHTML = `
+                        <div style="display: flex; align-items: center;">
+                            <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
+                            <span>Password Wajib Diisi !</span>
+                        </div>`;
+                        }
+                    }).showToast();
+                } else if (recaptchaResponse.length === 0 && appDebug != '1') {
+                    Toastify({
+                        text: 'Please complete the reCAPTCHA!',
+                        duration: 3000,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                        close: true,
+                        className: "toastify-error",
+                        escapeMarkup: false,
+                        onClick: function() {},
+                        callback: function() {
+                            document.querySelector('.toastify').innerHTML = `
+                        <div style="display: flex; align-items: center;">
+                            <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
+                            <span>Please complete the reCAPTCHA!</span>
+                        </div>`;
+                        }
+                    }).showToast();
+                } else {
+                    $.ajax({
+                        url: "{{ route('formlogin.check_login') }}",
+                        type: "POST",
+                        dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': token,
+                            'Content-Type': 'application/json'
+                        },
+                        data: JSON.stringify({
+                            "username": username,
+                            "password": password,
+                            "g-recaptcha-response": recaptchaResponse // Include reCAPTCHA response
+                        }),
+                        success: function(response) {
+                            if (response.success) {
+                                toastr.success(response.message);
+                                setTimeout(function() {
+                                    window.location.href = '/home';
+                                }, 2000);
+                            } else {
+                                Toastify({
+                                    text: response.message,
+                                    duration: 3000,
+                                    gravity: "top",
+                                    position: "right",
+                                    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                                    close: true,
+                                    className: "toastify-error",
+                                    escapeMarkup: false,
+                                    onClick: function() {},
+                                    callback: function() {
+                                        document.querySelector('.toastify')
+                                            .innerHTML = `
+                                    <div style="display: flex; align-items: center;">
+                                        <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
+                                        <span>${response.message}</span>
+                                    </div>`;
+                                    }
+                                }).showToast();
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            Toastify({
+                                text: error,
+                                duration: 3000,
+                                gravity: "top",
+                                position: "right",
+                                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                                close: true,
+                                className: "toastify-error",
+                                escapeMarkup: false,
+                                onClick: function() {},
+                                callback: function() {
+                                    document.querySelector('.toastify').innerHTML = `
                                 <div style="display: flex; align-items: center;">
                                     <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
                                     <span>${error}</span>
                                 </div>`;
+                                }
+                            }).showToast();
                         }
-                    }).showToast();
+                    });
                 }
             });
-        }
-    });
-});
-
+        });
     </script>
 </body>
+
 </html>
