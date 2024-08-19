@@ -25,7 +25,7 @@ use Laravel\Pulse\Pulse;
 
 
 Auth::routes();
-Route::get('/scanbarcode', function(){
+Route::get('/scanbarcode', function () {
     return view('auth.scanbarcode');
 });
 Route::get('/', [LoginController::class, 'index'])->name('logincbt');
@@ -38,9 +38,9 @@ Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('g
 Route::get('/callback/google', [LoginController::class, 'handleGoogleCallback']);
 Route::get('/website', [WebsiteController::class, 'index'])->name('website');
 
-Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.access', 'online']], function () {
+Route::group(['middleware' => ['verifiedmiddleware', 'verified', 'auth', 'log.user.access', 'online']], function () {
 
-// Route::group(['middleware' => ['verifiedmiddleware','twostep','verified','auth','log.user.access']], function () {
+    // Route::group(['middleware' => ['verifiedmiddleware','twostep','verified','auth','log.user.access']], function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/home/epresensi', [HomeController::class, 'index3'])->name('home.epresensi');
     Route::get('/home/cbt', [HomeController::class, 'index2'])->name('home.cbt');
@@ -71,7 +71,6 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/progress', 'OrdHeadController@getProgress')->name('getProgress');
         Route::get('/getOrderDetails', 'OrdHeadController@getOrderDetails')->name('getProgress');
         Route::get('/receiving', 'OrdHeadController@receiving')->name('receiving');
-
     });
 
 
@@ -85,8 +84,6 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/count', 'PriceChangeController@count')->name('count');
         Route::post('/approve', 'PriceChangeController@approve')->name('approve');
         Route::post('/reject', 'PriceChangeController@reject')->name('reject');
-
-
     });
 
     Route::prefix('permissions')->name('permissions.')->namespace('App\Http\Controllers')->group(function () {
@@ -110,7 +107,6 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::post('/store', 'JadwalController@store')->name('store');
         Route::delete('/destroy/{id}', 'JadwalController@destroy')->name('destroy');
         Route::get('/edit/{id}', 'JadwalController@edit')->name('edit');
-
     });
 
     Route::prefix('guru')->name('guru.')->namespace('App\Http\Controllers')->group(function () {
@@ -133,8 +129,6 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
 
         Route::get('/absen/harian', 'GuruController@absen')->name('absen.harian');
         Route::post('/absen/simpan', 'GuruController@simpan')->name('absen.simpan');
-
-
     });
     Route::prefix('jadwal')->name('jadwal.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/guru/jadwal', 'JadwalController@guru')->name('guru.jadwal');
@@ -157,12 +151,12 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/', 'UserController@index')->name('index');
         Route::get('/cbt', 'UserController@cbt')->name('cbt');
         Route::get('/create', 'UserController@create')->name('create');
-        Route::post('/store','UserController@store')->name('store');
+        Route::post('/store', 'UserController@store')->name('store');
         Route::get('/data', 'UserController@data')->name('data');
         Route::post('/reset-password/{id}', 'UserController@resetPassword')->name('reset-password');
         Route::get('/{id}/edit', 'UserController@edit')->name('edit');
         Route::get('/{id}/dataEdit', 'UserController@dataEdit')->name('dataEdit');
-        Route::delete('/delete/{id}','UserController@delete')->name('delete');
+        Route::delete('/delete/{id}', 'UserController@delete')->name('delete');
         Route::post('/send-account-details', 'UserController@sendAccountDetails');
         Route::get('/konfigurasi/{nik}/setjamkerja', 'UserController@setjamkerja');
         Route::post('/konfigurasi/store', 'UserController@konfigurasiStore');
@@ -173,9 +167,6 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/{id}', 'UserController@show')->name('cbt.show');
         Route::post('/storecbt', 'UserController@storecbt')->name('cbt.storecbt');
         Route::delete('/cbt/destroy/{id}', 'UserController@destroy')->name('cbt.destroy');
-
-
-
     });
 
     Route::prefix('departments')->name('departments.')->namespace('App\Http\Controllers')->group(function () {
@@ -230,7 +221,6 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/', 'ItemsController@index')->name('index');
         Route::get('/data', 'ItemsController@data')->name('data');
         Route::get('/getDataItemSupplierBySupplier', 'ItemsController@getDataItemSupplierBySupplier')->name('getDataItemSupplierBySupplier');
-
     });
 
     Route::prefix('provinsi')->name('provinsi.')->namespace('App\Http\Controllers')->group(function () {
@@ -262,7 +252,6 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/price-change/index', 'SettingsController@priceChange')->name('priceChange.index');
         Route::get('/price-change/data', 'SettingsController@approvalPriceChangeData')->name('priceChange.data');
         Route::post('/price-change/store', 'SettingsController@priceChangeStore')->name('priceChangeStore');
-
     });
 
 
@@ -274,17 +263,14 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::post('/update/{id}', 'PaketSoalController@update')->name('update');
         Route::delete('/delete/{id}', 'PaketSoalController@destroy')->name('destroy');
         Route::get('/options', 'PaketSoalController@dataoptions')->name('options');
-
     });
 
     Route::prefix('store')->name('store.')->namespace('App\Http\Controllers')->group(function () {
         Route::post('/store', 'StoreController@store')->name('store');
-
     });
 
     Route::prefix('supplier')->name('supplier.')->namespace('App\Http\Controllers')->group(function () {
         Route::post('/store', 'SupplierController@store')->name('store');
-
     });
 
 
@@ -294,7 +280,6 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::post('/store', 'JamKerjaController@store')->name('store');
         Route::get('/edit/{id}', 'JamKerjaController@edit')->name('edit');
         Route::delete('/delete/{id}', 'JamKerjaController@delete')->name('edit');
-
     });
 
     Route::prefix('rcv')->name('rcv.')->namespace('App\Http\Controllers')->group(function () {
@@ -311,7 +296,6 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::get('/options', 'KelasController@dataoptions')->name('options');
         Route::get('/getKelasData', 'KelasController@getKelasData');
         Route::get('/edit/json', 'KelasController@getEdit')->name('getEdit');
-
     });
 
     Route::prefix('rombel')->name('rombel.')->namespace('App\Http\Controllers')->group(function () {
@@ -322,7 +306,6 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::delete('/delete/{id}', 'RombelController@destroy')->name('destroy');
         Route::get('/options', 'RombelController@getRombelOptions')->name('getRombelOptions');
         Route::get('/getRombelData', 'RombelController@getRombelData')->name('getRombelData');
-
     });
 
     Route::prefix('siswa')->name('siswa.')->namespace('App\Http\Controllers')->group(function () {
@@ -343,7 +326,6 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::delete('/delete/{id}', 'MataPelajaranController@destroy')->name('destroy');
         Route::get('/options', 'MataPelajaranController@dataoptions')->name('options');
         Route::get('/getMataPelajaranData', 'MataPelajaranController@getMataPelajaranData')->name('getMataPelajaranData');
-
     });
 
     Route::prefix('soal')->name('soal.')->namespace('App\Http\Controllers')->group(function () {
@@ -354,6 +336,29 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
         Route::post('/update/{id}', 'ManagementSoalController@update')->name('update');
         Route::delete('/delete/{id}', 'ManagementSoalController@destroy')->name('destroy');
         Route::get('/options', 'ManagementSoalController@dataoptions')->name('options');
+    });
+
+
+    // Routes for 'orang-tua' using resource controller and additional restore route
+    Route::prefix('orang-tua')->name('orang-tua.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/', 'OrangTuaController@index')->name('index');
+        Route::get('/create', 'OrangTuaController@create')->name('create');
+        Route::post('/', 'OrangTuaController@store')->name('store');
+        Route::get('{id}/edit', 'OrangTuaController@edit')->name('edit');
+        Route::put('{id}', 'OrangTuaController@update')->name('update');
+        Route::delete('{id}', 'OrangTuaController@destroy')->name('destroy');
+        Route::post('restore/{id}', 'OrangTuaController@restore')->name('restore');
+    });
+
+    // Routes for 'siswas' using resource controller and additional restore route
+    Route::prefix('siswas')->name('siswas.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/', 'SiswaController@index')->name('index');
+        Route::get('/create', 'SiswaController@create')->name('create');
+        Route::post('/', 'SiswaController@store')->name('store');
+        Route::get('{id}/edit', 'SiswaController@edit')->name('edit');
+        Route::put('{id}', 'SiswaController@update')->name('update');
+        Route::delete('{id}', 'SiswaController@destroy')->name('destroy');
+        Route::post('restore/{id}', 'SiswaController@restore')->name('restore');
     });
 
     Route::prefix('ujian')->name('ujian.')->namespace('App\Http\Controllers')->group(function () {
@@ -374,13 +379,12 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     Route::prefix('monitoring-presensi')->name('monitoring-presensi.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/index', 'MonitoringPresensiController@index')->name('index');
         Route::get('/data', 'MonitoringPresensiController@data')->name('data');
-
     });
 
     Route::prefix('izin')->name('izin.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/index', 'IzinController@index')->name('index');
         Route::get('/data', 'IzinController@data')->name('data');
-        Route::get('/{id}/show','IzinController@show')->name('show');
+        Route::get('/{id}/show', 'IzinController@show')->name('show');
         Route::post('/{id}/approve', 'IzinController@approve')->name('izin.approve');
         Route::post('/{id}/reject', 'IzinController@reject')->name('izin.reject');
     });
@@ -399,12 +403,4 @@ Route::group(['middleware' => ['verifiedmiddleware','verified','auth','log.user.
     Route::get('/pengumuman', 'App\Http\Controllers\PengumumanController@index')->name('pengumuman');
     Route::post('/pengumuman/simpan', 'App\Http\Controllers\PengumumanController@simpan')->name('pengumuman.simpan');
     Route::get('/faqs', [FaqController::class, 'index']);
-
-
 });
-
-
-
-
-
-

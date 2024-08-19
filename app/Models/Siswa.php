@@ -4,11 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Siswa extends Model
 {
     use HasFactory;
-    protected $fillable = ['rombel_id', 'nama', 'nis', 'jenis_kelamin'];
+    use SoftDeletes;
+
+    protected $fillable = [
+        'nik', 'nis', 'nama', 'jk', 'tanggal_lahir', 'alamat', 'telepon',
+        'email', 'kelas_id', 'ortu_id', 'tanggal_masuk', 'tanggal_lulus',
+        'status', 'catatan', 'golongan_darah', 'tempat_lahir', 'foto'
+    ];
 
     public function rombel()
     {

@@ -96,3 +96,7 @@ Breadcrumbs::for('jadwal', function (BreadcrumbTrail $trail) {
 Breadcrumbs::for('guru', function (BreadcrumbTrail $trail) {
     $trail->push('guru', route('guru.index'));
 });
+
+Breadcrumbs::for('orang-tua', function (BreadcrumbTrail $trail) {
+    $trail->push('orang-tua', route('orang-tua.index'));
+});

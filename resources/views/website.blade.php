@@ -7,15 +7,26 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
+        /* General Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+        }
+
         /* Navbar */
         .navbar {
-            background: #343a40;
+            background-color: #343a40;
+            padding: 1rem 0;
         }
         .navbar-brand {
             color: #f8f9fa;
+            font-weight: 600;
+            font-size: 1.5rem;
         }
         .navbar-nav .nav-link {
             color: #f8f9fa;
+            font-size: 1.1rem;
+            margin-left: 1rem;
         }
         .navbar-nav .nav-link:hover {
             color: #007bff;
@@ -25,18 +36,19 @@
         header {
             background: url('https://via.placeholder.com/1920x600') no-repeat center center/cover;
             color: white;
-            border-radius: 0 0 20px 20px;
             padding: 5rem 0;
             text-align: center;
             position: relative;
+            border-radius: 0 0 20px 20px;
         }
         header h1 {
-            font-size: 4rem;
-            font-weight: bold;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
         }
         header p {
-            font-size: 1.75rem;
-            margin: 1rem 0;
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
         }
         header .btn {
             font-size: 1.25rem;
@@ -45,57 +57,93 @@
         }
 
         /* Features Section */
-        .card {
+        #features .card {
             border: none;
             border-radius: 15px;
             transition: transform 0.3s, box-shadow 0.3s;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            margin-bottom: 2rem;
         }
-        .card:hover {
+        #features .card:hover {
             transform: scale(1.05);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
-        .card-body {
-            padding: 2rem;
+        #features .card-body {
             text-align: center;
+        }
+        #features .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
         }
 
         /* Courses Section */
-        .card-img-top {
+        #courses .card {
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 2rem;
+            background-color: #ffffff;
+        }
+        #courses .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        #courses .card-img-top {
             height: 200px;
             object-fit: cover;
             border-radius: 15px 15px 0 0;
         }
-        .card-body {
-            padding: 1.5rem;
-            text-align: center;
+        #courses .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 1rem;
         }
-        .btn-primary {
+        #courses .card-text {
+            margin-top: 1rem;
+        }
+        #courses .btn-primary {
             background-color: #007bff;
             border: none;
             padding: 0.75rem 1.5rem;
             border-radius: 25px;
+            margin-top: 1rem;
         }
-        .btn-primary:hover {
+        #courses .btn-primary:hover {
             background-color: #0056b3;
         }
 
         /* Contact Section */
-        form .form-control {
+        #contact {
+            background-color: #f8f9fa;
+            padding: 4rem 0;
+        }
+        #contact h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+        #contact .form-control {
             border-radius: 15px;
             padding: 1rem;
+            margin-bottom: 1.5rem;
         }
-        .form-control::placeholder {
-            color: #6c757d;
-        }
-        .btn-primary {
+        #contact .btn-primary {
             border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            margin-top: 1rem;
         }
 
         /* Footer Section */
         footer {
             background-color: #343a40;
             color: white;
-            padding: 1rem;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
         }
 
         /* Responsive Design */
@@ -147,7 +195,7 @@
         <div class="container">
             <div class="row text-center">
                 <div class="col-md-4 animate__animated animate__fadeIn animate__delay-1s">
-                    <div class="card border-light shadow-sm">
+                    <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Expert Instructors</h5>
                             <p class="card-text">Learn from industry professionals with years of experience.</p>
@@ -155,7 +203,7 @@
                     </div>
                 </div>
                 <div class="col-md-4 animate__animated animate__fadeIn animate__delay-2s">
-                    <div class="card border-light shadow-sm">
+                    <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Hands-On Projects</h5>
                             <p class="card-text">Work on real-world projects to apply your knowledge.</p>
@@ -163,7 +211,7 @@
                     </div>
                 </div>
                 <div class="col-md-4 animate__animated animate__fadeIn animate__delay-3s">
-                    <div class="card border-light shadow-sm">
+                    <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Certification</h5>
                             <p class="card-text">Earn certifications to showcase your skills to potential employers.</p>
@@ -176,9 +224,9 @@
 
     <!-- Courses Section -->
     <section id="courses" class="bg-light py-5">
-        <div class="container text-center">
-            <h2 class="animate__animated animate__fadeIn">Our Popular Courses</h2>
-            <div class="row">
+        <div class="container">
+            <h2 class="animate__animated animate__fadeIn text-center">Our Popular Courses</h2>
+            <div class="row text-center">
                 <div class="col-md-4 animate__animated animate__fadeIn animate__delay-1s">
                     <div class="card">
                         <img src="https://via.placeholder.com/300" class="card-img-top" alt="Course 1">
@@ -204,7 +252,7 @@
                         <img src="https://via.placeholder.com/300" class="card-img-top" alt="Course 3">
                         <div class="card-body">
                             <h5 class="card-title">Cybersecurity</h5>
-                            <p class="card-text">Protect systems and networks from cyber threats and attacks.</p>
+                            <p class="card-text">Protect networks and systems from cyber threats.</p>
                             <a href="#" class="btn btn-primary">Learn More</a>
                         </div>
                     </div>
@@ -215,33 +263,36 @@
 
     <!-- Contact Section -->
     <section id="contact" class="py-5">
-        <div class="container text-center">
-            <h2 class="animate__animated animate__fadeIn">Contact Us</h2>
-            <p class="lead animate__animated animate__fadeIn animate__delay-1s">Have any questions? Feel free to reach out!</p>
-            <form class="animate__animated animate__fadeIn animate__delay-2s">
-                <div class="mb-3">
-                    <input type="text" class="form-control" placeholder="Your Name" required>
+        <div class="container">
+            <h2 class="text-center animate__animated animate__fadeIn">Get in Touch</h2>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <form>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Your Name">
+                        </div>
+                        <div class="form-group">
+                            <input type="email" class="form-control" placeholder="Your Email">
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-control" rows="5" placeholder="Your Message"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+                    </form>
                 </div>
-                <div class="mb-3">
-                    <input type="email" class="form-control" placeholder="Your Email" required>
-                </div>
-                <div class="mb-3">
-                    <textarea class="form-control" placeholder="Your Message" rows="4" required></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Send Message</button>
-            </form>
+            </div>
         </div>
     </section>
 
     <!-- Footer Section -->
-    <footer class="bg-dark text-white text-center py-3">
+    <footer>
         <div class="container">
-            <p>&copy; 2024 IT Education. All rights reserved.</p>
+            <p>&copy; 2024 IT Education. All Rights Reserved.</p>
         </div>
     </footer>
 
-    <!-- Bootstrap and Animate.css JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

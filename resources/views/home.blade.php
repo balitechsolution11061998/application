@@ -4,26 +4,27 @@
     @endsection
 
     @push('styles')
+        <!-- Preload Critical CSS -->
+        <link rel="preload" href="{{ asset('css/style.css') }}" as="style" onload="this.rel='stylesheet'">
+        <noscript>
+            <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+        </noscript>
 
+        <!-- Load less critical CSS files asynchronously -->
+        <link rel="preload" href="{{ asset('css/toastr.min.css') }}" as="style" onload="this.rel='stylesheet'">
+        <link rel="preload" href="{{ asset('css/toastify.min.css') }}" as="style" onload="this.rel='stylesheet'">
+        <link rel="preload" href="{{ asset('css/leaflet.css') }}" as="style" onload="this.rel='stylesheet'">
+        <noscript>
+            <link rel="stylesheet" href="{{ asset('css/toastr.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/toastify.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/leaflet.css') }}">
+        </noscript>
 
-    <!-- Preload Critical CSS -->
-<link rel="preload" href="{{ asset('css/style.css') }}" as="style" onload="this.rel='stylesheet'">
-<link rel="preload" href="{{ asset('css/toastr.min.css') }}" as="style" onload="this.rel='stylesheet'">
-<link rel="preload" href="{{ asset('css/toastify.min.css') }}" as="style" onload="this.rel='stylesheet'">
-<link rel="preload" href="{{ asset('css/leaflet.css') }}" as="style" onload="this.rel='stylesheet'">
-<noscript>
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/toastr.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/toastify.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/leaflet.css') }}">
-</noscript>
-
-<!-- Load the rest of the CSS files -->
-<link rel="stylesheet" href="{{ asset('css/jquery.fancybox.min.css') }}">
-<link rel="stylesheet" href="{{ asset('css/fullcalendar.min.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css') }}">
-<link rel="stylesheet" href="{{ asset('css/fancybox.css') }}">
-
+        <!-- Load the rest of the CSS files asynchronously -->
+        <link rel="stylesheet" href="{{ asset('css/jquery.fancybox.min.css') }}" media="all">
+        <link rel="stylesheet" href="{{ asset('css/fullcalendar.min.css') }}" media="all">
+        <link rel="stylesheet" href="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css') }}" media="all">
+        <link rel="stylesheet" href="{{ asset('css/fancybox.css') }}" media="all">
     @endpush
 
     @section('breadcrumbs')

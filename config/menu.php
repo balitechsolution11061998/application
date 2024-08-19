@@ -317,7 +317,17 @@ return [
             'iconName'       => 'fa-book',                     // The specific icon to display for "Nilai Raport"
             'iconPath'       => '',                            // Path to custom icons, typically empty for Font Awesome
         ],
-
+        [
+            'label'          => 'Orang Tua',                // Label for the "Nilai Raport" menu item
+            'type'           => 'item',                        // Type of the menu
+            'route'          => 'orang-tua.index',                // The route name for this menu item
+            'active'         => [],                            // An array of routes or patterns to mark as active
+            'permission'     => [],                            // The permission(s) required to view this item
+            'permissionType' => 'gate',                        // Type of permission check
+            'icon'           => 'fas',                         // The icon set being used
+            'iconName'       => 'fa-book',                     // The specific icon to display for "Nilai Raport"
+            'iconPath'       => '',                            // Path to custom icons, typically empty for Font Awesome
+        ],
         [
             'label'          => 'Master Data',
             'type'           => 'item',
