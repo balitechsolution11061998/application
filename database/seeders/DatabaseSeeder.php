@@ -185,7 +185,7 @@ class DatabaseSeeder extends Seeder
         SeedSoalJob::dispatch();
 
         $this->call(UjianSeeder::class);
-        $this->call(OrdheadAndOrdskuSeeder::class);
+        $this->call(TutorialsTableSeeder::class);
 
 
     }

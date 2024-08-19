@@ -37,6 +37,7 @@ Route::post('/login-with-qr', [LoginController::class, 'loginWithQrCode']);
 Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('/callback/google', [LoginController::class, 'handleGoogleCallback']);
 Route::get('/website', [WebsiteController::class, 'index'])->name('website');
+Route::get('/website/data', [WebsiteController::class, 'data'])->name('data');
 
 Route::group(['middleware' => ['verifiedmiddleware', 'verified', 'auth', 'log.user.access', 'online']], function () {
 

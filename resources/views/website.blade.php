@@ -9,7 +9,8 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400&display=swap"
+        rel="stylesheet">
 
     <style>
         body {
@@ -296,337 +297,355 @@
                 transform: rotate(360deg);
             }
         }
+
         .category-filter {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
-}
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
 
-.category-filter .btn {
-    display: flex;
-    align-items: center;
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: 600;
-    text-transform: uppercase;
-    border-radius: 30px;
-    transition: all 0.3s ease;
-}
+        .category-filter .btn {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
 
-.category-filter .btn i {
-    margin-right: 8px;
-    font-size: 18px;
-}
+        .category-filter .btn i {
+            margin-right: 8px;
+            font-size: 18px;
+        }
 
-.category-filter .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-    color: #fff;
-}
+        .category-filter .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+        }
 
-.category-filter .btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
-}
+        .category-filter .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
 
-.category-filter .btn-outline-primary {
-    background-color: transparent;
-    border-color: #007bff;
-    color: #007bff;
-}
+        .category-filter .btn-outline-primary {
+            background-color: transparent;
+            border-color: #007bff;
+            color: #007bff;
+        }
 
-.category-filter .btn-outline-primary:hover {
-    background-color: #007bff;
-    color: #fff;
-}
-.about-me {
-    font-family: 'Roboto', sans-serif;
-    color: #333;
-    padding: 60px 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
+        .category-filter .btn-outline-primary:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
 
-.about-me h2 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 36px;
-    font-weight: 700;
-    color: #007bff;
-    margin-bottom: 20px;
-    text-align: center;
-}
+        .about-me {
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+            padding: 60px 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
 
-.about-me p {
-    font-size: 18px;
-    line-height: 1.6;
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto;
-}
-.about-me {
-    font-family: 'Roboto', sans-serif;
-    color: #333;
-    padding: 60px 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
+        .about-me h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
 
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    align-items: center;
-}
+        .about-me p {
+            font-size: 18px;
+            line-height: 1.6;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
 
-.about-text {
-    animation: fadeInLeft 1s ease-out forwards;
-}
+        .about-me {
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+            padding: 60px 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
 
-.about-image {
-    animation: fadeInRight 1s ease-out forwards;
-}
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: center;
+        }
 
-.about-image img {
-    max-width: 100%;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
+        .about-text {
+            animation: fadeInLeft 1s ease-out forwards;
+        }
 
-.about-me h2 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 36px;
-    font-weight: 700;
-    color: #007bff;
-    margin-bottom: 20px;
-}
+        .about-image {
+            animation: fadeInRight 1s ease-out forwards;
+        }
 
-.about-me p {
-    font-size: 18px;
-    line-height: 1.6;
-}
+        .about-image img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
 
-@keyframes fadeInLeft {
-    0% {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
+        .about-me h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
 
-@keyframes fadeInRight {
-    0% {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
+        .about-me p {
+            font-size: 18px;
+            line-height: 1.6;
+        }
 
-/* Scroll Animation Trigger */
-.scroll-reveal {
-    opacity: 1;
-    transform: translateY(0);
-}
-/* Pagination Container */
-.pagination {
-    margin-top: 20px;
-}
+        @keyframes fadeInLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
 
-.page-item {
-    margin: 0 5px;
-}
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
 
-.page-link {
-    color: #007bff;
-    border-radius: 50px;
-    border: 2px solid #007bff;
-    padding: 10px 15px;
-    font-size: 16px;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-}
+        @keyframes fadeInRight {
+            0% {
+                opacity: 0;
+                transform: translateX(20px);
+            }
 
-.page-link:hover {
-    background-color: #007bff;
-    color: #fff;
-    border-color: #007bff;
-}
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
 
-.page-item.active .page-link {
-    background-color: #007bff;
-    color: #fff;
-    border-color: #007bff;
-}
+        /* Scroll Animation Trigger */
+        .scroll-reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-.page-item.disabled .page-link {
-    color: #ccc;
-    border-color: #ccc;
-}
+        /* Pagination Container */
+        .pagination {
+            margin-top: 20px;
+        }
 
-.page-link i {
-    font-size: 18px;
-}
-/* Spinner Container */
-.spinner-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
+        .page-item {
+            margin: 0 5px;
+        }
 
-.spinner-border {
-    width: 3rem;
-    height: 3rem;
-    border-width: 0.3em;
-    border-color: #007bff transparent transparent transparent;
-    animation: spin 1s linear infinite;
-}
+        .page-link {
+            color: #007bff;
+            border-radius: 50px;
+            border: 2px solid #007bff;
+            padding: 10px 15px;
+            font-size: 16px;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
 
-/* Animation for Data Loading */
-.tutorial-card-wrapper {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-}
+        .page-link:hover {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
 
-.tutorial-card-wrapper.show {
-    opacity: 1;
-    transform: translateY(0);
-}
+        .page-item.active .page-link {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
 
-/* Spinner Animation */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+        .page-item.disabled .page-link {
+            color: #ccc;
+            border-color: #ccc;
+        }
 
-/* Utility Classes */
-.d-none {
-    display: none !important;
-}
-/* Spinner Container */
-.spinner-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
+        .page-link i {
+            font-size: 18px;
+        }
 
-.spinner-border {
-    width: 3rem;
-    height: 3rem;
-    border-width: 0.3em;
-    border-color: #007bff transparent transparent transparent;
-    animation: spin 1s linear infinite;
-}
+        /* Spinner Container */
+        .spinner-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-/* Animation for Data Loading */
-.tutorial-card-wrapper {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-}
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.3em;
+            border-color: #007bff transparent transparent transparent;
+            animation: spin 1s linear infinite;
+        }
 
-.tutorial-card-wrapper.show {
-    opacity: 1;
-    transform: translateY(0);
-}
+        /* Animation for Data Loading */
+        .tutorial-card-wrapper {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
 
-/* Pagination */
-.pagination {
-    display: flex;
-    justify-content: center;
-    padding-left: 0;
-    list-style: none;
-}
+        .tutorial-card-wrapper.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-.page-item {
-    margin: 0 2px;
-}
+        /* Spinner Animation */
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
 
-.page-link {
-    border-radius: 50%;
-    padding: 0.5rem 1rem;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    transition: background-color 0.3s;
-}
+            100% {
+                transform: rotate(360deg);
+            }
+        }
 
-.page-link:hover {
-    background-color: #0056b3;
-}
+        /* Utility Classes */
+        .d-none {
+            display: none !important;
+        }
 
-.page-item.disabled .page-link {
-    background-color: #e9ecef;
-    color: #6c757d;
-    cursor: not-allowed;
-}
+        /* Spinner Container */
+        .spinner-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-.page-item.active .page-link {
-    background-color: #0056b3;
-    color: #fff;
-}
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.3em;
+            border-color: #007bff transparent transparent transparent;
+            animation: spin 1s linear infinite;
+        }
 
-/* Spinner Animation */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+        /* Animation for Data Loading */
+        .tutorial-card-wrapper {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
 
-/* Utility Classes */
-.d-none {
-    display: none !important;
-}
+        .tutorial-card-wrapper.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-.pagination {
-    display: flex;
-    justify-content: center;
-    padding-left: 0;
-    list-style: none;
-}
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            padding-left: 0;
+            list-style: none;
+        }
 
-.page-item {
-    margin: 0 2px;
-}
+        .page-item {
+            margin: 0 2px;
+        }
 
-.page-link {
-    border-radius: 50%;
-    padding: 0.5rem 1rem;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    transition: background-color 0.3s;
-}
+        .page-link {
+            border-radius: 50%;
+            padding: 0.5rem 1rem;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            transition: background-color 0.3s;
+        }
 
-.page-link:hover {
-    background-color: #0056b3;
-}
+        .page-link:hover {
+            background-color: #0056b3;
+        }
 
-.page-item.disabled .page-link {
-    background-color: #e9ecef;
-    color: #6c757d;
-    cursor: not-allowed;
-}
+        .page-item.disabled .page-link {
+            background-color: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
 
-.page-item.active .page-link {
-    background-color: #0056b3;
-    color: #fff;
-}
+        .page-item.active .page-link {
+            background-color: #0056b3;
+            color: #fff;
+        }
 
-     /* Spinner Styles */
-     .spinner-container {
+        /* Spinner Animation */
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Utility Classes */
+        .d-none {
+            display: none !important;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .page-item {
+            margin: 0 2px;
+        }
+
+        .page-link {
+            border-radius: 50%;
+            padding: 0.5rem 1rem;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+        .page-link:hover {
+            background-color: #0056b3;
+        }
+
+        .page-item.disabled .page-link {
+            background-color: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .page-item.active .page-link {
+            background-color: #0056b3;
+            color: #fff;
+        }
+
+        /* Spinner Styles */
+        .spinner-container {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -718,28 +737,86 @@
         }
 
         .category-html {
-            background-color: #ff5722; /* HTML */
+            background-color: #ff5722;
+            /* HTML */
         }
 
         .category-css {
-            background-color: #ff9800; /* CSS */
+            background-color: #ff9800;
+            /* CSS */
         }
 
         .category-js {
-            background-color: #03a9f4; /* JavaScript */
+            background-color: #03a9f4;
+            /* JavaScript */
         }
 
         .category-python {
-            background-color: #4caf50; /* Python */
+            background-color: #4caf50;
+            /* Python */
         }
 
         .category-php {
-            background-color: #9c27b0; /* PHP */
+            background-color: #9c27b0;
+            /* PHP */
         }
 
         .category-advanced {
-            background-color: #673ab7; /* Advanced Programming */
+            background-color: #673ab7;
+            /* Advanced Programming */
         }
+        .tutorial-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.tutorial-card {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.tutorial-card .card-img-top {
+    object-fit: cover;
+    height: 200px; /* Atur tinggi gambar agar seragam */
+    width: 100%;
+}
+
+.tutorial-card .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.tutorial-card .card-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.tutorial-card .card-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Batas maksimal 3 baris */
+    -webkit-box-orient: vertical;
+    white-space: normal;
+}
+
+.tutorial-card .category-tags {
+    margin-top: 0.5rem;
+}
+
+.tutorial-card .card-footer {
+    margin-top: auto;
+    text-align: center;
+}
 
     </style>
 </head>
@@ -805,118 +882,18 @@
     </div>
 
     <div class="container mt-5">
-        <div id="spinner" class="spinner-container d-none">
+        <div id="spinner" class="spinner-container">
             <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="sr-only">Loading...</span>
             </div>
         </div>
-        <div id="tutorials-content" class="row">
-            <!-- Tutorial Card 1 -->
-            <div class="col-md-4 mb-4 tutorial-card-wrapper">
-                <div class="card tutorial-card">
-                    <img src="https://source.unsplash.com/600x400/?coding" class="card-img-top" alt="HTML Tutorial">
-                    <div class="card-body">
-                        <h5 class="card-title">Learn HTML</h5>
-                        <p class="card-text">Start from the basics of HTML and build your way up to advanced topics.</p>
-                        <div class="category-tags">
-                            <span class="category-tag category-html">HTML</span>
-                            <span class="category-tag category-web">Web Development</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn-action">Explore</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Tutorial Card 2 -->
-            <div class="col-md-4 mb-4 tutorial-card-wrapper">
-                <div class="card tutorial-card">
-                    <img src="https://source.unsplash.com/600x400/?code" class="card-img-top" alt="CSS Tutorial">
-                    <div class="card-body">
-                        <h5 class="card-title">Master CSS</h5>
-                        <p class="card-text">Style your web pages like a pro with our comprehensive CSS tutorials.</p>
-                        <div class="category-tags">
-                            <span class="category-tag category-css">CSS</span>
-                            <span class="category-tag category-style">Styling</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn-action">Explore</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Tutorial Card 3 -->
-            <div class="col-md-4 mb-4 tutorial-card-wrapper">
-                <div class="card tutorial-card">
-                    <img src="https://source.unsplash.com/600x400/?coding" class="card-img-top" alt="JavaScript Tutorial">
-                    <div class="card-body">
-                        <h5 class="card-title">JavaScript Essentials</h5>
-                        <p class="card-text">Learn JavaScript from scratch and create dynamic, interactive web pages.</p>
-                        <div class="category-tags">
-                            <span class="category-tag category-js">JavaScript</span>
-                            <span class="category-tag category-programming">Programming</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn-action">Explore</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Tutorial Card 4 -->
-            <div class="col-md-4 mb-4 tutorial-card-wrapper">
-                <div class="card tutorial-card">
-                    <img src="https://source.unsplash.com/600x400/?python" class="card-img-top" alt="Python Tutorial">
-                    <div class="card-body">
-                        <h5 class="card-title">Python Basics</h5>
-                        <p class="card-text">Discover the fundamentals of Python programming with hands-on examples.</p>
-                        <div class="category-tags">
-                            <span class="category-tag category-python">Python</span>
-                            <span class="category-tag category-programming">Programming</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn-action">Explore</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Tutorial Card 5 -->
-            <div class="col-md-4 mb-4 tutorial-card-wrapper">
-                <div class="card tutorial-card">
-                    <img src="https://source.unsplash.com/600x400/?php" class="card-img-top" alt="PHP Tutorial">
-                    <div class="card-body">
-                        <h5 class="card-title">PHP for Beginners</h5>
-                        <p class="card-text">Learn PHP from the ground up and start building dynamic web applications.</p>
-                        <div class="category-tags">
-                            <span class="category-tag category-php">PHP</span>
-                            <span class="category-tag category-web">Web Development</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn-action">Explore</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Tutorial Card 6 -->
-            <div class="col-md-4 mb-4 tutorial-card-wrapper">
-                <div class="card tutorial-card">
-                    <img src="https://source.unsplash.com/600x400/?programming" class="card-img-top" alt="Advanced Programming">
-                    <div class="card-body">
-                        <h5 class="card-title">Advanced Programming</h5>
-                        <p class="card-text">Take your coding skills to the next level with advanced programming concepts and techniques.</p>
-                        <div class="category-tags">
-                            <span class="category-tag category-advanced">Advanced</span>
-                            <span class="category-tag category-programming">Programming</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn-action">Explore</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Add more cards as needed -->
+        <div id="tutorials-content" class="row d-none">
+            <!-- Tutorial cards will be dynamically inserted here -->
+        </div>
+        <div id="pagination" class="mt-4">
+            <!-- Pagination links will be dynamically inserted here -->
         </div>
     </div>
-
 
 
 
@@ -926,8 +903,10 @@
             <div class="grid">
                 <div class="about-text">
                     <h2>About Me</h2>
-                    <p>Hello! I'm a passionate coder and web developer with years of experience in the industry. My mission is
-                        to help others learn to code and build a successful career in tech. Through these tutorials, I aim to
+                    <p>Hello! I'm a passionate coder and web developer with years of experience in the industry. My
+                        mission is
+                        to help others learn to code and build a successful career in tech. Through these tutorials, I
+                        aim to
                         share my knowledge and insights in a way that's easy to understand and apply.</p>
                 </div>
                 <div class="about-image">
@@ -943,7 +922,6 @@
     <footer>
         <p>&copy; 2024 Coding Tutorials. All rights reserved.</p>
     </footer>
-
     <script>
         // Search Functionality
         function filterTutorials() {
@@ -961,54 +939,138 @@
                 }
             });
         }
-        document.addEventListener('DOMContentLoaded', function () {
-    const aboutSection = document.querySelector('.about-me');
 
-    function revealOnScroll() {
-        const windowHeight = window.innerHeight;
-        const sectionTop = aboutSection.getBoundingClientRect().top;
-        const revealPoint = 150;
+        function fetchDataTutorial(page = 1) {
+            $.ajax({
+                url: `/website/data?page=${page}`,
+                method: 'GET',
+                success: function(response) {
+                    $('#spinner').hide();
+                    $('#tutorials-content').removeClass('d-none');
 
-        if (sectionTop < windowHeight - revealPoint) {
-            aboutSection.classList.add('scroll-reveal');
-        }
-    }
+                    if (response.data.length === 0) {
+                        // No data found
+                        $('#tutorials-content').html(`
+                    <div class="col-12 text-center">
+                        <div class="alert alert-info" role="alert">
+                            <h4 class="alert-heading">No Tutorials Found</h4>
+                            <p>It looks like there are no tutorials available at the moment. Please check back later or <a href="#" class="alert-link">contact support</a> if you need assistance.</p>
+                        </div>
+                    </div>
+                `);
+                    } else {
+                        // Data found, populate cards
+                        $('#tutorials-content').html(response.data.map(tutorial => {
+                            let categoryTags = JSON.parse(tutorial.category_tags).map(tag =>
+                                `<span class="category-tag category-${tag.toLowerCase()}">${tag}</span>`
+                            ).join('');
 
-    window.addEventListener('scroll', revealOnScroll);
+                            return `
+             <div class="col-md-4 mb-4 tutorial-card-wrapper">
+            <div class="card tutorial-card">
+                <img src="${tutorial.image_url}" class="card-img-top" alt="${tutorial.title}">
+                <div class="card-body">
+                    <h5 class="card-title">${tutorial.title}</h5>
+                    <p class="card-text">${tutorial.description}</p>
+                    <div class="category-tags">
+                        ${categoryTags}
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="btn btn-primary">Explore</a>
+                </div>
+            </div>
+        </div>
+                    `;
+                        }).join(''));
 
-    const spinner = document.getElementById('spinner');
-    const content = document.getElementById('tutorials-content');
+                        // Render pagination links
+                        let paginationHtml = response.links.map(link => `
+                    <li class="page-item ${link.active ? 'active' : ''}">
+                        <a class="page-link" href="#" data-page="${link.url ? new URL(link.url).searchParams.get('page') : 1}">
+                            ${link.label}
+                        </a>
+                    </li>
+                `).join('');
 
-    // Function to simulate data loading
-    function loadData() {
-        // Show spinner
-        spinner.classList.remove('d-none');
-        content.classList.add('d-none');
-
-        // Simulate a delay for data loading
-        setTimeout(() => {
-            // Hide spinner
-            spinner.classList.add('d-none');
-            content.classList.remove('d-none');
-
-            // Animate data display
-            document.querySelectorAll('.tutorial-card-wrapper').forEach((card, index) => {
-                setTimeout(() => {
-                    card.classList.add('show');
-                }, index * 100); // Staggered animation
+                        $('#pagination').html(`
+                    <nav>
+                        <ul class="pagination">
+                            ${paginationHtml}
+                        </ul>
+                    </nav>
+                `);
+                    }
+                },
+                error: function() {
+                    $('#spinner').hide();
+                    $('#tutorials-content').html('<p class="text-danger">Failed to load tutorials.</p>');
+                }
             });
-        }, 2000); // Adjust the delay as needed
-    }
+        }
 
 
-    // Initial data loading
-    loadData();
-});
+
+        // Fetch initial data
+
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const aboutSection = document.querySelector('.about-me');
+
+            function revealOnScroll() {
+                const windowHeight = window.innerHeight;
+                const sectionTop = aboutSection.getBoundingClientRect().top;
+                const revealPoint = 150;
+
+                if (sectionTop < windowHeight - revealPoint) {
+                    aboutSection.classList.add('scroll-reveal');
+                }
+            }
+
+            window.addEventListener('scroll', revealOnScroll);
+
+            const spinner = document.getElementById('spinner');
+            const content = document.getElementById('tutorials-content');
+
+            // Function to simulate data loading
+            function loadData() {
+                // Show spinner
+                spinner.classList.remove('d-none');
+                content.classList.add('d-none');
+
+                // Simulate a delay for data loading
+                setTimeout(() => {
+                    // Hide spinner
+                    spinner.classList.add('d-none');
+                    content.classList.remove('d-none');
+
+                    // Animate data display
+                    document.querySelectorAll('.tutorial-card-wrapper').forEach((card, index) => {
+                        setTimeout(() => {
+                            card.classList.add('show');
+                        }, index * 100); // Staggered animation
+                    });
+                }, 2000); // Adjust the delay as needed
+            }
+
+
+            // Initial data loading
+            loadData();
+            fetchDataTutorial();
+
+            // Handle pagination link clicks
+            $(document).on('click', '.page-link', function(e) {
+                e.preventDefault();
+                let page = $(this).data('page');
+                fetchDataTutorial(page);
+            });
+        });
     </script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFyZWToLz5rnJM5I4bsM7qK/4FUjD5e78GkQ5Qx04p5O4NCKtrSYlTTO0" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
 
 </body>
 
