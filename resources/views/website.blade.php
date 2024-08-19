@@ -765,59 +765,61 @@
             background-color: #673ab7;
             /* Advanced Programming */
         }
+
         .tutorial-card-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
 
-.tutorial-card {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    overflow: hidden;
-}
+        .tutorial-card {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            overflow: hidden;
+        }
 
-.tutorial-card .card-img-top {
-    object-fit: cover;
-    height: 200px; /* Atur tinggi gambar agar seragam */
-    width: 100%;
-}
+        .tutorial-card .card-img-top {
+            object-fit: cover;
+            height: 200px;
+            /* Atur tinggi gambar agar seragam */
+            width: 100%;
+        }
 
-.tutorial-card .card-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
+        .tutorial-card .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
 
-.tutorial-card .card-title {
-    font-size: 1.25rem;
-    margin-bottom: 0.75rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-}
+        .tutorial-card .card-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
 
-.tutorial-card .card-text {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 3; /* Batas maksimal 3 baris */
-    -webkit-box-orient: vertical;
-    white-space: normal;
-}
+        .tutorial-card .card-text {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            /* Batas maksimal 3 baris */
+            -webkit-box-orient: vertical;
+            white-space: normal;
+        }
 
-.tutorial-card .category-tags {
-    margin-top: 0.5rem;
-}
+        .tutorial-card .category-tags {
+            margin-top: 0.5rem;
+        }
 
-.tutorial-card .card-footer {
-    margin-top: auto;
-    text-align: center;
-}
-
+        .tutorial-card .card-footer {
+            margin-top: auto;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -916,6 +918,27 @@
         </div>
     </section>
 
+    <div class="modal fade" id="tutorialDetailModal" tabindex="-1" aria-labelledby="tutorialDetailModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tutorialDetailModalLabel">Detail Tutorial</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="modalImage" src="" class="img-fluid mb-3" alt="Tutorial Image">
+                    <h5 id="modalTitle"></h5>
+                    <p id="modalDescription"></p>
+                    <div id="modalCategoryTags"></div>
+                    <div id="modalDetails"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <!-- Footer Section -->
@@ -940,6 +963,13 @@
             });
         }
 
+        function truncateText(text, maxLength) {
+            if (text.length > maxLength) {
+                return text.substring(0, maxLength) + '...';
+            }
+            return text;
+        }
+
         function fetchDataTutorial(page = 1) {
             $.ajax({
                 url: `/website/data?page=${page}`,
@@ -949,7 +979,7 @@
                     $('#tutorials-content').removeClass('d-none');
 
                     if (response.data.length === 0) {
-                        // No data found
+                        // Jika tidak ada data
                         $('#tutorials-content').html(`
                     <div class="col-12 text-center">
                         <div class="alert alert-info" role="alert">
@@ -959,29 +989,33 @@
                     </div>
                 `);
                     } else {
-                        // Data found, populate cards
+                        // Data ditemukan, buat kartu
                         $('#tutorials-content').html(response.data.map(tutorial => {
                             let categoryTags = JSON.parse(tutorial.category_tags).map(tag =>
                                 `<span class="category-tag category-${tag.toLowerCase()}">${tag}</span>`
                             ).join('');
 
+                            let truncatedDescription = truncateText(tutorial.description,
+                                100); // Batasi panjang deskripsi
+                            // Bagian dalam loop yang membuat kartu
                             return `
-             <div class="col-md-4 mb-4 tutorial-card-wrapper">
-            <div class="card tutorial-card">
-                <img src="${tutorial.image_url}" class="card-img-top" alt="${tutorial.title}">
-                <div class="card-body">
-                    <h5 class="card-title">${tutorial.title}</h5>
-                    <p class="card-text">${tutorial.description}</p>
-                    <div class="category-tags">
-                        ${categoryTags}
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn btn-primary">Explore</a>
+    <div class="col-md-4 mb-4 tutorial-card-wrapper">
+        <div class="card tutorial-card h-100">
+            <img src="${tutorial.image_url}" class="card-img-top" alt="${tutorial.title}">
+            <div class="card-body">
+                <h5 class="card-title">${tutorial.title}</h5>
+                <p class="card-text">${truncateText(tutorial.description, 100)}</p>
+                <div class="category-tags">
+                    ${categoryTags}
                 </div>
             </div>
+            <div class="card-footer">
+                <button class="btn btn-primary btn-explore" onclick="tutorial(${tutorial.id})">Explore</button>
+            </div>
         </div>
-                    `;
+    </div>
+`;
+
                         }).join(''));
 
                         // Render pagination links
@@ -1007,6 +1041,10 @@
                     $('#tutorials-content').html('<p class="text-danger">Failed to load tutorials.</p>');
                 }
             });
+        }
+
+        function tutorial(id){
+            console.log(id,'id');
         }
 
 
@@ -1065,6 +1103,9 @@
                 let page = $(this).data('page');
                 fetchDataTutorial(page);
             });
+
+
+
         });
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
