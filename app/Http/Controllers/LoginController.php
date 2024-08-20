@@ -67,10 +67,45 @@ class LoginController extends Controller
         return Socialite::driver('github')->redirect();
     }
 
-    public function handleGithubCallback() {
-        $user = Socialite::driver('github')->user();
-        // Handle the user data returned by GitHub
+    public function handleGithubCallback()
+    {
+        try {
+            // Attempt to retrieve the user from GitHub
+            $githubUser = Socialite::driver('github')->user();
+
+            // Generate a random password or use a predefined one
+            $generatedPassword = '12345678'; // Example password, ideally you generate this
+
+            // Insert or update the user data in the database
+            $user = User::updateOrCreate(
+                ['email' => $githubUser->getEmail()], // Use email as the unique identifier
+                [
+                    'username' => $githubUser->getNickname() ?? $githubUser->getName(),
+                    'name' => $githubUser->getNickname() ?? $githubUser->getName(),
+                    'email' => $githubUser->getEmail(),
+                    'photo' => $githubUser->getAvatar(),
+                    'password' => Hash::make($generatedPassword), // Store the hashed password
+                    'status' => 'y', // Assuming 'y' means active, adjust as needed
+                    'remember_token' => Str::random(10),
+                ]
+            );
+
+            // Log in the user
+            Auth::login($user, true);
+
+            // If you need to return the password (not recommended)
+            // return response()->json(['password' => $generatedPassword]);
+
+            // Redirect to the desired page after login
+            return redirect()->intended('/home');
+
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            // Optionally, show a user-friendly error message or redirect to an error page
+            return redirect()->route('login')->with('error', 'There was an issue logging in with GitHub. Please try again.');
+        }
     }
+
 
     public function handleGoogleCallback()
     {

@@ -835,25 +835,46 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link animate__animated animate__fadeIn" href="#"><i class="fas fa-home"></i>
-                            Home</a>
+                        <a class="nav-link animate__animated animate__fadeIn" href="#"><i class="fas fa-home"></i> Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link animate__animated animate__fadeIn" href="#tutorials"><i
-                                class="fas fa-book"></i> Tutorials</a>
+                        <a class="nav-link animate__animated animate__fadeIn" href="#tutorials"><i class="fas fa-book"></i> Tutorials</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link animate__animated animate__fadeIn" href="#about"><i class="fas fa-user"></i>
-                            About Me</a>
+                        <a class="nav-link animate__animated animate__fadeIn" href="#about"><i class="fas fa-user"></i> About Me</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link animate__animated animate__fadeIn" href="#contact"><i
-                                class="fas fa-envelope"></i> Contact</a>
+                        <a class="nav-link animate__animated animate__fadeIn" href="#contact"><i class="fas fa-envelope"></i> Contact</a>
                     </li>
+
+                    @if(Auth::check())
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle animate__animated animate__fadeIn" href="#" id="navbarDropdown"
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle"></i> {{ Auth::user()->name }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end animate__animated animate__fadeIn" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li><a class="dropdown-item" href="{{ route('logout') }}"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
+                        </ul>
+                    </li>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                    @else
+                    <li class="nav-item">
+                        <a class="nav-link animate__animated animate__fadeIn" href="{{ route('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link animate__animated animate__fadeIn" href="{{ route('register') }}"><i class="fas fa-user-plus"></i> Register</a>
+                    </li>
+                    @endif
                 </ul>
             </div>
         </div>
     </nav>
+
 
     <!-- Opening Message Section -->
     <section class="opening-message animate__animated animate__fadeIn">
