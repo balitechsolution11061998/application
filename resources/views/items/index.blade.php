@@ -2,7 +2,12 @@
     @section('title')
         Items
     @endsection
-
+    @push('styles')
+    <link rel="preload" href="{{ asset('css/style.css') }}" as="style" onload="this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    </noscript>
+    @endpush
     @section('breadcrumbs')
         {{ Breadcrumbs::render('items') }}
     @endsection

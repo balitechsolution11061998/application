@@ -9,6 +9,7 @@ use App\Repositories\ItemSupplier\ItemSupplierRepository;
 use App\Traits\QueryLoggingTrait;
 use App\Traits\LogsActivity;
 use App\Traits\QueryPerformanceLoggingTrait;
+use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\DataTables;
 
 class ItemServiceImplement extends ServiceApi implements ItemService
@@ -50,26 +51,30 @@ class ItemServiceImplement extends ServiceApi implements ItemService
         $startTime = microtime(true);
         $startMemory = memory_get_usage();
 
-        $data = $this->mainRepository->data();
+        // Cache the data for 1 year (525600 minutes)
+        $cacheKey = 'supplier_data_' . md5($request->search);
+        $results = Cache::remember($cacheKey, 525600, function () use ($request) {
+            $data = $this->mainRepository->data();
 
-
-        // Apply search filter
-        if ($request->search != null) {
-            $searchTerm = $request->search;
-            $data->where(function ($query) use ($searchTerm) {
-                $query->where('supplier', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('sku', 'like', '%' . $searchTerm . '%');
-            });
-        }
-
-        // Process data in chunks
-        $results = [];
-        $data->chunk(100, function ($items) use (&$results) {
-            foreach ($items as $item) {
-                $results[] = $item;
+            // Apply search filter
+            if ($request->search != null) {
+                $searchTerm = $request->search;
+                $data->where(function ($query) use ($searchTerm) {
+                    $query->where('supplier', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('sku', 'like', '%' . $searchTerm . '%');
+                });
             }
-        });
 
+            // Process data in chunks
+            $results = [];
+            $data->chunk(100, function ($items) use (&$results) {
+                foreach ($items as $item) {
+                    $results[] = $item;
+                }
+            });
+
+            return $results;
+        });
 
         $endTime = microtime(true);
         $endMemory = memory_get_usage();
@@ -78,9 +83,6 @@ class ItemServiceImplement extends ServiceApi implements ItemService
         $executionTimeInSeconds = round($executionTime, 4);
         $memoryUsage = $endMemory - $startMemory;
 
-        $this->saveQueryLogs($executedQueries);
-        $this->logQueryPerformance('items_data', $request->search, $executionTimeInSeconds, $memoryUsage, $userIp);
-        event(new PerformanceDataUpdated);
         // Calculate execution time and memory usage (if needed)
 
         return DataTables::of($results)
