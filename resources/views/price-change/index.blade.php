@@ -1,7 +1,8 @@
 <x-default-layout>
     @section('title')
-        Price change
+        Price Change
     @endsection
+
     @push('styles')
         <!-- Preload Critical CSS -->
         <link rel="preload" href="{{ asset('css/style.css') }}" as="style" onload="this.rel='stylesheet'">
@@ -9,9 +10,11 @@
             <link rel="stylesheet" href="{{ asset('css/style.css') }}">
         </noscript>
     @endpush
+
     @section('breadcrumbs')
         {{ Breadcrumbs::render('price-change') }}
     @endsection
+
     <!--begin::Card-->
     <div class="card">
         <!--begin::Card header-->
@@ -30,7 +33,7 @@
                 </div>
                 <!--end::Search-->
             </div>
-            <!--begin::Card title-->
+            <!--end::Card title-->
             <!--begin::Card toolbar-->
             <div class="card-toolbar">
                 <!--begin::Toolbar-->
@@ -81,11 +84,29 @@
     <!--end::Card-->
     @include('modals.modal')
     <!--end::Row-->
-    @push('scripts')
 
-        <script src="{{ asset('js/toastify-js.js') }}" defer></script>
-        <script src="{{ asset('js/jquery.validate.min.js') }}" defer></script>
-        <script src="{{ asset('js/pricelist.js') }}" defer></script>
-        <script src="{{ asset('js/formatRupiah.js') }}" defer></script>
+    @push('scripts')
+        <script>
+            // Delay script loading by 10 seconds (10000 milliseconds)
+            setTimeout(function() {
+                loadScripts();
+            }, 1);
+
+            function loadScripts() {
+                const scripts = [
+                    "{{ asset('js/toastify-js.js') }}",
+                    "{{ asset('js/jquery.validate.min.js') }}",
+                    "{{ asset('js/pricelist.js') }}",
+                    "{{ asset('js/formatRupiah.js') }}"
+                ];
+
+                scripts.forEach(function(src) {
+                    const script = document.createElement('script');
+                    script.src = src;
+                    script.defer = true;
+                    document.body.appendChild(script);
+                });
+            }
+        </script>
     @endpush
 </x-default-layout>
