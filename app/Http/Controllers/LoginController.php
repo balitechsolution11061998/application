@@ -232,22 +232,26 @@ class LoginController extends Controller
         }
     }
 
-
-
-
-
     public function check_login(Request $request)
     {
         $username = $request->input('username');
         $password = $request->input('password');
-        $remember_me = $request->input('remember_me', false); // Default to false if not provided
+        $remember_me = $request->input('remember_me', false);
+
         try {
-            // Pass the "remember" parameter to the authService
             $result = $this->authService->checkLogin($username, $password, $remember_me);
+
             if ($result['success']) {
+                $user = User::where('username', $username)->first();
+                // Generate a new access token and save it in the database
+                $accessToken = Str::random(60);
+                $user->access_token = $accessToken;
+                $user->save();
+
                 return response()->json([
                     'success' => true,
-                    'message' => "Success login, Welcome " . $username
+                    'message' => "Success login, Welcome " . $username,
+                    'access_token' => $accessToken // Send the access token to the client
                 ], 200);
             } else {
                 return response()->json([
@@ -256,7 +260,6 @@ class LoginController extends Controller
                 ], 401);
             }
         } catch (\Exception $e) {
-            // Log the error to the database
             ErrorLog::create([
                 'username' => $username,
                 'error_message' => $e->getMessage(),
@@ -270,4 +273,5 @@ class LoginController extends Controller
             ], 500);
         }
     }
+
 }

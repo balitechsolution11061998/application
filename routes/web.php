@@ -45,6 +45,7 @@ Route::get('auth/github', [LoginController::class, 'redirectToGithub'])->name('g
 Route::get('auth/github/callback', [LoginController::class, 'handleGithubCallback']);
 Route::get('/website', [WebsiteController::class, 'index'])->name('website');
 Route::get('/website/data', [WebsiteController::class, 'data'])->name('data');
+Route::get('/website/{id}', [WebsiteController::class, 'show'])->name('website.show');
 
 Route::group(['middleware' => ['verifiedmiddleware', 'verified', 'auth', 'log.user.access', 'online']], function () {
 

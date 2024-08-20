@@ -31,6 +31,7 @@ return new class extends Migration
             $table->text('alamat')->nullable();
             $table->text('about_us')->nullable();
             $table->rememberToken();
+            $table->string('access_token')->nullable();
             $table->timestamps();
         });
     }

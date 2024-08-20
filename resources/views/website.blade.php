@@ -820,18 +820,21 @@
             margin-top: auto;
             text-align: center;
         }
+
         .dropdown-menu {
             min-width: 250px;
             border-radius: 8px;
             overflow: hidden;
             padding: 0;
         }
+
         .dropdown-header {
             background-color: #343a40;
             color: #fff;
             padding: 15px;
             text-align: center;
         }
+
         .dropdown-header img {
             width: 50px;
             height: 50px;
@@ -839,22 +842,265 @@
             object-fit: cover;
             margin-bottom: 10px;
         }
+
         .dropdown-header h6 {
             margin: 0;
         }
+
         .dropdown-item {
             padding: 10px 20px;
             font-size: 14px;
         }
+
         .dropdown-item:hover {
             background-color: #f8f9fa;
         }
+
+        .navbar {
+            z-index: 1000;
+            /* Ensure the navbar is above other content */
+        }
+
+        /* Navbar styling */
+        .navbar {
+            background-color: #343a40;
+            /* Dark background */
+            border-bottom: 1px solid #6c757d;
+            /* Border for visual separation */
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            /* Emphasize brand name */
+            font-size: 1.5rem;
+            /* Larger font size for the brand */
+        }
+
+        .nav-link {
+            color: #f8f9fa !important;
+            /* Light color for text */
+            transition: color 0.3s ease;
+            /* Smooth color transition */
+            font-size: 1rem;
+            /* Default font size */
+        }
+
+        .nav-link:hover {
+            color: #adb5bd !important;
+            /* Change color on hover */
+        }
+
+        /* Dropdown menu styling */
+        .dropdown-menu {
+            border-radius: 0.375rem;
+            /* Rounded corners */
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            /* Shadow for depth */
+        }
+
+        .dropdown-item {
+            transition: background-color 0.3s ease;
+            /* Smooth background transition */
+        }
+
+        .dropdown-item:hover {
+            background-color: #e9ecef;
+            /* Light gray background on hover */
+        }
+
+        /* Avatar styling */
+        .dropdown-header img {
+            border: 2px solid #ffffff;
+            /* Border around avatar */
+            margin-right: 10px;
+        }
+
+        /* Responsive font sizes */
+        @media (max-width: 992px) {
+            .navbar-brand {
+                font-size: 1.25rem;
+                /* Slightly smaller on medium screens */
+            }
+
+            .nav-link {
+                font-size: 0.9rem;
+                /* Slightly smaller on medium screens */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.125rem;
+                /* Smaller on small screens */
+            }
+
+            .nav-link {
+                font-size: 0.85rem;
+                /* Smaller on small screens */
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar-brand {
+                font-size: 1rem;
+                /* Smaller on extra-small screens */
+            }
+
+            .nav-link {
+                font-size: 0.8rem;
+                /* Smaller on extra-small screens */
+            }
+        }
+        .modal-header.bg-primary {
+    background-color: #007bff; /* Bootstrap Primary Color */
+}
+
+.modal-header .modal-title {
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+#modalImage {
+    border-radius: 8px;
+}
+
+#modalTitle {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+#modalDescription {
+    font-size: 1rem;
+    text-align: center;
+}
+
+#modalCategoryTags .category-tag {
+    background-color: #f0f0f0;
+    color: #333;
+    border-radius: 12px;
+    padding: 0.25rem 0.5rem;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+/* Rounded corners and shadows for modal */
+.modal-content {
+    border-radius: 1rem; /* Rounded corners */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Soft shadow */
+}
+
+/* Gradient background and rounded corners for the modal header */
+.modal-header.bg-gradient-primary {
+    background: linear-gradient(45deg, #007bff, #0056b3); /* Gradient background */
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+}
+
+/* White close button for contrast */
+.modal-header .btn-close-white {
+    filter: invert(1); /* Invert to make close button white */
+}
+
+/* Styling for the modal image */
+#modalImage {
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+/* Responsive and centered modal title */
+#modalTitle {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Responsive and centered modal description */
+#modalDescription {
+    font-size: 1rem;
+    text-align: center;
+}
+
+/* Category tags styling */
+#modalCategoryTags .category-tag {
+    background-color: #f8f9fa;
+    color: #495057;
+    border-radius: 2rem;
+    padding: 0.5rem 1rem;
+    margin: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-block;
+    border: 1px solid #dee2e6;
+}
+
+/* Modal footer with centered button */
+.modal-footer {
+    border-top: none;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
+/* Rounded button style */
+.btn-rounded {
+    border-radius: 2rem;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.875rem;
+}
+/* Base style for category tags */
+.category-tag {
+    display: inline-block;
+    padding: 0.4rem 1rem; /* Padding to make tags more substantial */
+    margin: 0.2rem; /* Space between tags */
+    font-size: 0.875rem; /* Slightly smaller font size */
+    font-weight: 500; /* Semi-bold text */
+    color: #ffffff; /* White text */
+    background-color: #007bff; /* Default blue background */
+    border-radius: 20px; /* Fully rounded edges */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+}
+
+/* Specific category colors (example) */
+.category-tag.category-html {
+    background-color: #e34c26; /* HTML color */
+}
+
+.category-tag.category-css {
+    background-color: #264de4; /* CSS color */
+}
+
+.category-tag.category-js {
+    background-color: #f0db4f; /* JavaScript color */
+    color: #323330; /* Dark text */
+}
+
+/* Hover effect for tags */
+.category-tag:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Slightly more pronounced shadow */
+}
+
     </style>
 </head>
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark animate__animated animate__fadeIn">
+    <!-- Navbar -->
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark animate__animated animate__fadeIn">
         <div class="container">
             <a class="navbar-brand" href="#">Coding Tutorials</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -864,54 +1110,66 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link animate__animated animate__fadeIn" href="#"><i class="fas fa-home"></i> Home</a>
+                        <a class="nav-link animate__animated animate__fadeIn" href="#"><i class="fas fa-home"></i>
+                            Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link animate__animated animate__fadeIn" href="#tutorials"><i class="fas fa-book"></i> Tutorials</a>
+                        <a class="nav-link animate__animated animate__fadeIn" href="#tutorials"><i
+                                class="fas fa-book"></i> Tutorials</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link animate__animated animate__fadeIn" href="#about"><i class="fas fa-user"></i> About Me</a>
+                        <a class="nav-link animate__animated animate__fadeIn" href="#about"><i class="fas fa-user"></i>
+                            About Me</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link animate__animated animate__fadeIn" href="#contact"><i class="fas fa-envelope"></i> Contact</a>
+                        <a class="nav-link animate__animated animate__fadeIn" href="#contact"><i
+                                class="fas fa-envelope"></i> Contact</a>
                     </li>
 
-                    @if(Auth::check())
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle animate__animated animate__fadeIn" href="#" id="navbarDropdown"
-                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle"></i> {{ Auth::user()->name }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end animate__animated animate__fadeIn" aria-labelledby="navbarDropdown">
-                            <li class="dropdown-header">
-                                <img src="{{ Auth::user()->avatar_url ?? 'https://via.placeholder.com/50' }}" alt="User Avatar">
-                                <h6>{{ Auth::user()->name }}</h6>
-                                <small>{{ Auth::user()->email }}</small>
-                            </li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ route('logout') }}"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    <i class="fas fa-sign-out-alt"></i> Logout</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
+                    @if (Auth::check())
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle animate__animated animate__fadeIn" href="#"
+                                id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle"></i> {{ Auth::user()->name }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end animate__animated animate__fadeIn"
+                                aria-labelledby="navbarDropdown">
+                                <li class="dropdown-header">
+                                    <img src="{{ Auth::user()->avatar_url ?? 'https://via.placeholder.com/50' }}"
+                                        alt="User Avatar" class="rounded-circle" style="width: 50px; height: 50px;">
+                                    <h6>{{ Auth::user()->name }}</h6>
+                                    <small>{{ Auth::user()->email }}</small>
+                                </li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="{{ route('logout') }}"
+                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        <i class="fas fa-sign-out-alt"></i> Logout</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
                     @else
-                    <li class="nav-item">
-                        <a class="nav-link animate__animated animate__fadeIn" href="{{ route('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link animate__animated animate__fadeIn" href="{{ route('register') }}"><i class="fas fa-user-plus"></i> Register</a>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link animate__animated animate__fadeIn" href="{{ route('login') }}"><i
+                                    class="fas fa-sign-in-alt"></i> Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link animate__animated animate__fadeIn" href="{{ route('register') }}"><i
+                                    class="fas fa-user-plus"></i> Register</a>
+                        </li>
                     @endif
                 </ul>
             </div>
         </div>
     </nav>
+
+
 
 
     <!-- Opening Message Section -->
@@ -977,27 +1235,30 @@
         </div>
     </section>
 
-    <div class="modal fade" id="tutorialDetailModal" tabindex="-1" aria-labelledby="tutorialDetailModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="tutorialDetailModal" tabindex="-1" aria-labelledby="tutorialDetailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="tutorialDetailModalLabel">Detail Tutorial</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content rounded-4 shadow-lg">
+                <div class="modal-header bg-gradient-primary text-white rounded-top-4">
+                    <h5 class="modal-title" id="tutorialDetailModalLabel">Tutorial Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <img id="modalImage" src="" class="img-fluid mb-3" alt="Tutorial Image">
-                    <h5 id="modalTitle"></h5>
-                    <p id="modalDescription"></p>
-                    <div id="modalCategoryTags"></div>
-                    <div id="modalDetails"></div>
+                <div class="modal-body p-4">
+                    <div class="text-center">
+                        <img id="modalImage" src="" class="img-fluid mb-3 rounded-3 shadow-sm" alt="Tutorial Image" style="max-height: 300px; object-fit: cover;">
+                        <h5 id="modalTitle" class="text-primary mb-3"></h5>
+                        <p id="modalDescription" class="text-muted"></p>
+                    </div>
+                    <hr>
+                    <div id="modalCategoryTags" class="d-flex flex-wrap justify-content-center mb-3"></div>
+                    <div id="modalDetails" class="text-secondary"></div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <div class="modal-footer justify-content-center rounded-bottom-4">
+                    <button type="button" class="btn btn-secondary btn-rounded" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
+
 
 
     <!-- Footer Section -->
@@ -1102,8 +1363,52 @@
             });
         }
 
-        function tutorial(id){
-            console.log(id,'id');
+        function tutorial(id) {
+            // Show the modal
+            $('#tutorialDetailModal').modal('show');
+
+            // Show the spinner and clear the modal content
+            $('#modalImage').hide();
+            $('#modalTitle').text('');
+            $('#modalDescription').text('');
+            $('#modalCategoryTags').html('');
+            $('#modalDetails').html('');
+            $('#tutorialDetailModal .modal-body').append(
+                '<div id="loading-spinner" class="text-center"><i class="fas fa-spinner fa-spin fa-3x"></i></div>');
+
+            // Fetch tutorial details via AJAX
+            $.ajax({
+                url: `/website/${id}`, // Adjust the URL to match your route
+                method: 'GET',
+                success: function(response) {
+                    // Hide the spinner
+                    $('#loading-spinner').remove();
+
+                    // Update the modal with the fetched data
+                    $('#modalImage').attr('src', response.image_url).show();
+                    $('#modalTitle').text(response.title);
+                    $('#modalDescription').text(response.description);
+
+
+
+                    // Handle category tags
+                    let categoryTags = JSON.parse(response.category_tags).map(tag =>
+                        `<span class="category-tag">${tag}</span>`
+                    ).join('');
+                    $('#modalCategoryTags').html(categoryTags);
+
+
+                    // Additional details (if any)
+                    $('#modalDetails').html(response.additional_details);
+                },
+                error: function() {
+                    // Hide the spinner
+                    $('#loading-spinner').remove();
+
+                    // Show error message
+                    $('#modalDetails').html('<p class="text-danger">Failed to load tutorial details.</p>');
+                }
+            });
         }
 
 

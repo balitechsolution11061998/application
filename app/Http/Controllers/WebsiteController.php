@@ -18,4 +18,10 @@ return view('website');
         return response()->json($tutorials);
     }
 
+    public function show($id)
+    {
+        $tutorials = Tutorials::find($id); // Adjust the number of items per page as needed
+        return response()->json($tutorials);
+    }
+
 }
