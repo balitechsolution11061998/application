@@ -119,7 +119,7 @@ class PriceChangeController extends Controller
                 $executionTimeInSeconds = round($executionTime, 4);
                 $memoryUsage = $endMemory - $startMemory;
 
-                $this->logQueryPerformance('price_change_data', $request->search, $executionTimeInSeconds, $memoryUsage, $userIp);
+                // $this->logQueryPerformance('price_change_data', $request->search, $executionTimeInSeconds, $memoryUsage, $userIp);
 
                 return DataTables::of($results)
                     ->addIndexColumn()

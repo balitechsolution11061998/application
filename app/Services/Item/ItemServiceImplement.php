@@ -47,10 +47,6 @@ class ItemServiceImplement extends ServiceApi implements ItemService
         // Log activity
         $this->logActivity('Accessed item supplier data', 'User accessed the item page', $userIp);
 
-        $executedQueries = $this->logQueries();
-        $startTime = microtime(true);
-        $startMemory = memory_get_usage();
-
         // Cache the data for 1 year (525600 minutes)
         $cacheKey = 'supplier_data_' . md5($request->search);
         $results = Cache::remember($cacheKey, 525600, function () use ($request) {
@@ -65,9 +61,9 @@ class ItemServiceImplement extends ServiceApi implements ItemService
                 });
             }
 
-            // Process data in chunks
+            // Process data in chunks of 1000 records
             $results = [];
-            $data->chunk(100, function ($items) use (&$results) {
+            $data->chunk(1000, function ($items) use (&$results) {
                 foreach ($items as $item) {
                     $results[] = $item;
                 }
@@ -76,15 +72,7 @@ class ItemServiceImplement extends ServiceApi implements ItemService
             return $results;
         });
 
-        $endTime = microtime(true);
-        $endMemory = memory_get_usage();
-
-        $executionTime = $endTime - $startTime;
-        $executionTimeInSeconds = round($executionTime, 4);
-        $memoryUsage = $endMemory - $startMemory;
-
-        // Calculate execution time and memory usage (if needed)
-
+        // Return DataTables response
         return DataTables::of($results)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
