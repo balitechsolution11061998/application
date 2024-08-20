@@ -820,6 +820,35 @@
             margin-top: auto;
             text-align: center;
         }
+        .dropdown-menu {
+            min-width: 250px;
+            border-radius: 8px;
+            overflow: hidden;
+            padding: 0;
+        }
+        .dropdown-header {
+            background-color: #343a40;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+        }
+        .dropdown-header img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+        .dropdown-header h6 {
+            margin: 0;
+        }
+        .dropdown-item {
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
     </style>
 </head>
 
@@ -854,9 +883,18 @@
                             <i class="fas fa-user-circle"></i> {{ Auth::user()->name }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end animate__animated animate__fadeIn" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li class="dropdown-header">
+                                <img src="{{ Auth::user()->avatar_url ?? 'https://via.placeholder.com/50' }}" alt="User Avatar">
+                                <h6>{{ Auth::user()->name }}</h6>
+                                <small>{{ Auth::user()->email }}</small>
+                            </li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ route('logout') }}"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </li>
                         </ul>
                     </li>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -1130,8 +1168,7 @@
         });
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFyZWToLz5rnJM5I4bsM7qK/4FUjD5e78GkQ5Qx04p5O4NCKtrSYlTTO0" crossorigin="anonymous"></script>
+    <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
 
 </body>
