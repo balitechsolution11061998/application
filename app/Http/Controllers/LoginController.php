@@ -63,6 +63,15 @@ class LoginController extends Controller
         return Socialite::driver('google')->redirect();
     }
 
+    public function redirectToGithub() {
+        return Socialite::driver('github')->redirect();
+    }
+
+    public function handleGithubCallback() {
+        $user = Socialite::driver('github')->user();
+        // Handle the user data returned by GitHub
+    }
+
     public function handleGoogleCallback()
     {
         try {
@@ -119,7 +128,7 @@ class LoginController extends Controller
                 'name' => $request->input('name'),
                 'email' => $request->input('email'),
                 'username' => $request->input('username'),
-                'password' => bcrypt($request->input('password')),
+                'password' => Hash::make($request->input('password')),
                 'otp_code' => $otpCode,
                 'status' => 'n',
             ]);

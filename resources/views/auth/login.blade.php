@@ -113,6 +113,15 @@
                 transform: scale(1);
             }
         }
+
+        /* Custom styles for password strength meter */
+        #password-strength {
+            height: 5px;
+        }
+
+        #password-strength-text {
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 
@@ -156,7 +165,13 @@
                                 <i class="fab fa-google me-2"></i> Sign in with Google
                             </a>
                         </div>
+                        <div class="input-group mb-3">
+                            <a href="{{ route('github.login') }}" class="btn btn-dark w-100 fs-6">
+                                <i class="fab fa-github me-2"></i> Sign in with GitHub
+                            </a>
+                        </div>
                     </form>
+
 
                     <!-- Registration Form (Hidden by default) -->
                     <form method="POST" action="{{ route('formRegister') }}" id="register_form" class="form d-none">
@@ -177,6 +192,11 @@
                             <input type="password" class="form-control form-control-lg bg-light fs-6"
                                 placeholder="Password" name="password" id="reg-password" required>
                         </div>
+                        <!-- Password Strength Meter -->
+                        <div class="progress mb-3" id="password-strength">
+                            <div class="progress-bar" role="progressbar"></div>
+                        </div>
+                        <div id="password-strength-text" class="mb-3 text-muted"></div>
                         <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"
                             data-action="REGISTER"></div>
                         <div class="input-group mb-3">
@@ -184,11 +204,13 @@
                         </div>
                     </form>
 
+
                     <!-- Toggle Forms Links -->
                     <div class="input-group mb-3">
                         <button class="btn btn-link w-100 fs-6" id="toggle-register">Don't have an account? Register
                             here</button>
-                        <button class="btn btn-link w-100 fs-6 d-none" id="toggle-login">Already have an account? Login
+                        <button class="btn btn-link w-100 fs-6 d-none" id="toggle-login">Already have an account?
+                            Login
                             here</button>
                     </div>
                 </div>
@@ -200,6 +222,51 @@
     <script src="{{ asset('js/toastr.min.js') }}"></script>
     <script src="{{ asset('js/toastify-js.js') }}"></script>
     <script>
+        document.getElementById('reg-password').addEventListener('input', function() {
+            const password = this.value;
+            const strengthMeter = document.getElementById('password-strength');
+            const strengthText = document.getElementById('password-strength-text');
+            const progressBar = strengthMeter.querySelector('.progress-bar');
+
+            let strength = 0;
+            if (password.length >= 8) strength += 1; // Length check
+            if (/[A-Z]/.test(password)) strength += 1; // Uppercase letter
+            if (/[a-z]/.test(password)) strength += 1; // Lowercase letter
+            if (/[0-9]/.test(password)) strength += 1; // Number
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1; // Special character
+
+            switch (strength) {
+                case 1:
+                    progressBar.style.width = '20%';
+                    progressBar.className = 'progress-bar bg-danger';
+                    strengthText.textContent = 'Very Weak';
+                    break;
+                case 2:
+                    progressBar.style.width = '40%';
+                    progressBar.className = 'progress-bar bg-warning';
+                    strengthText.textContent = 'Weak';
+                    break;
+                case 3:
+                    progressBar.style.width = '60%';
+                    progressBar.className = 'progress-bar bg-info';
+                    strengthText.textContent = 'Medium';
+                    break;
+                case 4:
+                    progressBar.style.width = '80%';
+                    progressBar.className = 'progress-bar bg-primary';
+                    strengthText.textContent = 'Strong';
+                    break;
+                case 5:
+                    progressBar.style.width = '100%';
+                    progressBar.className = 'progress-bar bg-success';
+                    strengthText.textContent = 'Very Strong';
+                    break;
+                default:
+                    progressBar.style.width = '0%';
+                    strengthText.textContent = '';
+            }
+        });
+
         $(document).ready(function() {
             $("#toggle-register").click(function() {
                 $("#sign_in_form").addClass("d-none");
@@ -229,7 +296,7 @@
                 var appDebug = "{{ config('app.debug') }}";
 
                 var recaptchaResponse = appDebug == '1' ? "debug-bypass" : grecaptcha
-            .getResponse(); // Bypass reCAPTCHA in debug mode
+                    .getResponse(); // Bypass reCAPTCHA in debug mode
 
                 if (username.length === 0) {
                     Toastify({
@@ -303,6 +370,7 @@
                             "g-recaptcha-response": recaptchaResponse // Include reCAPTCHA response
                         }),
                         success: function(response) {
+                            console.log(response,'response');
                             if (response.success) {
                                 toastr.success(response.message);
                                 setTimeout(function() {
@@ -331,8 +399,9 @@
                             }
                         },
                         error: function(xhr, status, error) {
+                            var errorMessage = xhr.status === 401 ? xhr.responseJSON.message : error;
                             Toastify({
-                                text: error,
+                                text: errorMessage,
                                 duration: 3000,
                                 gravity: "top",
                                 position: "right",
@@ -343,10 +412,10 @@
                                 onClick: function() {},
                                 callback: function() {
                                     document.querySelector('.toastify').innerHTML = `
-                                <div style="display: flex; align-items: center;">
-                                    <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
-                                    <span>${error}</span>
-                                </div>`;
+                                    <div style="display: flex; align-items: center;">
+                                        <i class="fas fa-exclamation-circle" style="font-size: 20px; margin-right: 10px;"></i>
+                                        <span>${errorMessage}</span>
+                                    </div>`;
                                 }
                             }).showToast();
                         }

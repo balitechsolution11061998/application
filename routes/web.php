@@ -41,6 +41,8 @@ Route::post('/post/resend-otp', [LoginController::class, 'resendOtp'])->name('ot
 
 Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('/callback/google', [LoginController::class, 'handleGoogleCallback']);
+Route::get('auth/github', [LoginController::class, 'redirectToGithub'])->name('github.login');
+Route::get('auth/github/callback', [LoginController::class, 'handleGithubCallback']);
 Route::get('/website', [WebsiteController::class, 'index'])->name('website');
 Route::get('/website/data', [WebsiteController::class, 'data'])->name('data');
 

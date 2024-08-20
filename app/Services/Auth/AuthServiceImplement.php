@@ -35,15 +35,26 @@ class AuthServiceImplement extends ServiceApi implements AuthService
 
     public function checkLogin($username, $password, $remember_me)
     {
-        $user = $this->mainRepository->findActiveUserByUsername($username, $password, $remember_me);
-        // If user is found and the password matches
-        if ($user && Hash::check($password, $user->password)) {
-            // Log in the user with the "remember me" option
-            Auth::login($user, $remember_me);
+        // Find the user by username regardless of status
+        $user = $this->mainRepository->findUserByUsername($username);
 
-            return ['success' => true];
+        // If the user exists, check if the status is 'y'
+        if ($user) {
+            if ($user->status !== 'y') {
+                return ['success' => false, 'message' => 'Account is inactive. Please contact support.'];
+            }
+
+            // If the password matches
+            if (Hash::check($password, $user->password)) {
+                // Log in the user with the "remember me" option
+                Auth::login($user, $remember_me);
+                return ['success' => true];
+            } else {
+                return ['success' => false, 'message' => 'Invalid credentials.'];
+            }
         } else {
-            return ['success' => false, 'message' => 'Invalid credentials.'];
+            return ['success' => false, 'message' => 'User not found.'];
         }
     }
+
 }
