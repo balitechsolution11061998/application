@@ -72,13 +72,19 @@
 
             <!--end::Table-->
         </div>
-        <div class="card-footer">
-            <b>Note Pricelist :</b>
-            <p>1. Harga pricelist adalah harga diluar PPN</p>
-            <p>2. Harga pricelist adalah harga per pcs</p>
-            <p>3. Download format import dari excel atau csv, <a href="#" class="text-olive"
-                    onclick="showDownloadModal()"><b>klik disini</b></a></p>
+        <div class="card-footer bg-light p-4 rounded">
+            <h5 class="text-white fw-bold text-start">Note Pricelist:</h5>
+            <ul class="list-unstyled mb-0">
+                <li class="text-white fw-bold text-start">1. Harga pricelist adalah harga di luar PPN.</li>
+                <li class="text-white fw-bold text-start">2. Harga pricelist adalah harga per pcs.</li>
+                <li class="text-white fw-bold text-start">
+                    3. Download format import dari excel atau csv,
+                    <a href="#" class="text-white fw-bold text-start" onclick="showDownloadModal()">klik disini</a>.
+                </li>
+            </ul>
         </div>
+
+
         <!--end::Card body-->
     </div>
     <!--end::Card-->

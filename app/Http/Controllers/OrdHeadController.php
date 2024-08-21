@@ -198,7 +198,7 @@ public function store(Request $request)
     $failCount = 0;
     $errors = [];
 
-    $chunkSize = 10;
+    $chunkSize = 1000;
     $delayInMicroseconds = 100000;
 
     try {
@@ -339,7 +339,6 @@ public function store(Request $request)
             'performance_analysis_id' => $performanceAnalysis->id
         ]);
     }
-    Cache::tags(['order_data'])->flush();
 
     // Return a response indicating the processing results
     return response()->json([
