@@ -162,17 +162,15 @@
             <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box"
                 style="background: #103cbe;">
                 <div class="rounded-image-container left-box-content">
-                    <img
-                    src="{{ asset('image/8106515.webp') }}"
-                    srcset="{{ asset('image/8106515.webp') }} 480w,
+                    <img src="{{ asset('image/8106515.webp') }}"
+                        srcset="{{ asset('image/8106515.webp') }} 480w,
                             {{ asset('image/8106515.webp') }} 768w,
                             {{ asset('image/8106515.webp') }} 1024w"
-                    sizes="(max-width: 480px) 480px,
+                        sizes="(max-width: 480px) 480px,
                            (max-width: 768px) 768px,
                            1024px"
-                    class="rounded-image"
-                    alt="Descriptive Image Alt Text">
-                                </div>
+                        class="rounded-image" alt="Descriptive Image Alt Text">
+                </div>
             </div>
 
 
@@ -185,7 +183,8 @@
                     </div>
 
                     <!-- Login Form -->
-                    <form method="POST" action="{{ route('formlogin.check_login') }}" id="sign_in_form" class="form">
+                    <form method="POST" action="{{ route('formlogin.check_login') }}" id="sign_in_form"
+                        class="form">
                         @csrf
                         <div class="input-group mb-3">
                             <input type="text" class="form-control form-control-lg bg-light fs-6"
@@ -258,7 +257,19 @@
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Load reCAPTCHA API asynchronously -->
     <script src="{{ asset('js/recaptchaapi.js') }}" async defer></script>
+
+    <!-- Optionally, you can delay loading until after page load -->
+    <script>
+        window.onload = function() {
+            var script = document.createElement('script');
+            script.src = "{{ asset('js/recaptchaapi.js') }}";
+            script.async = true;
+            script.defer = true;
+            document.body.appendChild(script);
+        };
+    </script>
     <script src="{{ asset('js/toastr.min.js') }}" defer></script>
     <script src="{{ asset('js/toastify-js.js') }}" defer></script>
 
