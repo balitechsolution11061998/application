@@ -132,7 +132,7 @@
             <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box"
                 style="background: #103cbe;">
                 <div class="rounded-image-container left-box-content">
-                    <img src="{{ asset('image/sistem_information.png') }}" class="rounded-image">
+                    <img src="{{ asset('image/8106515.webp') }}" class="rounded-image">
                 </div>
             </div>
 
