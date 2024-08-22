@@ -187,7 +187,7 @@ class OrderServiceImplement extends ServiceApi implements OrderService{
         $cacheKey = 'order_data_' . md5($filterDate . $filterSupplier . $filterOrderNo . $filterStatus);
 
         // Cek apakah hasil query sudah ada di cache
-        return Cache::remember($cacheKey, 60, function () use ($filterDate, $filterSupplier, $filterOrderNo, $filterStatus) {
+        return Cache::remember($cacheKey, 10, function () use ($filterDate, $filterSupplier, $filterOrderNo, $filterStatus) {
             $query = $this->mainRepository->getOrderData($filterDate, $filterSupplier, $filterOrderNo, $filterStatus);
 
             $dataCollection = collect();

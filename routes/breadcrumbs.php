@@ -100,3 +100,11 @@ Breadcrumbs::for('guru', function (BreadcrumbTrail $trail) {
 Breadcrumbs::for('orang-tua', function (BreadcrumbTrail $trail) {
     $trail->push('orang-tua', route('orang-tua.index'));
 });
+
+Breadcrumbs::for('product', function (BreadcrumbTrail $trail) {
+    $trail->push('product', route('product.index'));
+});
+
+Breadcrumbs::for('po', function (BreadcrumbTrail $trail) {
+    $trail->push('Purchase Order', route('po.index'));
+});

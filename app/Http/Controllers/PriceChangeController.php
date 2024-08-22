@@ -335,24 +335,20 @@ class PriceChangeController extends Controller
             $pricelistHead->active_date = $activeDate;
             $pricelistHead->pricelist_desc = $pricelistDesc;
             $pricelistHead->status = 'progress';
-            $pricelistHead->supplier_id = Auth::user()->username;
-            $pricelistHead->role_last_app = Auth::user()->roles[0]->id;
 
-            if (Auth::user()->hasRole('superadministrator')) {
-                $roleNextApp = DB::table('mapping_app_pricelist')
-                    ->where('role_id', Auth::user()->roles[0]->id)
-                    ->where('region_id', Auth::user()->region)
-                    ->first()->position;
 
-            } else {
+            if (!Auth::user()->hasRole('superadministrator') && Auth::user()->hasRole == "supplier") {
+                $pricelistHead->supplier_id = Auth::user()->username;
+                $pricelistHead->role_last_app = Auth::user()->roles[0]->id;
                 $roleNextApp = DB::table('mapping_app_pricelist')
                     ->where('role_id', Auth::user()->roles[0]->id)
                     ->where('region_id', Auth::user()->region)
                     ->first()->position + 1;
+                $pricelistHead->role_next_app = $roleNextApp;
+            }else{
+                $pricelistHead->supplier_id = Auth::user()->username;
+                $pricelistHead->role_last_app = Auth::user()->roles[0]->id;
             }
-
-            $pricelistHead->role_next_app = $roleNextApp;
-
             // Save pricelistHead to generate an ID if it's a new record
             $pricelistHead->save();
 

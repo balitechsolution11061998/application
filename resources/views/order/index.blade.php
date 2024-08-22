@@ -149,7 +149,6 @@
     @push('scripts')
     <script src="{{ asset('js/ordhead.js') }}" defer></script>
     <script src="{{ asset('js/formatRupiah.js') }}" defer></script>
-    <script src="{{ asset('js/pusher.min.js') }}" defer></script>
 
     <!-- Load Animate.css asynchronously -->
 
