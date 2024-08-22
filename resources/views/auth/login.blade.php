@@ -217,8 +217,11 @@
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="{{ asset('js/toastr.min.js') }}" defer></script>
+    <script src="{{ asset('js/toastify-js.js') }}" defer></script>
+
     <script src="{{ asset('js/toastr.min.js') }}"></script>
     <script src="{{ asset('js/toastify-js.js') }}"></script>
     <script>
