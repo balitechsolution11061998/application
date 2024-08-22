@@ -8,13 +8,16 @@
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="{{ asset('css/toastr.min.css') }}" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="{{ asset('css/toastify.min.css') }}" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="{{ asset('css/font.css') }}" media="print" onload="this.media='all'">
 
     <link rel="shortcut icon" href="{{ asset('image/logo.png') }}">
     <title>Bayu Sulaksana System</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+
+
+
 
         body {
             font-family: 'Poppins', sans-serif;
@@ -146,7 +149,8 @@
                     </div>
 
                     <!-- Login Form -->
-                    <form method="POST" action="{{ route('formlogin.check_login') }}" id="sign_in_form" class="form">
+                    <form method="POST" action="{{ route('formlogin.check_login') }}" id="sign_in_form"
+                        class="form">
                         @csrf
                         <div class="input-group mb-3">
                             <input type="text" class="form-control form-control-lg bg-light fs-6"
@@ -218,7 +222,7 @@
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('js/recaptchaapi.js') }}" async defer></script>
     <script src="{{ asset('js/toastr.min.js') }}" defer></script>
     <script src="{{ asset('js/toastify-js.js') }}" defer></script>
@@ -374,7 +378,7 @@
                             "g-recaptcha-response": recaptchaResponse // Include reCAPTCHA response
                         }),
                         success: function(response) {
-                            console.log(response,'response');
+                            console.log(response, 'response');
                             if (response.success) {
                                 toastr.success(response.message);
                                 setTimeout(function() {
@@ -403,7 +407,8 @@
                             }
                         },
                         error: function(xhr, status, error) {
-                            var errorMessage = xhr.status === 401 ? xhr.responseJSON.message : error;
+                            var errorMessage = xhr.status === 401 ? xhr.responseJSON.message :
+                                error;
                             Toastify({
                                 text: errorMessage,
                                 duration: 3000,
