@@ -69,8 +69,8 @@
 
         .rounded-image {
             border-radius: 50%;
-            width: 80%;
-            height: 80%;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             position: absolute;
         }

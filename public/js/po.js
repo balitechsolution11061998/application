@@ -1189,28 +1189,31 @@ function openDetailPo(value) {
                             <tbody>
                                 <!-- DataTable will populate rows here -->
                             </tbody>
-                            <tfoot style="color:black;">
-                                <tr style="color:black;">
-                                    <th colspan="11" style="text-align:right" style="color:black;">TOTAL DISCOUNT :</th>
-                                    <th></th>
-                                    <th id="totalDiscount"></th>
-                                </tr>
-                                <tr>
-                                    <th colspan="11" style="text-align:right" style="color:black;">TOTAL (before PPN) :</th>
-                                    <th></th>
-                                    <th id="totalSubtotal"></th>
-                                </tr>
-                                <tr>
-                                    <th colspan="11" style="text-align:right" style="color:black;">PPN :</th>
-                                    <th></th>
-                                    <th id="totalPpn"></th>
-                                </tr>
-                                <tr>
-                                    <th colspan="11" style="text-align:right" style="color:black;">TOTAL (after PPN - Discount) :</th>
-                                    <th></th>
-                                    <th id="totalIncludingPpn"></th>
-                                </tr>
-                            </tfoot>
+<tfoot style="color:black; background-color:white !important;">
+    <tr style="color:black">
+        <th colspan="11" style="text-align:right;color:black !important;">TOTAL DISCOUNT :</th>
+        <th></th>
+        <th id="totalDiscount" style="color:black !important;"></th>
+    </tr>
+    <tr style="color:black">
+        <th colspan="11" style="text-align:right;color:black !important;">TOTAL (before PPN) :</th>
+        <th></th>
+        <th id="totalSubtotal" style="color:black !important;"></th>
+    </tr>
+    <tr style="color:black">
+        <th colspan="11" style="text-align:right;color:black !important;">PPN :</th>
+        <th></th>
+        <th id="totalPpn" style="color:black !important;"></th>
+    </tr>
+    <tr style="color:black">
+        <th colspan="11" style="text-align:right;color:black !important;">TOTAL (after PPN - Discount) :</th>
+        <th></th>
+        <th id="totalIncludingPpn" style="color:black !important;";></th>
+    </tr>
+</tfoot>
+
+
+
                         </table>
                         <br>
                         <table style="width: 100%; font-size: 13px">

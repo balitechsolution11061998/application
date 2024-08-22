@@ -3403,3 +3403,10 @@ input[type="number"]:hover {
 .white-bg {
     background-color: white;
 }
+tfoot {
+    color: black;
+    background-color: white;
+}
+tfoot th {
+    text-align: right;
+}
