@@ -15,10 +15,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
-
-
-
-
         body {
             font-family: 'Poppins', sans-serif;
             background: #ececec;
@@ -62,8 +58,12 @@
         .rounded-image-container {
             border-radius: 50%;
             overflow: hidden;
-            width: 350px;
-            height: 350px;
+            width: 100%;
+            /* Make container responsive */
+            max-width: 350px;
+            /* Set a max-width if needed */
+            height: auto;
+            /* Height should be adjusted according to content */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -74,9 +74,35 @@
         .rounded-image {
             border-radius: 50%;
             width: 100%;
-            height: 100%;
+            height: auto;
+            /* Maintain aspect ratio */
             object-fit: cover;
-            position: absolute;
+            /* Ensure the image covers the container */
+        }
+
+        @media only screen and (max-width: 768px) {
+            .rounded-image-container {
+                width: 100%;
+                /* Full width on mobile */
+                max-width: 250px;
+                /* Adjust max-width as needed */
+                height: auto;
+            }
+
+            .rounded-image {
+                width: 100%;
+                height: auto;
+                object-fit: cover;
+            }
+        }
+
+        @media only screen and (max-width: 768px) {
+            .left-box {
+                height: auto;
+                /* Adjust height on smaller screens */
+                padding: 20px;
+                /* Adjust padding as needed */
+            }
         }
 
         .left-box-content {
@@ -136,9 +162,10 @@
             <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box"
                 style="background: #103cbe;">
                 <div class="rounded-image-container left-box-content">
-                    <img src="{{ asset('image/8106515.webp') }}" class="rounded-image">
+                    <img src="{{ asset('image/8106515.webp') }}" class="rounded-image" alt="Descriptive Image Alt Text">
                 </div>
             </div>
+
 
             <div class="col-md-6 right-box">
                 <div class="row align-items-center">
@@ -149,8 +176,7 @@
                     </div>
 
                     <!-- Login Form -->
-                    <form method="POST" action="{{ route('formlogin.check_login') }}" id="sign_in_form"
-                        class="form">
+                    <form method="POST" action="{{ route('formlogin.check_login') }}" id="sign_in_form" class="form">
                         @csrf
                         <div class="input-group mb-3">
                             <input type="text" class="form-control form-control-lg bg-light fs-6"
