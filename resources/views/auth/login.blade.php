@@ -62,7 +62,7 @@
         }
 
         .rounded-image-container {
-            border-radius: 50%;
+            border-radius: 10%;
             overflow: hidden;
             width: 100%;
             /* Make container responsive */
@@ -78,7 +78,7 @@
         }
 
         .rounded-image {
-            border-radius: 50%;
+            border-radius: 10%;
             width: 100%;
             height: auto;
             /* Maintain aspect ratio */
