@@ -5,10 +5,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="{{ asset('css/toastr.min.css') }}" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="{{ asset('css/toastify.min.css') }}" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="{{ asset('css/font.css') }}" media="print" onload="this.media='all'">
+    <link rel="preload" href="{{ asset('css/bootstrap.min.css') }}" as="style">
+    <link rel="preload" href="{{ asset('css/toastr.min.css') }}" as="style">
+    <link rel="preload" href="{{ asset('css/toastify.min.css') }}" as="style">
+    <link rel="preload" href="{{ asset('css/font.css') }}" as="style">
+
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/toastify.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/font.css') }}">
+
 
     <link rel="shortcut icon" href="{{ asset('image/logo.png') }}">
     <title>Bayu Sulaksana System</title>
