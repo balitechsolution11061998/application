@@ -168,14 +168,15 @@
             <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box"
                 style="background: #103cbe;">
                 <div class="rounded-image-container left-box-content">
-                    <img src="{{ asset('image/8106515.webp') }}"
-                        srcset="{{ asset('image/8106515.webp') }} 480w,
-                            {{ asset('image/8106515.webp') }} 768w,
-                            {{ asset('image/8106515.webp') }} 1024w"
-                        sizes="(max-width: 480px) 480px,
-                           (max-width: 768px) 768px,
-                           1024px"
-                        class="rounded-image" alt="Descriptive Image Alt Text">
+                    <img
+                    src="/image/8106515.webp"
+                    srcset="/image/8106515.webp 480w, /image/8106515.webp 768w, /image/8106515.webp 1024w"
+                    sizes="(max-width: 480px) 480px, (max-width: 768px) 768px, 1024px"
+                    width="480"
+                    height="320"
+                    class="rounded-image"
+                    alt="Descriptive Image Alt Text">
+
                 </div>
             </div>
 
