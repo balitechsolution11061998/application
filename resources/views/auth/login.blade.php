@@ -262,25 +262,15 @@
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Load reCAPTCHA API asynchronously -->
-    <script src="{{ asset('js/recaptchaapi.js') }}" async defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous" ></script>
 
-    <!-- Optionally, you can delay loading until after page load -->
-    <script>
-        window.onload = function() {
-            var script = document.createElement('script');
-            script.src = "{{ asset('js/recaptchaapi.js') }}";
-            script.async = true;
-            script.defer = true;
-            document.body.appendChild(script);
-        };
-    </script>
+
+
+    <!-- Your custom scripts that depend on jQuery -->
+    <script src="{{ asset('js/recaptchaapi.js') }}" async defer></script>
     <script src="{{ asset('js/toastr.min.js') }}" defer></script>
     <script src="{{ asset('js/toastify-js.js') }}" defer></script>
-
-    <script src="{{ asset('js/toastr.min.js') }}"></script>
-    <script src="{{ asset('js/toastify-js.js') }}"></script>
     <script>
         document.getElementById('reg-password').addEventListener('input', function() {
             const password = this.value;
