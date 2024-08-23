@@ -22,7 +22,7 @@ use Laravel\Pulse\Pulse;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/website', [WebsiteController::class, 'index'])->name('website');
+Route::get('/', [WebsiteController::class, 'index'])->name('website');
 Route::get('/website/data', [WebsiteController::class, 'data'])->name('data');
 Route::get('/website/{id}', [WebsiteController::class, 'show'])->name('website.show');
 
@@ -30,7 +30,7 @@ Auth::routes();
 Route::get('/scanbarcode', function () {
     return view('auth.scanbarcode');
 });
-Route::get('/', [LoginController::class, 'index'])->name('logincbt');
+Route::get('/formlogin', [LoginController::class, 'index'])->name('logincbt');
 // Route::get('/logincbt', [LoginController::class, 'index1'])->name('logincbt');
 
 Route::post('/formlogin/check_login', [LoginController::class, 'check_login'])->name('formlogin.check_login');
