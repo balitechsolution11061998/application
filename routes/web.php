@@ -22,7 +22,9 @@ use Laravel\Pulse\Pulse;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+Route::get('/website', [WebsiteController::class, 'index'])->name('website');
+Route::get('/website/data', [WebsiteController::class, 'data'])->name('data');
+Route::get('/website/{id}', [WebsiteController::class, 'show'])->name('website.show');
 
 Auth::routes();
 Route::get('/scanbarcode', function () {
@@ -43,9 +45,7 @@ Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('g
 Route::get('/callback/google', [LoginController::class, 'handleGoogleCallback']);
 Route::get('auth/github', [LoginController::class, 'redirectToGithub'])->name('github.login');
 Route::get('auth/github/callback', [LoginController::class, 'handleGithubCallback']);
-Route::get('/website', [WebsiteController::class, 'index'])->name('website');
-Route::get('/website/data', [WebsiteController::class, 'data'])->name('data');
-Route::get('/website/{id}', [WebsiteController::class, 'show'])->name('website.show');
+
 
 Route::group(['middleware' => ['verifiedmiddleware', 'verified', 'auth', 'log.user.access', 'online']], function () {
 
