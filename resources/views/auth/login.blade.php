@@ -169,8 +169,8 @@
                 style="background: #103cbe;">
                 <div class="rounded-image-container left-box-content">
                     <img
-                    src="/image/8106515.webp"
-                    srcset="/image/8106515.webp 480w, /image/8106515.webp 768w, /image/8106515.webp 1024w"
+                    src="/image/learning.png"
+                    srcset="/image/learning.png 480w, /image/learning.png 768w, /image/learning.png 1024w"
                     sizes="(max-width: 480px) 480px, (max-width: 768px) 768px, 1024px"
                     width="480"
                     height="320"
