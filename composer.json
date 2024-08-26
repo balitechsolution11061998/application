@@ -34,6 +34,7 @@
         "spatie/laravel-activitylog": "^4.8",
         "torann/geoip": "^3.0",
         "tymon/jwt-auth": "2.1.1",
+        "unisharp/laravel-filemanager": "^2.9",
         "yadahan/laravel-authentication-log": "^1.7",
         "yajra/laravel-datatables-oracle": "^10.11",
         "yaza/laravel-repository-service": "^5.0"

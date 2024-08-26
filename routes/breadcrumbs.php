@@ -108,3 +108,15 @@ Breadcrumbs::for('product', function (BreadcrumbTrail $trail) {
 Breadcrumbs::for('po', function (BreadcrumbTrail $trail) {
     $trail->push('Purchase Order', route('po.index'));
 });
+
+Breadcrumbs::for('banner', function (BreadcrumbTrail $trail) {
+    $trail->push('Banner', route('banner.index'));
+});
+
+Breadcrumbs::for('category', function (BreadcrumbTrail $trail) {
+    $trail->push('Category', route('category.index'));
+});
+
+Breadcrumbs::for('brands', function (BreadcrumbTrail $trail) {
+    $trail->push('Brands', route('brands.index'));
+});

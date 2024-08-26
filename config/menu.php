@@ -35,36 +35,7 @@ return [
                     'iconPath'       => 8,
                     'route'          => 'home',
                 ],
-                [
-                    'label'          => 'CBT Dashboard',
-                    'type'           => 'item',
-                    'permission'     => ['dashboardcbt-show'],
-                    'permissionType' => 'gate',
-                    'icon'           => 'fas',
-                    'iconName'       => 'fa-laptop-code', // Icon for CBT (Computer-Based Testing)
-                    'iconPath'       => 9,
-                    'route'          => 'home.cbt',
-                ],
-                [
-                    'label'          => 'Presence Dashboard',
-                    'type'           => 'item',
-                    'permission'     => ['dashboardpresensi-show'],
-                    'permissionType' => 'gate',
-                    'icon'           => 'fas',
-                    'iconName'       => 'fa-user-check', // Icon for presence/attendance
-                    'iconPath'       => 10,
-                    'route'          => 'home.epresensi',
-                ],
-                [
-                    'label'          => 'User Dashboard',
-                    'type'           => 'item',
-                    'permission'     => ['dashboard-user'],
-                    'permissionType' => 'gate',
-                    'icon'           => 'fas', // Font Awesome solid icons
-                    'iconName'       => 'fa-user-check', // Icon for user check (presence/attendance)
-                    'iconPath'       => 10,
-                    'route'          => 'home.dashboarduser',
-                ],
+
             ],
         ],
         [
@@ -157,5 +128,51 @@ return [
             'iconName'       => 'fa-mobile-alt', // Icon for Pulsa (mobile phone icon)
             'iconPath'       => '',
         ],
+        [
+            'label'          => 'Banner',
+            'type'           => 'item',
+            'route'          => 'banner.index', // Change this to the appropriate route for the banner
+            'active'         => [],
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-image', // Icon for Banner (image icon)
+            'iconPath'       => '',
+        ],
+        [
+            'label'          => 'Category',
+            'type'           => 'item',
+            'route'          => 'category.index',
+            'active'         => [],
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-folder', // Icon for Banner (image icon)
+            'iconPath'       => '',
+        ],
+        [
+            'label'          => 'Brands',
+            'type'           => 'item',
+            'route'          => 'brands.index', // Replace with the correct route name for the brands list
+            'active'         => [], // Specify active routes or patterns related to brands
+            'permission'     => [], // Define any permissions required to access the brands menu
+            'permissionType' => 'gate', // Type of permission check, e.g., 'gate' or 'role'
+            'icon'           => 'fas', // FontAwesome icon for brands (e.g., 'fas fa-tags')
+            'iconName'       => 'fa-tags', // Just the icon name if needed separately
+            'iconPath'       => '', // If using a custom icon path or image, specify it here
+        ],
+        [
+            'label'          => 'Product',
+            'type'           => 'item',
+            'route'          => 'product.index',
+            'active'         => [],
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-box', // Icon for Product
+            'iconPath'       => '', // If needed, specify the path for custom icons
+        ],
+
+
     ],
 ];

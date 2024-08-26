@@ -216,6 +216,12 @@
                                 <i class="fab fa-github me-2"></i> Sign in with GitHub
                             </a>
                         </div>
+                        <div class="input-group mb-3">
+                            <a href="{{ route('facebook.login') }}" class="btn btn-primary w-100 fs-6">
+                                <i class="fab fa-facebook-f me-2"></i> Sign in with Facebook
+                            </a>
+                        </div>
+
                     </form>
 
 

@@ -2,97 +2,219 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brands;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    public function index(Request $request)
+     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
     {
-        return view('products.index');
+        $products=Product::getAllProduct();
+        // return $products;
+        return view('product.index')->with('products',$products);
     }
 
-    public function getData(Request $request)
+
+    // In ProductController.php
+public function data()
+{
+    return Datatables::of(Product::query())
+        ->addColumn('category', function(Product $product) {
+            return optional($product->cat_info)->title ?? 'N/A';
+        })
+        ->addColumn('brand', function(Product $product) {
+            return ucfirst(optional($product->brand)->title) ?? 'N/A';
+        })
+        ->addColumn('photo', function(Product $product) {
+            return $product->photo ? '<img src="'.explode(',', $product->photo)[0].'" style="max-width: 80px;" />' : '<img src="'.asset('backend/img/thumbnail-default.jpg').'" style="max-width: 80px;" />';
+        })
+        ->addColumn('action', function(Product $product) {
+            return '
+                <a href="'.route('product.edit', $product->id).'" class="btn btn-primary btn-sm me-1" data-bs-toggle="tooltip" title="Edit">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <form method="POST" action="'.route('product.destroy', $product->id).'" class="d-inline">
+                    '.csrf_field().method_field('delete').'
+                    <button type="submit" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" title="Delete">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </form>
+            ';
+        })
+        ->rawColumns(['photo', 'action'])
+        ->make(true);
+}
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
     {
-        $products = Product::select([
-            'product_name',
-            'category',
-            'brand',
-            'type',
-            'seller_name',
-            'price',
-            'buyer_sku_code',
-            'stock',
-            'buyer_product_status as status'
+        $brand=Brands::get();
+        $category=Category::where('is_parent',1)->get();
+        // return $category;
+        return view('product.create')->with('categories',$category)->with('brands',$brand);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        // return $request->all();
+        $this->validate($request,[
+            'title'=>'string|required',
+            'summary'=>'string|required',
+            'description'=>'string|nullable',
+            'photo'=>'string|required',
+            'size'=>'nullable',
+            'stock'=>"required|numeric",
+            'cat_id'=>'required|exists:categories,id',
+            'brand_id'=>'nullable|exists:brands,id',
+            'child_cat_id'=>'nullable|exists:categories,id',
+            'is_featured'=>'sometimes|in:1',
+            'status'=>'required|in:active,inactive',
+            'condition'=>'required|in:default,new,hot',
+            'price'=>'required|numeric',
+            'discount'=>'nullable|numeric'
         ]);
 
-        return DataTables::of($products)->make(true);
+        $data=$request->all();
+        $slug=Str::slug($request->title);
+        $count=Product::where('slug',$slug)->count();
+        if($count>0){
+            $slug=$slug.'-'.date('ymdis').'-'.rand(0,999);
+        }
+        $data['slug']=$slug;
+        $data['is_featured']=$request->input('is_featured',0);
+        $size=$request->input('size');
+        if($size){
+            $data['size']=implode(',',$size);
+        }
+        else{
+            $data['size']='';
+        }
+        // return $size;
+        // return $data;
+        $status=Product::create($data);
+        if($status){
+            request()->session()->flash('success','Product Successfully added');
+        }
+        else{
+            request()->session()->flash('error','Please try again!!');
+        }
+        return redirect()->route('product.index');
+
     }
 
-    public function syncData(Request $request)
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
     {
-        try {
-            // Prepare the raw JSON payload
-            $payload = [
-                "cmd" => "prepaid",
-                "username" => "jeyubaoPjxvW",
-                "sign" => "1f95978f81f544820a717e8fb67cd17a"
-            ];
+        //
+    }
 
-            // Send a POST request with the raw JSON payload
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post('https://api.digiflazz.com/v1/price-list', $payload);
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $brand=Brands::get();
+        $product=Product::findOrFail($id);
+        $category=Category::where('is_parent',1)->get();
+        $items=Product::where('id',$id)->get();
+        // return $items;
+        return view('product.edit')->with('product',$product)
+                    ->with('brands',$brand)
+                    ->with('categories',$category)->with('items',$items);
+    }
 
-            // Log or dd the response to inspect its contents
-            // Uncomment the line below to debug the raw response body
-            // dd($response->body());
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $product=Product::findOrFail($id);
+        $this->validate($request,[
+            'title'=>'string|required',
+            'summary'=>'string|required',
+            'description'=>'string|nullable',
+            'photo'=>'string|required',
+            'size'=>'nullable',
+            'stock'=>"required|numeric",
+            'cat_id'=>'required|exists:categories,id',
+            'child_cat_id'=>'nullable|exists:categories,id',
+            'is_featured'=>'sometimes|in:1',
+            'brand_id'=>'nullable|exists:brands,id',
+            'status'=>'required|in:active,inactive',
+            'condition'=>'required|in:default,new,hot',
+            'price'=>'required|numeric',
+            'discount'=>'nullable|numeric'
+        ]);
 
-            // Decode the JSON response
-            $responseData = $response->json();
-            // Check if the 'data' key exists and is an array
-            if (isset($responseData['data']) && is_array($responseData['data'])) {
-                $externalProducts = $responseData['data'];
-
-                // Sync each product
-                foreach ($externalProducts as $externalProduct) {
-                    Product::updateOrCreate(
-                        ['buyer_sku_code' => $externalProduct['buyer_sku_code']],
-                        [
-                            'product_name' => $externalProduct['product_name'],
-                            'category' => $externalProduct['category'],
-                            'brand' => $externalProduct['brand'],
-                            'type' => $externalProduct['type'],
-                            'seller_name' => $externalProduct['seller_name'],
-                            'price' => $externalProduct['price'],
-                            'stock' => $externalProduct['stock'],
-                            'buyer_product_status' => $externalProduct['buyer_product_status'],
-                            'seller_product_status' => $externalProduct['seller_product_status'],
-                            'unlimited_stock' => $externalProduct['unlimited_stock'],
-                            'start_cut_off' => $externalProduct['start_cut_off'],
-                            'end_cut_off' => $externalProduct['end_cut_off'],
-                            'desc' => $externalProduct['desc'],
-                            'multi' => $externalProduct['multi'] == true ? 0 : 1, // Set 0 if true, 1 if false
-                        ]
-                    );
-                }
-
-                return response()->json(['message' => 'Data synced successfully']);
-            } else {
-                // Handle unsuccessful responses or unexpected response format
-                return response()->json([
-                    'message' => 'Failed to sync data',
-                    'error' => 'Invalid response format or no data found'
-                ], 500);
-            }
-        } catch (\Exception $e) {
-            // Handle exceptions
-            return response()->json([
-                'message' => 'An error occurred during sync',
-                'error' => $e->getMessage()
-            ], 500);
+        $data=$request->all();
+        $data['is_featured']=$request->input('is_featured',0);
+        $size=$request->input('size');
+        if($size){
+            $data['size']=implode(',',$size);
         }
+        else{
+            $data['size']='';
+        }
+        // return $data;
+        $status=$product->fill($data)->save();
+        if($status){
+            request()->session()->flash('success','Product Successfully updated');
+        }
+        else{
+            request()->session()->flash('error','Please try again!!');
+        }
+        return redirect()->route('product.index');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $product=Product::findOrFail($id);
+        $status=$product->delete();
+
+        if($status){
+            request()->session()->flash('success','Product successfully deleted');
+        }
+        else{
+            request()->session()->flash('error','Error while deleting product');
+        }
+        return redirect()->route('product.index');
     }
 }

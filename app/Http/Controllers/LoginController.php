@@ -67,6 +67,32 @@ class LoginController extends Controller
         return Socialite::driver('github')->redirect();
     }
 
+    public function redirectToFacebook()
+    {
+        return Socialite::driver('facebook')->redirect();
+    }
+
+    public function handleFacebookCallback()
+    {
+        try {
+            $facebookUser = Socialite::driver('facebook')->stateless()->user();
+
+            $user = User::updateOrCreate([
+                'facebook_id' => $facebookUser->getId(),
+            ], [
+                'name' => $facebookUser->getName(),
+                'email' => $facebookUser->getEmail(),
+                'password' => encrypt('123456dummy')
+            ]);
+
+            Auth::login($user);
+
+            return redirect()->intended('dashboard');
+        } catch (\Exception $e) {
+            return redirect('login');
+        }
+    }
+
     public function handleGithubCallback()
     {
         try {

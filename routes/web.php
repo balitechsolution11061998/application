@@ -11,6 +11,7 @@ use App\Http\Controllers\WebsiteController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Pulse\Pulse;
+use \UniSharp\LaravelFilemanager\Lfm;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +46,9 @@ Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('g
 Route::get('/callback/google', [LoginController::class, 'handleGoogleCallback']);
 Route::get('auth/github', [LoginController::class, 'redirectToGithub'])->name('github.login');
 Route::get('auth/github/callback', [LoginController::class, 'handleGithubCallback']);
+
+Route::get('auth/facebook', [LoginController::class, 'redirectToFacebook'])->name('facebook.login');
+Route::get('auth/facebook/callback', [LoginController::class, 'handleFacebookCallback']);
 
 
 Route::group(['middleware' => ['verifiedmiddleware', 'verified', 'auth', 'log.user.access', 'online']], function () {
@@ -82,6 +86,47 @@ Route::group(['middleware' => ['verifiedmiddleware', 'verified', 'auth', 'log.us
         Route::get('/receiving', 'OrdHeadController@receiving')->name('receiving');
     });
 
+    Route::prefix('banner')->name('banner.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/', 'BannerController@index')->name('index');
+        Route::get('/data', 'BannerController@data')->name('data');
+        Route::get('/create', 'BannerController@create')->name('create');
+        Route::post('/store', 'BannerController@store')->name('store');
+        Route::get('/edit/{id}', 'BannerController@edit')->name('edit');
+        Route::delete('/destroy/{id}', 'BannerController@destroy')->name('destroy');
+        Route::patch('/banner/{id}', 'BannerController@update')->name('update');
+    });
+
+    Route::prefix('category')->name('category.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/', 'CategoryController@index')->name('index');
+        Route::get('/create', 'CategoryController@create')->name('create');
+        Route::get('/data', 'CategoryController@data')->name('data');
+        Route::post('/store', 'CategoryController@store')->name('store');
+        Route::get('/edit/{id}', 'CategoryController@edit')->name('edit');
+        Route::patch('/{id}', 'CategoryController@update')->name('update');
+        Route::delete('/destroy/{id}', 'CategoryController@destroy')->name('destroy');
+    });
+
+    Route::prefix('brands')->name('brands.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/', 'BrandsController@index')->name('index');
+        Route::get('/create', 'BrandsController@create')->name('create');
+        Route::get('/data', 'BrandsController@data')->name('data');
+        Route::post('/store', 'BrandsController@store')->name('store');
+        Route::get('/edit/{id}', 'BrandsController@edit')->name('edit');
+        Route::delete('/destroy/{id}', 'BrandsController@destroy')->name('destroy');
+        Route::patch('/{id}', 'BrandsController@update')->name('update');
+    });
+
+
+    Route::prefix('product')->name('product.')->namespace('App\Http\Controllers')->group(function () {
+        Route::get('/', 'ProductController@index')->name('index');
+        Route::get('/data', 'ProductController@data')->name('data');
+        Route::get('/create', 'ProductController@create')->name('create');
+        Route::post('/store', 'ProductController@store')->name('store');
+        Route::get('/edit/{id}', 'ProductController@edit')->name('edit');
+        Route::delete('/destroy/{id}', 'ProductController@destroy')->name('destroy');
+        Route::patch('/{id}', 'ProductController@update')->name('update');
+    });
+
 
     Route::prefix('order')->name('order.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/', 'PoController@index')->name('index');
@@ -111,12 +156,6 @@ Route::group(['middleware' => ['verifiedmiddleware', 'verified', 'auth', 'log.us
         Route::post('/reject', 'PriceChangeController@reject')->name('reject');
     });
 
-    Route::prefix('product')->name('product.')->namespace('App\Http\Controllers')->group(function () {
-        Route::get('/', 'ProductController@index')->name('index');
-        Route::get('/data', 'ProductController@getData')->name('data');
-        Route::get('/syncData', 'ProductController@syncData')->name('syncData');
-
-    });
 
     Route::prefix('permissions')->name('permissions.')->namespace('App\Http\Controllers')->group(function () {
         Route::get('/', 'PermissionsController@index')->name('index');
@@ -435,4 +474,7 @@ Route::group(['middleware' => ['verifiedmiddleware', 'verified', 'auth', 'log.us
     Route::get('/pengumuman', 'App\Http\Controllers\PengumumanController@index')->name('pengumuman');
     Route::post('/pengumuman/simpan', 'App\Http\Controllers\PengumumanController@simpan')->name('pengumuman.simpan');
     Route::get('/faqs', [FaqController::class, 'index']);
+});
+Route::group(['middleware' => ['web', 'auth']], function () {
+    \UniSharp\LaravelFilemanager\Lfm::routes();
 });
