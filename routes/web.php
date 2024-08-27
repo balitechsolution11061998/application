@@ -23,7 +23,7 @@ use \UniSharp\LaravelFilemanager\Lfm;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', [WebsiteController::class, 'index'])->name('website');
+Route::get('/website', [WebsiteController::class, 'index'])->name('website');
 Route::get('/website/data', [WebsiteController::class, 'data'])->name('data');
 Route::get('/website/{id}', [WebsiteController::class, 'show'])->name('website.show');
 
