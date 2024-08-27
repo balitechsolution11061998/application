@@ -23,11 +23,12 @@ use \UniSharp\LaravelFilemanager\Lfm;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+
+Auth::routes();
 Route::get('/website', [WebsiteController::class, 'index'])->name('website');
 Route::get('/website/data', [WebsiteController::class, 'data'])->name('data');
 Route::get('/website/{id}', [WebsiteController::class, 'show'])->name('website.show');
-
-Auth::routes();
 Route::get('/scanbarcode', function () {
     return view('auth.scanbarcode');
 });
