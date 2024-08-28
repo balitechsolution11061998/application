@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\UpdateOrderStatus;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -12,9 +13,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
-        $schedule->job(ProcessAudioFiles::class)->everyFifteenMinutes();
-
         $schedule->command('queue:work --stop-when-empty')
              ->everyMinute()
              ->withoutOverlapping();

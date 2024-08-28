@@ -480,6 +480,8 @@ public function data(Request $request)
         $filterOrderNo = $request->input('filterOrderNo');
         $filterStatus = $request->input('filterStatus');
 
+
+
         $data = $this->orderService->getOrderData($filterDate, $filterSupplier, $filterOrderNo,$filterStatus);
 
         // Calculate execution time and memory usage

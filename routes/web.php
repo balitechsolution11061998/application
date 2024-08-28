@@ -129,20 +129,7 @@ Route::group(['middleware' => ['verifiedmiddleware', 'verified', 'auth', 'log.us
     });
 
 
-    Route::prefix('order')->name('order.')->namespace('App\Http\Controllers')->group(function () {
-        Route::get('/', 'PoController@index')->name('index');
-        Route::get('/data', 'PoController@data')->name('data');
-        Route::get('/getDataItemSupplierBySupplier', 'PoController@getDataItemSupplierBySupplier')->name('getDataItemSupplierBySupplier');
-        Route::post('/store', 'PoController@store')->name('store');
-        Route::get('/{id}/edit', 'PoController@edit')->name('edit');
-        Route::delete('/delete', 'PoController@delete')->name('delete');
-        Route::get('/{id}/show', 'PoController@show')->name('show');
-        Route::get('/pdf', 'PoController@pdf')->name('pdf');
-        Route::delete('/deleteSku', 'PoController@deleteSku')->name('deleteSku');
-        Route::get('/{order_no}/print', 'PoController@print')->name('print');
-        Route::post('/confirmPo', 'PoController@confirmPo')->name('confirmPo');
 
-    });
 
 
     Route::prefix('price-change')->name('price-change.')->namespace('App\Http\Controllers')->group(function () {
