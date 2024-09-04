@@ -2,96 +2,71 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "require": {
-        "php": "^8.1",
-        "barryvdh/laravel-dompdf": "^2.2",
-        "binafy/laravel-user-monitoring": "^1.1",
-        "fakerphp/faker": "^1.23",
-        "giggsey/libphonenumber-for-php": "^8.13",
-        "guzzlehttp/guzzle": "^7.2",
-        "hashids/hashids": "^5.0",
-        "inspector-apm/inspector-laravel": "^4.9",
-        "intervention/image": "^3.7",
-        "itmm/m-mart-skin": "^1.0",
-        "jeremykenedy/laravel2step": "^3.1",
-        "laravel/framework": "^10.0",
-        "laravel/pulse": "^1.2",
-        "laravel/sanctum": "^3.2",
-        "laravel/socialite": "^5.15",
-        "laravel/tinker": "^2.8",
-        "laravel/ui": "^4.5",
-        "maatwebsite/excel": "^3.1",
-        "munafio/chatify": "^1.6",
-        "pragmarx/countries": "^0.8.2",
-        "predis/predis": "^2.2",
-        "propaganistas/laravel-phone": "^5.3",
-        "protonemedia/laravel-splade": "^1.4",
-        "pusher/pusher-php-server": "^7.2",
-        "santigarcor/laratrust": "^8.3",
-        "simplesoftwareio/simple-qrcode": "^2.0",
-        "spatie/laravel-activitylog": "^4.8",
-        "torann/geoip": "^3.0",
-        "tymon/jwt-auth": "2.1.1",
-        "unisharp/laravel-filemanager": "^2.9",
-        "yadahan/laravel-authentication-log": "^1.7",
-        "yajra/laravel-datatables-oracle": "^10.11",
-        "yaza/laravel-repository-service": "^5.0"
+        "php": "^7.2 || ^8.2",
+        "andes2912/indobank": "^0.4.0",
+        "azishapidin/indoregion": "^3.0",
+        "doctrine/dbal": "^3.1",
+        "fideloper/proxy": "^4.0",
+        "jorenvanhocht/laravel-share": "^4.1",
+        "laravel/framework": "^8.0",
+        "laravel/tinker": "^2.0",
+        "laravel/ui": "^3.0",
+        "spatie/laravel-permission": "^4.0"
     },
     "require-dev": {
-        "laravel/browser-kit-testing": "^7.2",
-        "laravel/pint": "^1.0",
-        "laravel/sail": "^1.18",
-        "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^7.0",
-        "phpunit/phpunit": "^10.5",
-        "spatie/laravel-ignition": "^2.0"
+        "facade/ignition": "^2.3.6",
+        "fzaninotto/faker": "^1.4",
+        "mockery/mockery": "^1.0",
+        "nunomaduro/collision": "^5.0",
+        "phpunit/phpunit": "^9.0"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
     },
     "autoload": {
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+          "app/Helpers/Model.php"
+        ],
+        "classmap": [
+            "database/seeders",
+            "database/factories"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
         }
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
-        ],
-        "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
-        ],
-        "test": "vendor/bin/pest"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "10.x-dev"
-        },
-        "laravel": {
-            "dont-discover": []
-        }
-    },
-    "config": {
-        "optimize-autoloader": true,
-        "preferred-install": "dist",
-        "sort-packages": true,
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        }
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+        ]
+    }
 }

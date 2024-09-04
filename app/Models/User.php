@@ -2,151 +2,75 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
-use Laratrust\Contracts\LaratrustUser;
-use Laratrust\Traits\HasRolesAndPermissions;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
-use Yadahan\AuthenticationLog\AuthenticationLogable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use Spatie\Permission\Traits\HasRoles;
 
-
-
-class User extends Authenticatable implements LaratrustUser,JWTSubject
+class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable,HasRolesAndPermissions,AuthenticationLogable;
-    use LogsActivity;
-
+    use Notifiable,HasRoles;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array
      */
     protected $fillable = [
-        'username',
-        'name',
-        'email',
-        'password',
-        'photo',
-        'whatshapp_no',
-        'channel_id',
-        'all_supplier',
-        'status',
-        'link_whatshapps',
-        'api_key_whatshapps',
-        'link_sync',
-        'phone_number',
-        'address',
-        'latitude',
-        'longitude',
-        'about_us',
-        'rating',
-        'nik',
-        'last_activity',
-        'google_id',
-        'id_card',
-        'otp_code',
+        'name', 'email', 'password','role','credit','no_wa'
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * The attributes that should be hidden for arrays.
      *
-     * @var array<int, string>
+     * @var array
      */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', 'remember_token',
     ];
 
-
-
-    public static $rules = array(
-        'username' => 'username|required|unique:users,id'
-    );
-
-    public function isOnline()
-    {
-        return $this->last_seen_at && $this->last_seen_at->gt(Carbon::now()->subMinutes(5));
-    }
-
     /**
-     * The attributes that should be cast.
+     * The attributes that should be cast to native types.
      *
-     * @var array<string, string>
+     * @var array
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
     ];
 
-    public function settings_user(){
-        return $this->hasOne(SettingsUser::class,'user_id','id');
-    }
-
-    public function jabatan(){
-        return $this->hasOne(Jabatan::class,'id','kode_jabatan');
-    }
-
-    public function department(){
-        return $this->hasOne(Department::class,'id','kode_dept');
-    }
-    public function cabang(){
-        return $this->hasOne(Cabang::class,'id','kode_cabang');
-    }
-    public function siswa(){
-        return $this->hasOne(Siswa::class,'nis','username');
-    }
-
-    public function konfigurasiJamKerja()
+    public function kamar()
     {
-        return $this->hasMany(KonfigurasiJamKerja::class, 'nik', 'username');
+        return $this->hasOne(kamar::class);
     }
 
-
-    public function getActivitylogOptions(): LogOptions
+    public function dataRekening()
     {
-        return LogOptions::defaults()
-                ->logOnly([
-                    'username',
-                    'name',
-                    'email',
-                    'password',
-                    'photo',
-                    'whatshapp_no',
-                    'channel_id',
-                    'channel_id',
-                    'all_supplier',
-                    'status',
-                    'link_whatshapps',
-                    'api_key_whatshapps',
-                    'link_sync',
-                ])
-                ->setDescriptionForEvent(fn(string $eventName) => "This user has been {$eventName}")
-                ->useLogName('User');
+      return $this->hasOne(DataRekening::class);
     }
 
-    public function incrementLoginAttempts(){
-        $this->increment('login_attempts');
-    }
-
-    public function getJWTIdentifier()
+    public function payment()
     {
-        return $this->getKey();
+      return $this->hasOne(payment::class);
     }
 
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
-    public function getJWTCustomClaims()
+    public function transaksi()
     {
-        return [];
+      return $this->hasMany(Transaction::class,'pemilik_id','id');
     }
+
+    public function testimoni()
+    {
+      return $this->hasOne(Testimoni::class);
+    }
+
+    public function simpanKamar()
+    {
+      return $this->hasOne(SimpanKamar::class);
+    }
+
+    public function simpanKamars()
+    {
+      return $this->hasMany(SimpanKamar::class)->limit(4);
+    }
+
 }
