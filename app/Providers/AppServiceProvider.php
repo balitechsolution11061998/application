@@ -3,33 +3,26 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Blade;
+use App\Core\KTBootstrap;
+use Illuminate\Database\Schema\Builder;
 
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         //
     }
 
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
-        Schema::defaultStringLength(125);
-
-         // Format Rupiah
-        Blade::directive('currency', function ($expression) {
-            return "Rp. <?php echo number_format($expression, 0, ',', '.'); ?>";
-        });
+        //
+        Builder::defaultStringLength(191);
+        KTBootstrap::init();
     }
 }
