@@ -2,100 +2,49 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\User;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\{User,DataUser};
-use ErrorException;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Spatie\Permission\Models\Role;
-use DB;
+use Illuminate\Support\Facades\Auth;
+
 class RegisterController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Register Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
-    | provide this functionality without requiring any additional code.
-    |
-    */
-
-    use RegistersUsers;
-
-    /**
-     * Where to redirect users after registration.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/home';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function showRegisterForm()
     {
-        $this->middleware('guest');
+        $roles = Role::all();
+        return view('auth.register', compact('roles'));
     }
 
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
+    public function register(Request $request)
     {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:50'],
-            'email' => ['required', 'string', 'email', 'max:50', 'unique:users'],
-            'role' => ['required'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ],
-
-        [
-            "name.required"      => 'Nama Tidak Boleh kosong.',
-            "name.max"           => 'Nama Tidak Boleh Lebih Dari 50 Karakter.',
-            "email.required"     => 'Email Tidak Boleh Kosong.',
-            "email.max"          => 'Email Tidak Boleh Lebih Dari 50 Karakter',
-            "email.unique"       => 'Email Sudah Terdaftar.',
-            "role.required"      => 'Jenis Pendaftaran Harus Di Pilih.',
-            "password.required"  => 'Password Tidak Boleh Kosong.',
-            "password.min"       => 'Password Minimal 8 Karakter.',
-            "password.confirmed" => 'Password Tidak Sama.',
-        ]
-
-        );
-    }
-
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return \App\User
-     */
-    protected function create(array $data)
-    {
-      try {
-        DB::beginTransaction();
-        $user =  User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'role' => $data['role'],
-            'password' => Hash::make($data['password']),
+        // Validasi input
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user->assignRole($data['role']);
-        DB::commit();
-        return $user;
-      } catch (ErrorException $e) {
-        DB::rollback();
-        throw new ErrorException($e->getMessage());
-      }
+        // Buat pengguna baru
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
 
+        // Cari role berdasarkan nama dan berikan ke pengguna
+        $role = Role::where('name', $request->role)->first();
+        if ($role) {
+            // Menggunakan syncRoles() untuk sinkronisasi role
+            $user->syncRoles([$role->name]);
+        }
+
+        // Login otomatis setelah register
+        Auth::login($user);
+
+        return redirect()->route('home'); // Redirect ke halaman home setelah login
     }
+
 }
