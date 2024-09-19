@@ -27,8 +27,10 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable(); // Email verification timestamp
             $table->string('password'); // Password for login (hashed)
             $table->string('password_show')->nullable(); // Optional: store password in plaintext (not recommended)
+            $table->string('phone_number')->nullable();
             $table->rememberToken(); // Token for "remember me" functionality
             $table->foreignId('region_id')->constrained('region')->onDelete('cascade'); // Cascade on delete
+            $table->text('address')->nullable();
             $table->timestamps(); // Created_at and updated_at timestamps
 
             // Adding indices for faster lookups

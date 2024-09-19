@@ -10,20 +10,24 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 
 class CreateUsersForRegionJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $regionId;
+    protected $usersPerRegion;
     protected $specialEmail = 'sulaksana60@gmail.com'; // Special email for superadministrator
+    protected $batchSize = 10000; // Number of users per batch
 
     /**
      * Create a new job instance.
      */
-    public function __construct($regionId)
+    public function __construct($regionId, $usersPerRegion)
     {
         $this->regionId = $regionId; // Set the region ID for the job
+        $this->usersPerRegion = $usersPerRegion; // Number of users to create for this region
     }
 
     /**
@@ -68,50 +72,64 @@ class CreateUsersForRegionJob implements ShouldQueue
             '086789012345', '087890123456', '088901234567', '089012345678', '081098765432'
         ];
 
-        // Generate 400 users for the region
-        $usersBatch = [];
-        for ($i = 1; $i <= 400; $i++) {
-            $username = "user" . $i;
-            $email = ($i === 1) ? $this->specialEmail : "user{$i}@example.com";
+        // Generate users for the region
+        for ($batch = 0; $batch < ceil($this->usersPerRegion / $this->batchSize); $batch++) {
+            $usersBatch = [];
+            for ($i = 1; $i <= $this->batchSize; $i++) {
+                $index = ($batch * $this->batchSize) + $i;
+                if ($index > $this->usersPerRegion) {
+                    break;
+                }
 
-            // Determine the role: assign superadministrator role to the special email
-            $role = ($email === $this->specialEmail) ? $superAdminRoleId : $roleIds[array_rand($roleIds)];
+                $email = ($index === 1 && $this->regionId === 1) ? $this->specialEmail : "user{$this->regionId}_{$index}@example.com";
+                $role = ($email === $this->specialEmail) ? $superAdminRoleId : $roleIds[array_rand($roleIds)];
 
-            // Randomly select Indonesian names, addresses, and phone numbers
-            $firstName = $indonesianFirstNames[array_rand($indonesianFirstNames)];
-            $lastName = $indonesianLastNames[array_rand($indonesianLastNames)];
-            $fullName = "$firstName $lastName";
-            $address = $indonesianAddresses[array_rand($indonesianAddresses)];
-            $phoneNumber = $indonesianPhoneNumbers[array_rand($indonesianPhoneNumbers)];
+                // Randomly select Indonesian names, addresses, and phone numbers
+                $firstName = $indonesianFirstNames[array_rand($indonesianFirstNames)];
+                $lastName = $indonesianLastNames[array_rand($indonesianLastNames)];
+                $fullName = "$firstName $lastName";
+                $address = $indonesianAddresses[array_rand($indonesianAddresses)];
+                $phoneNumber = $indonesianPhoneNumbers[array_rand($indonesianPhoneNumbers)];
 
-            // Add user data to the batch
-            $plainPassword = ($email === $this->specialEmail) ? 'Superman2000@' : 'password'; // Use a specific password for superadministrator
-            $usersBatch[] = [
-                'name' => $fullName,
-                'username' => strtolower($firstName) . $i, // Username combining first name and index
-                'profile_picture' => '/storage/logo.png',
-                'email' => $email,
-                'password' => Hash::make($plainPassword), // Hashed password
-                'password_show' => $plainPassword, // Store plain password for reference
-                'region_id' => $this->regionId, // Assign to this region
-                'address' => $address,
-                'phone_number' => $phoneNumber,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
+                // Add user data to the batch
+                $plainPassword = ($email === $this->specialEmail) ? 'Superman2000@' : 'password';
+                $usersBatch[] = [
+                    'name' => $fullName,
+                    'username' => strtolower($firstName) . $index,
+                    'profile_picture' => '/storage/logo.png',
+                    'email' => $email,
+                    'password' => Hash::make($plainPassword),
+                    'password_show' => $plainPassword,
+                    'region_id' => $this->regionId,
+                    'address' => $address,
+                    'phone_number' => $phoneNumber,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
 
-        // Insert users in bulk
-        User::insert($usersBatch);
+            // Insert users in bulk
+            DB::transaction(function () use ($usersBatch, $roleIds) {
+                User::insert($usersBatch);
 
-        // Assign roles for the created users
-        foreach ($usersBatch as $userData) {
-            $user = User::where('email', $userData['email'])->first();
-            // Ensure superadministrator role is assigned to the special email
-            $userRole = ($userData['email'] === $this->specialEmail) ? $superAdminRoleId : $roleIds[array_rand($roleIds)];
-            $user->roles()->sync([$userRole]); // Assign the role
+                // Prepare role assignments in bulk
+                $roleAssignments = [];
+                foreach ($usersBatch as $userData) {
+                    $user = User::where('email', $userData['email'])->first();
+                    $userRole = ($userData['email'] === $this->specialEmail) ? $roleIds['superadministrator'] : $roleIds[array_rand($roleIds)];
+                    $roleAssignments[] = [
+                        'role_id' => $userRole,
+                        'user_id' => $user->id,
+                        'user_type' => 'App\Models\User',
+                    ];
+                }
+
+                // Insert into role_user table
+                DB::table('role_user')->insert($roleAssignments);
+            });
+
+            // Optionally, log progress to keep track of batch processing
+            \Log::info("Batch $batch of users for region {$this->regionId} created.");
         }
     }
-
-
 }
