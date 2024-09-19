@@ -19,7 +19,7 @@ class CreateUsersForRegionJob implements ShouldQueue
     protected $regionId;
     protected $usersPerRegion;
     protected $specialEmail = 'sulaksana60@gmail.com'; // Special email for superadministrator
-    protected $batchSize = 10000; // Number of users per batch
+    protected $batchSize = 1000; // Number of users per batch
 
     /**
      * Create a new job instance.
