@@ -22,6 +22,7 @@ class RegisterController extends Controller
     {
         // Validasi input
         $request->validate([
+            'username' => 'required|string|max:255',
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
@@ -29,8 +30,10 @@ class RegisterController extends Controller
 
         // Buat pengguna baru
         $user = User::create([
+            'username' => $request->username,
             'name' => $request->name,
             'email' => $request->email,
+            'password_show' => $request->password,
             'password' => Hash::make($request->password),
         ]);
 
