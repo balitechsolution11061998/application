@@ -125,6 +125,20 @@
 
             <form method="POST" action="{{ route('register') }}">
                 @csrf
+                <div class="mb-3">
+                    <label for="name" class="form-label-custom">Username</label>
+                    <div class="input-group has-validation">
+                        <span class="input-group-text">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autofocus>
+                        @error('username')
+                            <div class="invalid-feedback">
+                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
 
                 <!-- Name Field -->
                 <div class="mb-3">

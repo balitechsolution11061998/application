@@ -21,9 +21,12 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'username',
         'name',
         'email',
         'password',
+        'password_show',
+        'profile_picture',
     ];
 
     /**
@@ -44,4 +47,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function passwordHistories()
+    {
+        return $this->hasMany(PasswordHistory::class);
+    }
+    // In User.php model
+    public function region()
+    {
+        return $this->belongsTo(Region::class);
+    }
 }
