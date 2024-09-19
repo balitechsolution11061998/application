@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 class CreateUsersForRegionJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
+    public $timeout = 1200;
     protected $regionId;
     protected $usersPerRegion;
     protected $specialEmail = 'sulaksana60@gmail.com'; // Special email for superadministrator
