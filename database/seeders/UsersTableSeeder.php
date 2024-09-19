@@ -13,9 +13,12 @@ class UsersTableSeeder extends Seeder
         // Fetch all regions
         $regions = Region::all();
 
-        // Dispatch a job to create 100 users per region
+        // Calculate the number of users to create per region
+        $totalUsers = 100000;
+        $usersPerRegion = intval($totalUsers / $regions->count()); // Users per region
+        // Dispatch a job to create users for each region
         foreach ($regions as $region) {
-            CreateUsersForRegionJob::dispatch($region->id); // Pass region_id to the job
+            CreateUsersForRegionJob::dispatch($region->id, $usersPerRegion);
         }
 
         $this->command->info('User creation jobs have been dispatched to the queue.');
