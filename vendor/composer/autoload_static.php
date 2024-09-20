@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitbfe12996eeecb6fdc8713a9fd9d431f8
+class ComposerStaticInit00ba1a4c216848f29b899b780dfdef4d
 {
     public static $files = array (
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
@@ -12,7 +12,6 @@ class ComposerStaticInitbfe12996eeecb6fdc8713a9fd9d431f8
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
-        '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
@@ -39,6 +38,7 @@ class ComposerStaticInitbfe12996eeecb6fdc8713a9fd9d431f8
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         '320163ac6b93aebe3dc25b60a0533d56' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/helpers.php',
         '0b47d6d4a00ca9112ba3953b49e7c9a4' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/helper.php',
+        'd21d43db5f6e840ee7b10744ec7fdf66' => __DIR__ . '/../..' . '/app/Helpers/helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -67,7 +67,6 @@ class ComposerStaticInitbfe12996eeecb6fdc8713a9fd9d431f8
             'Symfony\\Polyfill\\Uuid\\' => 22,
             'Symfony\\Polyfill\\Php83\\' => 23,
             'Symfony\\Polyfill\\Php80\\' => 23,
-            'Symfony\\Polyfill\\Php72\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Intl\\Normalizer\\' => 33,
             'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
@@ -234,10 +233,6 @@ class ComposerStaticInitbfe12996eeecb6fdc8713a9fd9d431f8
         'Symfony\\Polyfill\\Php80\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
-        ),
-        'Symfony\\Polyfill\\Php72\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-php72',
         ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
@@ -582,6 +577,8 @@ class ComposerStaticInitbfe12996eeecb6fdc8713a9fd9d431f8
         'App\\Http\\Controllers\\Auth\\RegisterController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/RegisterController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
+        'App\\Http\\Controllers\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProfileController.php',
+        'App\\Http\\Controllers\\RoleController' => __DIR__ . '/../..' . '/app/Http/Controllers/RoleController.php',
         'App\\Http\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
@@ -593,7 +590,10 @@ class ComposerStaticInitbfe12996eeecb6fdc8713a9fd9d431f8
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\ValidateSignature' => __DIR__ . '/../..' . '/app/Http/Middleware/ValidateSignature.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
+        'App\\Jobs\\CreateUsersForRegionJob' => __DIR__ . '/../..' . '/app/Jobs/CreateUsersForRegionJob.php',
+        'App\\Models\\PasswordHistory' => __DIR__ . '/../..' . '/app/Models/PasswordHistory.php',
         'App\\Models\\Permission' => __DIR__ . '/../..' . '/app/Models/Permission.php',
+        'App\\Models\\Region' => __DIR__ . '/../..' . '/app/Models/Region.php',
         'App\\Models\\Role' => __DIR__ . '/../..' . '/app/Models/Role.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
@@ -718,6 +718,7 @@ class ComposerStaticInitbfe12996eeecb6fdc8713a9fd9d431f8
         'Database\\Factories\\UserFactory' => __DIR__ . '/../..' . '/database/factories/UserFactory.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
         'Database\\Seeders\\LaratrustSeeder' => __DIR__ . '/../..' . '/database/seeders/LaratrustSeeder.php',
+        'Database\\Seeders\\RegionsTableSeeder' => __DIR__ . '/../..' . '/database/seeders/RegionsTableSeeder.php',
         'Database\\Seeders\\UsersTableSeeder' => __DIR__ . '/../..' . '/database/seeders/UsersTableSeeder.php',
         'DateError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
         'DateException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateException.php',
@@ -4648,12 +4649,14 @@ class ComposerStaticInitbfe12996eeecb6fdc8713a9fd9d431f8
         'PhpParser\\JsonDecoder' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/JsonDecoder.php',
         'PhpParser\\Lexer' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer.php',
         'PhpParser\\Lexer\\Emulative' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/Emulative.php',
+        'PhpParser\\Lexer\\TokenEmulator\\AsymmetricVisibilityTokenEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/AsymmetricVisibilityTokenEmulator.php',
         'PhpParser\\Lexer\\TokenEmulator\\AttributeEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/AttributeEmulator.php',
         'PhpParser\\Lexer\\TokenEmulator\\EnumTokenEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/EnumTokenEmulator.php',
         'PhpParser\\Lexer\\TokenEmulator\\ExplicitOctalEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/ExplicitOctalEmulator.php',
         'PhpParser\\Lexer\\TokenEmulator\\KeywordEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/KeywordEmulator.php',
         'PhpParser\\Lexer\\TokenEmulator\\MatchTokenEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/MatchTokenEmulator.php',
         'PhpParser\\Lexer\\TokenEmulator\\NullsafeTokenEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/NullsafeTokenEmulator.php',
+        'PhpParser\\Lexer\\TokenEmulator\\PropertyTokenEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/PropertyTokenEmulator.php',
         'PhpParser\\Lexer\\TokenEmulator\\ReadonlyFunctionTokenEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/ReadonlyFunctionTokenEmulator.php',
         'PhpParser\\Lexer\\TokenEmulator\\ReadonlyTokenEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/ReadonlyTokenEmulator.php',
         'PhpParser\\Lexer\\TokenEmulator\\ReverseEmulator' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/ReverseEmulator.php',
@@ -4787,6 +4790,7 @@ class ComposerStaticInitbfe12996eeecb6fdc8713a9fd9d431f8
         'PhpParser\\Node\\Name\\Relative' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Name/Relative.php',
         'PhpParser\\Node\\NullableType' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/NullableType.php',
         'PhpParser\\Node\\Param' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Param.php',
+        'PhpParser\\Node\\PropertyHook' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/PropertyHook.php',
         'PhpParser\\Node\\PropertyItem' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/PropertyItem.php',
         'PhpParser\\Node\\Scalar' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Scalar.php',
         'PhpParser\\Node\\Scalar\\Float_' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Scalar/Float_.php',
@@ -4800,6 +4804,7 @@ class ComposerStaticInitbfe12996eeecb6fdc8713a9fd9d431f8
         'PhpParser\\Node\\Scalar\\MagicConst\\Line' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Scalar/MagicConst/Line.php',
         'PhpParser\\Node\\Scalar\\MagicConst\\Method' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Scalar/MagicConst/Method.php',
         'PhpParser\\Node\\Scalar\\MagicConst\\Namespace_' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Scalar/MagicConst/Namespace_.php',
+        'PhpParser\\Node\\Scalar\\MagicConst\\Property' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Scalar/MagicConst/Property.php',
         'PhpParser\\Node\\Scalar\\MagicConst\\Trait_' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Scalar/MagicConst/Trait_.php',
         'PhpParser\\Node\\Scalar\\String_' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Scalar/String_.php',
         'PhpParser\\Node\\StaticVar' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/StaticVar.php',
@@ -6642,7 +6647,6 @@ class ComposerStaticInitbfe12996eeecb6fdc8713a9fd9d431f8
         'Symfony\\Polyfill\\Intl\\Idn\\Resources\\unidata\\Regex' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/Resources/unidata/Regex.php',
         'Symfony\\Polyfill\\Intl\\Normalizer\\Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Normalizer.php',
         'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
-        'Symfony\\Polyfill\\Php72\\Php72' => __DIR__ . '/..' . '/symfony/polyfill-php72/Php72.php',
         'Symfony\\Polyfill\\Php80\\Php80' => __DIR__ . '/..' . '/symfony/polyfill-php80/Php80.php',
         'Symfony\\Polyfill\\Php80\\PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/PhpToken.php',
         'Symfony\\Polyfill\\Php83\\Php83' => __DIR__ . '/..' . '/symfony/polyfill-php83/Php83.php',
@@ -6752,9 +6756,9 @@ class ComposerStaticInitbfe12996eeecb6fdc8713a9fd9d431f8
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitbfe12996eeecb6fdc8713a9fd9d431f8::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitbfe12996eeecb6fdc8713a9fd9d431f8::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitbfe12996eeecb6fdc8713a9fd9d431f8::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit00ba1a4c216848f29b899b780dfdef4d::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit00ba1a4c216848f29b899b780dfdef4d::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit00ba1a4c216848f29b899b780dfdef4d::$classMap;
 
         }, null, ClassLoader::class);
     }
