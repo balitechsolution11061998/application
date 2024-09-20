@@ -174,6 +174,25 @@
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.2/toastify.min.css">
 
+    <div class="card-body py-4">
+        <div class="row">
+            @foreach ($rolesWithUserCount as $role)
+                <div class="col-md-4 mb-4">
+                    <div class="p-3 rounded shadow-sm d-flex align-items-center bg-light">
+                        <div class="icon-wrapper rounded-circle bg-primary text-white d-flex justify-content-center align-items-center me-3" style="width: 50px; height: 50px;">
+                            <i class="fas fa-users fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1 fw-bold">{{ $role->name }}</h5>
+                            <p class="mb-0">{{ rupiah_format($role->users_count) }} users</p>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+
     <!--begin::Card-->
     <div class="card shadow-sm">
         <!--begin::Card header-->

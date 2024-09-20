@@ -35,7 +35,7 @@ class CreateUsersForRegionJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $roles = ['superadministrator', 'administrator', 'user'];
+        $roles = ['superadministrator', 'administrator', 'user', 'admin_md_region', 'acct', 'bdm', 'data_analyst_md', 'it', 'md_ho', 'md_manager', 'md_region', 'opr', 'supplier', 'wh'];
 
         // Fetch role IDs
         $roleIds = Role::whereIn('name', $roles)->pluck('id', 'name')->toArray();

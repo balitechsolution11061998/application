@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use DataTables;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -12,9 +14,25 @@ class UserController extends Controller
     //
     public function index()
     {
-        $roles = \Laratrust\Models\Role::all();
-        return view('management_user.users.index', compact('roles'));
+        // Use select() to reduce the columns fetched and withCount() to fetch the user count efficiently
+        $rolesWithUserCount = Role::select('id', 'name')->withCount('users')->get();
+
+        // Optionally, cache the results to avoid hitting the database repeatedly
+        $rolesWithUserCount = Cache::remember('rolesWithUserCount', now()->addMinutes(10), function () {
+            return Role::select('id', 'name')->withCount('users')->get();
+        });
+
+        return view('management_user.users.index', compact('rolesWithUserCount'));
     }
+
+    public function userCount(){
+        dd("masuk sini");
+        $rolesWithUserCount = Cache::remember('rolesWithUserCount', now()->addMinutes(10), function () {
+            return Role::select('id', 'name')->withCount('users')->get();
+        });
+        return response()->json($rolesWithUserCount);
+    }
+
     public function getUsersData(Request $request)
     {
         if ($request->ajax()) {

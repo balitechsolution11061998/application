@@ -37,32 +37,39 @@ Route::get('/home', [HomeController::class, 'index'])
 
     Route::prefix('management')
     ->middleware('auth')
-    ->as('management.users.') // Set a name prefix for all routes in this group
+    ->as('management.users.') // Name prefix for all routes in this group
     ->group(function () {
-        // Route for user management dashboard
+
+        // User Management Dashboard
         Route::get('users', [UserController::class, 'index'])
-            ->name('index'); // Full name will be 'management.users.index'
+            ->name('index'); // Named route 'management.users.index'
 
-        // Route for fetching user data with server-side processing
+        // Fetching user data for DataTables with server-side processing
         Route::get('users/data', [UserController::class, 'getUsersData'])
-            ->name('data');  // Full name will be 'management.users.data'
+            ->name('data');  // Named route 'management.users.data'
 
-        // Route for storing user data (create/update)
+        // Storing user data (create/update)
         Route::post('users/store', [UserController::class, 'store'])
-            ->name('store');
+            ->name('store'); // Named route 'management.users.store'
 
-        // Route for editing user data
+        // Editing user data by ID
         Route::get('users/{id}', [UserController::class, 'edit'])
-            ->name('edit');  // Full name will be 'management.users.edit'
+            ->name('edit');  // Named route 'management.users.edit'
 
-        // Route for deleting user data
+        // Deleting user data by ID
         Route::delete('users/{id}', [UserController::class, 'destroy'])
-            ->name('destroy'); // Full name will be 'management.users.destroy'
+            ->name('destroy'); // Named route 'management.users.destroy'
 
+        // Changing user password
         Route::post('users/change-password', [UserController::class, 'changePassword'])
-            ->name('changePassword'); // Full name will be 'management.users.changePassword'
+            ->name('changePassword'); // Named route 'management.users.changePassword'
+
+        // Fetching user count for each role
+
+
 
     });
+
 
 
 Route::prefix('roles')
