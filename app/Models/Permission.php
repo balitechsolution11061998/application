@@ -6,5 +6,6 @@ use Laratrust\Models\Permission as PermissionModel;
 
 class Permission extends PermissionModel
 {
+    protected $table = 'permissions';
     public $guarded = [];
 }

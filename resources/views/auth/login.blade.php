@@ -28,7 +28,7 @@
         <div class="bg-white shadow-lg rounded-lg p-6">
             <!-- Logo (optional) -->
             <div class="text-center mb-6">
-                <img src="{{ asset('logo.png') }}" alt="Logo" class="w-20 mx-auto">
+                <img src="{{ asset('img/logo/logo.png') }}" alt="Logo" class="w-20 mx-auto">
             </div>
 
             <h3 class="text-2xl font-semibold text-center mb-4">Welcome Back</h3>

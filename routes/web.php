@@ -3,7 +3,9 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RegionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -29,60 +31,83 @@ Route::controller(RegisterController::class)->group(function () {
 Route::get('login/form', [LoginController::class, 'showLoginForm'])->name('login.form');
 Route::post('login/prosesForm', [LoginController::class, 'login'])->name('login.prosesForm');
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
-
+// Home route with 'auth' middleware and role check (Laratrust)
 Route::get('/home', [HomeController::class, 'index'])
     ->name('home')
-    ->middleware('auth'); // 'role' is provided by Laratrust
+    ->middleware('auth');
 
-
-    Route::prefix('management')
+// Grouping Management User routes under 'management/users'
+Route::prefix('management/users')
     ->middleware('auth')
-    ->as('management.users.') // Name prefix for all routes in this group
+    ->as('management.users.') // Set a name prefix for all routes in this group
     ->group(function () {
-
         // User Management Dashboard
-        Route::get('users', [UserController::class, 'index'])
-            ->name('index'); // Named route 'management.users.index'
+        Route::get('/', [UserController::class, 'index'])
+            ->name('index'); // 'management.users.index'
 
-        // Fetching user data for DataTables with server-side processing
-        Route::get('users/data', [UserController::class, 'getUsersData'])
-            ->name('data');  // Named route 'management.users.data'
+        // Fetching user data for DataTables
+        Route::get('/data', [UserController::class, 'getUsersData'])
+            ->name('data'); // 'management.users.data'
 
-        // Storing user data (create/update)
-        Route::post('users/store', [UserController::class, 'store'])
-            ->name('store'); // Named route 'management.users.store'
+        // Store user data (create/update)
+        Route::post('/store', [UserController::class, 'store'])
+            ->name('store'); // 'management.users.store'
 
-        // Editing user data by ID
-        Route::get('users/{id}', [UserController::class, 'edit'])
-            ->name('edit');  // Named route 'management.users.edit'
+        // Edit user data by ID
+        Route::get('/{id}/edit', [UserController::class, 'edit'])
+            ->name('edit'); // 'management.users.edit'
 
-        // Deleting user data by ID
-        Route::delete('users/{id}', [UserController::class, 'destroy'])
-            ->name('destroy'); // Named route 'management.users.destroy'
+        // Delete user data by ID
+        Route::delete('/{id}', [UserController::class, 'destroy'])
+            ->name('destroy'); // 'management.users.destroy'
 
-        // Changing user password
-        Route::post('users/change-password', [UserController::class, 'changePassword'])
-            ->name('changePassword'); // Named route 'management.users.changePassword'
+        // Change user password
+        Route::post('/change-password', [UserController::class, 'changePassword'])
+            ->name('changePassword'); // 'management.users.changePassword'
 
-        // Fetching user count for each role
-
-
-
+        // User profile
+        Route::get('/profile', [UserController::class, 'profile'])
+            ->name('profile'); // 'management.users.profile'
     });
 
-
-
+// Role management routes
 Route::prefix('roles')
     ->middleware('auth')
-    ->as('roles.') // Set a name prefix for all routes in this group
+    ->as('roles.') // Set a name prefix for all role routes
     ->group(function () {
-        // Route for user management dashboard
-        Route::get('getRoles', [RoleController::class, 'getRoles'])
-            ->name('getRoles'); // Full name will be 'management.users.index'
-
-
+        // Fetch roles data
+        Route::get('/getRoles', [RoleController::class, 'getRoles'])
+            ->name('getRoles'); // 'roles.getRoles'
     });
-    Route::post('/upload-profile-picture', [ProfileController::class, 'uploadProfilePicture']);
-    Route::post('/remove-profile-picture', [ProfileController::class, 'removePicture'])->name('remove.profile.picture');
 
-Route::post('/verify-superadmin-password', [UserController::class, 'verifySuperadminPassword'])->name('management.verifySuperadminPassword');
+    Route::prefix('permissions')
+    ->middleware(['auth'])  // Middleware to ensure the user is authenticated
+    ->as('permissions.')    // Route name prefix for easier reference
+    ->group(function () {
+        // Exclude the 'show' route from the resource routes
+        Route::resource('/', PermissionController::class)->except(['show'])->parameters(['' => 'permission']);
+
+        // Additional route for DataTables AJAX request
+        Route::get('/data', [PermissionController::class, 'data'])->name('data');
+    });
+
+
+
+
+Route::prefix('regions')
+    ->middleware('auth')
+    ->as('regions.') // Set a name prefix for all role routes
+    ->group(function () {
+        // Fetch roles data
+        Route::get('/data', [RegionController::class, 'data'])
+            ->name('data'); // 'roles.getRoles'
+    });
+
+// Profile Picture management routes
+Route::post('/upload-profile-picture', [ProfileController::class, 'uploadProfilePicture']);
+Route::post('/remove-profile-picture', [ProfileController::class, 'removePicture'])
+    ->name('remove.profile.picture');
+
+// Verify Superadmin password route
+Route::post('/verify-superadmin-password', [UserController::class, 'verifySuperadminPassword'])
+    ->name('management.verifySuperadminPassword');

@@ -179,7 +179,8 @@
             @foreach ($rolesWithUserCount as $role)
                 <div class="col-md-4 mb-4">
                     <div class="p-3 rounded shadow-sm d-flex align-items-center bg-light">
-                        <div class="icon-wrapper rounded-circle bg-primary text-white d-flex justify-content-center align-items-center me-3" style="width: 50px; height: 50px;">
+                        <div class="icon-wrapper rounded-circle bg-primary text-white d-flex justify-content-center align-items-center me-3"
+                            style="width: 50px; height: 50px;">
                             <i class="fas fa-users fs-4"></i>
                         </div>
                         <div>
@@ -288,7 +289,8 @@
                         <div class="mb-3">
                             <label for="superadmin_password" class="form-label">Enter Superadministrator
                                 Password</label>
-                            <input type="password" class="form-control" id="superadmin_password" placeholder="Password">
+                            <input type="password" class="form-control" id="superadmin_password"
+                                placeholder="Password">
                             <div id="superadminError" class="text-danger mt-2" style="display: none;">Incorrect
                                 password. Please try again.</div>
                         </div>
@@ -344,38 +346,60 @@
                             <input type="email" class="form-control" id="email" name="email"
                                 placeholder="Email" required>
                         </div>
+                        <div class="mb-3 form-check" id="checboxForm">
+                            <input type="checkbox" class="form-check-input" id="changePasswordCheckbox">
+                            <label class="form-check-label" for="changePasswordCheckbox">Change Password</label>
+                        </div>
 
-                        <div class="mb-3 position-relative">
-                            <label for="password" class="form-label">Password</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="password" name="password"
-                                    placeholder="Password" required>
-                                <span class="input-group-text">
-                                    <i class="fas fa-eye toggle-password" data-password="password"
-                                        style="cursor: pointer;"></i>
-                                </span>
-                            </div>
-                            <button type="button" id="generatePasswordBtn" class="btn btn-secondary mt-2">Generate
-                                Password</button>
-                            <div class="progress mt-2" style="height: 8px;">
-                                <div id="passwordStrengthBar" class="progress-bar bg-success" role="progressbar"
-                                    style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                        <div id="passwordFields" style="display: none;">
+                            <div class="mb-3 position-relative">
+                                <label for="password" class="form-label">Password</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="password" name="password"
+                                        placeholder="Password">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-eye toggle-password" data-password="password"
+                                            style="cursor: pointer;"></i>
+                                    </span>
                                 </div>
+                                <button type="button" id="generatePasswordBtn"
+                                    class="btn btn-secondary mt-2">Generate Password</button>
+                                <div class="progress mt-2" style="height: 8px;">
+                                    <div id="passwordStrengthBar" class="progress-bar bg-success" role="progressbar"
+                                        style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 position-relative">
+                                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="confirmPassword"
+                                        name="password_confirmation" placeholder="Confirm Password" required>
+                                    <span class="input-group-text">
+                                        <i class="fas fa-eye toggle-password" data-password="confirmPassword"
+                                            style="cursor: pointer;"></i>
+                                    </span>
+                                </div>
+                                <div id="passwordError" class="text-danger mt-2" style="display: none;">Passwords do
+                                    not
+                                    match!</div>
                             </div>
                         </div>
 
-                        <div class="mb-3 position-relative">
-                            <label for="confirmPassword" class="form-label">Confirm Password</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="confirmPassword"
-                                    name="password_confirmation" placeholder="Confirm Password" required>
-                                <span class="input-group-text">
-                                    <i class="fas fa-eye toggle-password" data-password="confirmPassword"
-                                        style="cursor: pointer;"></i>
-                                </span>
-                            </div>
-                            <div id="passwordError" class="text-danger mt-2" style="display: none;">Passwords do not
-                                match!</div>
+
+
+                        <!-- Address field -->
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control" id="address" name="address" placeholder="Address" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="region" class="form-label">Region</label>
+                            <select class="form-select" id="region" name="region" required>
+                                <option value="">Select Region</option>
+                                <!-- Options will be dynamically loaded here -->
+                            </select>
                         </div>
 
                         <div class="mb-3">
@@ -464,7 +488,7 @@
                 var loading = false;
                 var itemsPerPage = 10;
                 fetchRoles();
-
+                fetchRegions();
 
                 $('#roles').select2({
                     placeholder: "Select roles", // Optional placeholder
@@ -637,14 +661,16 @@
                     formData.append('email', $('#email').val());
                     formData.append('password', $('#password').val());
                     formData.append('password_confirmation', $('#confirmPassword').val());
+                    formData.append('address', $('#address').val());
+                    formData.append('region_id', $('#region').val());
 
                     // Get selected roles as an array
                     let selectedRoles = $('#roles')
-                .val(); // Assuming #roles is a <select> with 'multiple' attribute
+                        .val(); // Assuming #roles is a <select> with 'multiple' attribute
                     if (selectedRoles) {
                         selectedRoles.forEach(role => {
                             formData.append('roles[]',
-                            role); // Append each role to FormData as an array
+                                role); // Append each role to FormData as an array
                         });
                     }
 
@@ -824,13 +850,39 @@
                     xhr.send();
                 }
 
-
-
+                $('#modalForm').on('hidden.bs.modal', function() {
+                    $(this).find('form')[0].reset(); // Reset all form inputs
+                    $('#profilePicturePreview').hide(); // Hide profile picture preview
+                    $('#uploadProgressWrapper').hide(); // Hide upload progress bar
+                    $('#removePictureButton').hide(); // Hide remove button
+                    $('#passwordFields').hide(); // Hide password fields
+                    $('#passwordStrengthBar').css('width', '0%'); // Reset password strength bar
+                    $('#passwordError').hide(); // Hide password mismatch error
+                    $('#userFormError').hide(); // Hide general form error
+                });
             });
+
+            function fetchRegions() {
+                // Fetch regions from your API or server
+                fetch('/regions/data') // Update the URL to your API endpoint
+                    .then(response => response.json())
+                    .then(data => {
+                        const regionSelect = document.getElementById('region');
+                        regionSelect.innerHTML = '<option value="">Select Region</option>'; // Reset options
+
+                        data.forEach(region => {
+                            const option = document.createElement('option');
+                            option.value = region.id;
+                            option.textContent = region.name;
+                            regionSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching regions:', error));
+            }
 
             function editUser(id) {
                 $.ajax({
-                    url: '/management/users/' + id, // Update the URL to match your route
+                    url: '/management/users/' + id + '/edit', // Update the URL to match your route
                     method: 'GET',
                     success: function(response) {
                         console.log(response.roles, 'response');
@@ -842,6 +894,10 @@
                         $('#roles').val(response.roles).trigger(
                             'change'
                         ); // Set selected values and trigger change event to update the select2 or similar plugins if used
+                        $('#address').val(response.address);
+                        $('#region').val(response.region).trigger(
+                            'change'
+                        );
 
                         // Clear previous error messages
                         $('#passwordError').hide();
@@ -859,6 +915,17 @@
                     }
                 });
             }
+
+            $('#changePasswordCheckbox').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#passwordFields').slideDown(); // Show the password fields
+                } else {
+                    $('#passwordFields').slideUp(); // Hide the password fields
+                    // Clear the password fields when hidden
+                    $('#password').val('');
+                    $('#confirmPassword').val('');
+                }
+            });
 
             function deleteUser(id) {
                 // Use SweetAlert for confirmation
@@ -935,6 +1002,9 @@
 
             function tambahUser() {
                 $("#modalForm").modal('show');
+                $('#passwordFields').show();
+                $('#checboxForm').hide();
+
             }
 
             function generateDynamicPassword(wordList, symbolList, length) {

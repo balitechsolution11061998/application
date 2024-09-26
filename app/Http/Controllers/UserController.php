@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -25,12 +26,12 @@ class UserController extends Controller
         return view('management_user.users.index', compact('rolesWithUserCount'));
     }
 
-    public function userCount(){
-        dd("masuk sini");
-        $rolesWithUserCount = Cache::remember('rolesWithUserCount', now()->addMinutes(10), function () {
-            return Role::select('id', 'name')->withCount('users')->get();
-        });
-        return response()->json($rolesWithUserCount);
+    public function profile()
+    {
+        // Fetch the authenticated user's details
+        $user = auth()->user();
+        // Return the profile view with the user's data
+        return view('management_user.users.profile', compact('user'));
     }
 
     public function getUsersData(Request $request)
@@ -88,49 +89,57 @@ class UserController extends Controller
 
     public function changePassword(Request $request)
     {
+        // Validate incoming request data
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'old_password' => 'required',
-            'password' => 'required|min:8', // Ensure the new password and confirmation match
+            'current_password' => 'required',
+            'new_password' => 'required|min:8|confirmed', // Ensure confirmation password matches
         ]);
 
         try {
+            // Find the user by ID
             $user = User::findOrFail($request->user_id);
 
-            // Debugging: Output the hashed values for comparison
-            $plainOldPassword = $request->old_password;
-            $storedOldPassword = $user->password_show; // Assuming this is not hashed
-
-            // Check if the old password is correct
-            // if ($plainOldPassword !== $storedOldPassword) {
-            //     return response()->json(['message' => 'The old password is incorrect.'], 400);
-            // }
-
-            // Check if the new password is the same as the old one
-            if (Hash::check($request->password, $user->password)) {
-                return response()->json(['message' => 'The new password cannot be the same as the old one.'], 400);
+            // Verify the old (current) password
+            if (!Hash::check($request->current_password, $user->password)) {
+                return response()->json([
+                    'errors' => [
+                        'current_password' => ['The current password is incorrect.']
+                    ]
+                ], 400);
             }
 
-            // Check if the new password has been used before
-            if ($user->passwordHistories()->where('password', $request->password)->exists()) {
-                return response()->json(['message' => 'The new password has been used before.'], 400);
+            // Prevent using the same password as the old one
+            if (Hash::check($request->new_password, $user->password)) {
+                return response()->json([
+                    'errors' => [
+                        'new_password' => ['The new password cannot be the same as the current password.']
+                    ]
+                ], 400);
             }
 
-            // Save the old password to history
+            // Optional: Save old password in password history table (if applicable)
             $user->passwordHistories()->create([
-                'password' => $user->password_show, // This should be the hashed password
+                'password' => $user->password, // Save the current hashed password
             ]);
 
-            // Update the password
-            $user->password = bcrypt($request->password);
-            $user->password_show = $request->password; // Update plain text password if needed
+            // Update the password with a new hash
+            $user->password = bcrypt($request->new_password);
+            $user->password_show = $request->new_password; // Store plain text password if necessary
             $user->save();
 
-            return response()->json(['message' => 'Password changed successfully'], 200);
+            return response()->json([
+                'success' => true,
+                'message' => 'Password changed successfully'
+            ], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to change password: ' . $e->getMessage()], 500);
+            return response()->json([
+                'message' => 'Failed to change password: ' . $e->getMessage()
+            ], 500);
         }
     }
+
+
 
 
 
@@ -139,12 +148,14 @@ class UserController extends Controller
     {
         // Validate the request data
         $rules = [
-            'username' => 'required|string|max:255|unique:users,username,' . $request->id, // Unique for all except current user (update)
+            'username' => 'required|string|max:255', // Removed the unique validation for username
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . ($request->id ?? 'NULL'), // Unique for all except current user (update)
-            'password' => $request->id ? 'nullable|min:8' : 'required|min:8', // Password is required for new user, optional for update
+            'password' => $request->id ? 'nullable|min:8|confirmed' : 'required|min:8|confirmed', // Password is required for new user, optional for update
+            'address' => 'required|string|max:255',
+            'region_id' => 'required|integer',
             'roles' => 'required|array',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate the profile picture
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
 
         // Validate the input
@@ -154,17 +165,37 @@ class UserController extends Controller
         if ($request->hasFile('profile_picture')) {
             $profilePicture = $request->file('profile_picture');
             $profilePicturePath = $profilePicture->store('profile_pictures', 'public');
+
+            // If updating, delete the old picture
+            if ($request->id) {
+                $existingUser = User::find($request->id);
+                if ($existingUser && $existingUser->profile_picture && Storage::disk('public')->exists($existingUser->profile_picture)) {
+                    Storage::disk('public')->delete($existingUser->profile_picture);
+                }
+            }
         } else {
-            $profilePicturePath = null;
+            $profilePicturePath = $request->id ? User::find($request->id)->profile_picture : null;
+        }
+
+        // Generate a unique username if necessary
+        $username = $validated['username'];
+        $counter = 1;
+
+        // Check if username exists and generate a unique one
+        while (User::where('username', $username)->where('id', '!=', $request->id)->exists()) {
+            $username = $validated['username'] . $counter; // Append a number to the username
+            $counter++;
         }
 
         if ($request->id === null) {
             // Create a new user
             $user = User::create([
-                'username' => $validated['username'],
+                'username' => $username, // Use generated unique username
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => bcrypt($validated['password']),
+                'address' => $validated['address'],
+                'region_id' => $validated['region_id'],
                 'profile_picture' => $profilePicturePath,
             ]);
         } else {
@@ -173,12 +204,13 @@ class UserController extends Controller
 
             // Update the user data
             $user->update([
-                'username' => $validated['username'],
+                'username' => $username, // Use generated unique username
                 'name' => $validated['name'],
                 'email' => $validated['email'],
-                // Only update the password if it's provided
                 'password' => $validated['password'] ? bcrypt($validated['password']) : $user->password,
-                'profile_picture' => $profilePicturePath ?? $user->profile_picture, // Keep the old profile picture if no new one is uploaded
+                'address' => $validated['address'],
+                'region_id' => $validated['region_id'],
+                'profile_picture' => $profilePicturePath,
             ]);
         }
 
@@ -188,6 +220,9 @@ class UserController extends Controller
         // Return a success response
         return response()->json(['message' => 'User saved successfully'], 200);
     }
+
+
+
 
 
 
@@ -221,6 +256,8 @@ class UserController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'roles' => $user->roles->pluck('name'), // Assuming roles are fetched by name
+                'address' => $user->address,
+                'region' => $user->region_id,
             ]);
         }
 

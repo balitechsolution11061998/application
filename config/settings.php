@@ -10,7 +10,6 @@ return [
 
     # Application Name
     'KT_APP_NAME' => env('APP_NAME', 'M Mart'),
-    'KT_APP_SLOGAN' => env('APP_SLOGAN', 'Modern Retail Store'),
 
     'KT_THEME' => 'metronic',
 
@@ -41,8 +40,8 @@ return [
     # Theme Assets
 
     'KT_THEME_ASSETS' => [
-        'favicon' => 'assets/media/logos/m-mart.ico',
-        'logo' => 'assets/media/logos/m-mart.svg',
+        'favicon' => 'img/logo/logo.png',
+        'logo' => 'img/logo/logo.png',
         'fonts' => [
             'https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700',
             'https://fonts.googleapis.com/css?family=Rubik:300,400,500,600,700',
