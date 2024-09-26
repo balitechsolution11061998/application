@@ -2,34 +2,84 @@
 
 return [
     # Menus
-    'KT_MENU_MODE' => 'auto', /** 'manual' or 'auto' */
-
-  'KT_MENUS' => [
+    'KT_MENU_MODE' => 'auto',
+    /** 'manual' or 'auto' */
+    'KT_MENUS' => [
+        // Dashboard menu item (previously Profile)
         [
-            'label'          => 'Management User',
-            'type'           => 'item',
-            'permission'     => [],
-            'permissionType' => 'gate',
-            'icon'           => 'fas', // Added 'fas' for Font Awesome Solid icons
-            'iconName'       => 'fa-users', // Added 'fa-users' icon class
+            'label'          => 'Dashboard',               // Menu label updated to Dashboard
+            'type'           => 'item',                    // Type (item represents a clickable menu option)
+            'permission'     => [],                        // Permissions required to view this item
+            'permissionType' => 'gate',                    // Permission type (gate or policy)
+            'icon'           => 'fas',                     // Font Awesome Solid icons (FA class)
+            'iconName'       => 'fa-tachometer-alt',        // Updated icon for the dashboard (optional)
+            'route'          => 'home',    // Route updated to dashboard (replace with your dashboard route)
+            'active'         => [],                        // Define conditions when this item is active
             'iconPath'       => 4,
-            'children'       => [
+        ],
+
+        // Pages section heading
+        [
+            'label' => 'Pages',
+            'type'  => 'heading' // This represents a section heading (non-clickable)
+        ],
+
+        // Management User menu item with sub-items (children)
+        [
+            'label'          => 'Management User',       // Main menu label
+            'type'           => 'item',                  // Type item (clickable menu item)
+            'permission'     => [],                      // Permissions (empty implies no restrictions)
+            'permissionType' => 'gate',                  // Permission type (gate or policy)
+            'icon'           => 'fas',                   // Font Awesome icons class
+            'iconName'       => 'fa-users',              // Icon name for this main item
+            'iconPath'       => 4,                       // Optional icon size/path
+            'children'       => [                        // Sub-items (children)
                 [
-                    'label'          => 'User',
+                    'label'          => 'User',          // Child item label
+                    'type'           => 'item',          // Type item (clickable)
+                    'route'          => 'management.users.index', // Route for user management
+                    'active'         => [],              // Define when this item is active
+                    'permission'     => [],              // Permissions required for this item
+                    'permissionType' => 'gate',          // Permission type
+                    'icon'           => 'dot',           // Optional small icon for child items
+                ],
+                [
+                    'label'          => 'Roles',         // Child item for managing roles
                     'type'           => 'item',
-                    'route'          => 'management.users.index',
+                    'route'          => 'management.users.index',  // Route for role management
                     'active'         => [],
                     'permission'     => [],
                     'permissionType' => 'gate',
+                    'icon'           => 'dot',           // Dot icon for sub-items
+                ],
+                [
+                    'label'          => 'Permissions',
+                    'type'           => 'item',
+                    'route'          => 'permissions.index',
+                    'active'         => [],
+                    'permission'     => [],
+                    'permissionType' => 'gate', // Using Laravel's gate for permission checking
                     'icon'           => 'dot',
                 ],
+
             ]
         ],
+
+        // Profile item (this one can be removed if it's redundant)
         [
-            'label' => 'Pages',
-            'type'  => 'heading'
+            'label'          => 'Profile',
+            'type'           => 'item',
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-user',
+            'route'          => 'management.users.profile',
+            'active'         => [],
+            'iconPath'       => 4,
+
         ],
-    ]
+    ],
+
     //     [
 
     //         'label'          => 'User Profile',

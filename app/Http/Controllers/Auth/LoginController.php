@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
@@ -7,12 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Models\User;
+use App\Models\LoginLog;
 
 class LoginController extends Controller
 {
     public function showLoginForm()
     {
-
         return view('auth.login'); // Points to your custom login form
     }
 
@@ -21,7 +21,14 @@ class LoginController extends Controller
         $this->validateLogin($request);
 
         if ($this->attemptLogin($request)) {
-            // Login successful, redirect to intended location or dashboard
+            // Log the login event
+            $user = Auth::user();
+            $user->is_logged_in = true;
+            $user->save();
+
+            $this->logEvent($user, 'login', $request);
+
+            // Redirect to intended location or dashboard
             return redirect()->intended('/home');
         }
 
@@ -40,7 +47,7 @@ class LoginController extends Controller
 
     protected function attemptLogin(Request $request)
     {
-        $user = \App\Models\User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
             // Log the user in manually
@@ -51,7 +58,6 @@ class LoginController extends Controller
         return false;
     }
 
-
     protected function sendFailedLoginResponse(Request $request)
     {
         throw ValidationException::withMessages([
@@ -61,7 +67,29 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        $user = Auth::user();
+
+        if ($user) {
+            // Log the logout event
+            $user->is_logged_in = false;
+            $user->save();
+
+            $this->logEvent($user, 'logout', $request);
+        }
+
         Auth::logout();
+
         return redirect('/login/form');
+    }
+
+    // Log login or logout event to the database
+    protected function logEvent(User $user, $event, Request $request)
+    {
+        LoginLog::create([
+            'user_id' => $user->id,
+            'event' => $event,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
     }
 }

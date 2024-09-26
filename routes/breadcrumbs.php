@@ -11,6 +11,14 @@ Breadcrumbs::for('home', function (BreadcrumbTrail $trail) {
 Breadcrumbs::for('users', function (BreadcrumbTrail $trail) {
     $trail->push('Users', route('management.users.index'));
 });
+
+Breadcrumbs::for('user_profile', function (BreadcrumbTrail $trail) {
+    $trail->push('Users', route('management.users.profile'));
+});
+
+Breadcrumbs::for('permissions', function (BreadcrumbTrail $trail) {
+    $trail->push('Permissions', route('permissions.index'));
+});
 // Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
 //     $trail->push('Dashboard', route('example.dashboard.default'));
 // });
