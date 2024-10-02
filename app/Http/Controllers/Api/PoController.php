@@ -183,9 +183,13 @@ class PoController extends Controller
                         DiffCostPo::create((array)$detail);
 
                         $errors[] = [
+                            'supplier' => $data[0]->supplier,
+                            'sup_name' => $data[0]->name,
                             'order_no' => $data[0]->order_no,
                             'sku' => $data[0]->sku,
-                            'message' => 'Price differences found.'
+                            'message' => 'Price differences found. Old price: ' . $detail->cost_supplier . ', New price: ' . $detail->cost_po,
+                            'old_price' => $detail->cost_supplier,
+                            'new_price' => $detail->cost_po,
                         ];
                         $historyMessage = 'Price differences found';
                     }

@@ -12,14 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('diff_cost_po', function (Blueprint $table) {
-            $table->id();
-            $table->string('order_no');
-            $table->string('supplier');
-            $table->string('sku');
-            $table->string('sup_name');
-            $table->decimal('cost_po', 15, 2);
-            $table->decimal('cost_supplier', 15, 2)->nullable();
-            $table->timestamps();
+            $table->integer('order_no')->unsigned();
+            $table->integer('supplier')->unsigned();
+            $table->string('sup_name', 255);
+            $table->integer('sku')->unsigned();
+            $table->string('sku_desc', 255);
+            $table->double('cost_po');
+            $table->double('cost_supplier')->nullable();
+            $table->timestamps(); // for 'created_at' and 'updated_at'
+
+            // Optionally, you can add indexes
+            $table->index('order_no');
+            $table->index('supplier');
         });
     }
 
