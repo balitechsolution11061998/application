@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('not_before_date')->nullable();
             $table->date('not_after_date')->nullable();
             $table->date('approval_date')->nullable();
-            $table->varchar('approval_id')->nullable();
+            $table->string('approval_id')->nullable();
             $table->date('cancelled_date')->nullable();
             $table->unsignedBigInteger('canceled_id')->nullable();
             $table->decimal('cancelled_amt', 15, 2)->nullable();
