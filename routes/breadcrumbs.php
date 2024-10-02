@@ -19,6 +19,10 @@ Breadcrumbs::for('user_profile', function (BreadcrumbTrail $trail) {
 Breadcrumbs::for('permissions', function (BreadcrumbTrail $trail) {
     $trail->push('Permissions', route('permissions.index'));
 });
+
+Breadcrumbs::for('roles', function (BreadcrumbTrail $trail) {
+    $trail->push('Roles', route('roles.index'));
+});
 // Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
 //     $trail->push('Dashboard', route('example.dashboard.default'));
 // });

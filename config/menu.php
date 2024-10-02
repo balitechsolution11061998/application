@@ -46,7 +46,7 @@ return [
                 [
                     'label'          => 'Roles',         // Child item for managing roles
                     'type'           => 'item',
-                    'route'          => 'management.users.index',  // Route for role management
+                    'route'          => 'roles.index',  // Route for role management
                     'active'         => [],
                     'permission'     => [],
                     'permissionType' => 'gate',

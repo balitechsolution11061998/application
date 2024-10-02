@@ -85,7 +85,25 @@ class PermissionController extends Controller
 
     public function destroy($id)
     {
-        Permission::find($id)->delete();
-        return redirect()->route('permissions.index')->with('success', 'Permission deleted successfully');
+        // Find the permission by ID
+        $permission = Permission::find($id);
+
+        // Check if the permission exists
+        if (!$permission) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Permission not found'
+            ], 404); // Return a 404 status code if not found
+        }
+
+        // Delete the permission
+        $permission->delete();
+
+        // Return a success response
+        return response()->json([
+            'success' => true,
+            'message' => 'Permission deleted successfully'
+        ]);
     }
+
 }
