@@ -187,6 +187,7 @@ class PoController extends Controller
                             'sup_name' => $data[0]->name,
                             'order_no' => $data[0]->order_no,
                             'sku' => $data[0]->sku,
+                            'sku_desc' => $data[0]->sku_desc,
                             'message' => 'Price differences found. Old price: ' . $detail->cost_supplier . ', New price: ' . $detail->cost_po,
                             'old_price' => $detail->cost_supplier,
                             'new_price' => $detail->cost_po,
