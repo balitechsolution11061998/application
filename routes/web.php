@@ -73,24 +73,37 @@ Route::prefix('management/users')
 // Role management routes
 Route::prefix('roles')
     ->middleware('auth')
-    ->as('roles.') // Set a name prefix for all role routes
+    ->as('roles.')
     ->group(function () {
         // Fetch roles data
-        Route::get('/getRoles', [RoleController::class, 'getRoles'])
-            ->name('getRoles'); // 'roles.getRoles'
+        Route::get('/getRoles', [RoleController::class, 'getRoles'])->name('getRoles');
+        Route::get('/data', [RoleController::class, 'data'])->name('data');
+
+        // Standard CRUD routes for Roles
+        Route::resource('/', RoleController::class)->parameters(['' => 'role'])->except(['show']);
     });
+
 
     Route::prefix('permissions')
     ->middleware(['auth'])  // Middleware to ensure the user is authenticated
     ->as('permissions.')    // Route name prefix for easier reference
     ->group(function () {
-        // Exclude the 'show' route from the resource routes
         Route::resource('/', PermissionController::class)->except(['show'])->parameters(['' => 'permission']);
 
         // Additional route for DataTables AJAX request
         Route::get('/data', [PermissionController::class, 'data'])->name('data');
     });
 
+
+Route::prefix('suppliers')
+    ->middleware(['auth']) // Ensure user authentication
+    ->as('suppliers.')     // Route name prefix for suppliers
+    ->group(function () {
+        // Route for importing suppliers via CSV/XLSX
+        Route::post('/import', [UserController::class, 'import'])->name('import');
+
+
+    });
 
 
 

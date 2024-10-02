@@ -171,6 +171,22 @@
         .progress {
             border-radius: 4px;
         }
+
+        .drop-zone {
+            border: 2px dashed #007bff;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .drop-zone.dragover {
+            background-color: #f0f0f0;
+        }
+
+        .file-input {
+            display: none;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.2/toastify.min.css">
 
@@ -205,7 +221,12 @@
                         class="form-control form-control-solid form-control-lg w-250px ps-13"
                         placeholder="Search Users" />
                 </div>
+
                 <div>
+                    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#importUsersModal">
+                        Import Users
+                    </button>
                     <button type="button" class="btn btn-primary btn-sm" onclick="tambahUser()">
                         <i class="fas fa-plus"></i> Tambah
                     </button>
@@ -465,6 +486,36 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="importUsersModal" tabindex="-1" aria-labelledby="importUsersLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="importUsersLabel">Import Users</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Drop Zone -->
+                    <div id="dropZoneCsv" class="drop-zone">
+                        <p>Drag & drop your CSV file here or click to upload</p>
+                        <input type="file" id="fileInputCsv" class="file-input" accept=".csv" hidden />
+                    </div>
+                    <!-- Display selected file name -->
+                    <div id="fileNameDisplayCsv" class="mt-3"></div>
+                    <!-- Progress Bar -->
+                    <div class="progress mt-3" style="height: 20px; display: none;" id="uploadProgressBar">
+                        <div class="progress-bar" role="progressbar" style="width: 0%;" id="uploadProgress"
+                            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="uploadBtnCsv">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
@@ -748,7 +799,112 @@
                     });
                 });
 
+                // upload file csv/xlsx supplier
+                const dropZoneCsv = document.getElementById('dropZoneCsv');
+                const fileInputCsv = document.getElementById('fileInputCsv');
+                const fileNameDisplayCsv = document.getElementById('fileNameDisplayCsv');
+                const uploadBtnCsv = document.getElementById('uploadBtnCsv');
+                const uploadProgressBar = document.getElementById('uploadProgressBar');
+                const uploadProgress = document.getElementById('uploadProgress');
 
+                // Handle drag & drop events
+                dropZoneCsv.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropZoneCsv.classList.add('dragover');
+                });
+
+                dropZoneCsv.addEventListener('dragleave', () => {
+                    dropZoneCsv.classList.remove('dragover');
+                });
+
+                dropZoneCsv.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZoneCsv.classList.remove('dragover');
+
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        handleFile(files[0]);
+                    }
+                });
+
+                // Handle file input click
+                dropZoneCsv.addEventListener('click', () => {
+                    fileInputCsv.click();
+                });
+
+                fileInputCsv.addEventListener('change', () => {
+                    if (fileInputCsv.files.length > 0) {
+                        handleFile(fileInputCsv.files[0]);
+                    }
+                });
+
+                // Function to handle the file
+                function handleFile(file) {
+                    const validTypes = ['text/csv',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+                    const validExtensions = ['.csv', '.xlsx'];
+                    const fileExtension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
+
+                    if (validTypes.includes(file.type) && validExtensions.includes(`.${fileExtension}`)) {
+                        fileNameDisplayCsv.textContent = `File selected: ${file.name}`;
+                    } else {
+                        fileNameDisplayCsv.textContent = 'Please select a valid CSV or XLSX file.';
+                    }
+                }
+
+                // Handle file upload
+                uploadBtnCsv.addEventListener('click', () => {
+                    if (fileInputCsv.files.length > 0) {
+                        const formData = new FormData();
+                        formData.append('file', fileInputCsv.files[0]);
+
+                        // Show progress bar
+                        uploadProgressBar.style.display = 'block';
+                        uploadProgress.style.width = '0%';
+                        uploadProgress.setAttribute('aria-valuenow', 0);
+
+                        // Create a new XMLHttpRequest to handle progress
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('POST', '/suppliers/import', true);
+                        xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content'));
+
+                        // Track upload progress
+                        xhr.upload.addEventListener('progress', (progressEvent) => {
+                            const percentCompleted = Math.round((progressEvent.loaded * 100) /
+                                progressEvent.total);
+                            uploadProgress.style.width = `${percentCompleted}%`;
+                            uploadProgress.setAttribute('aria-valuenow', percentCompleted);
+                        });
+
+                        // Handle response
+                        xhr.onload = () => {
+                            uploadProgressBar.style.display = 'none'; // Hide progress bar
+                            const data = JSON.parse(xhr.responseText);
+                            if (data.success) {
+                                alert('File uploaded successfully');
+                                location.reload(); // Reload to show the updated data
+                            } else {
+                                alert('Error uploading file');
+                            }
+                        };
+
+                        xhr.onerror = () => {
+                            uploadProgressBar.style.display = 'none'; // Hide progress bar
+                            alert('Error during upload');
+                        };
+
+                        // Send the request
+                        xhr.send(formData);
+                    } else {
+                        alert('Please select a file first.');
+                    }
+                });
+
+
+
+
+                // upload profile
                 const dropzone = document.getElementById('profilePictureDropzone');
                 const fileInput = document.getElementById('profilePicture');
                 const preview = document.getElementById('profilePicturePreview');

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\UsersImport;
+use App\Jobs\UsersImportJob;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -9,6 +11,8 @@ use DataTables;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -25,6 +29,33 @@ class UserController extends Controller
 
         return view('management_user.users.index', compact('rolesWithUserCount'));
     }
+
+    // Method to handle user import
+    public function import(Request $request)
+    {
+        // Validate the file input
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file|mimes:xlsx,csv', // Validate Excel or CSV file
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()]);
+        }
+
+        // Handle the Excel file and import data
+        try {
+            // Store the uploaded file in a temporary location
+            $filePath = $request->file('file')->store('imports');
+
+            // Dispatch the job, passing the stored file path
+            dispatch(new UsersImportJob($filePath)); // Pass file path, not the file object
+
+            return response()->json(['success' => true, 'message' => 'Users imported successfully!']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error importing data: ' . $e->getMessage()]);
+        }
+    }
+
 
     public function profile()
     {
