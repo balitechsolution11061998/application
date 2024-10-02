@@ -184,7 +184,7 @@ class PoController extends Controller
 
                         $errors[] = [
                             'supplier' => $data[0]->supplier,
-                            'sup_name' => $data[0]->name,
+                            'sup_name' => $detail->sup_name,
                             'order_no' => $data[0]->order_no,
                             'sku' => $detail->sku,
                             'sku_desc' => $detail->sku_desc,
