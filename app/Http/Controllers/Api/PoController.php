@@ -189,8 +189,8 @@ class PoController extends Controller
                             'sku' => $detail->sku,
                             'sku_desc' => $detail->sku_desc,
                             'message' => 'Price differences found. Old price: ' . $detail->cost_supplier . ', New price: ' . $detail->cost_po,
-                            'old_price' => $detail->cost_supplier,
-                            'new_price' => $detail->cost_po,
+                            'cost_supplier' => $detail->cost_supplier,
+                            'cost_po' => $detail->cost_po,
                         ];
                         $historyMessage = 'Price differences found';
                     }
