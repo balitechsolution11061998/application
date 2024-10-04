@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\PoController;
+use App\Http\Controllers\ItemSupplierController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,3 +23,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::post('/po/store', [PoController::class, 'store']);
+Route::post('/itemsupplier/store', [ItemSupplierController::class, 'store']);
