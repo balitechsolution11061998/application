@@ -9,27 +9,26 @@ return new class extends Migration
     public function up()
     {
         Schema::create('ordsku', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('ordhead_id');
-            $table->string('order_no');
-            $table->string('sku');
-            $table->text('sku_desc')->nullable();
-            $table->string('upc')->nullable();
+            $table->bigIncrements('id');
+            $table->integer('ordhead_id')->index();
+            $table->integer('order_no')->index();
+            $table->integer('sku')->index();
+            $table->string('sku_desc')->nullable();
+            $table->string('upc', 25)->index();
             $table->string('tag_code')->nullable();
-            $table->decimal('unit_cost', 15, 2);
-            $table->decimal('unit_retail', 15, 2)->nullable();
-            $table->decimal('vat_cost', 15, 2)->nullable();
-            $table->decimal('luxury_cost', 15, 2)->nullable();
-            $table->integer('qty_ordered')->nullable();
-            $table->integer('qty_received')->nullable();
-            $table->decimal('unit_discount', 10, 2)->nullable();
-            $table->decimal('unit_permanent_discount', 10, 2)->nullable();
+            $table->double('unit_cost')->index();
+            $table->double('unit_retail')->index();
+            $table->double('vat_cost')->nullable();
+            $table->double('luxury_cost')->nullable();
+            $table->integer('qty_ordered')->nullable()->index();
+            $table->integer('qty_fulfilled')->nullable()->index();
+            $table->integer('qty_received')->nullable()->index();
+            $table->double('unit_discount')->nullable()->index();
+            $table->double('unit_permanent_discount')->nullable()->index();
             $table->string('purchase_uom')->nullable();
-            $table->integer('supp_pack_size')->nullable();
-            $table->decimal('permanent_disc_pct', 5, 2)->nullable();
+            $table->integer('supp_pack_size')->nullable()->index();
+            $table->double('permanent_disc_pct')->nullable()->index();
             $table->timestamps();
-
-            $table->foreign('ordhead_id')->references('id')->on('ordhead')->onDelete('cascade');
         });
     }
 
