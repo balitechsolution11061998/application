@@ -23,4 +23,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::post('/po/store', [PoController::class, 'store']);
-Route::post('/itemsupplier/store', [ItemSupplierController::class, 'store']);
+Route::post('/itemsupplier/store', [ItemSupplierCcontroller::class, 'store']);

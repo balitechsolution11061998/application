@@ -1,264 +1,344 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Educational Blog Landing Page</title>
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
-
-    <!-- Custom Styles -->
-    <style>
-        .fade-in {
-            opacity: 0;
-            animation: fadeIn 1s forwards;
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Article Filter
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+            font-family: 'Roboto', sans-serif;
         }
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #4A90E2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
             }
         }
-        .slide-up {
-            transform: translateY(20px);
-            opacity: 0;
-            animation: slideUp 1s forwards;
+
+        .hidden {
+            display: none;
         }
-        @keyframes slideUp {
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        .carousel {
+
+        .pretty-checkbox {
+            appearance: none;
+            background-color: #fff;
+            border: 2px solid #d1d5db;
+            border-radius: 0.25rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            display: inline-block;
             position: relative;
-            overflow: hidden;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
         }
-        .carousel-inner {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
+
+        .pretty-checkbox:checked {
+            background-color: #4A90E2;
+            border-color: #4A90E2;
         }
-        .carousel-item {
-            min-width: 100%;
-            box-sizing: border-box;
+
+        .pretty-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            top: 0.1rem;
+            left: 0.35rem;
+            width: 0.25rem;
+            height: 0.5rem;
+            border: solid white;
+            border-width: 0 0.2rem 0.2rem 0;
+            transform: rotate(45deg);
         }
-    </style>
-</head>
-<body class="bg-gray-100 text-gray-900 font-sans antialiased">
 
-    <!-- Navbar -->
-    <nav class="bg-blue-600 text-white shadow-md">
-        <div class="container mx-auto flex items-center justify-between p-4">
-            <a href="#" class="text-2xl font-bold">YourLogo</a>
-            <div class="hidden md:flex space-x-4">
-                <a href="#services" class="hover:underline">Services</a>
-                <a href="#about" class="hover:underline">About</a>
-                <a href="#blog" class="hover:underline">Blog</a>
-                <a href="#education" class="hover:underline">Education</a>
-                <a href="#contact" class="hover:underline">Contact</a>
-                <a href="login/form" class="bg-white text-blue-600 py-2 px-4 rounded-full font-semibold transition-transform transform hover:scale-105">Login</a>
-            </div>
-            <button class="md:hidden text-white" id="menu-toggle">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                </svg>
-            </button>
-        </div>
-        <div class="md:hidden hidden" id="menu">
-            <a href="#services" class="block py-2 px-4 text-center hover:bg-blue-500 transition-transform transform hover:scale-105">Services</a>
-            <a href="#about" class="block py-2 px-4 text-center hover:bg-blue-500 transition-transform transform hover:scale-105">About</a>
-            <a href="#blog" class="block py-2 px-4 text-center hover:bg-blue-500 transition-transform transform hover:scale-105">Blog</a>
-            <a href="#education" class="block py-2 px-4 text-center hover:bg-blue-500 transition-transform transform hover:scale-105">Education</a>
-            <a href="#contact" class="block py-2 px-4 text-center hover:bg-blue-500 transition-transform transform hover:scale-105">Contact</a>
-            <a href="login/form" class="block py-2 px-4 text-center bg-white text-blue-600 font-semibold rounded-full hover:bg-gray-200 transition-transform transform hover:scale-105">Login</a>
-        </div>
-    </nav>
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
 
-    <!-- Hero Section -->
-    <section class="bg-blue-600 text-white h-screen flex items-center justify-center relative overflow-hidden">
-        <div class="absolute inset-0">
-            <div class="carousel relative">
-                <div class="carousel-inner">
-                    <div class="carousel-item bg-cover bg-center h-full" style="background-image: url('https://via.placeholder.com/1500x1000');"></div>
-                    <div class="carousel-item bg-cover bg-center h-full" style="background-image: url('https://via.placeholder.com/1500x1000/0000FF/808080');"></div>
-                    <div class="carousel-item bg-cover bg-center h-full" style="background-image: url('https://via.placeholder.com/1500x1000/FF0000/FFFFFF');"></div>
-                </div>
-                <button class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-blue-800 text-white p-2 rounded-full" id="prevSlide">&lt;</button>
-                <button class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-blue-800 text-white p-2 rounded-full" id="nextSlide">&gt;</button>
-            </div>
-        </div>
-        <div class="text-center relative z-10 fade-in">
-            <h1 class="text-5xl font-bold mb-4">Welcome to Our Blog & Learning Hub</h1>
-            <p class="text-lg mb-8">Explore tutorials, educational resources, and more to boost your knowledge.</p>
-            <a href="#blog" class="bg-white text-blue-600 py-3 px-6 rounded-full text-lg font-semibold hover:bg-gray-100 transition-transform transform hover:scale-105">Explore Blog</a>
-        </div>
-    </section>
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
 
-    <!-- Services Section -->
-    <section id="services" class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12 slide-up">
-                <h2 class="text-4xl font-bold mb-4">Our Services</h2>
-                <p class="text-lg text-gray-600">Explore our wide range of services designed to meet your needs.</p>
-            </div>
-            <div class="flex flex-wrap -mx-4">
-                <div class="w-full md:w-1/3 px-4 mb-8 slide-up">
-                    <div class="bg-white p-6 rounded-lg shadow-lg text-center transition-transform transform hover:scale-105">
-                        <h3 class="text-xl font-semibold mb-4">Service 1</h3>
-                        <p class="text-gray-600">High-quality service with professional support.</p>
-                    </div>
-                </div>
-                <div class="w-full md:w-1/3 px-4 mb-8 slide-up">
-                    <div class="bg-white p-6 rounded-lg shadow-lg text-center transition-transform transform hover:scale-105">
-                        <h3 class="text-xl font-semibold mb-4">Service 2</h3>
-                        <p class="text-gray-600">Innovative solutions tailored to your needs.</p>
-                    </div>
-                </div>
-                <div class="w-full md:w-1/3 px-4 mb-8 slide-up">
-                    <div class="bg-white p-6 rounded-lg shadow-lg text-center transition-transform transform hover:scale-105">
-                        <h3 class="text-xl font-semibold mb-4">Service 3</h3>
-                        <p class="text-gray-600">Exceptional quality and reliability in every aspect.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+        .slideshow-container {
+            position: relative;
+            max-width: 100%;
+            margin: auto;
+        }
 
-    <!-- Blog Section -->
-    <section id="blog" class="py-16">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12 slide-up">
-                <h2 class="text-4xl font-bold mb-4">Our Blog</h2>
-                <p class="text-lg text-gray-600">Read our latest posts and stay updated with valuable insights.</p>
-            </div>
-            <div class="flex flex-wrap -mx-4">
-                <!-- Blog Post 1 -->
-                <div class="w-full md:w-1/3 px-4 mb-8 slide-up">
-                    <div class="bg-white p-6 rounded-lg shadow-lg">
-                        <img src="https://via.placeholder.com/400x250" alt="Blog Post" class="mb-4 w-full h-48 object-cover rounded-lg">
-                        <h3 class="text-xl font-semibold mb-2">Blog Post Title 1</h3>
-                        <p class="text-gray-600 mb-4">Brief description or summary of the blog post goes here.</p>
-                        <a href="#" class="text-blue-600 hover:underline">Read more</a>
-                    </div>
-                </div>
-                <!-- Blog Post 2 -->
-                <div class="w-full md:w-1/3 px-4 mb-8 slide-up">
-                    <div class="bg-white p-6 rounded-lg shadow-lg">
-                        <img src="https://via.placeholder.com/400x250" alt="Blog Post" class="mb-4 w-full h-48 object-cover rounded-lg">
-                        <h3 class="text-xl font-semibold mb-2">Blog Post Title 2</h3>
-                        <p class="text-gray-600 mb-4">Brief description or summary of the blog post goes here.</p>
-                        <a href="#" class="text-blue-600 hover:underline">Read more</a>
-                    </div>
-                </div>
-                <!-- Blog Post 3 -->
-                <div class="w-full md:w-1/3 px-4 mb-8 slide-up">
-                    <div class="bg-white p-6 rounded-lg shadow-lg">
-                        <img src="https://via.placeholder.com/400x250" alt="Blog Post" class="mb-4 w-full h-48 object-cover rounded-lg">
-                        <h3 class="text-xl font-semibold mb-2">Blog Post Title 3</h3>
-                        <p class="text-gray-600 mb-4">Brief description or summary of the blog post goes here.</p>
-                        <a href="#" class="text-blue-600 hover:underline">Read more</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+        .slideshow-image {
+            display: none;
+            width: 100%;
+            border-radius: 0.5rem;
+        }
 
-    <!-- Education Section -->
-    <section id="education" class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12 slide-up">
-                <h2 class="text-4xl font-bold mb-4">Educational Resources</h2>
-                <p class="text-lg text-gray-600">Access various resources to enhance your learning experience.</p>
-            </div>
-            <div class="flex flex-wrap -mx-4">
-                <!-- Educational Resource 1 -->
-                <div class="w-full md:w-1/3 px-4 mb-8 slide-up">
-                    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
-                        <h3 class="text-xl font-semibold mb-4">Resource 1</h3>
-                        <p class="text-gray-600 mb-4">A brief description of the educational resource.</p>
-                        <a href="#" class="bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700">Explore</a>
-                    </div>
-                </div>
-                <!-- Educational Resource 2 -->
-                <div class="w-full md:w-1/3 px-4 mb-8 slide-up">
-                    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
-                        <h3 class="text-xl font-semibold mb-4">Resource 2</h3>
-                        <p class="text-gray-600 mb-4">A brief description of the educational resource.</p>
-                        <a href="#" class="bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700">Explore</a>
-                    </div>
-                </div>
-                <!-- Educational Resource 3 -->
-                <div class="w-full md:w-1/3 px-4 mb-8 slide-up">
-                    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
-                        <h3 class="text-xl font-semibold mb-4">Resource 3</h3>
-                        <p class="text-gray-600 mb-4">A brief description of the educational resource.</p>
-                        <a href="#" class="bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700">Explore</a>
-                    </div>
-                </div>
-            </div>
+        .active {
+            display: block;
+        }
+  </style>
+ </head>
+ <body class="bg-gray-100">
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md py-4">
+   <div class="container mx-auto flex justify-between items-center">
+    <a class="text-2xl font-bold text-gray-800" href="#">
+     MyWebsite
+    </a>
+    <div class="flex items-center space-x-4">
+     <a class="text-gray-800 hover:text-blue-500" href="#">
+      Home
+     </a>
+     <a class="text-gray-800 hover:text-blue-500" href="#">
+      About
+     </a>
+     <a class="text-gray-800 hover:text-blue-500" href="#">
+      Contact
+     </a>
+    </div>
+   </div>
+  </nav>
+  <!-- Slideshow -->
+  <div class="slideshow-container my-4">
+   <img alt="Slideshow image 1" class="slideshow-image active" src="https://placehold.co/800x300?text=Slide+1"/>
+   <img alt="Slideshow image 2" class="slideshow-image" src="https://placehold.co/800x300?text=Slide+2"/>
+   <img alt="Slideshow image 3" class="slideshow-image" src="https://placehold.co/800x300?text=Slide+3"/>
+  </div>
+  <div class="container mx-auto p-4">
+   <div class="flex">
+    <!-- Sidebar -->
+    <div class="w-1/4 p-4 bg-white rounded-lg shadow-md">
+     <button class="w-full bg-red-500 text-white py-2 px-4 rounded-lg mb-4 flex items-center justify-center">
+      <i class="fas fa-filter mr-2">
+      </i>
+      Filters Articles
+     </button>
+     <div class="mb-4">
+      <h2 class="text-lg font-semibold mb-2">
+       Type
+      </h2>
+      <div class="flex items-center mb-2">
+       <input class="pretty-checkbox mr-2" id="gratis" name="type" type="radio"/>
+       <label class="text-gray-700" for="gratis">
+        Gratis (Rp. 0)
+       </label>
+      </div>
+      <div class="flex items-center">
+       <input class="pretty-checkbox mr-2" id="premium" name="type" type="radio"/>
+       <label class="text-gray-700" for="premium">
+        Premium
+       </label>
+      </div>
+     </div>
+     <div>
+      <h2 class="text-lg font-semibold mb-2">
+       Technology
+      </h2>
+      <div class="flex items-center mb-2">
+       <input class="pretty-checkbox mr-2" id="adonis" type="checkbox"/>
+       <label class="flex items-center" for="adonis">
+        <img alt="Adonis Js logo" class="mr-2 rounded-full" src="https://placehold.co/24x24"/>
+        Adonis Js
+       </label>
+      </div>
+      <div class="flex items-center mb-2">
+       <input class="pretty-checkbox mr-2" id="alpine" type="checkbox"/>
+       <label class="flex items-center" for="alpine">
+        <img alt="Alpine Js logo" class="mr-2 rounded-full" src="https://placehold.co/24x24"/>
+        Alpine Js
+       </label>
+      </div>
+      <div class="flex items-center mb-2">
+       <input class="pretty-checkbox mr-2" id="bun" type="checkbox"/>
+       <label class="flex items-center" for="bun">
+        <img alt="Bun logo" class="mr-2 rounded-full" src="https://placehold.co/24x24"/>
+        Bun
+       </label>
+      </div>
+      <div class="flex items-center mb-2">
+       <input class="pretty-checkbox mr-2" id="codeigniter" type="checkbox"/>
+       <label class="flex items-center" for="codeigniter">
+        <img alt="CodeIgniter logo" class="mr-2 rounded-full" src="https://placehold.co/24x24"/>
+        CodeIgniter
+       </label>
+      </div>
+      <div class="flex items-center mb-2">
+       <input class="pretty-checkbox mr-2" id="dart" type="checkbox"/>
+       <label class="flex items-center" for="dart">
+        <img alt="Dart logo" class="mr-2 rounded-full" src="https://placehold.co/24x24"/>
+        Dart
+       </label>
+      </div>
+      <div class="flex items-center">
+       <input class="pretty-checkbox mr-2" id="devops" type="checkbox"/>
+       <label class="flex items-center" for="devops">
+        <img alt="DevOps logo" class="mr-2 rounded-full" src="https://placehold.co/24x24"/>
+        DevOps
+       </label>
+      </div>
+     </div>
+    </div>
+    <!-- Main Content -->
+    <div class="w-3/4 p-4">
+     <div class="flex items-center mb-4">
+      <input class="w-full p-2 border border-gray-300 rounded-lg" placeholder="Apa yang ingin Anda pelajari?" type="text"/>
+      <i class="fas fa-search ml-2 text-gray-500">
+      </i>
+     </div>
+     <div class="flex justify-center items-center h-64" id="spinner">
+      <div class="spinner">
+      </div>
+     </div>
+     <div class="grid grid-cols-2 gap-4 hidden fade-in" id="content">
+      <!-- Article Card -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+       <img alt="Express MongoDB tutorial image" class="w-full" src="https://placehold.co/600x400"/>
+       <div class="p-4">
+        <div class="flex items-center mb-2">
+         <span class="bg-blue-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+          Express JS
+         </span>
+         <span class="bg-gray-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+          Prisma
+         </span>
+         <span class="bg-green-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded">
+          MongoDB
+         </span>
         </div>
-    </section>
-
-    <!-- Footer -->
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8">
-        <div class="container mx-auto text-center">
-            <div class="flex flex-wrap justify-center mb-6">
-                <a href="#services" class="mx-4 text-gray-400 hover:text-white transition">Services</a>
-                <a href="#about" class="mx-4 text-gray-400 hover:text-white transition">About</a>
-                <a href="#blog" class="mx-4 text-gray-400 hover:text-white transition">Blog</a>
-                <a href="#education" class="mx-4 text-gray-400 hover:text-white transition">Education</a>
-                <a href="#contact" class="mx-4 text-gray-400 hover:text-white transition">Contact</a>
-            </div>
-            <div class="flex justify-center space-x-4 mb-6">
-                <a href="https://facebook.com" class="text-gray-400 hover:text-white transition">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.406.593 24 1.325 24H12.82v-9.294H9.692V11.01h3.128V8.367c0-3.1 1.894-4.787 4.658-4.787 1.325 0 2.463.098 2.793.143v3.24H18.15c-1.617 0-1.931.77-1.931 1.897v2.486h3.862l-.504 3.695h-3.358V24h6.586C23.406 24 24 23.406 24 22.676V1.325C24 .593 23.406 0 22.675 0z"/>
-                    </svg>
-                </a>
-                <a href="https://twitter.com" class="text-gray-400 hover:text-white transition">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M23.954 4.569c-.885.39-1.83.654-2.825.775a4.932 4.932 0 0 0 2.163-2.723c-.951.555-2.005.959-3.127 1.175a4.92 4.92 0 0 0-8.384 4.482A13.978 13.978 0 0 1 1.671 3.149a4.93 4.93 0 0 0 1.523 6.574 4.903 4.903 0 0 1-2.23-.616c-.053 2.281 1.581 4.415 3.949 4.894a4.935 4.935 0 0 1-2.224.085 4.936 4.936 0 0 0 4.604 3.417A9.87 9.87 0 0 1 0 19.539 13.94 13.94 0 0 0 7.548 21c9.142 0 14.307-7.72 14.307-14.415 0-.22 0-.435-.015-.648a10.282 10.282 0 0 0 2.512-2.645z"/>
-                    </svg>
-                </a>
-                <a href="https://linkedin.com" class="text-gray-400 hover:text-white transition">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M19.557 3H4.443A1.444 1.444 0 0 0 3 4.443v15.114A1.444 1.444 0 0 0 4.443 21h15.114A1.444 1.444 0 0 0 21 19.557V4.443A1.444 1.444 0 0 0 19.557 3zM8.54 18.31H5.872v-8.64H8.54v8.64zm-1.33-9.938a1.597 1.597 0 1 1 0-3.193 1.597 1.597 0 0 1 0 3.193zm11.3 9.937h-2.666v-4.173c0-.993-.358-1.672-1.253-1.672-.683 0-1.09.468-1.27.919-.065.158-.082.377-.082.598v4.328h-2.666V9.67h2.666v1.176h.038a2.92 2.92 0 0 1 2.63-1.434c1.916 0 3.356 1.251 3.356 3.936v5.963z"/>
-                    </svg>
-                </a>
-            </div>
-            <p class="text-gray-400 text-sm">© 2024 Your Blog Name. All Rights Reserved.</p>
+        <h3 class="text-lg font-semibold mb-2">
+         Tutorial RESTful API Express dan MongoDB #8: Enable CORS di Express
+        </h3>
+        <div class="flex items-center">
+         <img alt="Author's profile picture" class="w-6 h-6 rounded-full mr-2" src="https://placehold.co/24x24"/>
+         <span class="text-gray-700">
+          Fika Ridaul Maulayya
+         </span>
         </div>
-    </footer>
+       </div>
+      </div>
+      <!-- Article Card -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+       <img alt="Express MongoDB tutorial image" class="w-full" src="https://placehold.co/600x400"/>
+       <div class="p-4">
+        <div class="flex items-center mb-2">
+         <span class="bg-blue-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+          Express JS
+         </span>
+         <span class="bg-gray-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+          Prisma
+         </span>
+         <span class="bg-green-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded">
+          MongoDB
+         </span>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">
+         Tutorial RESTful API Express dan MongoDB #7: Delete Data dari Database
+        </h3>
+        <div class="flex items-center">
+         <img alt="Author's profile picture" class="w-6 h-6 rounded-full mr-2" src="https://placehold.co/24x24"/>
+         <span class="text-gray-700">
+          Fika Ridaul Maulayya
+         </span>
+        </div>
+       </div>
+      </div>
+      <!-- Article Card -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+       <img alt="Express MongoDB tutorial image" class="w-full" src="https://placehold.co/600x400"/>
+       <div class="p-4">
+        <div class="flex items-center mb-2">
+         <span class="bg-blue-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+          Express JS
+         </span>
+         <span class="bg-gray-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+          Prisma
+         </span>
+         <span class="bg-green-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded">
+          MongoDB
+         </span>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">
+         Tutorial RESTful API Express dan MongoDB #8: Enable CORS di Express
+        </h3>
+        <div class="flex items-center">
+         <img alt="Author's profile picture" class="w-6 h-6 rounded-full mr-2" src="https://placehold.co/24x24"/>
+         <span class="text-gray-700">
+          Fika Ridaul Maulayya
+         </span>
+        </div>
+       </div>
+      </div>
+      <!-- Article Card -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+       <img alt="Express MongoDB tutorial image" class="w-full" src="https://placehold.co/600x400"/>
+       <div class="p-4">
+        <div class="flex items-center mb-2">
+         <span class="bg-blue-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+          Express JS
+         </span>
+         <span class="bg-gray-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+          Prisma
+         </span>
+         <span class="bg-green-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded">
+          MongoDB
+         </span>
+        </div>
+        <h3 class="text-lg font-semibold mb-2">
+         Tutorial RESTful API Express dan MongoDB #7: Delete Data dari Database
+        </h3>
+        <div class="flex items-center">
+         <img alt="Author's profile picture" class="w-6 h-6 rounded-full mr-2" src="https://placehold.co/24x24"/>
+         <span class="text-gray-700">
+          Fika Ridaul Maulayya
+         </span>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+   document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(function() {
+                document.getElementById("spinner").classList.add("hidden");
+                document.getElementById("content").classList.remove("hidden");
+            }, 2000); // Simulate loading time
 
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp,container-queries"></script>
-    <script>
-        // Mobile menu toggle
-        document.getElementById('menu-toggle').addEventListener('click', () => {
-            const menu = document.getElementById('menu');
-            menu.classList.toggle('hidden');
+            let slideIndex = 0;
+            showSlides();
+
+            function showSlides() {
+                let slides = document.getElementsByClassName("slideshow-image");
+                for (let i = 0; i < slides.length; i++) {
+                    slides[i].classList.remove("active");
+                }
+                slideIndex++;
+                if (slideIndex > slides.length) {
+                    slideIndex = 1;
+                }
+                slides[slideIndex - 1].classList.add("active");
+                setTimeout(showSlides, 3000); // Change image every 3 seconds
+            }
         });
-
-        // Carousel functionality
-        let currentIndex = 0;
-        const items = document.querySelectorAll('.carousel-item');
-        const totalItems = items.length;
-
-        document.getElementById('nextSlide').addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % totalItems;
-            updateCarousel();
-        });
-
-        document.getElementById('prevSlide').addEventListener('click', () => {
-            currentIndex = (currentIndex - 1 + totalItems) % totalItems;
-            updateCarousel();
-        });
-
-        function updateCarousel() {
-            const offset = -currentIndex * 100;
-            document.querySelector('.carousel-inner').style.transform = `translateX(${offset}%)`;
-        }
-    </script>
-</body>
+  </script>
+ </body>
 </html>
