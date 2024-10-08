@@ -71,6 +71,7 @@ class PoController extends Controller
                     })
                     ->where('a.order_no', $data[0]->order_no)
                     ->get();
+                dd($diffCost);
                 $uniqueAttributes = ["order_no" => $data[0]->order_no];
 
                 $existingRecord = DB::table('ordhead')->where($uniqueAttributes)->first();
