@@ -71,7 +71,6 @@ class PoController extends Controller
                     })
                     ->where('a.order_no', $data[0]->order_no)
                     ->get();
-                return $diffCost;
                 $uniqueAttributes = ["order_no" => $data[0]->order_no];
 
                 $existingRecord = DB::table('ordhead')->where($uniqueAttributes)->first();
@@ -203,7 +202,7 @@ class PoController extends Controller
                     //     ];
                     //     $historyMessage = 'Price differences found';
                     // }
-
+                    return "masuk sini";
                     foreach ($diffCost as $detail) {
                         DiffCostPo::where('order_no', $detail->order_no)
                             ->where('supplier', $detail->supplier)
