@@ -131,7 +131,8 @@ class PoController extends Controller
                     ];
 
                     // Check if there is a price difference
-                    $itemSupplier = DB::table('item_supplier')->where('supplier', $detail->supplier)
+                    $itemSupplier = DB::table('item_supplier')
+                        ->where('supplier', $detail->supplier)
                         ->where('sku', $detail->sku)
                         ->first();
 
@@ -203,7 +204,6 @@ class PoController extends Controller
                     //     $historyMessage = 'Price differences found';
                     // }
                     foreach ($diffCost as $detail) {
-                        return $detail;
 
                         DiffCostPo::where('order_no', $detail->order_no)
                             ->where('supplier', $detail->supplier)
