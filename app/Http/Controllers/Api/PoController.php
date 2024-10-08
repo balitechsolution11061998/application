@@ -71,7 +71,6 @@ class PoController extends Controller
                     })
                     ->where('a.order_no', $data[0]->order_no)
                     ->get();
-                dd($diffCost);
                 $uniqueAttributes = ["order_no" => $data[0]->order_no];
 
                 $existingRecord = DB::table('ordhead')->where($uniqueAttributes)->first();
@@ -131,6 +130,17 @@ class PoController extends Controller
                         "permanent_disc_pct" => $detail->permanent_disc_pct,
                     ];
 
+                    // Check if there is a price difference
+                    $itemSupplier = DB::table('item_supplier')->where('supplier', $detail->supplier)
+                        ->where('sku', $detail->sku)
+                        ->first();
+
+                    if ($itemSupplier && $itemSupplier->unit_cost != $detail->unit_cost) {
+                        // Update the quantity to 0 and unit cost to the price in item_supplier
+                        $ordSkuData['qty_ordered'] = 0;
+                        $ordSkuData['unit_cost'] = $itemSupplier->unit_cost;
+                    }
+
                     $uniqueAttributes = [
                         "order_no" => $detail->order_no,
                         "sku" => $detail->sku,
@@ -143,22 +153,24 @@ class PoController extends Controller
 
                 // Send email to the supplier
                 // Send email to the supplier only if the PO does not exist
-                // if (!$existingRecord) {
-                //     $supplierNo = (string)$data[0]->supplier;
-                //     $emailSupplier = User::where('username', $supplierNo)->get();
+                if (!$existingRecord) {
+                    $supplierNo = (string)$data[0]->supplier;
+                    $emailSupplier = User::where('username', $supplierNo)->get();
 
-                //     if ($emailSupplier->count() > 0) {
-                //         foreach ($emailSupplier as $value) {
-                //             $dataOrder['order_no'] = $data[0]->order_no;
-                //             $dataOrder['supplier_email'] = $value->email;
-                //             $dataOrder['supplier_name'] = $value->name;
-                //             $dataOrder['download_link'] = env('APP_URL') . "/po/pdf?id=" . $data[0]->order_no;
-                //             $dataOrder['detail_link'] = env('APP_URL') . "/po/pdf?id=" . $data[0]->order_no;
+                    if ($emailSupplier->count() > 0) {
+                        foreach ($emailSupplier as $value) {
+                            $dataOrder['order_no'] = $data[0]->order_no;
+                            $dataOrder['supplier_email'] = $value->email;
+                            $dataOrder['supplier_name'] = $value->name;
+                            $dataOrder['download_link'] = env('APP_URL') . "/po/pdf?id=" . $data[0]->order_no;
+                            $dataOrder['detail_link'] = env('APP_URL') . "/po/pdf?id=" . $data[0]->order_no;
 
-                //             event(new OrderStoredEvent($dataOrder));
-                //         }
-                //     }
-                // }
+                            // event(new OrderStoredEvent($dataOrder));
+                        }
+
+
+                    }
+                }
                 // $supplierNo = (string)$data[0]->supplier;
                 // $emailSupplier = User::where('username', $supplierNo)->get();
 
@@ -175,6 +187,22 @@ class PoController extends Controller
                 // }
 
                 if (collect($diffCost)->count() > 0) {
+                    // foreach ($diffCost as $detail) {
+                    //     DiffCostPo::where('order_no', $detail->order_no)
+                    //         ->where('supplier', $detail->supplier)
+                    //         ->where('sku', $detail->sku)
+                    //         ->delete();
+
+                    //     DiffCostPo::create((array)$detail);
+
+                    //     $errors[] = [
+                    //         'order_no' => $data[0]->order_no,
+                    //         'sku' => $data[0]->sku,
+                    //         'message' => 'Price differences found.'
+                    //     ];
+                    //     $historyMessage = 'Price differences found';
+                    // }
+
                     foreach ($diffCost as $detail) {
                         DiffCostPo::where('order_no', $detail->order_no)
                             ->where('supplier', $detail->supplier)
