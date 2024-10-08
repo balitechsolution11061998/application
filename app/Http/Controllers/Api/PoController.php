@@ -202,8 +202,9 @@ class PoController extends Controller
                     //     ];
                     //     $historyMessage = 'Price differences found';
                     // }
-                    return "masuk sini";
                     foreach ($diffCost as $detail) {
+                        return $detail;
+
                         DiffCostPo::where('order_no', $detail->order_no)
                             ->where('supplier', $detail->supplier)
                             ->where('sku', $detail->sku)
