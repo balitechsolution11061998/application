@@ -23,7 +23,7 @@ class PoController extends Controller
         try {
             $user = Auth::user();
             $requestData = $request->all();
-            $chunkSize = 500;
+            $chunkSize = 1000;
 
             // Store data to temp_po table in chunks
             foreach (array_chunk($requestData, $chunkSize) as $chunk) {
@@ -64,12 +64,66 @@ class PoController extends Controller
 
                 // Set default status
                 $status = $existingRecord ? $existingRecord->status : "Progress";
+                $incompleteFlag = false;  // Flag to track incomplete orders
 
                 // Check status_ind and update status accordingly
                 if ($data[0]->status_ind == 15 && $data[0]->cancelled_date) {
                     $status = 'Canceled';
                 } elseif ($data[0]->status_ind == 20) {
                     $status = 'Completed';
+                }
+
+                // Process ordsku details and update qty_received if needed
+                foreach ($data as $detail) {
+                    if ($detail->qty_ordered != $detail->qty_received) {
+                        $incompleteFlag = true;  // Set flag if quantities do not match
+                    }
+
+                    $ordSkuData = [
+                        "ordhead_id" => $existingRecord ? $existingRecord->id : null,
+                        "order_no" => $detail->order_no,
+                        "sku" => $detail->sku,
+                        "sku_desc" => $detail->sku_desc,
+                        "upc" => $detail->upc,
+                        "tag_code" => $detail->tag_code,
+                        "unit_cost" => $detail->unit_cost,
+                        "unit_retail" => $detail->unit_retail,
+                        "vat_cost" => $detail->vat_cost,
+                        "luxury_cost" => $detail->luxury_cost,
+                        "qty_ordered" => $detail->qty_ordered,
+                        "qty_received" => $detail->qty_received,  // Update qty_received directly
+                        "unit_discount" => $detail->unit_discount,
+                        "unit_permanent_discount" => $detail->unit_permanent_discount,
+                        "purchase_uom" => $detail->purchase_uom,
+                        "supp_pack_size" => $detail->supp_pack_size,
+                        "permanent_disc_pct" => $detail->permanent_disc_pct,
+                    ];
+
+                    $uniqueAttributes = [
+                        "order_no" => $detail->order_no,
+                        "sku" => $detail->sku,
+                        "upc" => $detail->upc
+                    ];
+
+                    // Check if price difference exists
+                    $itemSupplier = DB::table('item_supplier')
+                        ->where('supplier', $detail->supplier)
+                        ->where('sku', $detail->sku)
+                        ->first();
+
+                    if ($itemSupplier && $itemSupplier->unit_cost != $detail->unit_cost) {
+                        // Update qty_ordered and unit_cost if there's a difference
+                        $ordSkuData['qty_ordered'] = 0;
+                        $ordSkuData['unit_cost'] = $itemSupplier->unit_cost;
+                    }
+
+                    // Insert or update in ordsku table
+                    DB::table('ordsku')->updateOrInsert($uniqueAttributes, $ordSkuData);
+                }
+
+                // Set status to "Incompleted" if any qty_ordered != qty_received
+                if ($incompleteFlag) {
+                    $status = 'Incompleted';
                 }
 
                 // Prepare dataOrder with updated status
@@ -99,54 +153,8 @@ class PoController extends Controller
                 // Insert or update in ordhead table
                 if ($existingRecord) {
                     DB::table('ordhead')->where('id', $existingRecord->id)->update($dataOrder);
-                    $ordheadId = $existingRecord->id;
                 } else {
-                    $ordheadId = DB::table('ordhead')->insertGetId(array_merge($uniqueAttributes, $dataOrder));
-                }
-
-                // Process ordsku details and update qty_received if needed
-                foreach ($data as $detail) {
-                    $ordSkuData = [
-                        "ordhead_id" => $ordheadId,
-                        "order_no" => $detail->order_no,
-                        "sku" => $detail->sku,
-                        "sku_desc" => $detail->sku_desc,
-                        "upc" => $detail->upc,
-                        "tag_code" => $detail->tag_code,
-                        "unit_cost" => $detail->unit_cost,
-                        "unit_retail" => $detail->unit_retail,
-                        "vat_cost" => $detail->vat_cost,
-                        "luxury_cost" => $detail->luxury_cost,
-                        "qty_ordered" => $detail->qty_ordered,
-                        "qty_received" => $detail->qty_received, // Update qty_received directly
-                        "unit_discount" => $detail->unit_discount,
-                        "unit_permanent_discount" => $detail->unit_permanent_discount,
-                        "purchase_uom" => $detail->purchase_uom,
-                        "supp_pack_size" => $detail->supp_pack_size,
-                        "permanent_disc_pct" => $detail->permanent_disc_pct,
-                    ];
-
-                    $uniqueAttributes = [
-                        "order_no" => $detail->order_no,
-                        "sku" => $detail->sku,
-                        "upc" => $detail->upc
-                    ];
-
-                    // Check if price difference exists
-                    $itemSupplier = DB::table('item_supplier')
-                        ->where('supplier', $detail->supplier)
-                        ->where('sku', $detail->sku)
-                        ->first();
-
-                    if ($itemSupplier && $itemSupplier->unit_cost != $detail->unit_cost) {
-                        // Update qty_ordered and unit_cost if there's a difference
-                        $ordSkuData['qty_ordered'] = 0;
-                        $ordSkuData['unit_cost'] = $itemSupplier->unit_cost;
-                    }
-
-                    // Insert or update in ordsku table
-                    DB::table('ordsku')->updateOrInsert($uniqueAttributes, $ordSkuData);
-                    $dataOrder['ord_detail'][] = $ordSkuData;
+                    DB::table('ordhead')->insert($dataOrder);
                 }
 
                 // Handle price differences and add to DiffCostPo table
@@ -205,5 +213,6 @@ class PoController extends Controller
             'different_count' => count($errors),
         ]);
     }
+
 
 }
