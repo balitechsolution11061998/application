@@ -7,7 +7,9 @@
         {{ Breadcrumbs::render('users') }}
     @endsection
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet" />
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.css"
+        integrity="sha512-n/6qsbBjjZik70avxNu5SS3tXMbWby7M7xiN/43zHKB2iPTcPaB98Y7+QN0pHWIDa2EDRCW5/d7fSB5XgBdTnw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         /* Hide default checkbox */
         input[type="checkbox"] {
@@ -175,13 +177,103 @@
             /* Bootstrap text-muted color */
         }
 
+        .introjs-tooltip {
+            box-sizing: content-box;
+            position: absolute;
+            visibility: visible;
+            padding: 10px;
+            background-color: #333;
+            /* Set the background color to black */
+            color: #fff;
+            /* Set the text color to white */
+            min-width: 200px;
+            max-width: 300px;
+            border-radius: 3px;
+            box-shadow: 0 1px 10px rgba(0, 0, 0, .4);
+            -webkit-transition: opacity 0.1s ease-out;
+            -moz-transition: opacity 0.1s ease-out;
+            -ms-transition: opacity 0.1s ease-out;
+            -o-transition: opacity 0.1s ease-out;
+            transition: opacity 0.1s ease-out;
+        }
+
+        .introjs-helperClass {
+            border-radius: 10px;
+            /* Add rounded corners */
+            background-color: #333;
+            /* Set the background color to black */
+            color: #fff;
+            /* Set the text color to white */
+            padding: 10px;
+            /* Add some padding */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            /* Add a box shadow */
+            font-family: 'Open Sans', sans-serif;
+            /* Set a pretty font family */
+            font-size: 18px;
+            /* Set a larger font size */
+        }
+
+        .introjs-tooltip {
+            font-family: 'Open Sans', sans-serif;
+            /* Set a pretty font family */
+            font-size: 16px;
+            /* Set a larger font size */
+        }
+
+        .introjs-button {
+            background-color: black;
+            /* Set the background color to black */
+            color: #fff;
+            /* Set the text color to white */
+            border: none;
+            /* Remove the border */
+            padding: 10px 20px;
+            /* Add some padding */
+            border-radius: 3px;
+            /* Add rounded corners */
+            cursor: pointer;
+            /* Change the cursor to a pointer */
+        }
+
+
+
+        .prev-button,
+        .next-button,
+        .skip-button,
+        .done-button {
+            margin: 10px;
+            /* Add some margin between buttons */
+        }
+
+        .introjs-checkbox {
+            margin: 10px; /* Add some margin to the checkbox */
+            font-family: 'Open Sans', sans-serif; /* Set a pretty font family */
+            font-size: 16px; /* Set a larger font size */
+        }
+
+        .introjs-checkbox input[type="checkbox"] {
+            margin: 0 10px; /* Add some margin to the checkbox input */
+            vertical-align: middle; /* Vertically align the checkbox input */
+        }
+
+        .introjs-checkbox label {
+            cursor: pointer; /* Change the cursor to a pointer */
+        }
+
         @media (max-width: 768px) {
-            .btn-sm {
-                width: 100%;
+            #users_table {
+                font-size: 12px;
             }
 
-            .font-responsive {
-                font-size: 2vw;
+            #users_table th,
+            #users_table td {
+                padding: 5px;
+            }
+
+            #users_table th:nth-child(2),
+            #users_table td:nth-child(2) {
+                display: none;
             }
         }
     </style>
@@ -214,10 +306,13 @@
             <div class="card-title d-flex flex-wrap justify-content-between w-100">
                 <div class="d-flex align-items-center position-relative my-1 w-100">
                     <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5 text-muted"></i>
-                    <input type="text" id="search-box" class="form-control form-control-solid form-control-lg w-100 ps-13" placeholder="Search Users" />
+                    <input type="text" id="search-box"
+                        class="form-control form-control-solid form-control-lg w-100 ps-13"
+                        placeholder="Search Users" />
                 </div>
                 <div class="w-100 d-flex justify-content-end">
-                    <button type="button" class="btn btn-success btn-sm d-sm-block" data-bs-toggle="modal" data-bs-target="#importUsersModal">
+                    <button type="button" class="btn btn-success btn-sm d-sm-block" data-bs-toggle="modal"
+                        data-bs-target="#importUsersModal">
                         Import Users
                     </button>
                     <button type="button" class="btn btn-primary btn-sm" onclick="tambahUser()">
@@ -546,7 +641,9 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.2/toastify.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"></script>
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js"
+            integrity="sha512-VTd65gL0pCLNPv5Bsf5LNfKbL8/odPq0bLQ4u226UNmT7SzE4xk+5ckLNMuksNTux/pDLMtxYuf0Copz8zMsSA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="{{ asset('js/helpers/datatables.js') }}"></script>
         <script src="{{ asset('js/users/tables.js') }}"></script>
         <script>
@@ -733,55 +830,6 @@
                 }
             });
 
-            function deleteUser(id) {
-                // Use SweetAlert for confirmation
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'Cancel'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Proceed with the AJAX request to delete the user
-                        $.ajax({
-                            url: '/users/' + id, // The delete URL
-                            type: 'DELETE',
-                            data: {
-                                _token: '{{ csrf_token() }}' // Include CSRF token for security
-                            },
-                            success: function(response) {
-                                // Use Toastify to display a success message
-                                Toastify({
-                                    text: response.message,
-                                    duration: 3000,
-                                    close: true,
-                                    gravity: "top", // Positioning
-                                    position: "right",
-                                    backgroundColor: "#4fbe87",
-                                }).showToast();
-
-                                // Reload the data table to reflect the deletion
-                                $('#users_table').DataTable().ajax.reload();
-                            },
-                            error: function(xhr) {
-                                // Use Toastify to display an error message
-                                Toastify({
-                                    text: 'Failed to delete user: ' + xhr.responseText,
-                                    duration: 3000,
-                                    close: true,
-                                    gravity: "top", // Positioning
-                                    position: "right",
-                                    backgroundColor: "#f3616d",
-                                }).showToast();
-                            }
-                        });
-                    }
-                });
-            }
 
 
 
@@ -837,68 +885,6 @@
             });
 
             // Handle the form submission
-
-
-
-
-
-
-
-
-
-
-
-            function deleteEmail(username, email) {
-                // SweetAlert confirmation
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: `You won't be able to revert this! Delete email: ${email}?`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'Cancel'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Perform the email deletion using an AJAX request
-                        $.ajax({
-                            url: `/users/delete-email`,
-                            type: 'POST',
-                            data: {
-                                username: username
-                                email: email,
-                                _token: $('meta[name="csrf-token"]').attr('content') // CSRF token
-                            },
-                            success: function(response) {
-                                // Show success notification using Toastify
-                                Toastify({
-                                    text: "Email deleted successfully",
-                                    duration: 3000,
-                                    gravity: "top", // top or bottom
-                                    position: "right", // left, center, or right
-                                    backgroundColor: "#28a745", // success color
-                                    close: true
-                                }).showToast();
-
-                                // Reload or update the DataTable to reflect the changes
-                                $('#myDataTable').DataTable().ajax.reload();
-                            },
-                            error: function(xhr) {
-                                // Show error notification using Toastify
-                                Toastify({
-                                    text: "Failed to delete email",
-                                    duration: 3000,
-                                    gravity: "top", // top or bottom
-                                    position: "right", // left, center, or right
-                                    backgroundColor: "#dc3545", // error color
-                                    close: true
-                                }).showToast();
-                            }
-                        });
-                    }
-                });
-            }
         </script>
     @endpush
 </x-default-layout>
