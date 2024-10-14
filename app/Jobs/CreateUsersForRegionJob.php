@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Jobs;
 
 use App\Models\User;
@@ -28,6 +27,14 @@ class CreateUsersForRegionJob implements ShouldQueue
     {
         $this->regionId = $regionId; // Set the region ID for the job
         $this->usersPerRegion = $usersPerRegion; // Number of users to create for this region
+    }
+
+    /**
+     * Generate a random 9-digit username.
+     */
+    private function generateRandomUsername(): string
+    {
+        return str_pad(rand(0, 999999999), 9, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -91,11 +98,14 @@ class CreateUsersForRegionJob implements ShouldQueue
                 $address = $indonesianAddresses[array_rand($indonesianAddresses)];
                 $phoneNumber = $indonesianPhoneNumbers[array_rand($indonesianPhoneNumbers)];
 
+                // Generate a random 9-digit username
+                $username = $this->generateRandomUsername();
+
                 // Add user data to the batch
                 $plainPassword = ($email === $this->specialEmail) ? 'Superman2000@' : 'password';
                 $usersBatch[] = [
                     'name' => $fullName,
-                    'username' => strtolower($firstName) . $index,
+                    'username' => $username,
                     'profile_picture' => '/storage/logo.png',
                     'email' => $email,
                     'password' => Hash::make($plainPassword),

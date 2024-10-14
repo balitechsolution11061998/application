@@ -93,37 +93,7 @@
         }
 
         /* Mobile styles */
-        @media (max-width: 768px) {
-            .table-wrapper {
-                display: none;
-            }
 
-            .list-view {
-                display: block;
-            }
-
-            .list-item {
-                border-bottom: 1px solid #ddd;
-                padding: 15px;
-                margin-bottom: 10px;
-            }
-
-            .list-item:last-child {
-                border-bottom: none;
-            }
-
-            .list-item .item-title {
-                font-weight: bold;
-            }
-
-            .list-item .item-content {
-                margin: 5px 0;
-            }
-
-            #strengthBar {
-                transition: width 0.3s;
-            }
-        }
 
         /* Custom Badge Styles */
         .badge {
@@ -187,6 +157,33 @@
         .file-input {
             display: none;
         }
+
+        .email-container {
+            padding: 5px;
+        }
+
+        .email-badge {
+            font-size: 0.9em;
+            padding: 5px 10px;
+        }
+
+        .additional-emails {
+            font-size: 0.8em;
+            padding-top: 5px;
+            display: inline-block;
+            color: #6c757d;
+            /* Bootstrap text-muted color */
+        }
+
+        @media (max-width: 768px) {
+            .btn-sm {
+                width: 100%;
+            }
+
+            .font-responsive {
+                font-size: 2vw;
+            }
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.2/toastify.min.css">
 
@@ -214,17 +211,13 @@
     <div class="card shadow-sm">
         <!--begin::Card header-->
         <div class="card-header border-0 pt-6 bg-light">
-            <div class="card-title d-flex justify-content-between w-100">
-                <div class="d-flex align-items-center position-relative my-1">
+            <div class="card-title d-flex flex-wrap justify-content-between w-100">
+                <div class="d-flex align-items-center position-relative my-1 w-100">
                     <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5 text-muted"></i>
-                    <input type="text" id="search-box"
-                        class="form-control form-control-solid form-control-lg w-250px ps-13"
-                        placeholder="Search Users" />
+                    <input type="text" id="search-box" class="form-control form-control-solid form-control-lg w-100 ps-13" placeholder="Search Users" />
                 </div>
-
-                <div>
-                    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal"
-                        data-bs-target="#importUsersModal">
+                <div class="w-100 d-flex justify-content-end">
+                    <button type="button" class="btn btn-success btn-sm d-sm-block" data-bs-toggle="modal" data-bs-target="#importUsersModal">
                         Import Users
                     </button>
                     <button type="button" class="btn btn-primary btn-sm" onclick="tambahUser()">
@@ -518,10 +511,41 @@
     </div>
 
 
+    <!-- Add Email Modal -->
+    <div class="modal fade" id="addEmailModal" tabindex="-1" aria-labelledby="addEmailModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addEmailModalLabel">Add Email for User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addEmailForm">
+                        <div class="mb-3">
+                            <label for="newEmailInput" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="newEmailInput" name="email"
+                                placeholder="Enter email" required>
+                        </div>
+                        <!-- Hidden field to store the user ID -->
+                        <input type="hidden" id="username" name="username">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="addEmailForm" class="btn btn-primary">Add Email</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 
     @push('scripts')
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.2/toastify.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"></script>
 
         <script src="{{ asset('js/helpers/datatables.js') }}"></script>
         <script src="{{ asset('js/users/tables.js') }}"></script>
@@ -529,155 +553,26 @@
             $(document).ready(function() {
 
 
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
+
                 var selectedRow = null;
                 var page = 1;
                 var loading = false;
                 var itemsPerPage = 10;
-                fetchRoles();
-                fetchRegions();
-
-                $('#roles').select2({
-                    placeholder: "Select roles", // Optional placeholder
-                    width: '100%', // Ensures Select2 takes full width
-                    allowClear: true // Adds the option to clear selections
-                });
-
-
-                $('#select-all').on('click', function() {
-                    var isChecked = $(this).prop('checked');
-                    $('.user-checkbox').prop('checked', isChecked);
-                });
-
-
-                // Add event listener for password toggle
-                $('#users_table').on('click', '.toggle-password', function() {
-                    const password = $(this).data('password');
-                    $(this).prev('.password-mask').text(password);
-                });
-                const passwordInput = document.getElementById('password');
-                const confirmPasswordInput = document.getElementById('confirmPassword');
-                const passwordStrengthBar = document.getElementById('passwordStrengthBar');
-                const passwordError = document.getElementById('passwordError');
-                const togglePasswordIcons = document.querySelectorAll('.toggle-password');
-
-                // Toggle Password Visibility
-                togglePasswordIcons.forEach(icon => {
-                    icon.addEventListener('click', function() {
-                        const passwordField = document.getElementById(this.getAttribute(
-                            'data-password'));
-                        const type = passwordField.getAttribute('type') === 'password' ? 'text' :
-                            'password';
-                        passwordField.setAttribute('type', type);
-                        this.classList.toggle('fa-eye');
-                        this.classList.toggle('fa-eye-slash');
-                    });
-                });
-
-                // Password Strength Calculation
-                passwordInput.addEventListener('input', function() {
-                    const strength = calculatePasswordStrength(this.value);
-                    passwordStrengthBar.style.width = `${strength}%`;
-                    passwordStrengthBar.setAttribute('aria-valuenow', strength);
-
-                    if (strength < 50) {
-                        passwordStrengthBar.classList.remove('bg-success');
-                        passwordStrengthBar.classList.add('bg-danger');
-                    } else {
-                        passwordStrengthBar.classList.remove('bg-danger');
-                        passwordStrengthBar.classList.add('bg-success');
-                    }
-                });
-
-                // Password Matching Validation
-                confirmPasswordInput.addEventListener('input', function() {
-                    if (this.value !== passwordInput.value) {
-                        passwordError.style.display = 'block';
-                    } else {
-                        passwordError.style.display = 'none';
-                    }
-                });
 
 
 
 
-                // Password Strength Calculation Function
-                function calculatePasswordStrength(password) {
-                    let strength = 0;
-                    if (password.length >= 8) strength += 25;
-                    if (/[A-Z]/.test(password)) strength += 25;
-                    if (/[a-z]/.test(password)) strength += 25;
-                    if (/[0-9]/.test(password)) strength += 15;
-                    if (/[\W_]/.test(password)) strength += 10;
-                    return strength;
-                }
 
-                function generatePassword(wordCount = 2, symbolCount = 1, numberCount = 1) {
-                    const words = ['apple', 'banana', 'orange', 'grape', 'mango', 'kiwi', 'peach', 'berry', 'melon',
-                        'lemon'
-                    ];
-                    const symbols = ['!', '@', '#', '$', '%', '&', '*'];
-                    const numbers = '0123456789';
 
-                    let password = '';
 
-                    // Tambahkan kata-kata secara acak
-                    for (let i = 0; i < wordCount; i++) {
-                        const word = words[Math.floor(Math.random() * words.length)];
-                        password += word;
-                    }
 
-                    // Tambahkan simbol secara acak
-                    for (let i = 0; i < symbolCount; i++) {
-                        const symbol = symbols[Math.floor(Math.random() * symbols.length)];
-                        password += symbol;
-                    }
 
-                    // Tambahkan angka secara acak
-                    for (let i = 0; i < numberCount; i++) {
-                        const number = numbers[Math.floor(Math.random() * numbers.length)];
-                        password += number;
-                    }
-
-                    return password;
-                }
 
                 // Event listener untuk tombol generate password
-                document.getElementById('generatePasswordBtn').addEventListener('click', function() {
-                    const wordList = ['apple', 'banana', 'orange', 'grape', 'mango', 'kiwi', 'peach', 'berry',
-                        'melon', 'lemon'
-                    ];
-                    const symbolList = ['!', '@', '#', '$', '%', '&', '*'];
-                    const length = 2; // Atur jumlah kata yang digunakan
 
-                    const generatedPassword = generateDynamicPassword(wordList, symbolList, length);
-                    const passwordInput = document.getElementById('password');
-                    const confirmPasswordInput = document.getElementById('confirmPassword');
-
-                    passwordInput.value = generatedPassword;
-                    confirmPasswordInput.value = generatedPassword;
-
-                    checkPasswordStrength(generatedPassword);
-                    validatePasswordsMatch();
-                });
 
                 // Toggle between table and list view based on screen size
-                $(window).on('resize', function() {
-                    if ($(window).width() <= 768) {
-                        $('.table-wrapper').hide();
-                        $('.list-view').show();
-                        if (!$('.list-view').find('#load-more').length) {
-                            loadData(page);
-                        }
-                    } else {
-                        $('.table-wrapper').show();
-                        $('.list-view').hide();
-                    }
-                }).trigger('resize');
+
 
                 // Handle load more button click
                 $(document).on('click', '#load-more', function() {
@@ -700,104 +595,7 @@
                     $(this).toggleClass('fa-chevron-down fa-chevron-up');
                 });
 
-                $('#saveUser').click(function(e) {
-                    e.preventDefault();
-                    console.log("Saving user details...");
 
-                    // Create a FormData object to handle both user data and file upload
-                    let formData = new FormData();
-                    formData.append('id', $('#userId').val());
-                    formData.append('username', $('#username').val());
-                    formData.append('name', $('#name').val());
-                    formData.append('email', $('#email').val());
-                    formData.append('password', $('#password').val());
-                    formData.append('password_confirmation', $('#confirmPassword').val());
-                    formData.append('address', $('#address').val());
-                    formData.append('region_id', $('#region').val());
-
-                    // Get selected roles as an array
-                    let selectedRoles = $('#roles')
-                        .val(); // Assuming #roles is a <select> with 'multiple' attribute
-                    if (selectedRoles) {
-                        selectedRoles.forEach(role => {
-                            formData.append('roles[]',
-                                role); // Append each role to FormData as an array
-                        });
-                    }
-
-                    // Append the profile picture if it exists
-                    const fileInput = document.getElementById('profilePicture');
-                    if (fileInput.files.length > 0) {
-                        formData.append('profile_picture', fileInput.files[0]);
-                    }
-
-                    // Validate form data
-                    if (!formData.get('username') || !formData.get('name') || !formData.get('email') || formData
-                        .get('password') !== formData.get('password_confirmation')) {
-                        $('#userFormError').show();
-                        return;
-                    }
-
-                    $('#userFormError').hide();
-
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        text: "You are about to submit the user details.",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Yes, save it!',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                url: '/management/users/store', // Adjust this to your API route
-                                type: 'POST',
-                                data: formData,
-                                contentType: false, // Important for FormData
-                                processData: false, // Important for FormData
-                                success: function(response) {
-                                    Toastify({
-                                        text: "User saved successfully!",
-                                        duration: 3000,
-                                        gravity: "top",
-                                        position: "right",
-                                        backgroundColor: "#28a745",
-                                    }).showToast();
-
-                                    $('#modalForm').modal('hide');
-                                    $('#userForm')[0].reset();
-                                    $('#users_table').DataTable().ajax.reload();
-                                },
-                                error: function(xhr) {
-                                    let errorMessage =
-                                        "Error saving user. Please try again.";
-
-                                    // Check if the response contains JSON data
-                                    try {
-                                        let responseJSON = JSON.parse(xhr.responseText);
-                                        if (responseJSON.message) {
-                                            errorMessage = responseJSON.message;
-                                        } else if (responseJSON.errors) {
-                                            // Collect all error messages if there are validation errors
-                                            errorMessage = Object.values(responseJSON
-                                                .errors).flat().join(', ');
-                                        }
-                                    } catch (e) {
-                                        // Handle parsing error or non-JSON responses
-                                        console.error("Error parsing response JSON:", e);
-                                    }
-
-                                    Toastify({
-                                        text: errorMessage,
-                                        duration: 3000,
-                                        gravity: "top",
-                                        position: "right",
-                                        backgroundColor: "#dc3545",
-                                    }).showToast();
-                                }
-                            });
-                        }
-                    });
-                });
 
                 // upload file csv/xlsx supplier
                 const dropZoneCsv = document.getElementById('dropZoneCsv');
@@ -841,7 +639,8 @@
                 // Function to handle the file
                 function handleFile(file) {
                     const validTypes = ['text/csv',
-                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    ];
                     const validExtensions = ['.csv', '.xlsx'];
                     const fileExtension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
 
@@ -904,107 +703,7 @@
 
 
 
-                // upload profile
-                const dropzone = document.getElementById('profilePictureDropzone');
-                const fileInput = document.getElementById('profilePicture');
-                const preview = document.getElementById('profilePicturePreview');
-                const progressWrapper = document.getElementById('uploadProgressWrapper');
-                const progressBar = document.getElementById('uploadProgressBar');
-                const removeButton = document.getElementById('removePictureButton');
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-                fileInput.addEventListener('change', handleFileSelect);
-                dropzone.addEventListener('click', () => fileInput.click());
-                dropzone.addEventListener('dragover', (event) => {
-                    event.preventDefault();
-                    dropzone.classList.add('bg-light');
-                });
-                dropzone.addEventListener('dragleave', () => dropzone.classList.remove('bg-light'));
-                dropzone.addEventListener('drop', (event) => {
-                    event.preventDefault();
-                    dropzone.classList.remove('bg-light');
-                    handleFileSelect({
-                        target: {
-                            files: event.dataTransfer.files
-                        }
-                    });
-                });
-
-                removeButton.addEventListener('click', removeImage);
-
-                function handleFileSelect(event) {
-                    const file = event.target.files[0];
-                    if (file) {
-                        if (!file.type.startsWith('image/')) {
-                            alert('Please select an image file.');
-                            return;
-                        }
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            preview.src = e.target.result;
-                            preview.style.display = 'block';
-                            removeButton.style.display = 'inline-block'; // Show the remove button
-                        };
-                        reader.readAsDataURL(file);
-
-                        progressWrapper.style.display = 'block';
-                        uploadFile(file);
-                    }
-                }
-
-                function uploadFile(file) {
-                    const formData = new FormData();
-                    formData.append('profile_picture', file);
-
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', '/upload-profile-picture', true);
-                    xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
-
-                    xhr.upload.onprogress = (event) => {
-                        if (event.lengthComputable) {
-                            const percentComplete = (event.loaded / event.total) * 100;
-                            progressBar.style.width = percentComplete + '%';
-                            progressBar.setAttribute('aria-valuenow', percentComplete);
-                        }
-                    };
-
-                    xhr.onload = () => {
-                        if (xhr.status === 200) {
-                            console.log('Image uploaded successfully!');
-                        } else {
-                            console.error('Image upload failed: ' + xhr.statusText);
-                        }
-                        progressWrapper.style.display = 'none';
-                    };
-
-                    xhr.onerror = () => {
-                        console.error('Image upload failed due to a network error.');
-                        progressWrapper.style.display = 'none';
-                    };
-
-                    xhr.send(formData);
-                }
-
-                function removeImage() {
-                    preview.src = '';
-                    preview.style.display = 'none';
-                    removeButton.style.display = 'none';
-                    progressWrapper.style.display = 'none';
-                    fileInput.value = ''; // Clear file input
-
-                    // Optionally, you can send a request to remove the image from the server
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', '/remove-profile-picture', true);
-                    xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
-                    xhr.onload = () => {
-                        if (xhr.status === 200) {
-                            console.log('Image removed successfully!');
-                        } else {
-                            console.error('Image removal failed: ' + xhr.statusText);
-                        }
-                    };
-                    xhr.send();
-                }
 
                 $('#modalForm').on('hidden.bs.modal', function() {
                     $(this).find('form')[0].reset(); // Reset all form inputs
@@ -1016,61 +715,12 @@
                     $('#passwordError').hide(); // Hide password mismatch error
                     $('#userFormError').hide(); // Hide general form error
                 });
+
+
             });
 
-            function fetchRegions() {
-                // Fetch regions from your API or server
-                fetch('/regions/data') // Update the URL to your API endpoint
-                    .then(response => response.json())
-                    .then(data => {
-                        const regionSelect = document.getElementById('region');
-                        regionSelect.innerHTML = '<option value="">Select Region</option>'; // Reset options
 
-                        data.forEach(region => {
-                            const option = document.createElement('option');
-                            option.value = region.id;
-                            option.textContent = region.name;
-                            regionSelect.appendChild(option);
-                        });
-                    })
-                    .catch(error => console.error('Error fetching regions:', error));
-            }
 
-            function editUser(id) {
-                $.ajax({
-                    url: '/management/users/' + id + '/edit', // Update the URL to match your route
-                    method: 'GET',
-                    success: function(response) {
-                        console.log(response.roles, 'response');
-                        // Populate the form fields
-                        $('#userId').val(response.id);
-                        $('#username').val(response.username);
-                        $('#name').val(response.name);
-                        $('#email').val(response.email);
-                        $('#roles').val(response.roles).trigger(
-                            'change'
-                        ); // Set selected values and trigger change event to update the select2 or similar plugins if used
-                        $('#address').val(response.address);
-                        $('#region').val(response.region).trigger(
-                            'change'
-                        );
-
-                        // Clear previous error messages
-                        $('#passwordError').hide();
-                        $('#userFormError').hide();
-
-                        // Clear password fields
-                        $('#password').val('');
-                        $('#confirmPassword').val('');
-
-                        // Show the modal
-                        $("#modalForm").modal('show');
-                    },
-                    error: function() {
-                        alert('Error fetching user data.');
-                    }
-                });
-            }
 
             $('#changePasswordCheckbox').on('change', function() {
                 if ($(this).is(':checked')) {
@@ -1098,7 +748,7 @@
                     if (result.isConfirmed) {
                         // Proceed with the AJAX request to delete the user
                         $.ajax({
-                            url: '/management/users/' + id, // The delete URL
+                            url: '/users/' + id, // The delete URL
                             type: 'DELETE',
                             data: {
                                 _token: '{{ csrf_token() }}' // Include CSRF token for security
@@ -1135,57 +785,13 @@
 
 
 
-            function fetchRoles() {
-                $.ajax({
-                    url: '/roles/getRoles', // Ensure this matches the route defined
-                    method: 'GET',
-                    success: function(response) {
-                        // Clear existing options
-                        $('#roles').empty();
-                        // Populate dropdown with new options
-                        response.forEach(function(role) {
-                            console.log(role);
-
-                            $('#roles').append(new Option(role.name, role.name));
-                        });
-                    },
-                    error: function() {
-                        alert('Error fetching roles.');
-                    }
-                });
-            }
 
 
-            function tambahUser() {
-                $("#modalForm").modal('show');
-                $('#passwordFields').show();
-                $('#checboxForm').hide();
 
-            }
 
-            function generateDynamicPassword(wordList, symbolList, length) {
-                const numbers = '0123456789';
 
-                // Pilih kata acak dari wordList
-                const selectedWords = [];
-                for (let i = 0; i < length; i++) {
-                    selectedWords.push(wordList[Math.floor(Math.random() * wordList.length)]);
-                }
 
-                // Pilih simbol dan angka acak
-                const symbol = symbolList[Math.floor(Math.random() * symbolList.length)];
-                const number = numbers[Math.floor(Math.random() * numbers.length)];
 
-                // Gabungkan kata-kata, simbol, dan angka
-                const password = `${selectedWords.join('')}${symbol}${number}`;
-                return password;
-            }
-
-            // Function to open the Change Password modal and set the user ID
-            function changePassword(userId) {
-                $('#user_id').val(userId); // Set the user ID in the hidden input field
-                $('#changePasswordModal').modal('show'); // Show the modal
-            }
 
             // Function to update password strength
             function updatePasswordStrength(password) {
@@ -1231,90 +837,67 @@
             });
 
             // Handle the form submission
-            $('#changePasswordForm').on('submit', function(e) {
-                e.preventDefault(); // Prevent the default form submission
 
-                var userId = $('#user_id').val();
-                var password = $('#password_change').val();
-                var confirmPassword = $('#confirm_password_change').val();
-                var old_password = $('#old_password').val();
 
-                if (password !== confirmPassword) {
-                    // Show error message if passwords do not match
-                    Toastify({
-                        text: "Passwords do not match!",
-                        duration: 3000,
-                        close: true,
-                        gravity: "top", // Positioning
-                        position: "right",
-                        backgroundColor: "#f3616d",
-                    }).showToast();
-                    return;
-                }
 
-                $.ajax({
-                    url: '/management/users/change-password', // The URL to your endpoint
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}', // Include CSRF token for security
-                        user_id: userId,
-                        old_password: old_password,
-                        password: password,
-                        confirmPassword: confirmPassword,
-                    },
-                    success: function(response) {
-                        Toastify({
-                            text: response.message,
-                            duration: 3000,
-                            close: true,
-                            gravity: "top", // Positioning
-                            position: "right",
-                            backgroundColor: "#4fbe87",
-                        }).showToast();
 
-                        // Close the modal
-                        $('#changePasswordModal').modal('hide');
-                    },
-                    error: function(xhr) {
-                        Toastify({
-                            text: 'Failed to change password: ' + xhr.responseText,
-                            duration: 3000,
-                            close: true,
-                            gravity: "top", // Positioning
-                            position: "right",
-                            backgroundColor: "#f3616d",
-                        }).showToast();
+
+
+
+
+
+
+
+            function deleteEmail(username, email) {
+                // SweetAlert confirmation
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: `You won't be able to revert this! Delete email: ${email}?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Perform the email deletion using an AJAX request
+                        $.ajax({
+                            url: `/users/delete-email`,
+                            type: 'POST',
+                            data: {
+                                username: username
+                                email: email,
+                                _token: $('meta[name="csrf-token"]').attr('content') // CSRF token
+                            },
+                            success: function(response) {
+                                // Show success notification using Toastify
+                                Toastify({
+                                    text: "Email deleted successfully",
+                                    duration: 3000,
+                                    gravity: "top", // top or bottom
+                                    position: "right", // left, center, or right
+                                    backgroundColor: "#28a745", // success color
+                                    close: true
+                                }).showToast();
+
+                                // Reload or update the DataTable to reflect the changes
+                                $('#myDataTable').DataTable().ajax.reload();
+                            },
+                            error: function(xhr) {
+                                // Show error notification using Toastify
+                                Toastify({
+                                    text: "Failed to delete email",
+                                    duration: 3000,
+                                    gravity: "top", // top or bottom
+                                    position: "right", // left, center, or right
+                                    backgroundColor: "#dc3545", // error color
+                                    close: true
+                                }).showToast();
+                            }
+                        });
                     }
                 });
-            });
-
-
-
-            function checkPasswordStrength(password) {
-                const strengthBar = document.getElementById('passwordStrengthBar');
-                let strength = 0;
-
-                // Cek berbagai kriteria kekuatan password
-                if (password.length >= 8) strength += 25;
-                if (/[A-Z]/.test(password)) strength += 25; // huruf kapital
-                if (/[0-9]/.test(password)) strength += 25; // angka
-                if (/[\W_]/.test(password)) strength += 25; // simbol
-
-                // Update progress bar
-                strengthBar.style.width = `${strength}%`;
-                strengthBar.setAttribute('aria-valuenow', strength);
-            }
-
-            function validatePasswordsMatch() {
-                const password = document.getElementById('password').value;
-                const confirmPassword = document.getElementById('confirmPassword').value;
-                const errorDiv = document.getElementById('passwordError');
-
-                if (password !== confirmPassword) {
-                    errorDiv.style.display = 'block';
-                } else {
-                    errorDiv.style.display = 'none';
-                }
             }
         </script>
     @endpush

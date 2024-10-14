@@ -21,8 +21,8 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'username',
         'name',
+        'username',
         'email',
         'password',
         'password_show',
@@ -58,5 +58,10 @@ class User extends Authenticatable
     public function region()
     {
         return $this->belongsTo(Region::class);
+    }
+
+    public function userEmails()
+    {
+        return $this->hasMany(UserEmail::class, 'username', 'username'); // Assuming 'username' is the foreign key
     }
 }

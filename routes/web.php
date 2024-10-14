@@ -37,9 +37,9 @@ Route::get('/home', [HomeController::class, 'index'])
     ->middleware('auth');
 
 // Grouping Management User routes under 'management/users'
-Route::prefix('management/users')
+Route::prefix('/users')
     ->middleware('auth')
-    ->as('management.users.') // Set a name prefix for all routes in this group
+    ->as('users.') // Set a name prefix for all routes in this group
     ->group(function () {
         // User Management Dashboard
         Route::get('/', [UserController::class, 'index'])
@@ -68,7 +68,14 @@ Route::prefix('management/users')
         // User profile
         Route::get('/profile', [UserController::class, 'profile'])
             ->name('profile'); // 'management.users.profile'
+
+        Route::post('/add-email', [UserController::class, 'addEmail'])
+            ->name('add-email'); // 'management.users.changePassword'
+
+        Route::post('/delete-email', [UserController::class, 'deleteEmail'])
+            ->name('delete-email'); // 'management.users.changePassword'
     });
+
 
 // Role management routes
 Route::prefix('roles')
@@ -84,7 +91,7 @@ Route::prefix('roles')
     });
 
 
-    Route::prefix('permissions')
+Route::prefix('permissions')
     ->middleware(['auth'])  // Middleware to ensure the user is authenticated
     ->as('permissions.')    // Route name prefix for easier reference
     ->group(function () {
@@ -101,8 +108,6 @@ Route::prefix('suppliers')
     ->group(function () {
         // Route for importing suppliers via CSV/XLSX
         Route::post('/import', [UserController::class, 'import'])->name('import');
-
-
     });
 
 
@@ -124,3 +129,6 @@ Route::post('/remove-profile-picture', [ProfileController::class, 'removePicture
 // Verify Superadmin password route
 Route::post('/verify-superadmin-password', [UserController::class, 'verifySuperadminPassword'])
     ->name('management.verifySuperadminPassword');
+    Route::get('/docs', function () {
+        return view('docs.index'); // File Markdown bisa Anda buat di sini
+    });

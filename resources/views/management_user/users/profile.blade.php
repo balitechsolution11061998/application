@@ -109,7 +109,7 @@
                     <button type="button" class="btn-close text-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                <form id="changePasswordForm" action="{{ route('management.users.changePassword') }}" method="POST">
+                <form id="changePasswordForm" action="{{ route('users.changePassword') }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <!-- Hidden input for user ID -->

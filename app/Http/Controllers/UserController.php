@@ -9,10 +9,12 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
+use Spatie\Activitylog\Models\Activity;
 
 class UserController extends Controller
 {
@@ -65,12 +67,36 @@ class UserController extends Controller
         return view('management_user.users.profile', compact('user'));
     }
 
+    public function deleteEmail(Request $request, $id)
+    {
+        try {
+            // Find the user by ID, throw a 404 error if the user doesn't exist
+            $user = User::findOrFail($id);
+
+            // Check if the email exists in the user's emails
+            if ($user->emails()->where('email', $request->email)->exists()) {
+                // Perform the delete operation
+                $user->emails()->where('email', $request->email)->delete();
+
+                // Return a success response
+                return response()->json(['success' => 'Email deleted successfully']);
+            } else {
+                // Return a 404 error if the email is not found
+                return response()->json(['error' => 'Email not found'], 404);
+            }
+        } catch (\Exception $e) {
+            // Handle any unexpected exceptions and return a 500 error
+            return response()->json(['error' => 'An error occurred while deleting the email'], 500);
+        }
+    }
+
+
     public function getUsersData(Request $request)
     {
         if ($request->ajax()) {
             // Query to get user data with roles and region
-            $data = User::with(['roles', 'region']) // Eager load roles and region
-                        ->select('id', 'profile_picture', 'username', 'name', 'email', 'password_show', 'region_id', 'created_at');
+            $data = User::with(['roles', 'region', 'userEmails']) // Eager load roles, region, and userEmails
+                ->select('id', 'profile_picture', 'username', 'name', 'email', 'password_show', 'region_id', 'created_at');
 
             return Datatables::of($data)
                 ->addColumn('roles', function ($row) {
@@ -80,6 +106,11 @@ class UserController extends Controller
                 ->addColumn('region', function ($row) {
                     // Fetch and format region name
                     return $row->region ? $row->region->name : 'N/A';
+                })
+                ->addColumn('userEmails', function ($row) {
+                    // Fetch user's emails where status is 1
+                    $emails = $row->userEmails->where('is_primary', 1)->pluck('email')->implode(', '); // Assuming 'is_primary' is the status
+                    return $emails ?: 'No active emails'; // Display message if no emails found
                 })
                 ->addColumn('actions', function ($row) {
                     // Fetch roles for the current user
@@ -118,19 +149,19 @@ class UserController extends Controller
 
 
 
+
     public function changePassword(Request $request)
     {
         // Validate incoming request data
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'current_password' => 'required',
-            'new_password' => 'required|min:8|confirmed', // Ensure confirmation password matches
+            'new_password' => 'required|min:8', // Ensure confirmation password matches
         ]);
 
         try {
             // Find the user by ID
             $user = User::findOrFail($request->user_id);
-
             // Verify the old (current) password
             if (!Hash::check($request->current_password, $user->password)) {
                 return response()->json([
@@ -171,6 +202,56 @@ class UserController extends Controller
     }
 
 
+    public function addEmail(Request $request)
+    {
+        // Validate the request inputs
+        $request->validate([
+            'email' => 'required|email',
+            'username' => 'required|exists:users,username', // Ensure the username exists in the users table
+        ]);
+
+        try {
+            // Check if the email already exists for the given username
+            $existingEmail = DB::table('user_emails')
+                ->where('username', $request->username)
+                ->where('email', $request->email)
+                ->first();
+
+            if ($existingEmail) {
+                return response()->json(['success' => false, 'message' => 'Email already exists for this user.']);
+            }
+
+            // Insert the new email for the user
+            DB::table('user_emails')->insert([
+                'username' => $request->username,
+                'email' => $request->email,
+            ]);
+
+            // Log the action using Spatie activity log
+            activity()
+                ->causedBy(auth()->user()) // The user performing the action
+                ->performedOn(User::where('username', $request->username)->first()) // Targeted user
+                ->withProperties([
+                    'username' => $request->username,
+                    'email' => $request->email
+                ]) // Additional data you want to log
+                ->log('Added a new email to the user'); // The message you want to log
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            // Log the exception in Spatie activity log
+            activity()
+                ->causedBy(auth()->user()) // The user performing the action
+                ->withProperties([
+                    'error' => $e->getMessage(),
+                    'username' => $request->username,
+                    'email' => $request->email
+                ])
+                ->log('Failed to add a new email due to an error');
+
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
 
 
 
