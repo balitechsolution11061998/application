@@ -37,7 +37,7 @@ return [
                 [
                     'label'          => 'User',          // Child item label
                     'type'           => 'item',          // Type item (clickable)
-                    'route'          => 'management.users.index', // Route for user management
+                    'route'          => 'users.index', // Route for user management
                     'active'         => [],              // Define when this item is active
                     'permission'     => [],              // Permissions required for this item
                     'permissionType' => 'gate',          // Permission type
@@ -73,7 +73,7 @@ return [
             'permissionType' => 'gate',
             'icon'           => 'fas',
             'iconName'       => 'fa-user',
-            'route'          => 'management.users.profile',
+            'route'          => 'users.profile',
             'active'         => [],
             'iconPath'       => 4,
 

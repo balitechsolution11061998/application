@@ -18,22 +18,53 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        $this->validateLogin($request);
+        try {
+            $this->validateLogin($request);
 
-        if ($this->attemptLogin($request)) {
-            // Log the login event
-            $user = Auth::user();
-            $user->is_logged_in = true;
-            $user->save();
+            if ($this->attemptLogin($request)) {
+                $user = Auth::user();
+                $user->is_logged_in = true;
+                $user->save();
 
-            $this->logEvent($user, 'login', $request);
+                // Log the successful login
+                LoginLog::create([
+                    'user_id' => $user->id,
+                    'email' => $user->email,
+                    'ip_address' => $request->ip(),
+                    'status' => 'success',
+                    'logged_at' => now(),
+                ]);
 
-            // Redirect to intended location or dashboard
-            return redirect()->intended('/home');
+                return response()->json([
+                    'message' => 'Login successful',
+                    'success' => true,
+                    'user' => $user,
+                ], 200);
+            }
+
+            // Log failed login attempt
+            LoginLog::create([
+                'email' => $request->email,
+                'ip_address' => $request->ip(),
+                'status' => 'failed',
+                'logged_at' => now(),
+            ]);
+
+            return response()->json([
+                'error' => 'Invalid credentials',
+            ], 401);
+        } catch (\Exception $e) {
+            LoginLog::create([
+                'email' => $request->email,
+                'ip_address' => $request->ip(),
+                'status' => 'error',
+                'logged_at' => now(),
+            ]);
+
+            return response()->json([
+                'error' => 'An error occurred during the login process. Please try again.',
+            ], 500);
         }
-
-        // If login fails, return with error
-        return $this->sendFailedLoginResponse($request);
     }
 
     protected function validateLogin(Request $request)
@@ -74,7 +105,6 @@ class LoginController extends Controller
             $user->is_logged_in = false;
             $user->save();
 
-            $this->logEvent($user, 'logout', $request);
         }
 
         Auth::logout();

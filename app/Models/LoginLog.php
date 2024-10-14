@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class LoginLog extends Model
 {
     use HasFactory;
-
-    protected $fillable = ['user_id', 'event', 'ip_address', 'user_agent'];
+    protected $table = 'login_logs';
+    protected $fillable = [
+        'user_id',
+        'email',
+        'ip_address',
+        'status',
+        'logged_at',
+    ];
 }

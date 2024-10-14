@@ -9,11 +9,11 @@ Breadcrumbs::for('home', function (BreadcrumbTrail $trail) {
 });
 
 Breadcrumbs::for('users', function (BreadcrumbTrail $trail) {
-    $trail->push('Users', route('management.users.index'));
+    $trail->push('Users', route('users.index'));
 });
 
 Breadcrumbs::for('user_profile', function (BreadcrumbTrail $trail) {
-    $trail->push('Users', route('management.users.profile'));
+    $trail->push('Users', route('users.profile'));
 });
 
 Breadcrumbs::for('permissions', function (BreadcrumbTrail $trail) {

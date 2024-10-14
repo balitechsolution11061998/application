@@ -182,6 +182,23 @@
                 <a class="text-gray-800 hover:text-blue-500" href="#">
                     Contact
                 </a>
+                <!-- Profile Dropdown -->
+                <div class="relative">
+                    <button class="flex items-center space-x-2 text-gray-800 hover:text-blue-500 focus:outline-none">
+                        <img src="https://via.placeholder.com/30" alt="Profile" class="rounded-full">
+                        <span>Profile</span>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M5.23 7.21A.75.75 0 016.3 6.3l3.72 3.72a.75.75 0 010 1.06l-3.72 3.72a.75.75 0 01-1.06-1.06l2.65-2.65-2.65-2.65a.75.75 0 010-1.06z"></path></svg>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div class="absolute right-0 z-20 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block">
+                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-500 hover:text-white">Settings</a>
+                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-500 hover:text-white">Logout</a>
+                    </div>
+                </div>
+                <!-- Login Button -->
+                <a href="{{ route('login.form') }}" class="px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-md transition duration-300">
+                    Login
+                </a>
             </div>
         </div>
     </nav>
