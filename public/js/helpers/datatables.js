@@ -29,7 +29,8 @@ function dataTableHelper(tableId, ajaxUrl, columnsConfig, orderColumn = 4, searc
             {
                 targets: columnsConfig.length - 1, // Disable sorting for the 'Actions' column
                 orderable: false,
-            }
+            },
+
         ]
     });
 

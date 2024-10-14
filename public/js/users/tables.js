@@ -1,12 +1,25 @@
 dataTableHelper("#users_table", "/users/data", [
     {
         data: "id",
-        name: "id",
-        render: function (data) {
-            return `
-<input type="checkbox" class="user-checkbox" id="user-${data}" value="${data}">
-<label for="user-${data}"></label>
-`;
+        name: function () {
+            if ($(window).width() < 768) {
+                // adjust the width value to your liking
+                return "Select"; // or any other name you prefer
+            } else {
+                return "id";
+            }
+        },
+        render: function (data, type, row) {
+            if ($(window).width() < 768) {
+                // On mobile mode, hide the checkbox and show only the name
+                return `<span>${row.name}</span>`;
+            } else {
+                // On desktop mode, show the checkbox and label text
+                return `
+                <input type="checkbox" class="user-checkbox" id="user-${data}" value="${data}">
+                <label for="user-${data}" data-intro="Click here to view user details" data-step="1"></label>
+                `;
+            }
         },
         orderable: false,
         searchable: false,
@@ -160,7 +173,46 @@ dataTableHelper("#users_table", "/users/data", [
     },
 ]);
 
-// Custom styles for tooltip
+if ($(window).width() < 768) {
+    introJs()
+        .setOptions({
+            steps: [
+                {
+                    intro: "Click + to view details", // Set the intro text to English
+                    element: document.querySelector("#users_table th:nth-child(1)"),
+                    position: "bottom", // Position the step at the bottom of the element
+                    highlightClass: "introjs-helperClass", // Add a custom class for styling
+                    title: "Welcome", // Add a title to the step
+                },
+            ],
+            overlayOpacity: 0.8, // Set the overlay opacity
+            showStepNumbers: false, // Hide the step numbers
+            showBullets: false, // Hide the bullets
+            exitOnOverlayClick: true, // Exit the intro on overlay click
+            nextLabel: "Click to view details", // Set the next button label to English
+            prevLabel: "Previous", // Set the previous button label
+            skipLabel: "Skip", // Set the skip button label
+            doneLabel: "Done", // Set the done button label
+            buttons: {
+                prev: '<button class="introjs-button prev-button">Previous</button>',
+                next: '<button class="introjs-button next-button" id="show-details-button">Click to view details</button>',
+                skip: '<button class="introjs-button skip-button">Skip</button>',
+                done: '<button class="introjs-button done-button">Done</button>',
+            },
+            dontShowAgain: {
+                label: "Don't show again" // Set the "Don't show again" checkbox label to English
+            }, // Add the "Don't show again" checkbox
+        })
+        .oncomplete(function () {
+            // Add event listener to the "Click to view details" button
+            $("#show-details-button").on("click", function () {
+                // Show the details of the data
+                // You can replace this with your own logic to show the details
+                alert("Details of the data will be shown here");
+            });
+        })
+        .start();
+}
 const tooltipStyles = `
 <style>
     .tooltip-inner {
@@ -257,13 +309,13 @@ $(document).ready(function () {
         $(".user-checkbox").prop("checked", isChecked);
     });
 
-    $('#changePasswordForm').on('submit', function(e) {
+    $("#changePasswordForm").on("submit", function (e) {
         e.preventDefault(); // Prevent the default form submission
 
-        var userId = $('#user_id').val();
-        var password = $('#password_change').val();
-        var confirmPassword = $('#confirm_password_change').val();
-        var old_password = $('#old_password').val();
+        var userId = $("#user_id").val();
+        var password = $("#password_change").val();
+        var confirmPassword = $("#confirm_password_change").val();
+        var old_password = $("#old_password").val();
         var csrfToken = $('input[name="_token"]').val(); // Retrieve the CSRF token value
 
         if (password !== confirmPassword) {
@@ -280,8 +332,8 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: '/users/change-password', // The URL to your endpoint
-            type: 'POST',
+            url: "/users/change-password", // The URL to your endpoint
+            type: "POST",
             data: {
                 _token: csrfToken, // Include the CSRF token value
                 user_id: userId,
@@ -289,7 +341,7 @@ $(document).ready(function () {
                 new_password: password,
                 confirmPassword: confirmPassword,
             },
-            success: function(response) {
+            success: function (response) {
                 Toastify({
                     text: response.message,
                     duration: 3000,
@@ -300,18 +352,18 @@ $(document).ready(function () {
                 }).showToast();
 
                 // Close the modal
-                $('#changePasswordModal').modal('hide');
+                $("#changePasswordModal").modal("hide");
             },
-            error: function(xhr) {
+            error: function (xhr) {
                 Toastify({
-                    text: 'Failed to change password: ' + xhr.responseText,
+                    text: "Failed to change password: " + xhr.responseText,
                     duration: 3000,
                     close: true,
                     gravity: "top", // Positioning
                     position: "right",
                     backgroundColor: "#f3616d",
                 }).showToast();
-            }
+            },
         });
     });
 
@@ -810,4 +862,107 @@ function changePassword(userId) {
     $("#changePasswordModal").modal("show"); // Show the modal
 }
 
+function deleteEmail(username, email) {
+    // SweetAlert confirmation
+    Swal.fire({
+        title: "Are you sure?",
+        text: `You won't be able to revert this! Delete email: ${email}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "Cancel",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Perform the email deletion using an AJAX request
+            $.ajax({
+                url: `/users/delete-email`,
+                type: "POST",
+                data: {
+                    username: username,
+                    email: email,
+                    _token: $('meta[name="csrf-token"]').attr("content"), // CSRF token
+                },
+                success: function (response) {
+                    // Show success notification using Toastify
+                    Toastify({
+                        text: "Email deleted successfully",
+                        duration: 3000,
+                        gravity: "top", // top or bottom
+                        position: "right", // left, center, or right
+                        backgroundColor: "#28a745", // success color
+                        close: true,
+                    }).showToast();
 
+                    // Reload or update the DataTable to reflect the changes
+                    $("#myDataTable").DataTable().ajax.reload();
+                },
+                error: function (xhr) {
+                    // Show error notification using Toastify
+                    Toastify({
+                        text: "Failed to delete email",
+                        duration: 3000,
+                        gravity: "top", // top or bottom
+                        position: "right", // left, center, or right
+                        backgroundColor: "#dc3545", // error color
+                        close: true,
+                    }).showToast();
+                },
+            });
+        }
+    });
+}
+
+function deleteUser(id) {
+    // Use SweetAlert for confirmation
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "Cancel",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Proceed with the AJAX request to delete the user
+            const token = $('input[name="_token"]').val();
+
+            $.ajax({
+                url: "/users/" + id, // The delete URL
+                type: "DELETE",
+                data: {
+                    _token: token,
+                    _method: "DELETE",
+                },
+                success: function (response) {
+                    // Use Toastify to display a success message
+                    Toastify({
+                        text: response.message,
+                        duration: 3000,
+                        close: true,
+                        gravity: "top", // Positioning
+                        position: "right",
+                        backgroundColor: "#4fbe87",
+                    }).showToast();
+
+                    // Reload the data table to reflect the deletion
+                    $("#users_table").DataTable().ajax.reload();
+                },
+                error: function (xhr) {
+                    // Use Toastify to display an error message
+                    Toastify({
+                        text: "Failed to delete user: " + xhr.responseText,
+                        duration: 3000,
+                        close: true,
+                        gravity: "top", // Positioning
+                        position: "right",
+                        backgroundColor: "#f3616d",
+                    }).showToast();
+                },
+            });
+        }
+    });
+}
