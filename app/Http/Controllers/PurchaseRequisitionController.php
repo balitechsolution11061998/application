@@ -14,6 +14,7 @@ class PurchaseRequisitionController extends Controller
     //
     public function store(Request $request)
     {
+        return $request->all();
         // DB::beginTransaction(); // Uncomment this to enable transactions if necessary
         try {
             // Get the last PurchaseRequisition ID
@@ -29,39 +30,39 @@ class PurchaseRequisitionController extends Controller
             $purchaseRequisition->region_id = 4;
             $purchaseRequisition->department_id = 9;
             $purchaseRequisition->nama_department = "development";
-            $purchaseRequisition->nama_pembuat = $request['nama_pembuat'];
-            $purchaseRequisition->tanggalpr = $request['tanggal_pr'];
-            $purchaseRequisition->tanggal_update_step_pr = $request['tanggal_pr'];
+            $purchaseRequisition->nama_pembuat = $request->nama_pembuat;
+            $purchaseRequisition->tanggalpr = $request->tanggal_pr;
+            $purchaseRequisition->tanggal_update_step_pr = $request->tanggal_pr;
             $purchaseRequisition->kondisiBarang = 'new';
-            $purchaseRequisition->keteranganKondisiBarang = $request['keteranganKondisiBarang'];
+            $purchaseRequisition->keteranganKondisiBarang = $request->keteranganKondisiBarang;
             $purchaseRequisition->pembayaran = "kredit";
             $purchaseRequisition->status = 'progress';
             $purchaseRequisition->steps = "departmentheadho";
-            $purchaseRequisition->nama_pr = $request['nama_pr'];
+            $purchaseRequisition->nama_pr = $request->nama_pr;
             $purchaseRequisition->departement_pemesan = 9;
             $purchaseRequisition->save(); // Save the new purchase requisition
 
             // Save PurchaseRequisitionDetails
-            foreach ($request['detail'] as $tempDetail) {
+            foreach ($request->detail as $tempDetail) {
                 $detail = new PurchaseRequisitionDetail();
-                $detail->purchase_requisition_id = $purchaseRequisition['id'];
-                $detail->purchase_requisition_detail_name = $tempDetail['purchase_requisition_detail_name'];
-                $detail->kebutuhan = $tempDetail['kebutuhan'];
-                $detail->keterangan_kebutuhan = $tempDetail['keterangan_kebutuhan'];
-                $detail->qty = $tempDetail['qty'];
+                $detail->purchase_requisition_id = $purchaseRequisition->id;
+                $detail->purchase_requisition_detail_name = $tempDetail->purchase_requisition_detail_name;
+                $detail->kebutuhan = $tempDetail->kebutuhan;
+                $detail->keterangan_kebutuhan = $tempDetail->keterangan_kebutuhan;
+                $detail->qty = $tempDetail->qty;
                 $detail->hargaPerPcs = 0;
                 $detail->hargaPerPcsRp = 0;
                 $detail->hargaTotal = 0;
                 $detail->hargaTotalRp = 'Rp ' . number_format(0, 0, ',', '.');
-                $detail->satuan = $tempDetail['satuan'];
+                $detail->satuan = $tempDetail->satuan;
                 $detail->save();
             }
 
             // Save PurchaseRequisitionImages
-            foreach ($request['image'] as $tempImage) {
+            foreach ($request->image as $tempImage) {
                 $image = new PurchaseRequisitionImage();
-                $image->purchase_requisition_id = $purchaseRequisition['id'];
-                $image->name = $tempImage['name'];
+                $image->purchase_requisition_id = $purchaseRequisition->id;
+                $image->name = $tempImage->name;
                 $image->save();
             }
 
