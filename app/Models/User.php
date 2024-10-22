@@ -9,12 +9,16 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Laratrust\Contracts\LaratrustUser;
 use Laratrust\Traits\HasRolesAndPermissions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
-class User extends Authenticatable
+class User extends Authenticatable implements LaratrustUser
 {
     use HasApiTokens, HasFactory, Notifiable;
     use HasRolesAndPermissions;
 
+    protected static $logAttributes = ['*'];
+    protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
     /**
      * The attributes that are mass assignable.
      *
@@ -63,5 +67,10 @@ class User extends Authenticatable
     public function userEmails()
     {
         return $this->hasMany(UserEmail::class, 'username', 'username'); // Assuming 'username' is the foreign key
+    }
+
+    public function userStore()
+    {
+        return $this->hasMany(UserStore::class, 'user_id', 'username'); // Assuming 'username' is the foreign key
     }
 }

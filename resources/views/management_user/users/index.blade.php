@@ -247,18 +247,24 @@
         }
 
         .introjs-checkbox {
-            margin: 10px; /* Add some margin to the checkbox */
-            font-family: 'Open Sans', sans-serif; /* Set a pretty font family */
-            font-size: 16px; /* Set a larger font size */
+            margin: 10px;
+            /* Add some margin to the checkbox */
+            font-family: 'Open Sans', sans-serif;
+            /* Set a pretty font family */
+            font-size: 16px;
+            /* Set a larger font size */
         }
 
         .introjs-checkbox input[type="checkbox"] {
-            margin: 0 10px; /* Add some margin to the checkbox input */
-            vertical-align: middle; /* Vertically align the checkbox input */
+            margin: 0 10px;
+            /* Add some margin to the checkbox input */
+            vertical-align: middle;
+            /* Vertically align the checkbox input */
         }
 
         .introjs-checkbox label {
-            cursor: pointer; /* Change the cursor to a pointer */
+            cursor: pointer;
+            /* Change the cursor to a pointer */
         }
 
         @media (max-width: 768px) {
@@ -276,27 +282,76 @@
                 display: none;
             }
         }
+
+        /* Style for the card */
+        .card.loading {
+            background-color: rgba(255, 255, 255, 0.9);
+            /* Slight transparency */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            /* Soft shadow */
+            text-align: center;
+            width: 200px;
+            height: 150px;
+        }
+
+        /* Spinner container */
+        .spinner-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Spinner animation */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .double-bounce1,
+        .double-bounce2 {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #007bff;
+            /* Bootstrap primary color */
+            opacity: 0.6;
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        .double-bounce2 {
+            animation-delay: -1s;
+        }
+
+        /* Bounce animation */
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: scale(0);
+            }
+
+            50% {
+                transform: scale(1);
+            }
+        }
+
+        /* Loading text */
+        .spinner-container p {
+            color: #333;
+            font-size: 14px;
+            margin: 0;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.2/toastify.min.css">
 
-    <div class="card-body py-4">
-        <div class="row">
-            @foreach ($rolesWithUserCount as $role)
-                <div class="col-md-4 mb-4">
-                    <div class="p-3 rounded shadow-sm d-flex align-items-center bg-light">
-                        <div class="icon-wrapper rounded-circle bg-primary text-white d-flex justify-content-center align-items-center me-3"
-                            style="width: 50px; height: 50px;">
-                            <i class="fas fa-users fs-4"></i>
-                        </div>
-                        <div>
-                            <h5 class="mb-1 fw-bold">{{ $role->name }}</h5>
-                            <p class="mb-0">{{ rupiah_format($role->users_count) }} users</p>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
 
 
     <!--begin::Card-->
@@ -646,6 +701,8 @@
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="{{ asset('js/helpers/datatables.js') }}"></script>
         <script src="{{ asset('js/users/tables.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/hashids@2.2.10/dist/hashids.min.js"></script>
+
         <script>
             $(document).ready(function() {
 
