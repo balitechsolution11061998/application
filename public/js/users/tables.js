@@ -99,7 +99,8 @@ dataTableHelper("#users_table", "/users/data", [
     {
         data: "roles",
         name: "roles",
-        render: function (data) {
+        render: function (data, type, row) {
+            console.log(row.roles, "row");
             const roleIcons = {
                 administrator: "fa-user-shield",
                 superadministrator: "fa-user-crown",
@@ -109,13 +110,21 @@ dataTableHelper("#users_table", "/users/data", [
             };
 
             return data
-                .split(", ")
                 .map(
                     (role) => `
-<span class="badge rounded-pill bg-dark text-white me-2" style="font-size: 0.9em; display: inline-flex; align-items: center; padding: 0.4em 0.7em; white-space: nowrap;">
-    <i class="fas ${roleIcons[role] || "fa-user"} me-1"></i> ${role}
-</span>
-`
+                <div class="d-inline-flex align-items-center me-2">
+                    <span class="badge rounded-pill bg-dark text-white" style="font-size: 0.9em; display: inline-flex; align-items: center; padding: 0.4em 0.7em 0.4em 1.2em; white-space: nowrap;">
+                        <i class="fas ${
+                            roleIcons[role.name] || "fa-user"
+                        } me-1"></i> ${role.name}
+                        <button class="btn btn-sm btn-danger ms-2" style="border-radius: 50%; padding: 0.2em 0.5em; line-height: 1;" role="button" aria-label="Delete ${
+                            role.name
+                        }" onclick="deleteRole('${role.id}',${
+                        row.id
+                    })"><i class="fas fa-times"></i></button>
+                    </span>
+                </div>
+            `
                 )
                 .join(" ");
         },
@@ -151,24 +160,27 @@ dataTableHelper("#users_table", "/users/data", [
                     : "No active emails";
 
             return `
-    <div class="btn-group" role="group">
-        <button type="button" class="btn btn-sm btn-primary" onclick="editUser(${row.id})" title="Edit User">
-            <i class="fas fa-edit"></i>
-        </button>
-        <button type="button" class="btn btn-sm btn-danger" onclick="deleteUser(${row.id})" title="Delete User">
-            <i class="fas fa-trash"></i>
-        </button>
-        <button type="button" class="btn btn-sm btn-warning" onclick="changePassword(${row.id})" title="Change Password">
-            <i class="fas fa-key"></i>
-        </button>
-        <button type="button" class="btn btn-sm btn-info" data-toggle="tooltip" title="<div class='tooltip-content'>${emailList}</div>" data-html="true">
-            <i class="fas fa-envelope"></i>
-        </button>
-        <button type="button" class="btn btn-sm btn-secondary btn-add-email" title="Add Email" onclick="addEmail(${row.username})">
-                <i class="fas fa-plus"></i>
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-sm btn-primary" onclick="editUser (${row.username})" title="Edit User">
+                <i class="fas fa-edit"></i>
             </button>
-    </div>
-    `;
+            <button type="button" class="btn btn-sm btn-danger" onclick="deleteUser (${row.id})" title="Delete User">
+                <i class="fas fa-trash"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-warning" onclick="changePassword(${row.id})" title="Change Password">
+                <i class="fas fa-key"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-info" data-toggle="tooltip" title="<div class='tooltip-content'>${emailList}</div>" data-html="true">
+                <i class="fas fa-envelope"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-secondary btn-add-email" title="Add Email" onclick="addEmail(${row.username})">
+                    <i class="fas fa-plus"></i>
+                </button>
+            <button type="button" class="btn btn-sm btn-success" title="Store" onclick="addStore(${row.username})">
+                <i class="fas fa-store"></i>
+            </button>
+        </div>
+        `;
         },
     },
 ]);
@@ -179,7 +191,9 @@ if ($(window).width() < 768) {
             steps: [
                 {
                     intro: "Click + to view details", // Set the intro text to English
-                    element: document.querySelector("#users_table th:nth-child(1)"),
+                    element: document.querySelector(
+                        "#users_table th:nth-child(1)"
+                    ),
                     position: "bottom", // Position the step at the bottom of the element
                     highlightClass: "introjs-helperClass", // Add a custom class for styling
                     title: "Welcome", // Add a title to the step
@@ -200,7 +214,7 @@ if ($(window).width() < 768) {
                 done: '<button class="introjs-button done-button">Done</button>',
             },
             dontShowAgain: {
-                label: "Don't show again" // Set the "Don't show again" checkbox label to English
+                label: "Don't show again", // Set the "Don't show again" checkbox label to English
             }, // Add the "Don't show again" checkbox
         })
         .oncomplete(function () {
@@ -578,13 +592,55 @@ $(document).ready(function () {
     });
 });
 
-function addEmail(username) {
-    console.log(username, "username");
-    // Open a modal to add an email for the given user ID
-    $("#addEmailModal").modal("show");
+// function addEmail(username) {
+//     console.log(username, "username");
+//     // Open a modal to add an email for the given user ID
+//     $("#addEmailModal").modal("show");
 
-    // You can load user data or just provide an input field to add an email
-    $("#username").val(username); // Set userId to a hidden input in the modal
+//     // You can load user data or just provide an input field to add an email
+//     $("#username").val(username); // Set userId to a hidden input in the modal
+// }
+
+async function addEmail(username) {
+    // Show the spinner while the request is being processed
+    showSpinner();
+
+    try {
+        // Make a GET request to the specified URL with the user ID as a parameter
+        const response = await fetch(`/users/${username}/addemail`, {
+            method: "GET", // Use GET as you're retrieving data
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector(
+                    'meta[name="csrf-token"]'
+                ).content, // Include CSRF token if needed
+            },
+        });
+
+        // Check if the response is OK (status code 200)
+        if (!response.ok) {
+            throw new Error("Network response was not ok"); // Handle network errors
+        }
+
+        // Parse the response as text (since it's an HTML view)
+        const htmlContent = await response.text();
+
+        // Inject the HTML content into the page
+        document.body.innerHTML = htmlContent;
+
+        // Optionally, remove the spinner once the content is loaded
+        removeSpinner();
+    } catch (error) {
+        // Handle unexpected errors
+        alert("An unexpected error occurred. Please try again later.");
+        console.error("Error:", error); // Log error for debugging
+
+        // Optionally, remove the spinner if an error occurs
+        removeSpinner();
+    } finally {
+        // Optionally redirect to a different URL after loading the content
+        // Change this to the appropriate URL you want to navigate to
+        window.location.href = `/users/${username}/addemail`; // Change this if needed
+    }
 }
 
 // Handle form submission
@@ -654,11 +710,49 @@ $("#addEmailForm").on("submit", function (e) {
     });
 });
 
-function tambahUser() {
-    $("#modalForm").modal("show");
-    $("#passwordFields").show();
-    $("#checboxForm").hide();
+async function tambahUser(username) {
+
+     showSpinner();
+
+     try {
+         // Make a GET request to the specified URL with the user ID as a parameter
+         const response = await fetch(`/users/${username}/formUser`, {
+             method: "GET", // Use GET as you're retrieving data
+             headers: {
+                 "X-CSRF-TOKEN": document.querySelector(
+                     'meta[name="csrf-token"]'
+                 ).content, // Include CSRF token if needed
+             },
+         });
+
+         // Check if the response is OK (status code 200)
+         if (!response.ok) {
+             throw new Error("Network response was not ok"); // Handle network errors
+         }
+
+         // Parse the response as text (since it's an HTML view)
+         const htmlContent = await response.text();
+
+         // Inject the HTML content into the page
+         document.body.innerHTML = htmlContent;
+
+         // Optionally, remove the spinner once the content is loaded
+         removeSpinner();
+     } catch (error) {
+         // Handle unexpected errors
+         alert("An unexpected error occurred. Please try again later.");
+         console.error("Error:", error); // Log error for debugging
+
+         // Optionally, remove the spinner if an error occurs
+         removeSpinner();
+     } finally {
+         // Optionally redirect to a different URL after loading the content
+         // Change this to the appropriate URL you want to navigate to
+         window.location.href = `/users/${username}/formUser`; // Change this if needed
+     }
 }
+
+
 
 function fetchRegions() {
     // Fetch regions from your API or server
@@ -824,36 +918,78 @@ function calculatePasswordStrength(password) {
     if (/[\W_]/.test(password)) strength += 10;
     return strength;
 }
-function editUser(id) {
-    $.ajax({
-        url: "/users/" + id + "/edit", // Update the URL to match your route
-        method: "GET",
-        success: function (response) {
-            console.log(response.roles, "response");
-            // Populate the form fields
-            $("#userId").val(response.id);
-            $("#username").val(response.username);
-            $("#name").val(response.name);
-            $("#email").val(response.email);
-            $("#roles").val(response.roles).trigger("change"); // Set selected values and trigger change event to update the select2 or similar plugins if used
-            $("#address").val(response.address);
-            $("#region").val(response.region).trigger("change");
+// function editUser(id) {
+//     $.ajax({
+//         url: "/users/" + id + "/edit", // Update the URL to match your route
+//         method: "GET",
+//         success: function (response) {
+//             console.log(response.roles, "response");
+//             // Populate the form fields
+//             $("#userId").val(response.id);
+//             $("#username").val(response.username);
+//             $("#name").val(response.name);
+//             $("#email").val(response.email);
+//             $("#roles").val(response.roles).trigger("change"); // Set selected values and trigger change event to update the select2 or similar plugins if used
+//             $("#address").val(response.address);
+//             $("#region").val(response.region).trigger("change");
 
-            // Clear previous error messages
-            $("#passwordError").hide();
-            $("#userFormError").hide();
+//             // Clear previous error messages
+//             $("#passwordError").hide();
+//             $("#userFormError").hide();
 
-            // Clear password fields
-            $("#password").val("");
-            $("#confirmPassword").val("");
+//             // Clear password fields
+//             $("#password").val("");
+//             $("#confirmPassword").val("");
 
-            // Show the modal
-            $("#modalForm").modal("show");
-        },
-        error: function () {
-            alert("Error fetching user data.");
-        },
-    });
+//             // Show the modal
+//             $("#modalForm").modal("show");
+//         },
+//         error: function () {
+//             alert("Error fetching user data.");
+//         },
+//     });
+// }
+
+async function editUser(username) {
+
+    showSpinner();
+
+    try {
+        // Make a GET request to the specified URL with the user ID as a parameter
+        const response = await fetch(`/users/${username}/formUser`, {
+            method: "GET", // Use GET as you're retrieving data
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector(
+                    'meta[name="csrf-token"]'
+                ).content, // Include CSRF token if needed
+            },
+        });
+
+        // Check if the response is OK (status code 200)
+        if (!response.ok) {
+            throw new Error("Network response was not ok"); // Handle network errors
+        }
+
+        // Parse the response as text (since it's an HTML view)
+        const htmlContent = await response.text();
+
+        // Inject the HTML content into the page
+        document.body.innerHTML = htmlContent;
+
+        // Optionally, remove the spinner once the content is loaded
+        removeSpinner();
+    } catch (error) {
+        // Handle unexpected errors
+        alert("An unexpected error occurred. Please try again later.");
+        console.error("Error:", error); // Log error for debugging
+
+        // Optionally, remove the spinner if an error occurs
+        removeSpinner();
+    } finally {
+        // Optionally redirect to a different URL after loading the content
+        // Change this to the appropriate URL you want to navigate to
+        window.location.href = `/users/${username}/formUser`; // Change this if needed
+    }
 }
 
 // Function to open the Change Password modal and set the user ID
@@ -965,4 +1101,117 @@ function deleteUser(id) {
             });
         }
     });
+}
+
+function deleteRole(role, user_id) {
+    console.log(role, user_id);
+    Swal.fire({
+        title: "Are you sure?",
+        text: `You want to delete the ${role} role from this user.`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Send request to Laravel route to delete the role
+            $.ajax({
+                type: "POST",
+                url: "/users/rolesdelete",
+                data: {
+                    role: role,
+                    user_id: user_id,
+                },
+                success: function (response) {
+                    $("#users_table").DataTable().ajax.reload();
+                    Swal.fire(
+                        "Deleted!",
+                        `The ${role} role has been deleted from this user.`,
+                        "success"
+                    );
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire(
+                        "Error!",
+                        `Failed to delete the ${role} role from this user.`,
+                        "error"
+                    );
+                },
+            });
+        }
+    });
+}
+
+async function addStore(user_id) {
+    // Show the spinner while the request is being processed
+    showSpinner();
+
+    try {
+        // Make a GET request to the specified URL with the user ID as a parameter
+        const response = await fetch(`/users/${user_id}/addstore`, {
+            method: "GET", // Use GET as you're retrieving data
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector(
+                    'meta[name="csrf-token"]'
+                ).content, // Include CSRF token if needed
+            },
+        });
+
+        // Check if the response is OK (status code 200)
+        if (!response.ok) {
+            throw new Error("Network response was not ok"); // Handle network errors
+        }
+
+        // Parse the response as text (since it's an HTML view)
+        const htmlContent = await response.text();
+
+        // Inject the HTML content into the page
+        document.body.innerHTML = htmlContent;
+
+        // Optionally, remove the spinner once the content is loaded
+        removeSpinner();
+    } catch (error) {
+        // Handle unexpected errors
+        alert("An unexpected error occurred. Please try again later.");
+        console.error("Error:", error); // Log error for debugging
+
+        // Optionally, remove the spinner if an error occurs
+        removeSpinner();
+    } finally {
+        // Optionally redirect to a different URL after loading the content
+        // Change this to the appropriate URL you want to navigate to
+        window.location.href = `/users/${user_id}/addstore`; // Change this if needed
+    }
+}
+
+function showSpinner() {
+    const card = document.createElement("div");
+    card.className = "card loading";
+
+    const spinner = document.createElement("div");
+    spinner.className = "spinner-container";
+    spinner.innerHTML = `
+        <div class="spinner">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+        </div>
+        <p>Loading, please wait...</p>
+    `;
+
+    card.appendChild(spinner);
+    document.body.appendChild(card);
+
+    card.style.position = "fixed";
+    card.style.top = "50%";
+    card.style.left = "50%";
+    card.style.transform = "translate(-50%, -50%)";
+    card.style.zIndex = "9999";
+}
+
+function removeSpinner() {
+    const spinnerCard = document.querySelector(".card.loading");
+    if (spinnerCard) {
+        spinnerCard.remove();
+    }
 }

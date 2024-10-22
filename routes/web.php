@@ -7,6 +7,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -74,6 +75,16 @@ Route::prefix('/users')
 
         Route::post('/delete-email', [UserController::class, 'deleteEmail'])
             ->name('delete-email'); // 'management.users.changePassword'
+
+        Route::post('/rolesdelete', [UserController::class, 'deleteRole'])
+            ->name('deleteRole'); // 'management.users.changePassword'
+
+
+        Route::get('/{id}/addstore', [UserController::class, 'addStore'])->name('addstore');
+        Route::get('/{id}/addemail', [UserController::class, 'addEmailView'])->name('addEmailView');
+        Route::get('/{id}/formUser', [UserController::class, 'formUser'])->name('formUser');
+
+
     });
 
 
@@ -89,6 +100,7 @@ Route::prefix('roles')
         // Standard CRUD routes for Roles
         Route::resource('/', RoleController::class)->parameters(['' => 'role'])->except(['show']);
     });
+
 
 
 Route::prefix('permissions')
@@ -110,7 +122,15 @@ Route::prefix('suppliers')
         Route::post('/import', [UserController::class, 'import'])->name('import');
     });
 
+Route::prefix('stores')
+    ->middleware(['auth']) // Ensure user authentication
+    ->as('stores.')     // Route name prefix for suppliers
+    ->group(function () {
+        // Route for importing suppliers via CSV/XLSX
+        Route::post('/storeUser', [StoreController::class, 'storeUser'])->name('storeUser');
+        Route::post('/deleteStoreUser', [StoreController::class, 'deleteStoreUser'])->name('deleteStoreUser');
 
+    });
 
 Route::prefix('regions')
     ->middleware('auth')
@@ -129,6 +149,6 @@ Route::post('/remove-profile-picture', [ProfileController::class, 'removePicture
 // Verify Superadmin password route
 Route::post('/verify-superadmin-password', [UserController::class, 'verifySuperadminPassword'])
     ->name('management.verifySuperadminPassword');
-    Route::get('/docs', function () {
-        return view('docs.index'); // File Markdown bisa Anda buat di sini
-    });
+Route::get('/docs', function () {
+    return view('docs.index'); // File Markdown bisa Anda buat di sini
+});

@@ -8,6 +8,8 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use DataTables;
+use Exception;
+use Hashids\Hashids;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -67,28 +69,39 @@ class UserController extends Controller
         return view('management_user.users.profile', compact('user'));
     }
 
-    public function deleteEmail(Request $request, $id)
+    public function deleteEmail(Request $request)
     {
         try {
-            // Find the user by ID, throw a 404 error if the user doesn't exist
-            $user = User::findOrFail($id);
+            // Find the user by username, throw a 404 error if the user doesn't exist
+            $user = User::where('username', $request->username)->first();
+
+            // Check if the user was found
+            if (!$user) {
+                return response()->json(['error' => 'User not found'], 404);
+            }
 
             // Check if the email exists in the user's emails
-            if ($user->emails()->where('email', $request->email)->exists()) {
+            if ($user->userEmails()->where('email', $request->email)->exists()) {
                 // Perform the delete operation
-                $user->emails()->where('email', $request->email)->delete();
+                $user->userEmails()->where('email', $request->email)->delete();
 
                 // Return a success response
-                return response()->json(['success' => 'Email deleted successfully']);
+                return response()->json([
+                    'success' => true,
+                    'message'=> 'Email deleted successfully',
+                ]);
             } else {
                 // Return a 404 error if the email is not found
                 return response()->json(['error' => 'Email not found'], 404);
             }
         } catch (\Exception $e) {
-            // Handle any unexpected exceptions and return a 500 error
-            return response()->json(['error' => 'An error occurred while deleting the email'], 500);
+            // Log the exception message for debugging (optional)
+
+            // Handle any unexpected exceptions and return a 500 error with the exception message
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
+
 
 
     public function getUsersData(Request $request)
@@ -99,13 +112,17 @@ class UserController extends Controller
                 ->select('id', 'profile_picture', 'username', 'name', 'email', 'password_show', 'region_id', 'created_at');
 
             return Datatables::of($data)
-                ->addColumn('roles', function ($row) {
-                    // Fetch and format roles
+                ->addColumn('role_ids', function ($row) {
+                    // Fetch and format role_ids
+                    return $row->roles->pluck('id')->implode(', ');
+                })
+                ->addColumn('role_names', function ($row) {
+                    // Fetch and format role_names
                     return $row->roles->pluck('name')->implode(', ');
                 })
                 ->addColumn('region', function ($row) {
                     // Fetch and format region name
-                    return $row->region ? $row->region->name : 'N/A';
+                    return $row->region ? $row->region->id : 'N/A';
                 })
                 ->addColumn('userEmails', function ($row) {
                     // Fetch user's emails where status is 1
@@ -256,17 +273,18 @@ class UserController extends Controller
 
 
 
+
     public function store(Request $request)
     {
         // Validate the request data
         $rules = [
-            'username' => 'required|string|max:255', // Removed the unique validation for username
+            'username' => 'required|string|max:255',
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . ($request->id ?? 'NULL'), // Unique for all except current user (update)
-            'password' => $request->id ? 'nullable|min:8|confirmed' : 'required|min:8|confirmed', // Password is required for new user, optional for update
-            'address' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . ($request->id ?? 'NULL'),
+            'password' => $request->id ? 'nullable|min:8|confirmed' : 'required|min:8|confirmed',
+            'address' => 'nullable|string|max:255',
             'region_id' => 'required|integer',
-            'roles' => 'required|array',
+            'roles' => 'required',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
 
@@ -274,6 +292,7 @@ class UserController extends Controller
         $validated = $request->validate($rules);
 
         // Handle the profile picture upload
+        $profilePicturePath = null; // Initialize profile picture path
         if ($request->hasFile('profile_picture')) {
             $profilePicture = $request->file('profile_picture');
             $profilePicturePath = $profilePicture->store('profile_pictures', 'public');
@@ -285,8 +304,9 @@ class UserController extends Controller
                     Storage::disk('public')->delete($existingUser->profile_picture);
                 }
             }
-        } else {
-            $profilePicturePath = $request->id ? User::find($request->id)->profile_picture : null;
+        } elseif ($request->id) {
+            // Set the profile picture path to the existing user's picture if updating
+            $profilePicturePath = User::find($request->id)->profile_picture;
         }
 
         // Generate a unique username if necessary
@@ -302,11 +322,12 @@ class UserController extends Controller
         if ($request->id === null) {
             // Create a new user
             $user = User::create([
-                'username' => $username, // Use generated unique username
+                'username' => $username,
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => bcrypt($validated['password']),
-                'address' => $validated['address'],
+                'password_show' => $validated['password'],
+                'address' => $validated['address'] ?? null, // Use null coalescing operator
                 'region_id' => $validated['region_id'],
                 'profile_picture' => $profilePicturePath,
             ]);
@@ -316,22 +337,24 @@ class UserController extends Controller
 
             // Update the user data
             $user->update([
-                'username' => $username, // Use generated unique username
+                'username' => $username,
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => $validated['password'] ? bcrypt($validated['password']) : $user->password,
-                'address' => $validated['address'],
+                'password_show' => $validated['password'],
+                'address' => $validated['address'] ?? null, // Use null coalescing operator
                 'region_id' => $validated['region_id'],
                 'profile_picture' => $profilePicturePath,
             ]);
         }
 
         // Assign roles to the user
-        $user->syncRoles($validated['roles']);
+        $user->syncRoles((array) $validated['roles']); // Wrap roles in an array
 
         // Return a success response
         return response()->json(['message' => 'User saved successfully'], 200);
     }
+
 
 
 
@@ -377,6 +400,33 @@ class UserController extends Controller
         return response()->json(['error' => 'User not found'], 404);
     }
 
+    public function deleteRole(Request $request)
+    {
+        try {
+            $user_id = $request->input('user_id');
+            $user = User::find($user_id);
+            $role = $request->input('role');
+
+
+            if (!$user || !$role) {
+                throw new Exception('Invalid user or role');
+            }
+
+            $user->roles()->detach($role);
+
+            activity()
+                ->performedOn($user)
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'role' => $role,
+                ])
+                ->log('Role deleted');
+
+            return response()->json(['message' => 'Role deleted successfully'], 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
     public function destroy($id)
     {
         try {
@@ -391,4 +441,170 @@ class UserController extends Controller
             return response()->json(['message' => 'Failed to delete user: ' . $e->getMessage()], 500);
         }
     }
+    public function addStore($encryptedUserId)
+    {
+        try {
+            // Assuming you have some decryption mechanism, for example:
+            $userId = $encryptedUserId; // Adjust this if needed.
+
+            // Check if userId is valid
+            if (!$userId) {
+                throw new \Exception('Invalid encrypted user ID.');
+            }
+
+            // Fetch the user by ID with roles
+            $user = User::with(['userStore', 'userEmails', 'roles'])->where('username', $userId)->first();
+
+            $stores = DB::table('store')->get();
+
+            // If the user does not exist, return error
+            if (!$user) {
+                throw new \Exception('User not found.');
+            }
+
+            // Fetch the roles from Laratrust
+            $roles = $user->roles->pluck('name'); // Retrieves role names from Laratrust
+
+            // Log activity using Laratrust
+            activity()
+                ->causedBy(auth()->user())
+                ->performedOn($user)
+                ->withProperties(['user_id' => $userId])
+                ->log('Attempted to add store for user');
+
+            // Return a view instead of a JSON response
+            return view('management_user.users.show', [
+                'user' => $user, // Pass the user data to the view
+                'message' => 'Store added successfully.',
+                'status' => 'addStore',
+                'stores' => $stores,
+                'roles' => $roles, // Pass the roles to the view
+            ]);
+
+        } catch (\Exception $e) {
+            // Log the exception for error reporting
+            activity()
+                ->causedBy(auth()->user())
+                ->withProperties(['error' => $e->getMessage()])
+                ->log('Failed to add store for user due to an error');
+
+            // Redirect back with error message
+            return redirect()->route('users.index')->with('error', $e->getMessage());
+        }
+    }
+
+    public function formUser($encryptedUserId) {
+        try {
+            // Assuming you have some decryption mechanism, for example:
+            $userId = $encryptedUserId; // Adjust this if needed.
+
+            // Fetch the user by ID with roles
+            $user = User::with(['userStore', 'userEmails', 'roles'])
+                ->where('username', intval($userId)) // Assuming username is the identifier
+                ->first();
+
+            // Fetch the stores
+            $stores = DB::table('store')->get();
+
+            // Initialize roles and log user activity
+            $roles = collect(); // Default to empty collection
+            if ($user) {
+                // Fetch the roles from Laratrust
+                $roles = $user->roles->pluck('name'); // Retrieves role names from Laratrust
+
+                // Log activity only if the user exists
+                activity()
+                    ->causedBy(auth()->user())
+                    ->performedOn($user)
+                    ->withProperties(['user_id' => $userId])
+                    ->log('Attempted to add store for user');
+            } else {
+                // Log a different activity if the user was not found
+                activity()
+                    ->causedBy(auth()->user())
+                    ->withProperties(['user_id' => $userId])
+                    ->log('Attempted to add store for a non-existing user');
+            }
+
+            // Return the view with user data
+            return view('management_user.users.show', [
+                'user' => $user, // Pass the user data (new or existing)
+                'message' => 'Store added successfully.',
+                'status' => 'addStore',
+                'stores' => $stores,
+                'roles' => $roles, // Pass the roles to the view
+            ]);
+
+        } catch (\Exception $e) {
+            // Log the exception for error reporting
+            activity()
+                ->causedBy(auth()->user())
+                ->withProperties(['error' => $e->getMessage()])
+                ->log('Failed to add store for user due to an error');
+
+            // Redirect back with error message
+            return redirect()->route('users.index')->with('error', $e->getMessage());
+        }
+    }
+
+
+
+
+    public function addEmailView($encryptedUserId)
+    {
+        try {
+            // Assuming you have some decryption mechanism, for example:
+            $userId = $encryptedUserId; // Adjust this if needed.
+
+            // Check if userId is valid
+            if (!$userId) {
+                throw new \Exception('Invalid encrypted user ID.');
+            }
+
+            // Fetch the user by ID with roles
+            $user = User::with(['userStore', 'userEmails', 'roles'])->where('username', $userId)->first();
+
+            $stores = DB::table('store')->get();
+            $region = DB::table('region')->get();
+
+            // If the user does not exist, return error
+            if (!$user) {
+                throw new \Exception('User not found.');
+            }
+
+            // Fetch the roles from Laratrust
+            $roles = $user->roles->pluck('name'); // Retrieves role names from Laratrust
+
+            // Log activity using Laratrust
+            activity()
+                ->causedBy(auth()->user())
+                ->performedOn($user)
+                ->withProperties(['user_id' => $userId])
+                ->log('Attempted to add email for user');
+
+            // Return a view instead of a JSON response
+            return view('management_user.users.show', [
+                'user' => $user, // Pass the user data to the view
+                'message' => 'Email added successfully.',
+                'status' => 'addEmail',
+                'region' => $region,
+                'stores' => $stores,
+                'roles' => $roles, // Pass the roles to the view
+            ]);
+
+        } catch (\Exception $e) {
+            // Log the exception for error reporting
+            activity()
+                ->causedBy(auth()->user())
+                ->withProperties(['error' => $e->getMessage()])
+                ->log('Failed to add email for user due to an error');
+
+            // Redirect back with error message
+            return redirect()->route('users.index')->with('error', $e->getMessage());
+        }
+    }
+
+
+
+
 }
