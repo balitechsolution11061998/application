@@ -14,7 +14,6 @@ class PurchaseRequisitionController extends Controller
     //
     public function store(Request $request)
     {
-        return $request->all();
         // DB::beginTransaction(); // Uncomment this to enable transactions if necessary
         try {
             // Get the last PurchaseRequisition ID
