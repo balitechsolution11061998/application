@@ -38,8 +38,9 @@ class PurchaseRequisitionController extends Controller
             $purchaseRequisition->departement_pemesan = 9;
             $purchaseRequisition->save();
             // Save PurchaseRequisitionDetails
+            return $request->detail;
+
             foreach ($request->detail as $tempDetail) {
-                return $tempDetail;
 
                 $detail = new PurchaseRequisitionDetail();
                 $detail->purchase_requisition_id = $purchaseRequisition->id;
