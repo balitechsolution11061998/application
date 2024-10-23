@@ -14,7 +14,6 @@ class PurchaseRequisitionController extends Controller
     //
     public function store(Request $request)
     {
-        return $request->all();
         // DB::beginTransaction(); // Uncomment this to enable transactions if necessary
         try {
             // Get the last PurchaseRequisition ID
@@ -43,23 +42,22 @@ class PurchaseRequisitionController extends Controller
             foreach ($request->detail as $tempDetail) {
                 $detail = new PurchaseRequisitionDetail();
                 $detail->purchase_requisition_id = $purchaseRequisition->id;
-                $detail->purchase_requisition_detail_name = $tempDetail['purchase_requisition_detail_name'];
-                $detail->kebutuhan = $tempDetail['kebutuhan'];
-                $detail->keterangan_kebutuhan = $tempDetail['keterangan_kebutuhan'] ?? '';
-                $detail->qty = $tempDetail['qty'];
+                $detail->purchase_requisition_detail_name = $tempDetail->purchase_requisition_detail_name;
+                $detail->kebutuhan = $tempDetail->kebutuhan;
+                $detail->keterangan_kebutuhan = $tempDetail->keterangan_kebutuhan ?? '';
+                $detail->qty = $tempDetail->qty;
                 $detail->hargaPerPcs = 0;
                 $detail->hargaPerPcsRp = 0;
                 $detail->hargaTotal = 0;
                 $detail->hargaTotalRp = 'Rp ' . number_format(0, 0, ',', '.');
-                $detail->satuan = $tempDetail['satuan'] ?? '-';
+                $detail->satuan = $tempDetail->satuan ?? '-';
                 $detail->save();
             }
-            return $request->all();
             // Save PurchaseRequisitionImages
             foreach ($request->image as $tempImage) {
                 $image = new PurchaseRequisitionImage();
                 $image->purchase_requisition_id = $purchaseRequisition->id;
-                $image->name = $tempImage['name'];
+                $image->name = $tempImage->name;
                 $image->save();
             }
 
