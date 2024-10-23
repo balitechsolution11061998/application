@@ -53,7 +53,7 @@ class PurchaseRequisitionController extends Controller
                 $detail->satuan = $tempDetail['satuan'] ?? '-';
                 $detail->save();
             }
-
+            return $request->all();
             // Save PurchaseRequisitionImages
             foreach ($request->image as $tempImage) {
                 $image = new PurchaseRequisitionImage();
