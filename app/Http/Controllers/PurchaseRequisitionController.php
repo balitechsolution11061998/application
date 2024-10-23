@@ -41,7 +41,6 @@ class PurchaseRequisitionController extends Controller
 
             // Decode the 'detail' field if it's a JSON string
             $details = is_string($request->detail) ? json_decode($request->detail, true) : $request->detail;
-            return $details;
 
             // Check if the decoded 'detail' is an array
             if (is_array($details)) {
