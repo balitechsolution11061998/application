@@ -98,7 +98,7 @@ class PurchaseRequisitionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Purchase requisition created successfully',
-                'purchaseRequisitionId' => $purchaseRequisition->id,
+                'purchase_requisition_id' => $purchaseRequisition->id,
                 'icon' => 'success',
             ]);
         } catch (\Exception $e) {
