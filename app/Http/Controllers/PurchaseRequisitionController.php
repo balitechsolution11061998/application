@@ -18,13 +18,10 @@ class PurchaseRequisitionController extends Controller
         try {
             // Get the last PurchaseRequisition ID
             $lastId = PurchaseRequisition::max('id');
-
-            // Increment the last ID by 1
             $newNoPr = $lastId + 1;
 
             // Create a new PurchaseRequisition instance
             $purchaseRequisition = new PurchaseRequisition();
-            // Fill PurchaseRequisition with data from TempData
             $purchaseRequisition->no_pr = 'PR' . $newNoPr;
             $purchaseRequisition->region_id = 4;
             $purchaseRequisition->department_id = 9;
@@ -39,21 +36,21 @@ class PurchaseRequisitionController extends Controller
             $purchaseRequisition->steps = "departmentheadho";
             $purchaseRequisition->nama_pr = $request->nama_pr;
             $purchaseRequisition->departement_pemesan = 9;
-            $purchaseRequisition->save(); // Save the new purchase requisition
+            $purchaseRequisition->save();
 
             // Save PurchaseRequisitionDetails
             foreach ($request->detail as $tempDetail) {
                 $detail = new PurchaseRequisitionDetail();
                 $detail->purchase_requisition_id = $purchaseRequisition->id;
-                $detail->purchase_requisition_detail_name = $tempDetail->purchase_requisition_detail_name;
-                $detail->kebutuhan = $tempDetail->kebutuhan;
-                $detail->keterangan_kebutuhan = $tempDetail->keterangan_kebutuhan;
-                $detail->qty = $tempDetail->qty;
+                $detail->purchase_requisition_detail_name = $tempDetail['purchase_requisition_detail_name'];
+                $detail->kebutuhan = $tempDetail['kebutuhan'];
+                $detail->keterangan_kebutuhan = $tempDetail['keterangan_kebutuhan'] ?? '';
+                $detail->qty = $tempDetail['qty'];
                 $detail->hargaPerPcs = 0;
                 $detail->hargaPerPcsRp = 0;
                 $detail->hargaTotal = 0;
                 $detail->hargaTotalRp = 'Rp ' . number_format(0, 0, ',', '.');
-                $detail->satuan = $tempDetail->satuan;
+                $detail->satuan = $tempDetail['satuan'] ?? '-';
                 $detail->save();
             }
 
@@ -61,15 +58,18 @@ class PurchaseRequisitionController extends Controller
             foreach ($request->image as $tempImage) {
                 $image = new PurchaseRequisitionImage();
                 $image->purchase_requisition_id = $purchaseRequisition->id;
-                $image->name = $tempImage->name;
+                $image->name = $tempImage['name'];
                 $image->save();
             }
+
+            // Commit the transaction
+            DB::commit();
 
             // Return response with PR ID
             return response()->json([
                 'success' => true,
                 'message' => 'Purchase requisition created successfully',
-                'purchaseRequisitionId' => $purchaseRequisition->id, // Return the newly created PR ID
+                'purchaseRequisitionId' => $purchaseRequisition->id,
                 'icon' => 'success',
             ]);
         } catch (\Exception $e) {
@@ -78,6 +78,4 @@ class PurchaseRequisitionController extends Controller
             return response()->json(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
-
-
 }
