@@ -37,7 +37,7 @@ class PurchaseRequisitionController extends Controller
             $purchaseRequisition->nama_pr = $request->nama_pr;
             $purchaseRequisition->departement_pemesan = 9;
             $purchaseRequisition->save();
-
+            return $request->detail;
             // Save PurchaseRequisitionDetails
             foreach ($request->detail as $tempDetail) {
                 $detail = new PurchaseRequisitionDetail();
