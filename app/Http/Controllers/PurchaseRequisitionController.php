@@ -44,6 +44,7 @@ class PurchaseRequisitionController extends Controller
 
             // Check if the decoded 'detail' is an array
             if (is_array($details)) {
+                return "masuk sini";
                 foreach ($details as $tempDetail) {
                     $detail = new PurchaseRequisitionDetail();
                     $detail->purchase_requisition_id = $purchaseRequisition->id;
