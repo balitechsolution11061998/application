@@ -29,7 +29,7 @@ class PurchaseRequisitionController extends Controller
             $purchaseRequisition->nama_pembuat = $request->nama_pembuat;
             $purchaseRequisition->tanggalpr = $request->tanggal_pr;
             $purchaseRequisition->tanggal_update_step_pr = $request->tanggal_pr;
-            $purchaseRequisition->kondisiBarang = 'new';
+            $purchaseRequisition->kondisiBarang = 'baru';
             $purchaseRequisition->keteranganKondisiBarang = $request->keteranganKondisiBarang;
             $purchaseRequisition->pembayaran = "kredit";
             $purchaseRequisition->status = 'progress';
