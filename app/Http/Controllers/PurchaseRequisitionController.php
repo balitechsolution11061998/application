@@ -38,27 +38,39 @@ class PurchaseRequisitionController extends Controller
             $purchaseRequisition->departement_pemesan = 9;
             $purchaseRequisition->save();
             // Save PurchaseRequisitionDetails
-            return $request->detail;
 
-            foreach ($request->detail as $tempDetail) {
+            // Decode the 'detail' field if it's a JSON string
+            $details = is_string($request->detail) ? json_decode($request->detail, true) : $request->detail;
+            return $details;
 
-                $detail = new PurchaseRequisitionDetail();
-                $detail->purchase_requisition_id = $purchaseRequisition->id;
+            // Check if the decoded 'detail' is an array
+            if (is_array($details)) {
+                foreach ($details as $tempDetail) {
+                    $detail = new PurchaseRequisitionDetail();
+                    $detail->purchase_requisition_id = $purchaseRequisition->id;
 
-                // Access array values with array-style syntax
-                $detail->purchase_requisition_detail_name = $tempDetail['purchase_requisition_detail_name'];
-                $detail->kebutuhan = $tempDetail['kebutuhan'];
-                $detail->keterangan_kebutuhan = $tempDetail['keterangan_kebutuhan'] ?? ''; // Use array syntax and default if null
-                $detail->qty = $tempDetail['qty'];
-                $detail->hargaPerPcs = 0; // This value can be set as per your logic
-                $detail->hargaPerPcsRp = 0; // This value can be set as per your logic
-                $detail->hargaTotal = 0; // This value can be set as per your logic
-                $detail->hargaTotalRp = 'Rp ' . number_format(0, 0, ',', '.');
-                $detail->satuan = $tempDetail['satuan'] ?? '-'; // Use array syntax and default if null
+                    // Access array values with array-style syntax
+                    $detail->purchase_requisition_detail_name = $tempDetail['purchase_requisition_detail_name'];
+                    $detail->kebutuhan = $tempDetail['kebutuhan'];
+                    $detail->keterangan_kebutuhan = $tempDetail['keterangan_kebutuhan'] ?? ''; // Use array syntax and default if null
+                    $detail->qty = $tempDetail['qty'];
+                    $detail->hargaPerPcs = 0; // This value can be set as per your logic
+                    $detail->hargaPerPcsRp = 0; // This value can be set as per your logic
+                    $detail->hargaTotal = 0; // This value can be set as per your logic
+                    $detail->hargaTotalRp = 'Rp ' . number_format(0, 0, ',', '.');
+                    $detail->satuan = $tempDetail['satuan'] ?? '-'; // Use array syntax and default if null
 
-                // Save each detail
-                $detail->save();
+                    // Save each detail
+                    $detail->save();
+                }
+            } else {
+                // Return an error response if 'detail' is not an array
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The detail field must be a valid array.'
+                ], 400);
             }
+
 
             // Save PurchaseRequisitionImages
             foreach ($request->image as $tempImage) {
