@@ -37,22 +37,28 @@ class PurchaseRequisitionController extends Controller
             $purchaseRequisition->nama_pr = $request->nama_pr;
             $purchaseRequisition->departement_pemesan = 9;
             $purchaseRequisition->save();
-            return $request->detail;
             // Save PurchaseRequisitionDetails
             foreach ($request->detail as $tempDetail) {
+                return $tempDetail;
+
                 $detail = new PurchaseRequisitionDetail();
                 $detail->purchase_requisition_id = $purchaseRequisition->id;
-                $detail->purchase_requisition_detail_name = $tempDetail->purchase_requisition_detail_name;
-                $detail->kebutuhan = $tempDetail->kebutuhan;
-                $detail->keterangan_kebutuhan = $tempDetail->keterangan_kebutuhan ?? '';
-                $detail->qty = $tempDetail->qty;
-                $detail->hargaPerPcs = 0;
-                $detail->hargaPerPcsRp = 0;
-                $detail->hargaTotal = 0;
+
+                // Access array values with array-style syntax
+                $detail->purchase_requisition_detail_name = $tempDetail['purchase_requisition_detail_name'];
+                $detail->kebutuhan = $tempDetail['kebutuhan'];
+                $detail->keterangan_kebutuhan = $tempDetail['keterangan_kebutuhan'] ?? ''; // Use array syntax and default if null
+                $detail->qty = $tempDetail['qty'];
+                $detail->hargaPerPcs = 0; // This value can be set as per your logic
+                $detail->hargaPerPcsRp = 0; // This value can be set as per your logic
+                $detail->hargaTotal = 0; // This value can be set as per your logic
                 $detail->hargaTotalRp = 'Rp ' . number_format(0, 0, ',', '.');
-                $detail->satuan = $tempDetail->satuan ?? '-';
+                $detail->satuan = $tempDetail['satuan'] ?? '-'; // Use array syntax and default if null
+
+                // Save each detail
                 $detail->save();
             }
+
             // Save PurchaseRequisitionImages
             foreach ($request->image as $tempImage) {
                 $image = new PurchaseRequisitionImage();
