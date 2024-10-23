@@ -70,14 +70,26 @@ class PurchaseRequisitionController extends Controller
                 ], 400);
             }
 
+            // Decode the 'image' field if it's a JSON string
+            $images = is_string($request->image) ? json_decode($request->image, true) : $request->image;
 
-            // Save PurchaseRequisitionImages
-            foreach ($request->image as $tempImage) {
-                $image = new PurchaseRequisitionImage();
-                $image->purchase_requisition_id = $purchaseRequisition->id;
-                $image->name = $tempImage->name;
-                $image->save();
+            // Check if the decoded 'image' is an array
+            if (is_array($images)) {
+                // Save PurchaseRequisitionImages
+                foreach ($images as $tempImage) {
+                    $image = new PurchaseRequisitionImage();
+                    $image->purchase_requisition_id = $purchaseRequisition->id;
+                    $image->name = $tempImage['name']; // Use array syntax
+                    $image->save();
+                }
+            } else {
+                // Return an error response if 'image' is not an array
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The image field must be a valid array.'
+                ], 400);
             }
+
 
             // Commit the transaction
             DB::commit();
