@@ -99,6 +99,7 @@ class PurchaseRequisitionController extends Controller
                 'success' => true,
                 'message' => 'Purchase requisition created successfully',
                 'purchase_requisition_id' => $purchaseRequisition->id,
+                'tanggal_pr' => $request->tanggal_pr,
                 'icon' => 'success',
             ]);
         } catch (\Exception $e) {
