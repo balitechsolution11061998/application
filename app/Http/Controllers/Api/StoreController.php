@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class StoreController extends Controller
@@ -69,7 +68,7 @@ class StoreController extends Controller
                     activity('StoreRecordAction')
                     ->performedOn(new Store())
                     ->event('api_store_insert')
-                    ->causedBy(Auth::user()->id) // Optional: log the user who caused the action
+                    ->causedBy(auth()->user()) // Optional: log the user who caused the action
                     ->withProperties(['record' => $record]) // Add record properties
                     ->log('Store record inserted successfully: {store_name}', ['store_name' => Arr::get($record, 'store_name')]);
                 } catch (\Exception $e) {
@@ -80,7 +79,7 @@ class StoreController extends Controller
                     activity('StoreRecordAction')
                         ->performedOn(new Store())
                         ->event('api_store_insert')
-                        ->causedBy(Auth::user()->id) // Optional: log the user who caused the action
+                        ->causedBy(auth()->user()) // Optional: log the user who caused the action
                         ->withProperties(['record' => $record, 'error' => $e->getMessage()]) // Add record and error properties
                         ->log('Failed to insert store record: {store_name}', ['store_name' => Arr::get($record, 'store_name')]);
                 }
@@ -101,13 +100,12 @@ class StoreController extends Controller
             // Log the overall failure with custom name and properties
             activity()
                 ->event('api_store_insert')
-                ->causedBy(Auth::user()->id) // Optional: log the user who caused the action
+                ->causedBy(auth()->user()) // Optional: log the user who caused the action
                 ->withProperties(['error' => $e->getMessage()]) // Add error properties
                 ->log('An error occurred while processing data');
 
             return response()->json([
                 'message' => 'An error occurred while processing data',
-                'success' => false,
                 'error' => $e->getMessage(),
                 'total_data' => $totalData,
                 'success_count' => $successCount,
