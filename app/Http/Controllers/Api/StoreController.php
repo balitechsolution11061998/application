@@ -73,7 +73,7 @@ class StoreController extends Controller
                             'record' => $record,
                             'event' => 'store_inserted', // Optional: to specify the event
                         ]) // Add record properties
-                        ->log('Store record inserted successfully: {store_name}', ['store_name' => Arr::get($record, 'store_name')]);
+                        ->log('Store record inserted successfully:'.Arr::get($record, 'store_name'), ['store_name' => Arr::get($record, 'store_name')]);
                 } catch (\Exception $e) {
                     // Increment failure count if there's an issue inserting this record
                     $failureCount++;
@@ -88,7 +88,7 @@ class StoreController extends Controller
                             'error' => $e->getMessage(),
                             'event' => 'insert_failed', // Optional: to specify the event
                         ]) // Add record and error properties
-                        ->log('Failed to insert store record: {store_name}', ['store_name' => Arr::get($record, 'store_name')]);
+                        ->log('Failed to insert store record: {store_name}'.Arr::get($record, 'store_name'), ['store_name' => Arr::get($record, 'store_name')]);
                 }
             }
 
@@ -112,7 +112,8 @@ class StoreController extends Controller
                     'error' => $e->getMessage(),
                     'event' => 'processing_failed', // Optional: to specify the event
                 ]) // Add error properties
-                ->log('An error occurred while processing data');
+                ->log('An error occurred while processing data : {store_name}'.Arr::get($record, 'store_name'), ['store_name' => Arr::get($record, 'store_name')]);
+
 
             return response()->json([
                 'message' => 'An error occurred while processing data',
