@@ -67,6 +67,7 @@ class StoreController extends Controller
                     // Log successful activity with custom name and properties
                     activity('StoreRecordAction')
                     ->performedOn(new Store())
+                    ->event('api_store_insert')
                     ->causedBy(auth()->user()) // Optional: log the user who caused the action
                     ->withProperties(['record' => $record]) // Add record properties
                     ->log('Store record inserted successfully: {store_name}', ['store_name' => Arr::get($record, 'store_name')]);
@@ -77,6 +78,7 @@ class StoreController extends Controller
                     // Log failed activity with custom name and properties
                     activity('StoreRecordAction')
                         ->performedOn(new Store())
+                        ->event('api_store_insert')
                         ->causedBy(auth()->user()) // Optional: log the user who caused the action
                         ->withProperties(['record' => $record, 'error' => $e->getMessage()]) // Add record and error properties
                         ->log('Failed to insert store record: {store_name}', ['store_name' => Arr::get($record, 'store_name')]);
@@ -94,10 +96,10 @@ class StoreController extends Controller
 
         } catch (\Exception $e) {
             // Handle the exception, log it, and return an error response
-            Log::error('An error occurred while processing data: ' . $e->getMessage());
 
             // Log the overall failure with custom name and properties
             activity()
+                ->event('api_store_insert')
                 ->causedBy(auth()->user()) // Optional: log the user who caused the action
                 ->withProperties(['error' => $e->getMessage()]) // Add error properties
                 ->log('An error occurred while processing data');
