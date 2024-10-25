@@ -99,8 +99,6 @@ class StoreController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
-            // Handle the exception, log it, and return an error response
-            Log::error('An error occurred while processing data: ' . $e->getMessage());
 
             // Log the overall failure with custom name and properties
             activity()
