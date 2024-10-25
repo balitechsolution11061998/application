@@ -65,7 +65,7 @@ class StoreController extends Controller
                     $successCount++;
 
                     // Log successful activity with custom name and properties
-                    activity()
+                    activity('StoreRecordAction')
                     ->performedOn(new Store())
                     ->causedBy(auth()->user()) // Optional: log the user who caused the action
                     ->withProperties(['record' => $record]) // Add record properties
@@ -75,7 +75,7 @@ class StoreController extends Controller
                     $failureCount++;
 
                     // Log failed activity with custom name and properties
-                    activity()
+                    activity('StoreRecordAction')
                         ->performedOn(new Store())
                         ->causedBy(auth()->user()) // Optional: log the user who caused the action
                         ->withProperties(['record' => $record, 'error' => $e->getMessage()]) // Add record and error properties
