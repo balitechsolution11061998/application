@@ -64,21 +64,23 @@ class StoreController extends Controller
                     ]);
                     $successCount++;
 
-                    // Log successful activity
+                    // Log successful activity with custom name and properties
                     activity()
                         ->performedOn(new Store())
                         ->causedBy(auth()->user()) // Optional: log the user who caused the action
-                        ->log('Successfully inserted a new store record: ' . json_encode($record));
+                        ->withProperties(['record' => $record]) // Add record properties
+                        ->log('Store record inserted successfully: {store_name}', ['store_name' => Arr::get($record, 'store_name')]);
 
                 } catch (\Exception $e) {
                     // Increment failure count if there's an issue inserting this record
                     $failureCount++;
 
-                    // Log failed activity
+                    // Log failed activity with custom name and properties
                     activity()
                         ->performedOn(new Store())
                         ->causedBy(auth()->user()) // Optional: log the user who caused the action
-                        ->log('Failed to insert store record: ' . json_encode($record) . ' Error: ' . $e->getMessage());
+                        ->withProperties(['record' => $record, 'error' => $e->getMessage()]) // Add record and error properties
+                        ->log('Failed to insert store record: {store_name}', ['store_name' => Arr::get($record, 'store_name')]);
                 }
             }
 
@@ -95,10 +97,11 @@ class StoreController extends Controller
             // Handle the exception, log it, and return an error response
             Log::error('An error occurred while processing data: ' . $e->getMessage());
 
-            // Log the overall failure
+            // Log the overall failure with custom name and properties
             activity()
                 ->causedBy(auth()->user()) // Optional: log the user who caused the action
-                ->log('An error occurred while processing data: ' . $e->getMessage());
+                ->withProperties(['error' => $e->getMessage()]) // Add error properties
+                ->log('An error occurred while processing data');
 
             return response()->json([
                 'message' => 'An error occurred while processing data',
