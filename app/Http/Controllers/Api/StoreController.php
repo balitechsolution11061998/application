@@ -53,7 +53,7 @@ class StoreController extends Controller
             foreach ($data as $record) {
                 try {
                     // Create a new store record
-                    Store::create([
+                    $newStore = Store::create([
                         'store' => (int) Arr::get($record, 'store', 0), // Ensure 'store' is an integer
                         'store_name' => Arr::get($record, 'store_name', ''),
                         'store_add1' => Arr::get($record, 'store_add1', ''),
@@ -66,9 +66,15 @@ class StoreController extends Controller
 
                     // Log successful activity with custom name and properties
                     activity()
-                    ->performedOn(new Store())
-                    ->causedBy(auth()->user()) // Optional: log the user who caused the action
-                    ->withProperties(['record' => $record]) // Add record properties
+                    ->performedOn($newStore) // Set the subject to the newly created store
+                    ->causedBy(auth()->user()) // Log the user who caused the action
+                    ->withProperties([
+                        'record' => $record, // Include the record being inserted
+                        'event' => 'store_inserted', // Custom event name for successful insertion
+                        'subject_id' => $newStore->id, // ID of the created store
+                        'causer_type' => get_class(auth()->user()), // Type of the causer (e.g., User)
+                        'causer_id' => auth()->user()->id, // ID of the causer
+                    ])
                     ->log('Store record inserted successfully: {store_name}', ['store_name' => Arr::get($record, 'store_name')]);
                 } catch (\Exception $e) {
                     // Increment failure count if there's an issue inserting this record
