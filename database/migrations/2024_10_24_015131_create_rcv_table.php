@@ -58,18 +58,18 @@ return new class extends Migration
             $table->bigIncrements('receive_no');
             $table->date('receive_date');
             $table->date('created_date');
-            $table->string('receive_id', 50)->collation('utf8mb4_unicode_ci');
+            $table->string('receive_id', 50);
             $table->integer('order_no')->nullable();
             $table->integer('ref_no')->nullable();
-            $table->string('order_type', 10)->collation('utf8mb4_unicode_ci')->nullable();
-            $table->string('status_ind', 5)->collation('utf8mb4_unicode_ci')->nullable();
+            $table->string('order_type', 10)->nullable();
+            $table->string('status_ind', 5)->nullable();
             $table->date('approval_date');
-            $table->string('approval_id', 50)->collation('utf8mb4_unicode_ci')->nullable();
+            $table->string('approval_id', 50)->nullable();
             $table->integer('store');
-            $table->string('store_name', 20)->collation('utf8mb4_unicode_ci');
+            $table->string('store_name', 20);
             $table->integer('sku');
-            $table->string('sku_desc', 191)->collation('utf8mb4_unicode_ci');
-            $table->string('upc', 20)->collation('utf8mb4_unicode_ci')->nullable();
+            $table->string('sku_desc', 191);
+            $table->string('upc', 20)->nullable();
             $table->integer('qty_expected')->nullable();
             $table->integer('qty_received')->nullable();
             $table->double('unit_cost')->nullable();
@@ -77,8 +77,8 @@ return new class extends Migration
             $table->double('vat_cost')->nullable();
             $table->double('unit_cost_disc')->nullable();
             $table->integer('supplier');
-            $table->string('sup_name', 191)->collation('utf8mb4_unicode_ci');
-            $table->string('comment_desc', 191)->collation('utf8mb4_unicode_ci ')->nullable();
+            $table->string('sup_name', 191);
+            $table->string('comment_desc', 191)->nullable();
         });
     }
 
