@@ -26,6 +26,7 @@ class StoreController extends Controller
                 'success' => true,
                 'data' => $storeData,
             ], 200);
+
         } catch (\Exception $e) {
             // Handle the exception, you can log it or return an error response
             return response()->json([
@@ -52,7 +53,7 @@ class StoreController extends Controller
             foreach ($data as $record) {
                 try {
                     // Create a new store record
-                    $newStore = Store::create([
+                    Store::create([
                         'store' => (int) Arr::get($record, 'store', 0), // Ensure 'store' is an integer
                         'store_name' => Arr::get($record, 'store_name', ''),
                         'store_add1' => Arr::get($record, 'store_add1', ''),
@@ -65,36 +66,20 @@ class StoreController extends Controller
 
                     // Log successful activity with custom name and properties
                     activity()
-                        ->performedOn($newStore) // Set the subject to the newly created store
-                        ->causedBy(auth()->user()) // Log the user who caused the action
-                        ->withProperties([
-                            'record' => $record,
-                            'event' => 'insert', // Custom event name
-                            'subject_id' => $newStore->id, // ID of the created store
-                            'causer_type' => get_class(auth()->user()), // Type of the causer (e.g., User)
-                            'causer_id' => auth()->user()->id, // ID of the causer
-                        ])
-                        ->log('Store record inserted successfully: {store_name}', ['store_name' => Arr::get($record, 'store_name')]);
+                    ->performedOn(new Store())
+                    ->causedBy(auth()->user()) // Optional: log the user who caused the action
+                    ->withProperties(['record' => $record]) // Add record properties
+                    ->log('Store record inserted successfully: {store_name}', ['store_name' => Arr::get($record, 'store_name')]);
                 } catch (\Exception $e) {
                     // Increment failure count if there's an issue inserting this record
                     $failureCount++;
 
                     // Log failed activity with custom name and properties
                     activity()
-                        ->performedOn(new Store()) // Set the subject to a new Store instance (not saved)
-                        ->causedBy(auth()->user()) // Log the user who caused the action
-                        ->withProperties([
-                            'record' => $record,
-                            'error' => $e->getMessage(),
-                            'event' => 'insert_failed', // Custom event name for failure
-                            'subject_id' => null, // No subject ID since the insert failed
-                            'causer_type' => get_class(auth()->user()), // Type of the causer
-                            'causer_id' => auth()->user()->id, // ID of the causer
-                        ])
+                        ->performedOn(new Store())
+                        ->causedBy(auth()->user()) // Optional: log the user who caused the action
+                        ->withProperties(['record' => $record, 'error' => $e->getMessage()]) // Add record and error properties
                         ->log('Failed to insert store record: {store_name}', ['store_name' => Arr::get($record, 'store_name')]);
-
-                    // Optionally, you can log the error to the default log for further debugging
-                    Log::error('Failed to insert store record: ' . Arr::get($record, 'store_name') . ' Error: ' . $e->getMessage());
                 }
             }
 
@@ -103,22 +88,18 @@ class StoreController extends Controller
                 'message' => 'Data processed successfully',
                 'success' => true,
                 'total_data' => $totalData,
-                'success_count' => $success Count,
+                'success_count' => $successCount,
                 'failure_count' => $failureCount,
             ], 200);
+
         } catch (\Exception $e) {
             // Handle the exception, log it, and return an error response
+            Log::error('An error occurred while processing data: ' . $e->getMessage());
 
             // Log the overall failure with custom name and properties
             activity()
-                ->causedBy(auth()->user()) // Log the user who caused the action
-                ->withProperties([
-                    'error' => $e->getMessage(),
-                    'event' => 'processing_failed', // Custom event name for overall failure
-                    'subject_id' => null, // No subject ID since the process failed
-                    'causer_type' => get_class(auth()->user()), // Type of the causer
-                    'causer_id' => auth()->user()->id, // ID of the causer
-                ])
+                ->causedBy(auth()->user()) // Optional: log the user who caused the action
+                ->withProperties(['error' => $e->getMessage()]) // Add error properties
                 ->log('An error occurred while processing data');
 
             return response()->json([
@@ -130,4 +111,5 @@ class StoreController extends Controller
             ], 500);
         }
     }
+
 }
