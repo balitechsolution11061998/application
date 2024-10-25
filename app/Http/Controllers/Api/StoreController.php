@@ -107,6 +107,7 @@ class StoreController extends Controller
 
             return response()->json([
                 'message' => 'An error occurred while processing data',
+                'success' => false,
                 'error' => $e->getMessage(),
                 'total_data' => $totalData,
                 'success_count' => $successCount,
