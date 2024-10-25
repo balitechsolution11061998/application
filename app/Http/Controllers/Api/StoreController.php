@@ -92,6 +92,9 @@ class StoreController extends Controller
                             'causer_id' => auth()->user()->id, // ID of the causer
                         ])
                         ->log('Failed to insert store record: {store_name}', ['store_name' => Arr::get($record, 'store_name')]);
+
+                    // Optionally, you can log the error to the default log for further debugging
+                    Log::error('Failed to insert store record: ' . Arr::get($record, 'store_name') . ' Error: ' . $e->getMessage());
                 }
             }
 
@@ -100,7 +103,7 @@ class StoreController extends Controller
                 'message' => 'Data processed successfully',
                 'success' => true,
                 'total_data' => $totalData,
-                'success_count' => $successCount,
+                'success_count' => $success Count,
                 'failure_count' => $failureCount,
             ], 200);
         } catch (\Exception $e) {
