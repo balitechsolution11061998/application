@@ -10,20 +10,35 @@ class ProfileController extends Controller
     //
     public function uploadProfilePicture(Request $request)
     {
+        // Validate the incoming request
         $request->validate([
-            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        if ($request->hasFile('profile_picture')) {
-            $file = $request->file('profile_picture');
-            $fileName = time() . '.' . $file->getClientOriginalExtension();
-            $filePath = $file->storeAs('public/profile_pictures', $fileName);
+        // Check if the request has a file
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
 
-            return response()->json(['success' => true, 'file_path' => $filePath]);
+            // Create a unique filename based on the current time
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+
+            // Store the file in the specified directory
+            $filePath = $file->storeAs('profile_pictures', $fileName, 'public'); // Using 'public' disk for visibility
+
+            // Generate a URL for the uploaded file
+            $fileUrl = asset('storage/' . $filePath); // Generates a public URL to access the file
+
+            // Return a JSON response with success status and file URL
+            return response()->json([
+                'success' => true,
+                'file_url' => $fileUrl // Return the URL instead of the path
+            ], 200);
         }
 
-        return response()->json(['success' => false, 'message' => 'No file uploaded.']);
+        // Return an error response if no file is uploaded
+        return response()->json(['success' => false, 'message' => 'No file uploaded.'], 400);
     }
+
     public function removePicture(Request $request)
     {
         // Validate the request if needed

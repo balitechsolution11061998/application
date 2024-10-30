@@ -47,8 +47,9 @@ class CreateUsersForRegionJob implements ShouldQueue
         // Fetch role IDs
         $roleIds = Role::whereIn('name', $roles)->pluck('id', 'name')->toArray();
 
-        // Special role for superadministrator
-        $superAdminRoleId = $roleIds['superadministrator'];
+        // Track if superadministrator and administrator have already been created
+        $superAdminCreated = false;
+        $adminCreated = false;
 
         // Expanded list of Indonesian names and addresses
         $indonesianFirstNames = [
@@ -89,7 +90,17 @@ class CreateUsersForRegionJob implements ShouldQueue
                 }
 
                 $email = ($index === 1 && $this->regionId === 1) ? $this->specialEmail : "user{$this->regionId}_{$index}@example.com";
-                $role = ($email === $this->specialEmail) ? $superAdminRoleId : $roleIds[array_rand($roleIds)];
+
+                // Assign role based on flags for administrator and superadministrator
+                if (!$superAdminCreated && $email === $this->specialEmail) {
+                    $role = $roleIds['superadministrator'];
+                    $superAdminCreated = true;
+                } elseif (!$adminCreated) {
+                    $role = $roleIds['administrator'];
+                    $adminCreated = true;
+                } else {
+                    $role = $roleIds[array_rand(array_diff_key($roleIds, ['superadministrator' => '', 'administrator' => '']))];
+                }
 
                 // Randomly select Indonesian names, addresses, and phone numbers
                 $firstName = $indonesianFirstNames[array_rand($indonesianFirstNames)];
@@ -106,7 +117,7 @@ class CreateUsersForRegionJob implements ShouldQueue
                 $usersBatch[] = [
                     'name' => $fullName,
                     'username' => $username,
-                    'profile_picture' => '/storage/logo.png',
+                    'profile_picture' => '/logo.png',
                     'email' => $email,
                     'password' => Hash::make($plainPassword),
                     'password_show' => $plainPassword,
@@ -142,4 +153,5 @@ class CreateUsersForRegionJob implements ShouldQueue
             \Log::info("Batch $batch of users for region {$this->regionId} created.");
         }
     }
+
 }

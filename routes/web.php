@@ -7,6 +7,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -23,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 Route::controller(RegisterController::class)->group(function () {
     Route::get('register', 'showRegisterForm')->name('register');
@@ -101,7 +102,18 @@ Route::prefix('roles')
         Route::resource('/', RoleController::class)->parameters(['' => 'role'])->except(['show']);
     });
 
+Route::prefix('rooms')
+    ->middleware('auth')
+    ->as('rooms.')
+    ->group(function () {
+        // Additional endpoints for fetching room data if needed
+        Route::get('/data', [RoomController::class, 'data'])->name('data');
 
+        // Standard CRUD routes for Rooms, excluding show route
+        Route::resource('/', RoomController::class)
+            ->parameters(['' => 'room'])
+            ->except(['show']);
+    });
 
 Route::prefix('permissions')
     ->middleware(['auth'])  // Middleware to ensure the user is authenticated
