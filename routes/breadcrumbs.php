@@ -16,6 +16,10 @@ Breadcrumbs::for('user_profile', function (BreadcrumbTrail $trail) {
     $trail->push('Users', route('users.profile'));
 });
 
+Breadcrumbs::for('rooms', function (BreadcrumbTrail $trail) {
+    $trail->push('Rooms', route('rooms.index'));
+});
+
 Breadcrumbs::for('permissions', function (BreadcrumbTrail $trail) {
     $trail->push('Permissions', route('permissions.index'));
 });

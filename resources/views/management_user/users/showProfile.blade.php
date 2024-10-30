@@ -52,7 +52,7 @@
             <div class="row">
                 <input type="hidden" name="id" id="id" value="{{ $user->id ?? '' }}">
 
-                <!-- Drag and Drop File Upload -->
+                <input type="hidden" id="profile-picture-url" name="profile_picture" value="" />
                 <!-- Drag and Drop File Upload -->
                 <div class="col-md-12 mb-4">
                     <div class="form-group w-100">
@@ -283,8 +283,12 @@
 
         xhr.addEventListener('load', function() {
             if (xhr.status === 200) {
-                // Upload complete
+                const response = JSON.parse(xhr.responseText);
                 console.log('Upload complete');
+                // Set the profile picture preview to the returned URL
+                document.getElementById('image-preview').src = response.profile_picture_url;
+                // Set the hidden input value to the uploaded image URL
+                document.getElementById('profile-picture-url').value = response.profile_picture_url;
             } else {
                 console.error('Upload failed');
             }
@@ -295,10 +299,16 @@
         });
 
         xhr.open('POST', '/upload-profile-picture'); // Replace with your actual upload URL
+
+        // Get CSRF token from meta tag and add it to FormData
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('_token', csrfToken); // Include CSRF token
+
         xhr.send(formData);
     }
+
 
 
 
@@ -366,11 +376,6 @@
     document.addEventListener("DOMContentLoaded", function() {
         fetchRegions();
         fetchRoles();
-
-        $('#roles').select2({
-            placeholder: "Select an option",
-            allowClear: true // Allows clearing of the selection
-        });
     });
 
     // Function to fetch regions and set the current user's region

@@ -160,28 +160,33 @@ dataTableHelper("#users_table", "/users/data", [
                     : "No active emails";
 
             return `
-        <div class="btn-group" role="group">
-            <button type="button" class="btn btn-sm btn-primary" onclick="editUser (${row.username})" title="Edit User">
-                <i class="fas fa-edit"></i>
-            </button>
-            <button type="button" class="btn btn-sm btn-danger" onclick="deleteUser (${row.id})" title="Delete User">
-                <i class="fas fa-trash"></i>
-            </button>
-            <button type="button" class="btn btn-sm btn-warning" onclick="changePassword(${row.id})" title="Change Password">
-                <i class="fas fa-key"></i>
-            </button>
-            <button type="button" class="btn btn-sm btn-info" data-toggle="tooltip" title="<div class='tooltip-content'>${emailList}</div>" data-html="true">
-                <i class="fas fa-envelope"></i>
-            </button>
-            <button type="button" class="btn btn-sm btn-secondary btn-add-email" title="Add Email" onclick="addEmail(${row.username})">
-                    <i class="fas fa-plus"></i>
-                </button>
-            <button type="button" class="btn btn-sm btn-success" title="Store" onclick="addStore(${row.username})">
-                <i class="fas fa-store"></i>
-            </button>
-        </div>
-        `;
+            <div class="btn-group d-flex flex-wrap" role="group">
+                <div class="d-flex w-100 justify-content-between mb-1">
+                    <button type="button" class="btn btn-sm btn-primary w-32" onclick="editUser(${row.username})" title="Edit User">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger w-32" onclick="deleteUser(${row.id})" title="Delete User">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-warning w-32" onclick="changePassword(${row.id})" title="Change Password">
+                        <i class="fas fa-key"></i>
+                    </button>
+                </div>
+                <div class="d-flex w-100 justify-content-between">
+                    <button type="button" class="btn btn-sm btn-info w-32" data-toggle="tooltip" title="<div class='tooltip-content'>${emailList}</div>" data-html="true">
+                        <i class="fas fa-envelope"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-secondary w-32 btn-add-email" title="Add Email" onclick="addEmail(${row.username})">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-success w-32" title="Store" onclick="addStore(${row.username})">
+                        <i class="fas fa-store"></i>
+                    </button>
+                </div>
+            </div>
+            `;
         },
+
     },
 ]);
 
@@ -221,34 +226,29 @@ if ($(window).width() < 768) {
             // Add event listener to the "Click to view details" button
             $("#show-details-button").on("click", function () {
                 // Show the details of the data
-                // You can replace this with your own logic to show the details
                 alert("Details of the data will be shown here");
             });
         })
         .start();
-}
-const tooltipStyles = `
-<style>
-    .tooltip-inner {
-        background-color: #333; /* Darker background for the tooltip */
-        color: white; /* Text color */
-        max-width: 250px; /* Limit tooltip width */
-        font-weight: bold; /* Bold font */
-        font-size: 0.9em; /* Slightly smaller text */
-        padding: 8px; /* Increase padding for better readability */
-        text-align: left; /* Align text to the left */
-    }
-    .tooltip-content {
-        padding: 5px;
-    }
-    .tooltip-arrow {
-        border-bottom-color: #333; /* Match the arrow color with the tooltip background */
-    }
-</style>
-`;
 
-// Add the custom styles to the document
-$("head").append(tooltipStyles);
+    // Add CSS to set all text to black within Intro.js tooltips with high specificity
+    const tooltipStyles = `
+    <style>
+        .introjs-tooltip, .introjs-tooltip * {
+            color: black !important;
+        }
+        .introjs-tooltip-title, .introjs-tooltiptext, .introjs-helperLayer, .introjs-overlay, .introjs-tooltipbuttons {
+            color: black !important;
+            background-color: #fff !important; /* Optional: Set background color for visibility */
+        }
+    </style>
+    `;
+
+    // Append the custom styles to the document head
+    $("head").append(tooltipStyles);
+}
+
+
 $(document).ready(function () {
     $.ajaxSetup({
         headers: {
@@ -381,215 +381,9 @@ $(document).ready(function () {
         });
     });
 
-    // upload profile
-    const dropzone = document.getElementById("profilePictureDropzone");
-    const fileInput = document.getElementById("profilePicture");
-    const preview = document.getElementById("profilePicturePreview");
-    const progressWrapper = document.getElementById("uploadProgressWrapper");
-    const progressBar = document.getElementById("uploadProgressBar");
-    const removeButton = document.getElementById("removePictureButton");
-    const csrfToken = document
-        .querySelector('meta[name="csrf-token"]')
-        .getAttribute("content");
 
-    fileInput.addEventListener("change", handleFileSelect);
-    dropzone.addEventListener("click", () => fileInput.click());
-    dropzone.addEventListener("dragover", (event) => {
-        event.preventDefault();
-        dropzone.classList.add("bg-light");
-    });
-    dropzone.addEventListener("dragleave", () =>
-        dropzone.classList.remove("bg-light")
-    );
-    dropzone.addEventListener("drop", (event) => {
-        event.preventDefault();
-        dropzone.classList.remove("bg-light");
-        handleFileSelect({
-            target: {
-                files: event.dataTransfer.files,
-            },
-        });
-    });
 
-    removeButton.addEventListener("click", removeImage);
 
-    function handleFileSelect(event) {
-        const file = event.target.files[0];
-        if (file) {
-            if (!file.type.startsWith("image/")) {
-                alert("Please select an image file.");
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                preview.src = e.target.result;
-                preview.style.display = "block";
-                removeButton.style.display = "inline-block"; // Show the remove button
-            };
-            reader.readAsDataURL(file);
-
-            progressWrapper.style.display = "block";
-            uploadFile(file);
-        }
-    }
-
-    function uploadFile(file) {
-        const formData = new FormData();
-        formData.append("profile_picture", file);
-
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "/upload-profile-picture", true);
-        xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);
-
-        xhr.upload.onprogress = (event) => {
-            if (event.lengthComputable) {
-                const percentComplete = (event.loaded / event.total) * 100;
-                progressBar.style.width = percentComplete + "%";
-                progressBar.setAttribute("aria-valuenow", percentComplete);
-            }
-        };
-
-        xhr.onload = () => {
-            if (xhr.status === 200) {
-                console.log("Image uploaded successfully!");
-            } else {
-                console.error("Image upload failed: " + xhr.statusText);
-            }
-            progressWrapper.style.display = "none";
-        };
-
-        xhr.onerror = () => {
-            console.error("Image upload failed due to a network error.");
-            progressWrapper.style.display = "none";
-        };
-
-        xhr.send(formData);
-    }
-
-    function removeImage() {
-        preview.src = "";
-        preview.style.display = "none";
-        removeButton.style.display = "none";
-        progressWrapper.style.display = "none";
-        fileInput.value = ""; // Clear file input
-
-        // Optionally, you can send a request to remove the image from the server
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "/remove-profile-picture", true);
-        xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);
-        xhr.onload = () => {
-            if (xhr.status === 200) {
-                console.log("Image removed successfully!");
-            } else {
-                console.error("Image removal failed: " + xhr.statusText);
-            }
-        };
-        xhr.send();
-    }
-
-    $("#saveUser").click(function (e) {
-        e.preventDefault();
-        console.log("Saving user details...");
-
-        // Create a FormData object to handle both user data and file upload
-        let formData = new FormData();
-        formData.append("id", $("#userId").val());
-        formData.append("username", $("#username").val());
-        formData.append("name", $("#name").val());
-        formData.append("email", $("#email").val());
-        formData.append("password", $("#password").val());
-        formData.append("password_confirmation", $("#confirmPassword").val());
-        formData.append("address", $("#address").val());
-        formData.append("region_id", $("#region").val());
-
-        // Get selected roles as an array
-        let selectedRoles = $("#roles").val(); // Assuming #roles is a <select> with 'multiple' attribute
-        if (selectedRoles) {
-            selectedRoles.forEach((role) => {
-                formData.append("roles[]", role); // Append each role to FormData as an array
-            });
-        }
-
-        // Append the profile picture if it exists
-        const fileInput = document.getElementById("profilePicture");
-        if (fileInput.files.length > 0) {
-            formData.append("profile_picture", fileInput.files[0]);
-        }
-
-        // Validate form data
-        if (
-            !formData.get("username") ||
-            !formData.get("name") ||
-            !formData.get("email") ||
-            formData.get("password") !== formData.get("password_confirmation")
-        ) {
-            $("#userFormError").show();
-            return;
-        }
-
-        $("#userFormError").hide();
-
-        Swal.fire({
-            title: "Are you sure?",
-            text: "You are about to submit the user details.",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Yes, save it!",
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: "/users/store", // Adjust this to your API route
-                    type: "POST",
-                    data: formData,
-                    contentType: false, // Important for FormData
-                    processData: false, // Important for FormData
-                    success: function (response) {
-                        Toastify({
-                            text: "User saved successfully!",
-                            duration: 3000,
-                            gravity: "top",
-                            position: "right",
-                            backgroundColor: "#28a745",
-                        }).showToast();
-
-                        $("#modalForm").modal("hide");
-                        $("#userForm")[0].reset();
-                        $("#users_table").DataTable().ajax.reload();
-                    },
-                    error: function (xhr) {
-                        let errorMessage =
-                            "Error saving user. Please try again.";
-
-                        // Check if the response contains JSON data
-                        try {
-                            let responseJSON = JSON.parse(xhr.responseText);
-                            if (responseJSON.message) {
-                                errorMessage = responseJSON.message;
-                            } else if (responseJSON.errors) {
-                                // Collect all error messages if there are validation errors
-                                errorMessage = Object.values(
-                                    responseJSON.errors
-                                )
-                                    .flat()
-                                    .join(", ");
-                            }
-                        } catch (e) {
-                            // Handle parsing error or non-JSON responses
-                            console.error("Error parsing response JSON:", e);
-                        }
-
-                        Toastify({
-                            text: errorMessage,
-                            duration: 3000,
-                            gravity: "top",
-                            position: "right",
-                            backgroundColor: "#dc3545",
-                        }).showToast();
-                    },
-                });
-            }
-        });
-    });
 });
 
 // function addEmail(username) {

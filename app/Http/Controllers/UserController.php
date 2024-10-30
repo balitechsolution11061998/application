@@ -276,6 +276,7 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        dd($request->all());
         // Validate the request data
         $rules = [
             'username' => 'required|string|max:255',
