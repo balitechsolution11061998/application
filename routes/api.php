@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\PoController;
+use App\Http\Controllers\Api\RcvController;
 use App\Http\Controllers\Api\StoreController;
 use App\Http\Controllers\ItemSupplierController;
 use App\Http\Controllers\PurchaseRequisitionController;
@@ -24,7 +25,31 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 
-Route::post('/po/store', [PoController::class, 'store']);
-Route::post('/itemsupplier/store', [ItemSupplierCcontroller::class, 'store']);
+
 Route::post('/pr/store', [PurchaseRequisitionController::class, 'store']);
-Route::post('/stores/store', [StoreController::class, 'store']);
+// Supplier Routes
+Route::prefix('supplier')->group(function () {
+    Route::post('/store', [SupplierController::class, 'store']);
+    Route::get('/get', [SupplierController::class, 'getData']);
+});
+
+// Store Routes
+Route::prefix('stores')->group(function () {
+    Route::post('/store', [StoreController::class, 'store']);
+    Route::get('/get', [StoreController::class, 'get']);
+});
+
+// Purchase Order (PO) Routes
+Route::prefix('po')->group(function () {
+    Route::post('/store', [PoController::class, 'store']);
+    Route::get('/getData', [PoController::class, 'getData']);
+});
+
+// Item Supplier Routes
+Route::post('/itemsupplier/store', [ItemSupplierController::class, 'store']);
+
+// Receive (RCV) Routes
+Route::prefix('rcv')->group(function () {
+    Route::post('/store', [RcvController::class, 'store']);
+    Route::get('/getData', [RcvController::class, 'getData']);
+});
