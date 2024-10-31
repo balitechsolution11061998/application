@@ -78,6 +78,8 @@ return array(
     'Laravel\\Sanctum\\' => array($vendorDir . '/laravel/sanctum/src'),
     'Laravel\\Sail\\' => array($vendorDir . '/laravel/sail/src'),
     'Laravel\\Prompts\\' => array($vendorDir . '/laravel/prompts/src'),
+    'LaravelEasyRepository\\Database\\Factories\\' => array($vendorDir . '/yaza/laravel-repository-service/database/factories'),
+    'LaravelEasyRepository\\' => array($vendorDir . '/yaza/laravel-repository-service/src'),
     'Laratrust\\' => array($vendorDir . '/santigarcor/laratrust/src'),
     'Itmm\\MMartSkin\\' => array($vendorDir . '/itmm/m-mart-skin/src'),
     'Illuminate\\Support\\' => array($vendorDir . '/laravel/framework/src/Illuminate/Macroable', $vendorDir . '/laravel/framework/src/Illuminate/Collections', $vendorDir . '/laravel/framework/src/Illuminate/Conditionable'),
