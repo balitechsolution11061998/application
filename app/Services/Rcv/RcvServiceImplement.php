@@ -44,6 +44,9 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
 
     public function store($data)
     {
+        $successCount = 0;
+        $failureCount = 0;
+
         try {
             // Start transaction
             DB::beginTransaction();
@@ -101,6 +104,8 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     ->performedOn($rcvHead)
                     ->log($rcvHead->wasRecentlyCreated ? 'Inserted RcvHead' : 'Updated RcvHead');
 
+                $successCount++; // Increment success count for RcvHead
+
                 foreach ($data as $detail) {
                     $rcvDetailData = [
                         "store" => $detail->store,
@@ -127,7 +132,12 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                         ->performedOn($rcvDetail)
                         ->log($rcvDetail->wasRecentlyCreated ? 'Inserted RcvDetail' : 'Updated RcvDetail');
 
-                    $totalServiceLevel += ($detail->qty_received / $detail->qty_expected) * 100;
+                    $successCount++; // Increment success count for RcvDetail
+
+                    // Calculate totals
+                    if ($detail->qty_expected > 0) {
+                        $totalServiceLevel += ($detail->qty_received / $detail->qty_expected) * 100;
+                    }
                     $sub_total += $detail->qty_received * $detail->unit_cost;
                     $sub_total_vat_cost += $detail->vat_cost * $detail->qty_received;
                 }
@@ -137,7 +147,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                 // Update RcvHead with calculated values
                 $rcvHead->update([
                     'average_service_level' => $averageServiceLevel,
-                    'sub_total' => $sub_total ,
+                    'sub_total' => $sub_total,
                     'sub_total_vat_cost' => $sub_total_vat_cost,
                 ]);
 
@@ -158,6 +168,8 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     activity()
                         ->performedOn($podata)
                         ->log('Updated order status to Completed');
+
+                    $successCount++; // Increment success count for order status update
                 } else if ($podata != null && $averageServiceLevel < 100) {
                     $podata->update([
                         'status' => 'Incompleted',
@@ -168,11 +180,17 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     activity()
                         ->performedOn($podata)
                         ->log('Updated order status to Incompleted');
+
+                    $successCount++; // Increment success count for order status update
                 }
             }
 
             DB::table('temp_rcv')->truncate();
             DB::commit(); // Commit transaction
+
+            // Log activity for successful operation
+            activity()
+                ->log("Successfully processed $successCount records.");
 
         } catch (\Throwable $th) {
             // Check if a transaction is active before rolling back
@@ -180,9 +198,9 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                 DB::rollBack(); // Rollback transaction on error
             }
 
-            // Log activity for failed operation
+            // Log activity for failed operation with detailed error message
             activity()
-                ->log('Failed to process data');
+                ->log("Failed to process data. $failureCount records failed to process. Error: " . $th->getMessage());
 
             throw $th; // Rethrow the exception for further handling
         }
