@@ -7,6 +7,7 @@ use App\Core\KTBootstrap;
 use App\Models\RcvHead;
 use App\Repositories\OrdHead\OrdHeadRepository;
 use App\Repositories\RcvDetail\RcvDetailRepository;
+use App\Repositories\RcvDetail\RcvDetailRepositoryImplement;
 use App\Repositories\RcvHead\RcvHeadRepository;
 use App\Repositories\RcvHead\RcvHeadRepositoryImplement;
 use App\Services\Rcv\RcvService;
@@ -20,17 +21,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // Binding the repositories
+        // Binding OrdHeadRepository to its implementation
         $this->app->bind(OrdHeadRepository::class, function ($app) {
-            return new OrdHeadRepository(); // Adjust as necessary
+            return new OrdHeadRepositoryImplement(); // Adjust constructor parameters as necessary
         });
 
+        // Binding RcvDetailRepository to its implementation
         $this->app->bind(RcvDetailRepository::class, function ($app) {
-            return new RcvDetailRepository(); // Adjust as necessary
+            return new RcvDetailRepositoryImplement(); // Adjust constructor parameters as necessary
         });
 
+        // Binding RcvHeadRepository to its implementation
         $this->app->bind(RcvHeadRepository::class, function ($app) {
-            return new RcvHeadRepository(); // Adjust as necessary
+            return new RcvHeadRepositoryImplement(); // Adjust constructor parameters as necessary
         });
 
         // Binding the RcvService interface to its implementation
