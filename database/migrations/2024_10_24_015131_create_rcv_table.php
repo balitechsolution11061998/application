@@ -54,7 +54,7 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('receives', function (Blueprint $table) {
+        Schema::create('temp_rcv', function (Blueprint $table) {
             $table->bigIncrements('receive_no');
             $table->date('receive_date');
             $table->date('created_date');
