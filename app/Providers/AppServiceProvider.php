@@ -5,8 +5,12 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Core\KTBootstrap;
 use App\Models\RcvHead;
+use App\Repositories\OrdHead\OrdHeadRepository;
+use App\Repositories\RcvDetail\RcvDetailRepository;
+use App\Repositories\RcvHead\RcvHeadRepository;
 use App\Repositories\RcvHead\RcvHeadRepositoryImplement;
 use App\Services\Rcv\RcvService;
+use App\Services\Rcv\RcvServiceImplement;
 use Illuminate\Database\Schema\Builder;
 
 class AppServiceProvider extends ServiceProvider
@@ -16,14 +20,26 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-         // Binding RcvHeadRepositoryImplement
-         $this->app->bind(RcvHeadRepositoryImplement::class, function ($app) {
-            return new RcvHeadRepositoryImplement(new RcvHead());
+        // Binding the repositories
+        $this->app->bind(OrdHeadRepository::class, function ($app) {
+            return new OrdHeadRepository(); // Adjust as necessary
         });
 
-        // Binding RcvService
+        $this->app->bind(RcvDetailRepository::class, function ($app) {
+            return new RcvDetailRepository(); // Adjust as necessary
+        });
+
+        $this->app->bind(RcvHeadRepository::class, function ($app) {
+            return new RcvHeadRepository(); // Adjust as necessary
+        });
+
+        // Binding the RcvService interface to its implementation
         $this->app->singleton(RcvService::class, function ($app) {
-            return new RcvService($app->make(RcvHeadRepositoryImplement::class));
+            return new RcvServiceImplement(
+                $app->make(OrdHeadRepository::class),
+                $app->make(RcvDetailRepository::class),
+                $app->make(RcvHeadRepository::class)
+            );
         });
     }
 
