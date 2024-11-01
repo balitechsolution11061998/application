@@ -9,7 +9,7 @@ use App\Repositories\RcvDetail\RcvDetailRepository;
 use App\Repositories\RcvHead\RcvHeadRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Spatie\Activitylog\Models\Activity;
+
 class RcvServiceImplement extends ServiceApi implements RcvService{
 
     /**
@@ -44,46 +44,64 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
 
     public function store($data)
     {
-        DB::beginTransaction(); // Start transaction
         try {
+            // Start transaction
+            DB::beginTransaction();
+
+            $requestData = $data;
             $chunkSize = 100;
 
             // Insert data in chunks
-            collect($data)->chunk($chunkSize)->each(function ($chunk) {
+            collect($requestData)->chunk($chunkSize)->each(function ($chunk) {
                 DB::table('temp_rcv')->insert($chunk->toArray());
             });
 
-            // Fetch records that do not exist in rcvhead
             $rcvNotExists = DB::table('temp_rcv')
                 ->select('temp_rcv.*')
-                ->leftJoin('rcvhead', 'temp_rcv.receive_no', '=', 'rcvhead.receive_no')
+                ->leftJoin('rcvhead', function ($join) {
+                    $join->on('temp_rcv.receive_no', '=', 'rcvhead.receive_no');
+                })
                 ->whereNull('rcvhead.receive_no')
                 ->get();
 
-            $groupedData = $rcvNotExists->groupBy('receive_no');
+            $datas = collect($rcvNotExists);
 
-            foreach ($groupedData as $receiveNo => $dataGroup) {
+            foreach ($datas->groupBy('receive_no') as $data) {
                 $totalServiceLevel = 0;
-                $subTotal = 0;
-                $subTotalVatCost = 0;
-                $totalItems = $dataGroup->count();
+                $sub_total = 0;
+                $sub_total_vat_cost = 0;
+                $totalItems = count($data);
 
-                $rcvHeadData = $this->prepareRcvHeadData($dataGroup);
+                $rcvHeadData = [
+                    "receive_date" => $data[0]->receive_date,
+                    "created_date" => $data[0]->created_date,
+                    "receive_id" => $data[0]->receive_id,
+                    "order_no" => $data[0]->order_no,
+                    "ref_no" => $data[0]->ref_no,
+                    "order_type" => $data[0]->order_type,
+                    "status_ind" => $data[0]->status_ind,
+                    "approval_date" => $data[0]->approval_date,
+                    "approval_id" => $data[0]->approval_id,
+                    "store" => $data[0]->store,
+                    "store_name" => $data[0]->store_name,
+                    "supplier" => $data[0]->supplier,
+                    "sup_name" => $data[0]->sup_name,
+                    'status' => 'n',
+                    "comment_desc" => $data[0]->comment_desc,
+                ];
 
-                // Check if we need to insert or update
+                // Insert or update RcvHead
                 $rcvHead = $this->rcvHeadRepository->updateOrCreate(
-                    ["receive_no" => $receiveNo],
+                    ["receive_no" => $data[0]->receive_no],
                     $rcvHeadData
                 );
 
-                // Log activity for insert/update
+                // Log activity for RcvHead insert/update
                 activity()
                     ->performedOn($rcvHead)
                     ->log($rcvHead->wasRecentlyCreated ? 'Inserted RcvHead' : 'Updated RcvHead');
 
-                foreach ($dataGroup as $detail) {
-                    $serviceLevel = ($detail->qty_expected > 0) ? ($detail->qty_received / $detail->qty_expected) * 100 : 0;
-
+                foreach ($data as $detail) {
                     $rcvDetailData = [
                         "store" => $detail->store,
                         "sku" => $detail->sku,
@@ -95,30 +113,32 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                         "unit_retail" => $detail->unit_retail,
                         "vat_cost" => $detail->vat_cost,
                         "unit_cost_disc" => $detail->unit_cost_disc,
-                        "service_level" => $serviceLevel,
+                        "service_level" => $detail->qty_expected > 0 ? ($detail->qty_received / $detail->qty_expected) * 100 : 0,
                     ];
 
+                    // Insert or update RcvDetail
                     $rcvDetail = $this->rcvDetailRepository->updateOrCreate(
                         ['rcvhead_id' => $rcvHead->id, 'sku' => $detail->sku, 'receive_no' => $detail->receive_no],
                         $rcvDetailData
                     );
 
-                    // Log activity for insert/update
+                    // Log activity for RcvDetail insert/update
                     activity()
                         ->performedOn($rcvDetail)
                         ->log($rcvDetail->wasRecentlyCreated ? 'Inserted RcvDetail' : 'Updated RcvDetail');
 
-                    $totalServiceLevel += $serviceLevel;
-                    $subTotal += $detail->qty_received * $detail->unit_cost;
-                    $subTotalVatCost += $detail->vat_cost * $detail->qty_received;
+                    $totalServiceLevel += ($detail->qty_received / $detail->qty_expected) * 100;
+                    $sub_total += $detail->qty_received * $detail->unit_cost;
+                    $sub_total_vat_cost += $detail->vat_cost * $detail->qty_received;
                 }
 
                 $averageServiceLevel = $totalItems > 0 ? $totalServiceLevel / $totalItems : 0;
 
+                // Update RcvHead with calculated values
                 $rcvHead->update([
                     'average_service_level' => $averageServiceLevel,
-                    'sub_total' => $subTotal,
-                    'sub_total_vat_cost' => $subTotalVatCost,
+                    'sub_total' => $sub_total ,
+                    'sub_total_vat_cost' => $sub_total_vat_cost,
                 ]);
 
                 // Log activity for updating average service level
@@ -126,60 +146,45 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     ->performedOn($rcvHead)
                     ->log('Updated average service level for RcvHead');
 
-                $this->updateOrderStatus($dataGroup[0]->order_no, $averageServiceLevel, $dataGroup[0]->receive_date);
+                $podata = $this->ordHeadRepository->where('order_no', $data[0]->order_no)->first();
+
+                if ($podata != null && $averageServiceLevel == 100) {
+                    $podata->update([
+                        'status' => 'Completed',
+                        'estimated_delivery_date' => $data[0]->receive_date,
+                    ]);
+
+                    // Log activity for updating order status to Completed
+                    activity()
+                        ->performedOn($podata)
+                        ->log('Updated order status to Completed');
+                } else if ($podata != null && $averageServiceLevel < 100) {
+                    $podata->update([
+                        'status' => 'Incompleted',
+                        'estimated_delivery_date' => $data[0]->receive_date,
+                    ]);
+
+                    // Log activity for updating order status to Incompleted
+                    activity()
+                        ->performedOn($podata)
+                        ->log('Updated order status to Incompleted');
+                }
             }
 
             DB::table('temp_rcv')->truncate();
             DB::commit(); // Commit transaction
 
         } catch (\Throwable $th) {
-            DB::rollBack(); // Rollback transaction on error
-            throw $th;
-        }
-    }
-
-    private function prepareRcvHeadData($dataGroup)
-    {
-        return [
-            "receive _date" => $dataGroup[0]->receive_date,
-            "created_date" => $dataGroup[0]->created_date,
-            "receive_id" => $dataGroup[0]->receive_id,
-            "order_no" => $dataGroup[0]->order_no,
-            "ref_no" => $dataGroup[0]->ref_no,
-            "order_type" => $dataGroup[0]->order_type ,
-            "status_ind" => $dataGroup[0]->status_ind,
-            "approval_date" => $dataGroup[0]->approval_date,
-            "approval_id" => $dataGroup[0]->approval_id,
-            "store" => $dataGroup[0]->store,
-            "store_name" => $dataGroup[0]->store_name,
-            "supplier" => $dataGroup[0]->supplier,
-            "sup_name" => $dataGroup[0]->sup_name,
-            'status' => 'n',
-            "comment_desc" => $dataGroup[0]->comment_desc,
-        ];
-    }
-
-    private function updateOrderStatus($orderNo, $averageServiceLevel, $receiveDate)
-    {
-        $podata = $this->ordHeadRepository->where('order_no', $orderNo)->first();
-
-        if ($podata != null) {
-            if ($averageServiceLevel == 100) {
-                $podata->update([
-                    'status' => 'Completed',
-                    'estimated_delivery_date' => $receiveDate,
-                ]);
-            } else {
-                $podata->update([
-                    'status' => 'Incompleted',
-                    'estimated_delivery_date' => $receiveDate,
-                ]);
+            // Check if a transaction is active before rolling back
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack(); // Rollback transaction on error
             }
 
-            // Log activity for updating order status
+            // Log activity for failed operation
             activity()
-                ->performedOn($podata)
-                ->log($averageServiceLevel == 100 ? 'Updated order status to Completed' : 'Updated order status to Incompleted');
+                ->log('Failed to process data');
+
+            throw $th; // Rethrow the exception for further handling
         }
     }
 }
