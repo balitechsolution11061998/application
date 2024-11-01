@@ -49,6 +49,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
 
         try {
             // Start transaction
+            DB::beginTransaction(); // Added to ensure transaction control
 
             // Validate data before processing
             if (empty($data)) {
@@ -102,9 +103,11 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                 );
 
                 // Log activity for RcvHead insert/update
+                $isFirstReceiveNo = $data[0]->receive_no == 1;
+                $logMessage = "RcvHead for receive_no {$data[0]->receive_no} " . ($rcvHead->wasRecentlyCreated ? 'Inserted' : 'Updated');
                 activity()
                     ->performedOn($rcvHead)
-                    ->log("RcvHead for receive_no {$data[0]->receive_no} " . ($rcvHead->wasRecentlyCreated ? 'Inserted' : 'Updated'));
+                    ->log($logMessage);
 
                 $successCount++; // Increment success count for RcvHead
 
@@ -130,9 +133,10 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     );
 
                     // Log activity for RcvDetail insert/update
+                    $logMessage = "RcvDetail for receive_no {$detail->receive_no} " . ($rcvDetail->wasRecentlyCreated ? 'Inserted' : 'Updated');
                     activity()
                         ->performedOn($rcvDetail)
-                        ->log("RcvDetail for receive_no {$detail->receive_no} " . ($rcvDetail->wasRecentlyCreated ? 'Inserted' : 'Updated'));
+                        ->log($logMessage);
 
                     $successCount++; // Increment success count for RcvDetail
 
@@ -154,9 +158,10 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                 ]);
 
                 // Log activity for updating average service level
+                $logMessage = "Updated average service level for receive_no {$data[0]->receive_no}";
                 activity()
                     ->performedOn($rcvHead)
-                    ->log("Updated average service level for receive_no {$data[0]->receive_no}");
+                    ->log($logMessage);
 
                 $podata = $this->ordHeadRepository->where('order_no', $data[0]->order_no)->first();
 
@@ -167,9 +172,10 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     ]);
 
                     // Log activity for updating order status to Completed
+                    $logMessage = "Updated order status to Completed for order_no {$data[0]->order_no}";
                     activity()
                         ->performedOn($podata)
-                        ->log("Updated order status to Completed for order_no {$data[0]->order_no}");
+                        ->log($logMessage);
 
                     $successCount++; // Increment success count for order status update
                 } else if ($podata != null && $averageServiceLevel < 100) {
@@ -179,21 +185,27 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     ]);
 
                     // Log activity for updating order status to Incompleted
+                    $logMessage = "Updated order status to Incompleted for order_no {$data[0]->order_no}";
                     activity()
                         ->performedOn($podata)
-                        ->log("Updated order status to Incompleted for order_no {$data[0]->order_no}");
+                        ->log($logMessage);
 
                     $successCount++; // Increment success count for order status update
                 }
             }
 
             DB::table('temp_rcv')->truncate();
+            DB::commit(); // Commit transaction
 
             // Log activity for successful operation
             activity()
                 ->log("Successfully processed $successCount records.");
 
         } catch (\Throwable $th) {
+            // Check if a transaction is active before rolling back
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack(); // Rollback transaction on error
+            }
 
             // Log activity for failed operation with detailed error message
             activity()
