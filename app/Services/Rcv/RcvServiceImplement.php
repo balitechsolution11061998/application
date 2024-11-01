@@ -51,11 +51,14 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
             // Start transaction
             DB::beginTransaction();
 
-            $requestData = $data;
-            $chunkSize = 100;
+            // Validate data before processing
+            if (empty($data)) {
+                throw new Exception("No data provided for processing.");
+            }
 
             // Insert data in chunks
-            collect($requestData)->chunk($chunkSize)->each(function ($chunk) {
+            $chunkSize = 100;
+            collect($data)->chunk($chunkSize)->each(function ($chunk) {
                 DB::table('temp_rcv')->insert($chunk->toArray());
             });
 
@@ -118,7 +121,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                         "unit_retail" => $detail->unit_retail,
                         "vat_cost" => $detail->vat_cost,
                         "unit_cost_disc" => $detail->unit_cost_disc,
-                        "service_level" => $detail->qty_expected > 0 ? ($detail->qty_received / $detail->qty_expected) * 100 : 0,
+                        " service_level" => $detail->qty_expected > 0 ? ($detail->qty_received / $detail->qty_expected) * 100 : 0,
                     ];
 
                     // Insert or update RcvDetail
@@ -138,7 +141,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     if ($detail->qty_expected > 0) {
                         $totalServiceLevel += ($detail->qty_received / $detail->qty_expected) * 100;
                     }
-                    $sub_total += $detail->qty_received * $detail ->unit_cost;
+                    $sub_total += $detail->qty_received * $detail->unit_cost;
                     $sub_total_vat_cost += $detail->vat_cost * $detail->qty_received;
                 }
 
