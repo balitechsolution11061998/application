@@ -2,6 +2,8 @@
 
 namespace App\Services\Rcv;
 
+use App\Models\RcvDetail;
+use App\Models\RcvHead;
 use LaravelEasyRepository\ServiceApi;
 use App\Repositories\Rcv\RcvRepository;
 use App\Repositories\OrdHead\OrdHeadRepository;
@@ -44,19 +46,12 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
 
     public function store($data)
     {
-        $successCount = 0;
-        $failureCount = 0;
-
         try {
+            $requestData = $data;
 
-            // Validate data before processing
-            if (empty($data)) {
-                throw new Exception("No data provided for processing.");
-            }
-
-            // Insert data in chunks
             $chunkSize = 100;
-            collect($data)->chunk($chunkSize)->each(function ($chunk) {
+
+            collect($requestData)->chunk($chunkSize)->each(function ($chunk) {
                 DB::table('temp_rcv')->insert($chunk->toArray());
             });
 
@@ -65,7 +60,6 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                 ->leftJoin('rcvhead', function ($join) {
                     $join->on('temp_rcv.receive_no', '=', 'rcvhead.receive_no');
                 })
-                ->whereNull('rcvhead.receive_no')
                 ->get();
 
             $datas = collect($rcvNotExists);
@@ -90,24 +84,39 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     "store_name" => $data[0]->store_name,
                     "supplier" => $data[0]->supplier,
                     "sup_name" => $data[0]->sup_name,
-                    'status' => 'n',
                     "comment_desc" => $data[0]->comment_desc,
                 ];
 
-                // Insert or update RcvHead
+                // Use Eloquent model to check for existing RcvHead
+                $existingRcvHead = RcvHead::where('receive_no', $data[0]->receive_no)->first();
+
+                // Log existing RcvHead state before update
+                if ($existingRcvHead) {
+                    activity()
+                        ->performedOn($existingRcvHead) // Now it's an Eloquent model
+                        ->withProperties(['before_update' => $existingRcvHead->toArray()])
+                        ->log("Existing RcvHead state before update for receive_no {$data[0]->receive_no}");
+                }
+
+                // Set status based on existing record
+                if (!$existingRcvHead || $existingRcvHead->status !== 'y') {
+                    $rcvHeadData['status'] = 'n';
+                }
+
                 $rcvHead = $this->rcvHeadRepository->updateOrCreate(
                     ["receive_no" => $data[0]->receive_no],
                     $rcvHeadData
                 );
 
                 // Log activity for RcvHead insert/update
-                $isFirstReceiveNo = $data[0]->receive_no == 1;
-                $logMessage = "RcvHead for receive_no {$data[0]->receive_no} " . ($rcvHead->wasRecentlyCreated ? 'Inserted' : 'Updated');
                 activity()
                     ->performedOn($rcvHead)
-                    ->log($logMessage);
-
-                $successCount++; // Increment success count for RcvHead
+                    ->withProperties([
+                        'receive_no' => $data[0]->receive_no,
+                        'order_no' => $data[0]->order_no,
+                        'status' => $existingRcvHead && $existingRcvHead->status === 'y' ? 'Unchanged' : 'Updated to n',
+                    ])
+                    ->log("RcvHead for receive_no {$data[0]->receive_no} " . ($rcvHead->wasRecentlyCreated ? 'Inserted' : 'Updated'));
 
                 foreach ($data as $detail) {
                     $rcvDetailData = [
@@ -121,27 +130,38 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                         "unit_retail" => $detail->unit_retail,
                         "vat_cost" => $detail->vat_cost,
                         "unit_cost_disc" => $detail->unit_cost_disc,
-                        "service_level" => $detail->qty_expected > 0 ? ($detail->qty_received / $detail->qty_expected) * 100 : 0,
+                        "service_level" =>  $detail->qty_received / $detail->qty_expected * 100,
                     ];
 
-                    // Insert or update RcvDetail
+                    // Use Eloquent model to check for existing RcvDetail
+                    $existingRcvDetail = RcvDetail::where(['rcvhead_id' => $rcvHead->id, 'sku' => $detail->sku, 'receive_no' => $detail->receive_no])->first();
+
+                    // Log existing RcvDetail state before update
+                    if ($existingRcvDetail) {
+                        activity()
+                            ->performedOn($existingRcvDetail)
+                            ->withProperties(['before_update' => $existingRcvDetail->toArray()])
+                            ->log("Existing RcvDetail state before update for SKU {$detail->sku}");
+                    }
+
                     $rcvDetail = $this->rcvDetailRepository->updateOrCreate(
                         ['rcvhead_id' => $rcvHead->id, 'sku' => $detail->sku, 'receive_no' => $detail->receive_no],
                         $rcvDetailData
                     );
 
                     // Log activity for RcvDetail insert/update
-                    $logMessage = "RcvDetail for receive_no {$detail->receive_no} " . ($rcvDetail->wasRecentlyCreated ? 'Inserted' : 'Updated');
                     activity()
                         ->performedOn($rcvDetail)
-                        ->log($logMessage);
+                        ->withProperties([
+                            'receive_no' => $detail->receive_no,
+                            'sku' => $detail->sku,
+                            'qty_expected' => $detail->qty_expected,
+                            'qty_received' => $detail->qty_received,
+                            'service_level' => $rcvDetailData['service_level'],
+                        ])
+                        ->log("RcvDetail for receive_no {$detail->receive_no} " . ($rcvDetail->wasRecentlyCreated ? 'Inserted' : 'Updated'));
 
-                    $successCount++; // Increment success count for RcvDetail
-
-                    // Calculate totals
-                    if ($detail->qty_expected > 0) {
-                        $totalServiceLevel += ($detail->qty_received / $detail->qty_expected) * 100;
-                    }
+                    $totalServiceLevel += ($detail->qty_received / $detail->qty_expected) * 100;
                     $sub_total += $detail->qty_received * $detail->unit_cost;
                     $sub_total_vat_cost += $detail->vat_cost * $detail->qty_received;
                 }
@@ -155,11 +175,15 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     'sub_total_vat_cost' => $sub_total_vat_cost,
                 ]);
 
-                // Log activity for updating average service level
-                $logMessage = "Updated average service level for receive_no {$data[0]->receive_no}";
+                // Log update for RcvHead with calculated values
                 activity()
                     ->performedOn($rcvHead)
-                    ->log($logMessage);
+                    ->withProperties([
+                        'average_service_level' => $averageServiceLevel,
+                        'sub_total' => $sub_total,
+                        'sub_total_vat_cost' => $sub_total_vat_cost,
+                    ])
+                    ->log("Updated RcvHead with calculated values for receive_no {$data[0]->receive_no}");
 
                 $podata = $this->ordHeadRepository->where('order_no', $data[0]->order_no)->first();
 
@@ -168,43 +192,40 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                         'status' => 'Completed',
                         'estimated_delivery_date' => $data[0]->receive_date,
                     ]);
-
-                    // Log activity for updating order status to Completed
-                    $logMessage = "Updated order status to Completed for order_no {$data[0]->order_no}";
                     activity()
                         ->performedOn($podata)
-                        ->log($logMessage);
-
-                    $successCount++; // Increment success count for order status update
+                        ->withProperties([
+                            'order_no' => $data[0]->order_no,
+                            'status' => 'Completed',
+                            'estimated_delivery_date' => $data[0]->receive_date,
+                        ])
+                        ->log("Updated ordHead status to 'Completed' for order_no {$data[0]->order_no}");
                 } else if ($podata != null && $averageServiceLevel < 100) {
                     $podata->update([
                         'status' => 'Incompleted',
                         'estimated_delivery_date' => $data[0]->receive_date,
                     ]);
-
-                    // Log activity for updating order status to Incompleted
-                    $logMessage = "Updated order status to Incompleted for order_no {$data[0]->order_no}";
                     activity()
                         ->performedOn($podata)
-                        ->log($logMessage);
-
-                    $successCount++; // Increment success count for order status update
+                        ->withProperties([
+                            'order_no' => $data[0]->order_no,
+                            'status' => 'Incompleted',
+                            'estimated_delivery_date' => $data[0]->receive_date,
+                        ])
+                        ->log("Updated ordHead status to 'Incompleted' for order_no {$data[0]->order_no}");
                 }
             }
 
             DB::table('temp_rcv')->truncate();
-
-            // Log activity for successful operation
-            activity()
-                ->log("Successfully processed $successCount records.");
+            activity()->log("Processed all receive_no groups and cleared temp_rcv table.");
 
         } catch (\Throwable $th) {
-
-            // Log activity for failed operation with detailed error message
-            activity()
-                ->log("Failed to process data. $failureCount records failed to process. Error: " . $th->getMessage());
-
-            throw $th; // Rethrow the exception for further handling
+            activity()->withProperties(['error' => $th->getMessage()])->log("Error processing data");
+            throw $th;
         }
     }
+
+
+
+
 }
