@@ -121,7 +121,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                         "unit_retail" => $detail->unit_retail,
                         "vat_cost" => $detail->vat_cost,
                         "unit_cost_disc" => $detail->unit_cost_disc,
-                        " service_level" => $detail->qty_expected > 0 ? ($detail->qty_received / $detail->qty_expected) * 100 : 0,
+                        "service_level" => $detail->qty_expected > 0 ? ($detail->qty_received / $detail->qty_expected) * 100 : 0,
                     ];
 
                     // Insert or update RcvDetail
