@@ -102,7 +102,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                 // Log activity for RcvHead insert/update
                 activity()
                     ->performedOn($rcvHead)
-                    ->log($rcvHead->wasRecentlyCreated ? 'Inserted RcvHead' : 'Updated RcvHead');
+                    ->log("RcvHead for receive_no {$data[0]->receive_no} " . ($rcvHead->wasRecentlyCreated ? 'Inserted' : 'Updated'));
 
                 $successCount++; // Increment success count for RcvHead
 
@@ -130,7 +130,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     // Log activity for RcvDetail insert/update
                     activity()
                         ->performedOn($rcvDetail)
-                        ->log($rcvDetail->wasRecentlyCreated ? 'Inserted RcvDetail' : 'Updated RcvDetail');
+                        ->log("RcvDetail for receive_no {$detail->receive_no} " . ($rcvDetail->wasRecentlyCreated ? 'Inserted' : 'Updated'));
 
                     $successCount++; // Increment success count for RcvDetail
 
@@ -138,7 +138,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     if ($detail->qty_expected > 0) {
                         $totalServiceLevel += ($detail->qty_received / $detail->qty_expected) * 100;
                     }
-                    $sub_total += $detail->qty_received * $detail->unit_cost;
+                    $sub_total += $detail->qty_received * $detail ->unit_cost;
                     $sub_total_vat_cost += $detail->vat_cost * $detail->qty_received;
                 }
 
@@ -154,7 +154,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                 // Log activity for updating average service level
                 activity()
                     ->performedOn($rcvHead)
-                    ->log('Updated average service level for RcvHead');
+                    ->log("Updated average service level for receive_no {$data[0]->receive_no}");
 
                 $podata = $this->ordHeadRepository->where('order_no', $data[0]->order_no)->first();
 
@@ -167,7 +167,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     // Log activity for updating order status to Completed
                     activity()
                         ->performedOn($podata)
-                        ->log('Updated order status to Completed');
+                        ->log("Updated order status to Completed for order_no {$data[0]->order_no}");
 
                     $successCount++; // Increment success count for order status update
                 } else if ($podata != null && $averageServiceLevel < 100) {
@@ -179,7 +179,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     // Log activity for updating order status to Incompleted
                     activity()
                         ->performedOn($podata)
-                        ->log('Updated order status to Incompleted');
+                        ->log("Updated order status to Incompleted for order_no {$data[0]->order_no}");
 
                     $successCount++; // Increment success count for order status update
                 }
