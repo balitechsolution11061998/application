@@ -196,10 +196,6 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                 ->log("Successfully processed $successCount records.");
 
         } catch (\Throwable $th) {
-            // Check if a transaction is active before rolling back
-            if (DB::transactionLevel() > 0) {
-                DB::rollBack(); // Rollback transaction on error
-            }
 
             // Log activity for failed operation with detailed error message
             activity()
