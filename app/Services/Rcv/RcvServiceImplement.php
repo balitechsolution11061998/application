@@ -83,6 +83,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     "store_name" => $data[0]->store_name,
                     "supplier" => $data[0]->supplier,
                     "sup_name" => $data[0]->sup_name,
+                    'status'=> 'n',
                     "comment_desc" => $data[0]->comment_desc,
                 ];
 
