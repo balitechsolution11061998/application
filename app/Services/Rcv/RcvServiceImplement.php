@@ -48,8 +48,6 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
         $failureCount = 0;
 
         try {
-            // Start transaction
-            DB::beginTransaction(); // Added to ensure transaction control
 
             // Validate data before processing
             if (empty($data)) {
@@ -195,17 +193,12 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
             }
 
             DB::table('temp_rcv')->truncate();
-            DB::commit(); // Commit transaction
 
             // Log activity for successful operation
             activity()
                 ->log("Successfully processed $successCount records.");
 
         } catch (\Throwable $th) {
-            // Check if a transaction is active before rolling back
-            if (DB::transactionLevel() > 0) {
-                DB::rollBack(); // Rollback transaction on error
-            }
 
             // Log activity for failed operation with detailed error message
             activity()
