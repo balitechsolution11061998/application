@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Core\KTBootstrap;
+use App\Models\OrdHead;
+use App\Models\RcvDetail;
 use App\Models\RcvHead;
 use App\Repositories\OrdHead\OrdHeadRepository;
 use App\Repositories\RcvDetail\RcvDetailRepository;
@@ -23,17 +25,17 @@ class AppServiceProvider extends ServiceProvider
     {
         // Binding OrdHeadRepository to its implementation
         $this->app->bind(OrdHeadRepository::class, function ($app) {
-            return new OrdHeadRepositoryImplement(); // Adjust constructor parameters as necessary
+            return new OrdHeadRepositoryImplement($app->make(OrdHead::class)); // Adjust constructor parameters as necessary
         });
 
         // Binding RcvDetailRepository to its implementation
         $this->app->bind(RcvDetailRepository::class, function ($app) {
-            return new RcvDetailRepositoryImplement(); // Adjust constructor parameters as necessary
+            return new RcvDetailRepositoryImplement($app->make(RcvDetail::class)); // Adjust constructor parameters as necessary
         });
 
         // Binding RcvHeadRepository to its implementation
         $this->app->bind(RcvHeadRepository::class, function ($app) {
-            return new RcvHeadRepositoryImplement(); // Adjust constructor parameters as necessary
+            return new RcvHeadRepositoryImplement($app->make(RcvHead::class)); // Adjust constructor parameters as necessary
         });
 
         // Binding the RcvService interface to its implementation
