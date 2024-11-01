@@ -49,7 +49,6 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
 
         try {
             // Start transaction
-            DB::beginTransaction();
 
             // Validate data before processing
             if (empty($data)) {
@@ -189,7 +188,6 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
             }
 
             DB::table('temp_rcv')->truncate();
-            DB::commit(); // Commit transaction
 
             // Log activity for successful operation
             activity()
