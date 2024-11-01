@@ -93,7 +93,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                 // Log existing RcvHead state before update
                 if ($existingRcvHead) {
                     activity()
-                        ->performedOn($existingRcvHead) // Now it's an Eloquent model
+                        ->performedOn($existingRcvHead)
                         ->withProperties(['before_update' => $existingRcvHead->toArray()])
                         ->log("Existing RcvHead state before update for receive_no {$data[0]->receive_no}");
                 }
@@ -103,18 +103,20 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     $rcvHeadData['status'] = 'n';
                 }
 
+                // Update or create RcvHead
                 $rcvHead = $this->rcvHeadRepository->updateOrCreate(
                     ["receive_no" => $data[0]->receive_no],
                     $rcvHeadData
                 );
 
-                // Log activity for RcvHead insert/update
+                // Log activity for RcvHead insert/update after the operation
                 activity()
                     ->performedOn($rcvHead)
                     ->withProperties([
                         'receive_no' => $data[0]->receive_no,
                         'order_no' => $data[0]->order_no,
                         'status' => $existingRcvHead && $existingRcvHead->status === 'y' ? 'Unchanged' : 'Updated to n',
+                        'after_update' => $rcvHead->toArray()
                     ])
                     ->log("RcvHead for receive_no {$data[0]->receive_no} " . ($rcvHead->wasRecentlyCreated ? 'Inserted' : 'Updated'));
 
@@ -130,7 +132,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                         "unit_retail" => $detail->unit_retail,
                         "vat_cost" => $detail->vat_cost,
                         "unit_cost_disc" => $detail->unit_cost_disc,
-                        "service_level" =>  $detail->qty_received / $detail->qty_expected * 100,
+                        "service_level" => $detail->qty_received / $detail->qty_expected * 100,
                     ];
 
                     // Use Eloquent model to check for existing RcvDetail
@@ -144,12 +146,13 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                             ->log("Existing RcvDetail state before update for SKU {$detail->sku}");
                     }
 
+                    // Update or create RcvDetail
                     $rcvDetail = $this->rcvDetailRepository->updateOrCreate(
                         ['rcvhead_id' => $rcvHead->id, 'sku' => $detail->sku, 'receive_no' => $detail->receive_no],
                         $rcvDetailData
                     );
 
-                    // Log activity for RcvDetail insert/update
+                    // Log activity for RcvDetail insert/update after the operation
                     activity()
                         ->performedOn($rcvDetail)
                         ->withProperties([
@@ -158,6 +161,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                             'qty_expected' => $detail->qty_expected,
                             'qty_received' => $detail->qty_received,
                             'service_level' => $rcvDetailData['service_level'],
+                            'after_update' => $rcvDetail->toArray()
                         ])
                         ->log("RcvDetail for receive_no {$detail->receive_no} " . ($rcvDetail->wasRecentlyCreated ? 'Inserted' : 'Updated'));
 
@@ -175,13 +179,14 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     'sub_total_vat_cost' => $sub_total_vat_cost,
                 ]);
 
-                // Log update for RcvHead with calculated values
+                // Log update for RcvHead with calculated values after the operation
                 activity()
                     ->performedOn($rcvHead)
                     ->withProperties([
                         'average_service_level' => $averageServiceLevel,
                         'sub_total' => $sub_total,
                         'sub_total_vat_cost' => $sub_total_vat_cost,
+                        'after_update' => $rcvHead->toArray()
                     ])
                     ->log("Updated RcvHead with calculated values for receive_no {$data[0]->receive_no}");
 
