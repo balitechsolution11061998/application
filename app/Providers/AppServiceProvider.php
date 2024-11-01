@@ -13,7 +13,7 @@ use App\Repositories\RcvHead\RcvHeadRepositoryImplement;
 use App\Services\Rcv\RcvService;
 use App\Services\Rcv\RcvServiceImplement;
 use Illuminate\Database\Schema\Builder;
-
+use App\Repositories\OrdHead\OrdHeadRepositoryImplement;
 class AppServiceProvider extends ServiceProvider
 {
     /**
