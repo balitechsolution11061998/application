@@ -77,8 +77,11 @@
                             name: 'order_no'
                         },
                         {
-                            data: 'written_date',
-                            name: 'written_date'
+                            data: 'store_name', // Assuming you have store_name in your data
+                            name: 'store_name',
+                            render: function(data, type, row) {
+                                return data + ' (' + row.store + ')'; // Format as store_name(store_code)
+                            }
                         },
                         {
                             data: 'supplier',
