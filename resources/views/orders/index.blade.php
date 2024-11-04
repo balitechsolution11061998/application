@@ -68,30 +68,25 @@
 
                                 switch (data) {
                                     case 'Confirmed':
-                                        statusClass = 'badge badge-light-primary';
                                         statusText = 'Confirmed';
                                         icon = '<i class="fas fa-check-circle"></i>';
                                         break;
-                                    case 'Pending':
-                                        statusClass = 'badge badge-light-warning';
-                                        statusText = 'Pending';
+                                    case 'Progress':
+                                        statusText = 'Progress';
                                         icon = '<i class="fas fa-clock"></i>';
                                         break;
                                     case 'Cancelled':
-                                        statusClass = 'badge badge-light-danger';
                                         statusText = 'Cancelled';
                                         icon = '<i class="fas fa-times-circle"></i>';
                                         break;
                                     default:
-                                        statusClass = 'badge badge-light-secondary';
                                         statusText = 'Unknown';
                                         icon = '<i class="fas fa-question-circle"></i>';
                                         break;
                                 }
 
                                 // Add buttons for "Detail" and "Confirmed" next to the status
-                                return '<span class="' + statusClass + '">' + icon + ' ' + statusText +
-                                    '</span>' +
+                                return
                                     ' <button class="btn btn-sm btn-info detail-btn" data-id="' + row
                                     .id + '">' +
                                     '<i class="fas fa-info-circle"></i> Details</button>' +
@@ -131,7 +126,7 @@
                                         statusText = 'Confirmed';
                                         icon = '<i class="fas fa-check-circle"></i>';
                                         break;
-                                    case 'Pending':
+                                    case 'Progress':
                                         statusClass = 'badge badge-light-warning';
                                         statusText = 'Pending';
                                         icon = '<i class="fas fa-clock"></i>';
@@ -152,11 +147,6 @@
                                     '</span>';
                             }
                         },
-                        {
-                            data: 'action',
-                            orderable: false,
-                            searchable: false
-                        }
                     ]
                 });
             });
