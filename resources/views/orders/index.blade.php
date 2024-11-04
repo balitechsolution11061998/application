@@ -57,37 +57,14 @@
                 var table = $('#po_table').DataTable({
                     processing: true,
                     serverSide: true,
+                    deferRender: true,
                     ajax: '{{ route('purchase-orders.data') }}',
                     columns: [{
-                            data: 'status',
-                            name: 'status',
+                            data: null, // This will hold the buttons
+                            orderable: false, // Disable sorting for this column
+                            searchable: false, // Disable searching for this column
                             render: function(data, type, row) {
-                                let statusClass = '';
-                                let statusText = '';
-                                let icon = '';
-
-                                switch (data) {
-                                    case 'Confirmed':
-                                        statusText = 'Confirmed';
-                                        icon = '<i class="fas fa-check-circle"></i>';
-                                        break;
-                                    case 'Progress':
-                                        statusText = 'Progress';
-                                        icon = '<i class="fas fa-clock"></i>';
-                                        break;
-                                    case 'Cancelled':
-                                        statusText = 'Cancelled';
-                                        icon = '<i class="fas fa-times-circle"></i>';
-                                        break;
-                                    default:
-                                        statusText = 'Unknown';
-                                        icon = '<i class="fas fa-question-circle"></i>';
-                                        break;
-                                }
-
-                                // Add buttons for "Detail" and "Confirmed" next to the status
-                                return
-                                    ' <button class="btn btn-sm btn-info detail-btn" data-id="' + row
+                                return '<button class="btn btn-sm btn-info detail-btn" data-id="' + row
                                     .id + '">' +
                                     '<i class="fas fa-info-circle"></i> Details</button>' +
                                     ' <button class="btn btn-sm btn-success confirm-btn" data-id="' +
@@ -111,7 +88,6 @@
                             data: 'total_cost',
                             name: 'total_cost'
                         },
-
                         {
                             data: 'status',
                             name: 'status',
@@ -120,6 +96,7 @@
                                 let statusText = '';
                                 let icon = '';
 
+                                // Determine the status class, text, and icon
                                 switch (data) {
                                     case 'Confirmed':
                                         statusClass = 'badge badge-light-primary';
@@ -128,7 +105,7 @@
                                         break;
                                     case 'Progress':
                                         statusClass = 'badge badge-light-warning';
-                                        statusText = 'Pending';
+                                        statusText = 'Progress';
                                         icon = '<i class="fas fa-clock"></i>';
                                         break;
                                     case 'Cancelled':
@@ -143,11 +120,26 @@
                                         break;
                                 }
 
+                                // Return the status badge
                                 return '<span class="' + statusClass + '">' + icon + ' ' + statusText +
                                     '</span>';
                             }
-                        },
+                        }
                     ]
+                });
+
+                // Event listener for detail button
+                $('#po_table tbody').on('click', '.detail-btn', function() {
+                    var orderId = $(this).data('id');
+                    // Handle the detail action here, e.g., open a modal with order details
+                    console.log('View details for order ID:', orderId);
+                });
+
+                // Event listener for confirm button
+                $('#po_table tbody').on('click', '.confirm-btn', function() {
+                    var orderId = $(this).data('id');
+                    // Handle the confirm action here, e.g., send an AJAX request to confirm the order
+                    console.log('Confirm order ID:', orderId);
                 });
             });
         </script>
