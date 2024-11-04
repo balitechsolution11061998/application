@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegionController;
@@ -151,6 +152,18 @@ Route::prefix('regions')
         // Fetch roles data
         Route::get('/data', [RegionController::class, 'data'])
             ->name('data'); // 'roles.getRoles'
+    });
+
+Route::prefix('purchase-orders') // Prefix for all order routes
+    ->middleware('auth') // Ensure the user is authenticated
+    ->as('purchase-orders.') // Prefix for route names
+    ->group(function () {
+        // Fetch orders data
+        Route::get('/getOrders', [OrderController::class, 'getOrders'])->name('getOrders');
+        Route::get('/data', [OrderController::class, 'data'])->name('data');
+
+        // Standard CRUD routes for Orders
+        Route::resource('/', OrderController::class)->parameters(['' => 'order'])->except(['show']);
     });
 
 // Profile Picture management routes

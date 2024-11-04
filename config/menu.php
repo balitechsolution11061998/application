@@ -18,15 +18,15 @@ return [
             'iconPath'       => 4,
         ],
         [
-            'label'          => 'Room',                        // Menu label updated to Room
-            'type'           => 'item',                        // Type (item represents a clickable menu option)
-            'permission'     => [],                            // Permissions required to view this item
-            'permissionType' => 'gate',                        // Permission type (gate or policy)
-            'icon'           => 'fas',                         // Font Awesome Solid icons (FA class)
-            'iconName'       => 'fa-door-open',                // Icon for the room section
-            'route'          => 'rooms.index',                 // Route for the room index page
-            'active'         => ['rooms.*'],                   // Define conditions when this item is active (e.g., all room routes)
-            'iconPath'       => 4,
+            'label'          => 'Purchase Order',               // Menu label for Purchase Order
+            'type'           => 'item',                          // Type (item represents a clickable menu option)
+            'permission'     => [],                              // Permissions required to view this item
+            'permissionType' => 'gate',                          // Permission type (gate or policy)
+            'icon'           => 'fas',                           // Font Awesome Solid icons (FA class)
+            'iconName'       => 'fa-shopping-cart',              // Icon for the purchase order section
+            'route'          => 'purchase-orders.index',         // Route for the purchase order index page
+            'active'         => ['purchase-orders.*'],           // Define conditions when this item is active (e.g., all purchase order routes)
+            'iconPath'       => 4,                               // Path for the icon (if applicable)
         ],
 
 

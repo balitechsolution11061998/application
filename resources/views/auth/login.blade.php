@@ -144,7 +144,7 @@
                 </div>
 
                 <div class=" mb-4">
-                    <button type="button" id="login Button"
+                    <button type="button" id="loginButton"
                         class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600">
                         <i class="fas fa-sign-in-alt"></i> Login
                     </button>
