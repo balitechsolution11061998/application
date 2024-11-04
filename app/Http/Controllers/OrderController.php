@@ -46,7 +46,15 @@ class OrderController extends Controller
             $data = OrdHead::with(['ordsku']) // Eager load only necessary relationships
                 ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store') // Use leftJoin to keep ordhead records even if store is missing
                 ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code') // Use leftJoin to keep ordhead records even if supplier is missing
-                ->select('ordhead.*', 'store.store as store','store.store_name as store_name', 'supplier.supp_name as supp_name'); // Select additional fields
+                ->select(
+                    'ordhead.*',
+                    'store.store as store',
+                    'store.store_name as store_name',
+                    'supplier.supp_code as supp_code',
+                    'supplier.supp_name as supp_name',
+                    'ordhead.not_after_date as expired_date',
+                    'ordhead.approval_date as created_at'
+                ); // Select additional fields
 
             return DataTables::of($data)
                 ->addColumn('action', function($row) {

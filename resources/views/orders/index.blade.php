@@ -84,12 +84,26 @@
                             }
                         },
                         {
-                            data: 'supplier',
-                            name: 'supplier'
+                            data: 'store_name', // Assuming you have store_name in your data
+                            name: 'store_name',
+                            render: function(data, type, row) {
+                                return data + ' (' + row.store + ')'; // Format as store_name(store_code)
+                            }
                         },
                         {
-                            data: 'total_cost',
-                            name: 'total_cost'
+                            data: 'supp_name', // Assuming you have store_name in your data
+                            name: 'supp_name',
+                            render: function(data, type, row) {
+                                return data + ' (' + row.supp_code + ')'; // Format as store_name(store_code)
+                            }
+                        },
+                        {
+                            data: 'created_at',
+                            name: 'created_at'
+                        },
+                        {
+                            data: 'expired_date',
+                            name: 'expired_date'
                         },
                         {
                             data: 'status',
