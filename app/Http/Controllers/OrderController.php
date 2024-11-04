@@ -42,10 +42,15 @@ class OrderController extends Controller
     public function data(Request $request)
     {
         if ($request->ajax()) {
-            $data = OrdHead::with('ordsku')->select('ordhead.*'); // Adjust the model name as necessary
+            // Start the query with necessary joins and selects
+            $data = OrdHead::with(['ordsku', 'store', 'supplier']) // Eager load relationships
+                ->select('ordhead.*') // Select necessary columns from ordhead
+                ->join('store', 'ordhead.ship_to', '=', 'store.store') // Join with stores
+                ->join('supplier', 'ordhead.supplier', '=', 'supplier.supp_code') // Join with suppliers
+                ->select('ordhead.*', 'store.store_name as store_name', 'supplier.supp_name as supp_name'); // Select additional fields
 
             return DataTables::of($data)
-                ->addColumn('action', function($row){
+                ->addColumn('action', function($row) {
                     return '<button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px" data-kt-docs-datatable-subtable="expand_row">
                                 <span class="svg-icon fs-3 m-0 toggle-off">...</span>
                                 <span class="svg-icon fs-3 m-0 toggle-on">...</span>
@@ -57,12 +62,10 @@ class OrderController extends Controller
                 ->editColumn('total_retail', function($row) {
                     return '$' . number_format($row->total_retail, 2);
                 })
-
-                ->rawColumns(['status', 'action']) // Add this line to allow HTML rendering
+                ->rawColumns(['status', 'action']) // Allow HTML rendering
                 ->make(true);
         }
     }
-
 
 
     /**
