@@ -53,7 +53,7 @@ class OrderController extends Controller
                     'supplier.supp_code as supp_code',
                     'supplier.supp_name as supp_name',
                     'ordhead.not_after_date as expired_date',
-                    'ordhead.approval_date as created_at'
+                    'ordhead.approval_date as approval_date'
                 ); // Select additional fields
 
             return DataTables::of($data)

@@ -98,12 +98,18 @@
                             }
                         },
                         {
-                            data: 'created_at',
-                            name: 'created_at'
+                            data: 'approval_date',
+                            name: 'approval_date',
+                            render:function(data,type,row){
+                                return moment(data).format('DD MMMM YYYY'); // e.g., "23 Desember 2023"
+                            }
                         },
                         {
                             data: 'expired_date',
-                            name: 'expired_date'
+                            name: 'expired_date',
+                            render:function(data,type,row){
+                                return moment(data).format('DD MMMM YYYY'); // e.g., "23 Desember 2023"
+                            }
                         },
                         {
                             data: 'status',
