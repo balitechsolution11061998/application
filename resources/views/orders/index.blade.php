@@ -49,79 +49,118 @@
         @foreach (getGlobalAssets() as $path)
             {!! sprintf('<script src="%s"></script>', asset($path)) !!}
         @endforeach
-        @foreach(getVendors('js') as $path)
+        @foreach (getVendors('js') as $path)
             {!! sprintf('<script src="%s"></script>', asset($path)) !!}
         @endforeach
-    <script>
-        $(document).ready(function() {
-            var table = $('#po_table').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: '{{ route('purchase-orders.data') }}',
-                columns: [{
-                        data: 'order_no',
-                        name: 'order_no'
-                    },
-                    {
-                        data: 'written_date',
-                        name: 'written_date'
-                    },
-                    {
-                        data: 'supplier',
-                        name: 'supplier'
-                    },
-                    {
-                        data: 'total_cost',
-                        name: 'total_cost'
-                    },
-                    {
-                        data: 'total_retail',
-                        name: 'total_retail'
-                    },
-                    {
-                        data: 'status',
-                        name: 'status',
-                        render: function(data, type, row) {
-                            let statusClass = '';
-                            let statusText = '';
-                            let icon = '';
+        <script>
+            $(document).ready(function() {
+                var table = $('#po_table').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: '{{ route('purchase-orders.data') }}',
+                    columns: [{
+                            data: 'status',
+                            name: 'status',
+                            render: function(data, type, row) {
+                                let statusClass = '';
+                                let statusText = '';
+                                let icon = '';
 
-                            switch (data) {
-                                case 'Confirmed':
-                                    statusClass = 'badge badge-light-primary';
-                                    statusText = 'Confirmed';
-                                    icon = '<i class="fas fa-check-circle"></i>';
-                                    break;
-                                case 'Pending':
-                                    statusClass = 'badge badge-light-warning';
-                                    statusText = 'Pending';
-                                    icon = '<i class="fas fa-clock"></i>';
-                                    break;
-                                case 'Cancelled':
-                                    statusClass = 'badge badge-light-danger';
-                                    statusText = 'Cancelled';
-                                    icon = '<i class="fas fa-times-circle"></i>';
-                                    break;
-                                default:
-                                    statusClass = 'badge badge-light-secondary';
-                                    statusText = 'Unknown';
-                                    icon = '<i class="fas fa-question-circle"></i>';
-                                    break;
+                                switch (data) {
+                                    case 'Confirmed':
+                                        statusClass = 'badge badge-light-primary';
+                                        statusText = 'Confirmed';
+                                        icon = '<i class="fas fa-check-circle"></i>';
+                                        break;
+                                    case 'Pending':
+                                        statusClass = 'badge badge-light-warning';
+                                        statusText = 'Pending';
+                                        icon = '<i class="fas fa-clock"></i>';
+                                        break;
+                                    case 'Cancelled':
+                                        statusClass = 'badge badge-light-danger';
+                                        statusText = 'Cancelled';
+                                        icon = '<i class="fas fa-times-circle"></i>';
+                                        break;
+                                    default:
+                                        statusClass = 'badge badge-light-secondary';
+                                        statusText = 'Unknown';
+                                        icon = '<i class="fas fa-question-circle"></i>';
+                                        break;
+                                }
+
+                                // Add buttons for "Detail" and "Confirmed" next to the status
+                                return '<span class="' + statusClass + '">' + icon + ' ' + statusText +
+                                    '</span>' +
+                                    ' <button class="btn btn-sm btn-info detail-btn" data-id="' + row
+                                    .id + '">' +
+                                    '<i class="fas fa-info-circle"></i> Details</button>' +
+                                    ' <button class="btn btn-sm btn-success confirm-btn" data-id="' +
+                                    row.id + '">' +
+                                    '<i class="fas fa-check"></i> Confirmed</button>';
                             }
+                        },
+                        {
+                            data: 'order_no',
+                            name: 'order_no'
+                        },
+                        {
+                            data: 'written_date',
+                            name: 'written_date'
+                        },
+                        {
+                            data: 'supplier',
+                            name: 'supplier'
+                        },
+                        {
+                            data: 'total_cost',
+                            name: 'total_cost'
+                        },
 
-                            return '<span class="' + statusClass + '">' + icon + ' ' + statusText +
-                                '</span>';
+                        {
+                            data: 'status',
+                            name: 'status',
+                            render: function(data, type, row) {
+                                let statusClass = '';
+                                let statusText = '';
+                                let icon = '';
+
+                                switch (data) {
+                                    case 'Confirmed':
+                                        statusClass = 'badge badge-light-primary';
+                                        statusText = 'Confirmed';
+                                        icon = '<i class="fas fa-check-circle"></i>';
+                                        break;
+                                    case 'Pending':
+                                        statusClass = 'badge badge-light-warning';
+                                        statusText = 'Pending';
+                                        icon = '<i class="fas fa-clock"></i>';
+                                        break;
+                                    case 'Cancelled':
+                                        statusClass = 'badge badge-light-danger';
+                                        statusText = 'Cancelled';
+                                        icon = '<i class="fas fa-times-circle"></i>';
+                                        break;
+                                    default:
+                                        statusClass = 'badge badge-light-secondary';
+                                        statusText = 'Unknown';
+                                        icon = '<i class="fas fa-question-circle"></i>';
+                                        break;
+                                }
+
+                                return '<span class="' + statusClass + '">' + icon + ' ' + statusText +
+                                    '</span>';
+                            }
+                        },
+                        {
+                            data: 'action',
+                            orderable: false,
+                            searchable: false
                         }
-                    },
-                    {
-                        data: 'action',
-                        orderable: false,
-                        searchable: false
-                    }
-                ]
+                    ]
+                });
             });
-        });
-    </script>
+        </script>
     @endpush
 
 </x-default-layout>
