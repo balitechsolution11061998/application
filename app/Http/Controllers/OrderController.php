@@ -57,36 +57,8 @@ class OrderController extends Controller
                 ->editColumn('total_retail', function($row) {
                     return '$' . number_format($row->total_retail, 2);
                 })
-                ->editColumn('status', function($row) {
-                    $statusClass = '';
-                    $statusText = '';
-                    $icon = '';
 
-                    switch ($row->status) {
-                        case 'Confirmed':
-                            $statusClass = 'badge badge-light-primary';
-                            $statusText = 'Confirmed';
-                            $icon = '<i class="fas fa-check-circle"></i>';
-                            break;
-                        case 'Pending':
-                            $statusClass = 'badge badge-light-warning';
-                            $statusText = 'Pending';
-                            $icon = '<i class="fas fa-clock"></i>';
-                            break;
-                        case 'Cancelled':
-                            $statusClass = 'badge badge-light-danger';
-                            $statusText = 'Cancelled';
-                            $icon = '<i class="fas fa-times-circle"></i>';
-                            break;
-                        default:
-                            $statusClass = 'badge badge-light-secondary';
-                            $statusText = 'Unknown';
-                            $icon = '<i class="fas fa-question-circle"></i>';
-                            break;
-                    }
-
-                    return '<span class="' . $statusClass . '">' . $icon . ' ' . $statusText . '</span>';
-                })
+                ->rawColumns(['status', 'action']) // Add this line to allow HTML rendering
                 ->make(true);
         }
     }
