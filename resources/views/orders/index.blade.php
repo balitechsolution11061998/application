@@ -80,21 +80,21 @@
                             data: 'store_name', // Assuming you have store_name in your data
                             name: 'store_name',
                             render: function(data, type, row) {
-                                return data + ' (' + row.store + ')'; // Format as store_name(store_code)
+                                return data + ' (' + row.store +
+                                ')'; // Format as store_name(store_code)
                             }
                         },
+
                         {
-                            data: 'store_name', // Assuming you have store_name in your data
-                            name: 'store_name',
-                            render: function(data, type, row) {
-                                return data + ' (' + row.store + ')'; // Format as store_name(store_code)
-                            }
-                        },
-                        {
-                            data: 'supp_name', // Assuming you have store_name in your data
+                            data: 'supp_name', // Assuming you have supp_name in your data
                             name: 'supp_name',
                             render: function(data, type, row) {
-                                return data + ' (' + row.supp_code + ')'; // Format as store_name(store_code)
+                                // Check if supp_name exists; if not, return the custom message
+                                if (!data) {
+                                    return 'Tidak ada data supplier, silahkan untuk release supplier terlebih dahulu';
+                                }
+                                return data + ' (' + row.supp_code +
+                                ')'; // Format as supp_name(supp_code)
                             }
                         },
                         {
