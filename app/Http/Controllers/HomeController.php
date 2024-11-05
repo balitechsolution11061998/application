@@ -11,10 +11,10 @@ class HomeController extends Controller
 
     public function index()
     {
-        $loggedInUsers = User::join('user_activity_logs', 'users.id', '=', 'user_activity_logs.user_id')
+        $loggedInUsers = User::join('authentications_monitoring', 'users.id', '=', 'authentications_monitoring.user_id')
         ->where('users.is_logged_in', true)
-        ->where('user_activity_logs.action_type', 'login')
-        ->select('users.*', 'user_activity_logs.*')
+        ->where('authentications_monitoring.action_type', 'login')
+        ->select('users.*', 'authentications_monitoring.*')
         ->get();
         return view('home', compact('loggedInUsers'));
     }

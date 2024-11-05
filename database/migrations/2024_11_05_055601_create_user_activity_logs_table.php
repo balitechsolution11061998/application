@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_activity_logs', function (Blueprint $table) {
+        Schema::create('authentications_monitoring', function (Blueprint $table) {
             $table->id(); // id column as bigint with auto increment and primary key
             $table->bigInteger('user_id')->unsigned(); // user_id as unsigned bigint
             $table->string('action_type', 191); // action_type as varchar(191)
