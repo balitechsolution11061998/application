@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('authentications_monitoring', function (Blueprint $table) {
             $table->id(); // id column as bigint with auto increment and primary key
-            $table->bigInteger('user_id')->unsigned(); // user_id as unsigned bigint
+            $table->bigInteger('user_id')->nullable(); // user_id as unsigned bigint
             $table->string('action_type', 191); // action_type as varchar(191)
             $table->string('browser_name', 191); // browser_name as varchar(191)
             $table->string('platform', 191); // platform as varchar(191)
