@@ -47,6 +47,22 @@
                 color: white;
             }
         }
+        #loggedInUsersCard {
+    border-radius: 8px;
+}
+
+.card-title {
+    font-weight: 600;
+}
+
+.list-group-item {
+    padding: 12px 15px;
+}
+
+.badge .fa-circle {
+    font-size: 0.6rem; /* Adjust icon size within the badge */
+}
+
     </style>
 
     <!--begin::Dashboard-->
@@ -122,29 +138,40 @@
     <div class="row g-6 mb-6">
         <div class="col-xl-12">
             <!--begin::Logged In Users Card-->
-            <div class="card card-stretch shadow-lg" id="loggedInUsersCard">
-                <div class="card-header border-0 text-white">
-                    <h3 class="card-title text-uppercase">Users Currently Logged In</h3>
+            <div class="card card-stretch shadow-lg border-0" id="loggedInUsersCard" style="background-color: #f8f9fa;">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3 class="card-title text-uppercase m-0">Users Currently Logged In</h3>
+                    <i class="fas fa-users fs-4"></i> <!-- Font Awesome icon for user group -->
                 </div>
                 <div class="card-body">
                     @if ($loggedInUsers->isEmpty())
-                        <p class="text-muted">No users currently logged in.</p>
+                        <p class="text-muted text-center">No users currently logged in.</p>
                     @else
                         <ul class="list-group list-group-flush">
                             @foreach ($loggedInUsers as $user)
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span class="fw-bold">{{ $user->name }} ({{ $user->email }})</span>
-                                    <span class="badge rounded-pill">Active</span>
+                                <li class="list-group-item d-flex justify-content-between align-items-center bg-light border-bottom">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-circle me-3 fs-4 text-primary"></i>
+                                        <div>
+                                            <span class="fw-bold">{{ $user->name }}</span> <br>
+                                            <small class="text-muted">{{ $user->email }}</small>
+                                        </div>
+                                    </div>
+                                    <!-- "Active" Badge with Font Awesome icon -->
+                                    <span class="badge bg-success rounded-pill px-3 py-2">
+                                        <i class="fas fa-circle me-1"></i> Active
+                                    </span>
                                 </li>
                             @endforeach
                         </ul>
-
                     @endif
                 </div>
             </div>
             <!--end::Logged In Users Card-->
         </div>
     </div>
+
+
     <!--end::Logged In Users-->
 
 
