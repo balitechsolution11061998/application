@@ -18,9 +18,10 @@ class ActivityController extends Controller
                 $startTime = microtime(true);
                 $startMemory = memory_get_usage();
 
-                // Fetch activities, eager load the user relationship, and filter by action_type 'login'
+                // Fetch activities, eager load the user relationship, and filter by action_type 'login' and today's date
                 $activities = ActivityLog::with('user')
                     ->where('action_type', 'login')
+                    ->whereDate('created_at', today()) // Filter by today's date
                     ->select('authentications_monitoring.*')
                     ->get(); // Get all records first
 
