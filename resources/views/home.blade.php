@@ -18,13 +18,16 @@
                             <h3 class="card-label">Total RAM Usage vs Remaining RAM</h3>
                         </div>
                         <div class="card-toolbar">
-                            <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary mr-1" data-card-tool="toggle" data-toggle="tooltip" data-placement="top" title="Toggle Card">
+                            <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary mr-1"
+                                data-card-tool="toggle" data-toggle="tooltip" data-placement="top" title="Toggle Card">
                                 <i class="ki ki-arrow-down icon-nm"></i>
                             </a>
-                            <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary mr-1" data-card-tool="reload" data-toggle="tooltip" data-placement="top" title="Reload Card">
+                            <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary mr-1"
+                                data-card-tool="reload" data-toggle="tooltip" data-placement="top" title="Reload Card">
                                 <i class="ki ki-reload icon-nm"></i>
                             </a>
-                            <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary" data-card-tool="remove" data-toggle="tooltip" data-placement="top" title="Remove Card">
+                            <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary"
+                                data-card-tool="remove" data-toggle="tooltip" data-placement="top" title="Remove Card">
                                 <i class="ki ki-close icon-nm"></i>
                             </a>
                         </div>
@@ -112,29 +115,53 @@
         </div>
 
     </div>
+    <div class="container">
+        <div class="col-md-12 mt-10">
 
     <!-- Recent Activities Table -->
-    <div class="container mt-5">
-        <h3 class="text-center text-dark mb-4">Recent Activities</h3>
-        <div class="table-responsive">
-            <table id="kt_datatable_example_1" class="table align-middle table-row-dashed fs-6 gy-5">
-                <thead class="table-dark">
-                    <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
-                        <th>ID</th>
-                        <th>User</th>
-                        <th>Action Type</th>
-                        <th>Browser</th>
-                        <th>Platform</th>
-                        <th>Device</th>
-                        <th>IP</th>
-                        <th>Page</th>
-                        <th>Created At</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Data will be populated by DataTables -->
-                </tbody>
-            </table>
+    <div class="card card-custom" id="kt_card_3">
+        <div class="card-header">
+            <div class="card-title">
+                <h3 class="card-label">Recent Activities</h3>
+            </div>
+            <div class="card-toolbar">
+                <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary mr-1" data-card-tool="toggle"
+                    data-toggle="tooltip" data-placement="top" title="Toggle Card">
+                    <i class="ki ki-arrow-down icon-nm"></i>
+                </a>
+                <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary mr-1" data-card-tool="reload"
+                    data-toggle="tooltip" data-placement="top" title="Reload Card">
+                    <i class="ki ki-reload icon-nm"></i>
+                </a>
+                <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary" data-card-tool="remove"
+                    data-toggle="tooltip" data-placement="top" title="Remove Card">
+                    <i class="ki ki-close icon-nm"></i>
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="kt_datatable_example_1" class="table align-middle table-row-dashed fs-6 gy-5">
+                    <thead class="table-dark">
+                        <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Action Type</th>
+                            <th>Browser</th>
+                            <th>Platform</th>
+                            <th>Device</th>
+                            <th>IP</th>
+                            <th>Page</th>
+                            <th>Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be populated by DataTables -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
         </div>
     </div>
 
