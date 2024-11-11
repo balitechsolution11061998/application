@@ -30,34 +30,6 @@ class ActivityController extends Controller
                     return $group->first(); // Get the first activity for each user
                 })->values(); // Reset keys
 
-                // Adding location data based on IP for each user
-                foreach ($uniqueActivities as $activity) {
-                    // Fetch the user's IP
-                    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-                        $ip = $_SERVER['HTTP_CLIENT_IP'];
-                    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-                    } else {
-                        $ip = $_SERVER['REMOTE_ADDR'];
-                    }
-
-                    // Use the Google Maps Geocoding API to get location details
-                    $apiKey = 'AIzaSyBcWbh2Eng7P6-842kxBOUFiKGZt9x3WTA'; // Replace with your API key
-                    $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$ip&key=$apiKey";
-                    $response = file_get_contents($url);
-                    $data = json_decode($response, true);
-
-                    // Check if the response contains location data
-                    if (isset($data['results'][0])) {
-                        $location = $data['results'][0]['formatted_address']; // Get the formatted address
-                    } else {
-                        $location = 'Location not found';
-                    }
-
-                    // Add location data to the activity
-                    $activity->location = $location;
-                }
-
                 // Prepare data for DataTables
                 $result = DataTables::of($uniqueActivities)
                     ->addIndexColumn() // Add index column
@@ -71,9 +43,6 @@ class ActivityController extends Controller
                         // Return formatted timestamp of the activity
                         return $activity->created_at->format('Y-m-d H:i:s');
                     })
-                    ->addColumn('location', function ($activity) {
-                        return $activity->location ?? 'Location not available'; // Display the location
-                    })
                     ->make(true);
 
                 // Log memory usage and load time using the helper function
@@ -86,7 +55,5 @@ class ActivityController extends Controller
             }
         }
     }
-
-
 
 }
