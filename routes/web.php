@@ -11,6 +11,7 @@ use App\Http\Controllers\RegionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\SystemUsageController;
 use App\Http\Controllers\TahunPelajaranController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,7 @@ Route::controller(RegisterController::class)->group(function () {
 });
 
 Route::get('/activities/data', [ActivityController::class, 'getData'])->name('activities.data');
+Route::get('/get-ram-usage', [SystemUsageController::class, 'getRamUsageData'])->name('ramUsageData');
 
 Route::get('login/form', [LoginController::class, 'showLoginForm'])->name('login.form');
 Route::post('login/prosesForm', [LoginController::class, 'login'])->name('login.prosesForm');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Imports\UsersImport;
 use App\Jobs\UsersImportJob;
 use App\Models\Role;
+use App\Models\SystemUsage;
 use App\Models\User;
 use Illuminate\Http\Request;
 use DataTables;
@@ -88,7 +89,7 @@ class UserController extends Controller
                 // Return a success response
                 return response()->json([
                     'success' => true,
-                    'message'=> 'Email deleted successfully',
+                    'message' => 'Email deleted successfully',
                 ]);
             } else {
                 // Return a 404 error if the email is not found
@@ -107,60 +108,80 @@ class UserController extends Controller
     public function getUsersData(Request $request)
     {
         if ($request->ajax()) {
-            // Query to get user data with roles and region
-            $data = User::with(['roles', 'region', 'userEmails']) // Eager load roles, region, and userEmails
-                ->select('id', 'profile_picture', 'username', 'name', 'email', 'password_show', 'region_id', 'created_at');
+            try {
+                // Start timing and memory tracking
+                $startTime = microtime(true);
+                $startMemory = memory_get_usage();
 
-            return Datatables::of($data)
-                ->addColumn('role_ids', function ($row) {
-                    // Fetch and format role_ids
-                    return $row->roles->pluck('id')->implode(', ');
-                })
-                ->addColumn('role_names', function ($row) {
-                    // Fetch and format role_names
-                    return $row->roles->pluck('name')->implode(', ');
-                })
-                ->addColumn('region', function ($row) {
-                    // Fetch and format region name
-                    return $row->region ? $row->region->id : 'N/A';
-                })
-                ->addColumn('userEmails', function ($row) {
-                    // Fetch user's emails where status is 1
-                    $emails = $row->userEmails->where('is_primary', 1)->pluck('email')->implode(', '); // Assuming 'is_primary' is the status
-                    return $emails ?: 'No active emails'; // Display message if no emails found
-                })
-                ->addColumn('actions', function ($row) {
-                    // Fetch roles for the current user
-                    $userRoles = $row->roles->pluck('name')->toArray();
-                    $isAdmin = in_array('superadministrator', $userRoles); // Assuming 'superadministrator' role can perform all actions
+                // Your existing data processing logic
+                $data = User::with(['roles', 'region', 'userEmails'])
+                    ->select('id', 'profile_picture', 'username', 'name', 'email', 'password_show', 'region_id', 'created_at');
 
-                    // Return a set of buttons for each action: Edit, Delete, and Change Password, with Font Awesome icons
-                    $actions = '';
+                $result = Datatables::of($data)
+                    ->addColumn('role_ids', function ($row) {
+                        return $row->roles->pluck('id')->implode(', ');
+                    })
+                    ->addColumn('role_names', function ($row) {
+                        return $row->roles->pluck('name')->implode(', ');
+                    })
+                    ->addColumn('region', function ($row) {
+                        return $row->region ? $row->region->id : 'N/A';
+                    })
+                    ->addColumn('userEmails', function ($row) {
+                        $emails = $row->userEmails->where('is_primary', 1)->pluck('email')->implode(', ');
+                        return $emails ?: 'No active emails';
+                    })
+                    ->addColumn('actions', function ($row) {
+                        $userRoles = $row->roles->pluck('name')->toArray();
+                        $isAdmin = in_array('superadministrator', $userRoles);
 
-                    if ($isAdmin) {
-                        $actions .= '
-                            <button type="button" class="btn btn-sm btn-primary" onclick="editUser(' . $row->id . ')">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button type="button" class="btn btn-sm btn-danger" onclick="deleteUser(' . $row->id . ')">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                            <button type="button" class="btn btn-sm btn-warning" onclick="changePassword(' . $row->id . ')">
-                                <i class="fas fa-key"></i> Change Password
-                            </button>
-                        ';
-                    } else {
-                        $actions .= '
-                            <button type="button" class="btn btn-sm btn-primary" onclick="editUser(' . $row->id . ')">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                        ';
-                    }
+                        $actions = '';
+                        if ($isAdmin) {
+                            $actions .= '
+                                <button type="button" class="btn btn-sm btn-primary" onclick="editUser(' . $row->id . ')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteUser(' . $row->id . ')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                                <button type="button" class="btn btn-sm btn-warning" onclick="changePassword(' . $row->id . ')">
+                                    <i class="fas fa-key"></i> Change Password
+                                </button>
+                            ';
+                        } else {
+                            $actions .= '
+                                <button type="button" class="btn btn-sm btn-primary" onclick="editUser(' . $row->id . ')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                            ';
+                        }
 
-                    return $actions;
-                })
-                ->rawColumns(['actions']) // Important for rendering HTML in the actions column
-                ->make(true);
+                        return $actions;
+                    })
+                    ->rawColumns(['actions'])
+                    ->make(true);
+
+                // End timing and memory tracking
+                $endTime = microtime(true);
+                $endMemory = memory_get_usage();
+
+                // Calculate load time in milliseconds and memory usage in MB
+                $loadTimeMs = round(($endTime - $startTime) * 1000); // Convert seconds to milliseconds
+                $ramUsageMb = round(($endMemory - $startMemory) / 1024 / 1024, 2);
+
+                // Log memory usage, load time, and access time to the database
+                SystemUsage::create([
+                    'memory_usage_mb' => $ramUsageMb,
+                    'load_time_ms' => $loadTimeMs,
+                    'accessed_at' => now(),
+                ]);
+
+                // Return the result to DataTables
+                return $result;
+            } catch (\Exception $e) {
+
+                return response()->json(['error' => 'An error occurred while fetching user data.'.$e->getMessage()], 500);
+            }
         }
     }
 
@@ -481,7 +502,6 @@ class UserController extends Controller
                 'stores' => $stores,
                 'roles' => $roles, // Pass the roles to the view
             ]);
-
         } catch (\Exception $e) {
             // Log the exception for error reporting
             activity()
@@ -494,7 +514,8 @@ class UserController extends Controller
         }
     }
 
-    public function formUser($encryptedUserId) {
+    public function formUser($encryptedUserId)
+    {
         try {
             // Assuming you have some decryption mechanism, for example:
             $userId = $encryptedUserId; // Adjust this if needed.
@@ -535,7 +556,6 @@ class UserController extends Controller
                 'stores' => $stores,
                 'roles' => $roles, // Pass the roles to the view
             ]);
-
         } catch (\Exception $e) {
             // Log the exception for error reporting
             activity()
@@ -592,7 +612,6 @@ class UserController extends Controller
                 'stores' => $stores,
                 'roles' => $roles, // Pass the roles to the view
             ]);
-
         } catch (\Exception $e) {
             // Log the exception for error reporting
             activity()
@@ -604,8 +623,4 @@ class UserController extends Controller
             return redirect()->route('users.index')->with('error', $e->getMessage());
         }
     }
-
-
-
-
 }

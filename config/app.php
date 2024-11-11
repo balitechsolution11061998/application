@@ -69,7 +69,8 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    // 'timezone' => 'UTC',
+    'timezone' => 'Asia/Makassar',
 
     /*
     |--------------------------------------------------------------------------
@@ -197,6 +198,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Torann\GeoIP\GeoIPServiceProvider::class,
 
+        Spatie\ServerMonitor\ServerMonitorServiceProvider::class,
 
     ],
 
