@@ -31,6 +31,19 @@ Breadcrumbs::for('roles', function (BreadcrumbTrail $trail) {
 Breadcrumbs::for('orders', function (BreadcrumbTrail $trail) {
     $trail->push('Purchase Order', route('purchase-orders.index'));
 });
+
+Breadcrumbs::for('tahun-pelajaran', function (BreadcrumbTrail $trail) {
+    $trail->push('Tahun Pelajaran', route('tahun-pelajaran.index'));
+});
+
+Breadcrumbs::for('tahun-pelajaran.create', function (BreadcrumbTrail $trail) {
+    $trail->push('Create Tahun Pelajaran', route('tahun-pelajaran.create'));
+});
+
+Breadcrumbs::for('tahun-pelajaran.edit', function (BreadcrumbTrail $trail, $tahunPelajaran) {
+    $trail->push('Edit Tahun Pelajaran', route('tahun-pelajaran.edit', $tahunPelajaran->id));
+});
+
 // Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
 //     $trail->push('Dashboard', route('example.dashboard.default'));
 // });

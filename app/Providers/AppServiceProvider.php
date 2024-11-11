@@ -7,6 +7,7 @@ use App\Core\KTBootstrap;
 use App\Models\OrdHead;
 use App\Models\RcvDetail;
 use App\Models\RcvHead;
+use App\Models\User;
 use App\Repositories\OrdHead\OrdHeadRepository;
 use App\Repositories\RcvDetail\RcvDetailRepository;
 use App\Repositories\RcvDetail\RcvDetailRepositoryImplement;
@@ -16,6 +17,8 @@ use App\Services\Rcv\RcvService;
 use App\Services\Rcv\RcvServiceImplement;
 use Illuminate\Database\Schema\Builder;
 use App\Repositories\OrdHead\OrdHeadRepositoryImplement;
+use Illuminate\Support\Facades\Gate;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -56,5 +59,9 @@ class AppServiceProvider extends ServiceProvider
         //
         Builder::defaultStringLength(191);
         KTBootstrap::init();
+
+        Gate::define('viewPulse', function (User $user) {
+            return $user->hasRole('superadministrator');
+        });
     }
 }

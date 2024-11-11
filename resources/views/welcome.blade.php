@@ -1,457 +1,368 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>
-        Article Filter
-    </title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV of I Wayan Bayu Sulaksana</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.2.2/cdn.js"></script>
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
+        /* Progress bar animation and design */
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+            position: relative;
         }
 
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #4A90E2;
-            border-radius: 50%;
+        .progress-bar {
+            height: 1rem;
+            border-radius: 9999px;
+            background-image: linear-gradient(90deg, #3b82f6, #60a5fa);
+            animation: fillProgress 2s ease forwards;
+            background-size: 200% 100%;
+        }
+
+        .progress-bar::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-image: linear-gradient(45deg,
+                    rgba(255, 255, 255, 0.2) 25%,
+                    transparent 25%,
+                    transparent 50%,
+                    rgba(255, 255, 255, 0.2) 50%,
+                    rgba(255, 255, 255, 0.2) 75%,
+                    transparent 75%,
+                    transparent);
+            background-size: 1rem 1rem;
+            animation: stripe 1s linear infinite;
+        }
+
+        @keyframes fillProgress {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: var(--progress-width);
+            }
+        }
+
+        @keyframes stripe {
+            from {
+                background-position: 1rem 0;
+            }
+
+            to {
+                background-position: 0 0;
+            }
+        }
+
+      /* Loading Spinner */
+      .loading {
             width: 40px;
             height: 40px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #4caf50;
+            border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .hidden {
+        /* Lightbox Styling */
+        .lightbox-overlay {
             display: none;
-        }
-
-        .pretty-checkbox {
-            appearance: none;
-            background-color: #fff;
-            border: 2px solid #d1d5db;
-            border-radius: 0.25rem;
-            width: 1.25rem;
-            height: 1.25rem;
-            display: inline-block;
-            position: relative;
-            cursor: pointer;
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-
-        .pretty-checkbox:checked {
-            background-color: #4A90E2;
-            border-color: #4A90E2;
-        }
-
-        .pretty-checkbox:checked::after {
-            content: '';
-            position: absolute;
-            top: 0.1rem;
-            left: 0.35rem;
-            width: 0.25rem;
-            height: 0.5rem;
-            border: solid white;
-            border-width: 0 0.2rem 0.2rem 0;
-            transform: rotate(45deg);
-        }
-
-        .fade-in {
-            animation: fadeIn 1s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-            }
-
-            100% {
-                opacity: 1;
-            }
-        }
-
-        .slideshow-container {
-            position: relative;
-            max-width: 100%;
-            margin: auto;
-        }
-
-        .slideshow-image {
-            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            border-radius: 0.5rem;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
-
-        .active {
-            display: block;
-        }
-
-        .slideshow-container {
-            position: relative;
-            width: 100%;
-            max-width: 100%;
-            overflow: hidden;
-        }
-
-        .slideshow-item {
-            position: relative;
-            display: none;
-        }
-
-        .slideshow-item.active {
-            display: block;
-        }
-
-        .slideshow-image {
-            width: 100%;
-            height: auto;
-            display: block;
-            object-fit: cover;
-            transition: all 0.5s ease-in-out;
-        }
-
-        .slide-text {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.5);
-            color: #fff;
-            padding: 15px;
-            text-align: center;
+        .lightbox-img {
+            max-width: 90%;
+            max-height: 90%;
             border-radius: 8px;
-            max-width: 80%;
+            opacity: 0;
+            transition: opacity 0.5s ease; /* Fade-in effect */
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            padding: 10px;
+            cursor: pointer;
         }
 
-        .slide-text h2 {
-            font-size: 1.5rem;
-            margin: 0 0 10px;
-            font-family: 'Montserrat', sans-serif;
+        /* Spinner Styling */
+        .spinner-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2000;
         }
 
-        .slide-text p {
-            font-size: 1rem;
-            margin: 0;
-            font-family: 'Roboto', sans-serif;
+        /* Profile Section Animation */
+        .profile-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .profile-content.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        /* Add responsiveness */
-        @media (max-width: 768px) {
-            .slide-text {
-                max-width: 95%;
-                bottom: 10px;
-                font-size: 0.9rem;
-            }
+        /* Profile Image Fade-In and Zoom Effect */
+        .profile-image {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
 
-            .slide-text h2 {
-                font-size: 1.2rem;
-            }
+        .profile-image.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
 
-            .slide-text p {
-                font-size: 0.9rem;
-            }
+        /* Zoom effect for profile image hover */
+        .profile-image:hover {
+            transform: scale(1.1);
         }
     </style>
 </head>
 
-<body class="bg-gray-100">
-    <!-- Navbar -->
-    <nav class="bg-white shadow-md py-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <a class="text-2xl font-bold text-gray-800" href="#">
-                MyWebsite
-            </a>
-            <div class="flex items-center space-x-4">
-                <a class="text-gray-800 hover:text-blue-500" href="#">
-                    Home
-                </a>
-                <a class="text-gray-800 hover:text-blue-500" href="#">
-                    About
-                </a>
-                <a class="text-gray-800 hover:text-blue-500" href="#">
-                    Contact
-                </a>
-                <!-- Profile Dropdown -->
-                <div class="relative">
-                    <button class="flex items-center space-x-2 text-gray-800 hover:text-blue-500 focus:outline-none">
-                        <img src="https://via.placeholder.com/30" alt="Profile" class="rounded-full">
-                        <span>Profile</span>
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M5.23 7.21A.75.75 0 016.3 6.3l3.72 3.72a.75.75 0 010 1.06l-3.72 3.72a.75.75 0 01-1.06-1.06l2.65-2.65-2.65-2.65a.75.75 0 010-1.06z"></path></svg>
-                    </button>
-                    <!-- Dropdown Menu -->
-                    <div class="absolute right-0 z-20 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block">
-                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-500 hover:text-white">Settings</a>
-                        <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-500 hover:text-white">Logout</a>
-                    </div>
-                </div>
-                <!-- Login Button -->
-                <a href="{{ route('login.form') }}" class="px-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-md transition duration-300">
-                    Login
-                </a>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+    <div class="max-w-3xl mx-auto my-8 p-6 bg-white shadow-lg rounded-lg relative">
+        <!-- Profile Section -->
+        <!-- Profile Section -->
+        <div class="max-w-3xl mx-auto my-8 p-6 bg-white shadow-lg rounded-lg relative" id="resume-content">
+            <!-- Loading Spinner -->
+            <div id="loading" class="flex justify-center items-center h-32">
+                <div class="loading"></div>
             </div>
-        </div>
-    </nav>
-    <!-- Slideshow -->
-    <div class="slideshow-container my-4">
-        <div class="slideshow-item">
-            <img alt="Slideshow image 1" class="slideshow-image active"
-                src="https://placehold.co/800x300?text=Slide+1" />
-            <div class="slide-text">
-                <h2>Slide 1 Title</h2>
-                <p>This is a description for Slide 1.</p>
-            </div>
-        </div>
-        <div class="slideshow-item">
-            <img alt="Slideshow image 2" class="slideshow-image" src="https://placehold.co/800x300?text=Slide+2" />
-            <div class="slide-text">
-                <h2>Slide 2 Title</h2>
-                <p>This is a description for Slide 2.</p>
-            </div>
-        </div>
-        <div class="slideshow-item">
-            <img alt="Slideshow image 3" class="slideshow-image" src="https://placehold.co/800x300?text=Slide+3" />
-            <div class="slide-text">
-                <h2>Slide 3 Title</h2>
-                <p>This is a description for Slide 3.</p>
-            </div>
-        </div>
-    </div>
 
-    <div class="container mx-auto p-4">
-        <div class="flex">
-            <!-- Sidebar -->
-            <div class="w-1/4 p-4 bg-white rounded-lg shadow-md">
-                <button class="w-full bg-red-500 text-white py-2 px-4 rounded-lg mb-4 flex items-center justify-center">
-                    <i class="fas fa-filter mr-2">
-                    </i>
-                    Filters Articles
-                </button>
+            <!-- Profile Content (Initially hidden until loading is complete) -->
+            <div id="profile-content" class="profile-content flex flex-col items-center mb-6">
+                <img src="https://via.placeholder.com/200" alt="Profile Photo" class="w-32 h-32 rounded-full shadow-md mb-4 photo-effect profile-image" id="profile-image">
+                <h1 class="text-4xl font-semibold text-gray-800">I Wayan Bayu Sulaksana</h1>
+                <p class="text-xl text-gray-600">Informatics Student & Full Stack Developer</p>
+                <p class="text-gray-500 mt-2">Jl. Raya Ubud No.123, Ubud, Bali, Indonesia</p>
+                <p class="text-gray-500">Phone: +62 812 3456 7890 | Email: wayan.bayu@example.com</p>
+            </div>
+
+            <!-- Lightbox -->
+            <div class="lightbox-overlay" id="lightbox">
+                <span class="lightbox-close" id="close-lightbox">✖</span>
+                <div class="spinner-container" id="spinner-container">
+                    <div class="loading"></div> <!-- Spinner -->
+                </div>
+                <img src="" id="lightbox-image" class="lightbox-img">
+            </div>
+        </div>
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-700">Profile</h2>
+            <p class="text-gray-700 mt-2">An Informatics student passionate about web and application development, with
+                skills in programming, data analysis, and developing modern technology-based applications. Focused on
+                problem-solving and creating efficient, user-friendly applications.</p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-700">Education</h2>
+            <div class="mt-4">
+                <h3 class="text-xl font-semibold text-gray-800">Bachelor's Degree in Informatics Engineering</h3>
+                <p class="text-gray-600">Udayana University, Bali | 2020 - Present</p>
+                <p class="text-gray-600">GPA: 3.8/4.0</p>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-700">Skills</h2>
+            <div class="mt-4">
                 <div class="mb-4">
-                    <h2 class="text-lg font-semibold mb-2">
-                        Type
-                    </h2>
-                    <div class="flex items-center mb-2">
-                        <input class="pretty-checkbox mr-2" id="gratis" name="type" type="radio" />
-                        <label class="text-gray-700" for="gratis">
-                            Gratis (Rp. 0)
-                        </label>
-                    </div>
-                    <div class="flex items-center">
-                        <input class="pretty-checkbox mr-2" id="premium" name="type" type="radio" />
-                        <label class="text-gray-700" for="premium">
-                            Premium
-                        </label>
+                    <p class="text-gray-800">HTML</p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="--progress-width: 90%;"></div>
                     </div>
                 </div>
-                <div>
-                    <h2 class="text-lg font-semibold mb-2">
-                        Technology
-                    </h2>
-                    <div class="flex items-center mb-2">
-                        <input class="pretty-checkbox mr-2" id="adonis" type="checkbox" />
-                        <label class="flex items-center" for="adonis">
-                            <img alt="Adonis Js logo" class="mr-2 rounded-full" src="https://placehold.co/24x24" />
-                            Adonis Js
-                        </label>
+                <div class="mb-4">
+                    <p class="text-gray-800">CSS & Tailwind</p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="--progress-width: 85%;"></div>
                     </div>
-                    <div class="flex items-center mb-2">
-                        <input class="pretty-checkbox mr-2" id="alpine" type="checkbox" />
-                        <label class="flex items-center" for="alpine">
-                            <img alt="Alpine Js logo" class="mr-2 rounded-full" src="https://placehold.co/24x24" />
-                            Alpine Js
-                        </label>
+                </div>
+                <div class="mb-4">
+                    <p class="text-gray-800">JavaScript</p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="--progress-width: 88%;"></div>
                     </div>
-                    <div class="flex items-center mb-2">
-                        <input class="pretty-checkbox mr-2" id="bun" type="checkbox" />
-                        <label class="flex items-center" for="bun">
-                            <img alt="Bun logo" class="mr-2 rounded-full" src="https://placehold.co/24x24" />
-                            Bun
-                        </label>
+                </div>
+                <div class="mb-4">
+                    <p class="text-gray-800">React & Node.js</p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="--progress-width: 80%;"></div>
                     </div>
-                    <div class="flex items-center mb-2">
-                        <input class="pretty-checkbox mr-2" id="codeigniter" type="checkbox" />
-                        <label class="flex items-center" for="codeigniter">
-                            <img alt="CodeIgniter logo" class="mr-2 rounded-full" src="https://placehold.co/24x24" />
-                            CodeIgniter
-                        </label>
-                    </div>
-                    <div class="flex items-center mb-2">
-                        <input class="pretty-checkbox mr-2" id="dart" type="checkbox" />
-                        <label class="flex items-center" for="dart">
-                            <img alt="Dart logo" class="mr-2 rounded-full" src="https://placehold.co/24x24" />
-                            Dart
-                        </label>
-                    </div>
-                    <div class="flex items-center">
-                        <input class="pretty-checkbox mr-2" id="devops" type="checkbox" />
-                        <label class="flex items-center" for="devops">
-                            <img alt="DevOps logo" class="mr-2 rounded-full" src="https://placehold.co/24x24" />
-                            DevOps
-                        </label>
+                </div>
+                <div class="mb-4">
+                    <p class="text-gray-800">Python & Machine Learning</p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="--progress-width: 70%;"></div>
                     </div>
                 </div>
             </div>
-            <!-- Main Content -->
-            <div class="w-3/4 p-4">
-                <div class="flex items-center mb-4">
-                    <input class="w-full p-2 border border-gray-300 rounded-lg"
-                        placeholder="Apa yang ingin Anda pelajari?" type="text" />
-                    <i class="fas fa-search ml-2 text-gray-500">
-                    </i>
-                </div>
-                <div class="flex justify-center items-center h-64" id="spinner">
-                    <div class="spinner">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4 hidden fade-in" id="content">
-                    <!-- Article Card -->
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img alt="Express MongoDB tutorial image" class="w-full"
-                            src="https://placehold.co/600x400" />
-                        <div class="p-4">
-                            <div class="flex items-center mb-2">
-                                <span class="bg-blue-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
-                                    Express JS
-                                </span>
-                                <span class="bg-gray-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
-                                    Prisma
-                                </span>
-                                <span class="bg-green-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded">
-                                    MongoDB
-                                </span>
-                            </div>
-                            <h3 class="text-lg font-semibold mb-2">
-                                Tutorial RESTful API Express dan MongoDB #8: Enable CORS di Express
-                            </h3>
-                            <div class="flex items-center">
-                                <img alt="Author's profile picture" class="w-6 h-6 rounded-full mr-2"
-                                    src="https://placehold.co/24x24" />
-                                <span class="text-gray-700">
-                                    Fika Ridaul Maulayya
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Article Card -->
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img alt="Express MongoDB tutorial image" class="w-full"
-                            src="https://placehold.co/600x400" />
-                        <div class="p-4">
-                            <div class="flex items-center mb-2">
-                                <span class="bg-blue-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
-                                    Express JS
-                                </span>
-                                <span class="bg-gray-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
-                                    Prisma
-                                </span>
-                                <span class="bg-green-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded">
-                                    MongoDB
-                                </span>
-                            </div>
-                            <h3 class="text-lg font-semibold mb-2">
-                                Tutorial RESTful API Express dan MongoDB #7: Delete Data dari Database
-                            </h3>
-                            <div class="flex items-center">
-                                <img alt="Author's profile picture" class="w-6 h-6 rounded-full mr-2"
-                                    src="https://placehold.co/24x24" />
-                                <span class="text-gray-700">
-                                    Fika Ridaul Maulayya
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Article Card -->
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img alt="Express MongoDB tutorial image" class="w-full"
-                            src="https://placehold.co/600x400" />
-                        <div class="p-4">
-                            <div class="flex items-center mb-2">
-                                <span class="bg-blue-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
-                                    Express JS
-                                </span>
-                                <span class="bg-gray-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
-                                    Prisma
-                                </span>
-                                <span class="bg-green-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded">
-                                    MongoDB
-                                </span>
-                            </div>
-                            <h3 class="text-lg font-semibold mb-2">
-                                Tutorial RESTful API Express dan MongoDB #8: Enable CORS di Express
-                            </h3>
-                            <div class="flex items-center">
-                                <img alt="Author's profile picture" class="w-6 h-6 rounded-full mr-2"
-                                    src="https://placehold.co/24x24" />
-                                <span class="text-gray-700">
-                                    Fika Ridaul Maulayya
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Article Card -->
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img alt="Express MongoDB tutorial image" class="w-full"
-                            src="https://placehold.co/600x400" />
-                        <div class="p-4">
-                            <div class="flex items-center mb-2">
-                                <span class="bg-blue-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
-                                    Express JS
-                                </span>
-                                <span class="bg-gray-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
-                                    Prisma
-                                </span>
-                                <span class="bg-green-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded">
-                                    MongoDB
-                                </span>
-                            </div>
-                            <h3 class="text-lg font-semibold mb-2">
-                                Tutorial RESTful API Express dan MongoDB #7: Delete Data dari Database
-                            </h3>
-                            <div class="flex items-center">
-                                <img alt="Author's profile picture" class="w-6 h-6 rounded-full mr-2"
-                                    src="https://placehold.co/24x24" />
-                                <span class="text-gray-700">
-                                    Fika Ridaul Maulayya
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-700">Organizational Experience</h2>
+            <div class="mt-4">
+                <h3 class="text-xl font-semibold text-gray-800">Informatics Student Association (HIMATIKA)</h3>
+                <p class="text-gray-600">Head of IT Division | 2022 - Present</p>
+                <ul class="list-disc list-inside mt-2 text-gray-700">
+                    <li>Coordinating the team to manage the organization’s website and membership database.</li>
+                    <li>Leading the development of a web-based application for the student activity information system.
+                    </li>
+                </ul>
             </div>
-        </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-700">Work Experience</h2>
+            <div class="mt-4">
+                <h3 class="text-xl font-semibold text-gray-800">Web Development Intern</h3>
+                <p class="text-gray-600">PT. Techno Solution, Bali | Jan 2023 - Present</p>
+                <ul class="list-disc list-inside mt-2 text-gray-700">
+                    <li>Participated in the development of a responsive web application using React and Node.js.</li>
+                    <li>Collaborated with designers for implementing user-friendly UI.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-700">Projects</h2>
+            <div class="mt-4">
+                <h3 class="text-xl font-semibold text-gray-800">Personal Portfolio Website</h3>
+                <p class="text-gray-600">Created a personal portfolio using HTML, CSS, and JavaScript to showcase
+                    projects and skills.</p>
+            </div>
+            <div class="mt-4">
+                <h3 class="text-xl font-semibold text-gray-800">E-commerce Information System (Final Project)</h3>
+                <p class="text-gray-600">Built a prototype of an e-commerce platform using the MERN stack, including
+                    user authentication, shopping cart, and payment integration features.</p>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-700">Certifications</h2>
+            <div class="mt-4">
+                <p class="text-gray-800">Google IT Support Professional Certificate</p>
+                <p class="text-gray-600">Issued by Google | Completed in 2022</p>
+            </div>
+            <div class="mt-4">
+                <p class="text-gray-800">JavaScript and Web Development Certificate</p>
+                <p class="text-gray-600">Issued by Udemy | Completed in 2023</p>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-700">Extracurriculars</h2>
+            <div class="mt-4">
+                <h3 class="text-xl font-semibold text-gray-800">Member of Game Development Club</h3>
+                <p class="text-gray-600">Udayana University | 2021 - Present</p>
+                <ul class="list-disc list-inside mt-2 text-gray-700">
+                    <li>Participated in a project to create simple games using Unity and C#.</li>
+                    <li>Improved skills in programming and game design.</li>
+                </ul>
+            </div>
+        </section>
+
+        <footer class="text-center mt-8">
+            <p class="text-gray-600">Contact me at:
+                <a href="https://www.linkedin.com/in/wayanbayu" class="text-blue-600">LinkedIn</a> |
+                <a href="https://github.com/wayanbayu" class="text-blue-600">GitHub</a>
+            </p>
+            <p class="text-gray-600">© 2024 I Wayan Bayu Sulaksana</p>
+        </footer>
     </div>
+
+
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.width = entry.target.style.getPropertyValue(
+                            '--progress-width');
+                    }
+                });
+            }, {
+                threshold: 0.2
+            });
+
+            document.querySelectorAll(".progress-bar").forEach((bar) => {
+                observer.observe(bar);
+            });
+        });
+
+        // Simulate content loading
+        window.onload = function() {
+            // Simulating a delay for loading
             setTimeout(function() {
-                document.getElementById("spinner").classList.add("hidden");
-                document.getElementById("content").classList.remove("hidden");
-            }, 2000); // Simulate loading time
+                document.getElementById('loading').style.display = 'none'; // Hide the loading animation
+                document.getElementById('profile-content').classList.add('visible'); // Add animation class to show profile content
+                document.getElementById('profile-image').classList.add('visible'); // Add animation to show profile image
+            }, 1500); // Adjust the delay as needed
+        };
 
-            let slideIndex = 0;
-            showSlides();
+        // Lightbox functionality
+        const profileImage = document.getElementById('profile-image');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImage = document.getElementById('lightbox-image');
+        const closeLightbox = document.getElementById('close-lightbox');
+        const spinnerContainer = document.getElementById('spinner-container');
 
-            function showSlides() {
-                let slides = document.getElementsByClassName("slideshow-image");
-                for (let i = 0; i < slides.length; i++) {
-                    slides[i].classList.remove("active");
-                }
-                slideIndex++;
-                if (slideIndex > slides.length) {
-                    slideIndex = 1;
-                }
-                slides[slideIndex - 1].classList.add("active");
-                setTimeout(showSlides, 3000); // Change image every 3 seconds
+        // Open lightbox when image is clicked
+        profileImage.addEventListener('click', function() {
+            lightbox.style.display = 'flex';
+            lightboxImage.src = profileImage.src; // Set the large image source
+
+            // Show the spinner while the image is loading
+            spinnerContainer.style.display = 'flex';
+            lightboxImage.style.opacity = 0; // Ensure the image is initially invisible
+
+            // Once the image is fully loaded, hide the spinner and show the image with fade-in
+            lightboxImage.onload = function() {
+                spinnerContainer.style.display = 'none'; // Hide spinner
+                lightboxImage.style.opacity = 1; // Fade-in the image
+            };
+        });
+
+        // Close lightbox when the close button is clicked
+        closeLightbox.addEventListener('click', function() {
+            lightbox.style.display = 'none';
+            lightboxImage.style.opacity = 0; // Fade-out the lightbox image
+        });
+
+        // Close lightbox when clicking outside the image
+        lightbox.addEventListener('click', function(event) {
+            if (event.target === lightbox) {
+                lightbox.style.display = 'none';
+                lightboxImage.style.opacity = 0; // Fade-out the lightbox image
             }
         });
     </script>

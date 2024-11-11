@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\HomeController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\RegionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\TahunPelajaranController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,12 +27,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('auth.login');
+    return view('welcome');
 });
 Route::controller(RegisterController::class)->group(function () {
     Route::get('register', 'showRegisterForm')->name('register');
     Route::post('register', 'register');
 });
+
+Route::get('/activities/data', [ActivityController::class, 'getData'])->name('activities.data');
+
 Route::get('login/form', [LoginController::class, 'showLoginForm'])->name('login.form');
 Route::post('login/prosesForm', [LoginController::class, 'login'])->name('login.prosesForm');
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
@@ -102,6 +107,11 @@ Route::prefix('roles')
         // Standard CRUD routes for Roles
         Route::resource('/', RoleController::class)->parameters(['' => 'role'])->except(['show']);
     });
+
+
+
+Route::resource('tahun-pelajaran', TahunPelajaranController::class);
+Route::get('tahun-pelajaran/data', [TahunPelajaranController::class, 'getData'])->name('tahun-pelajaran.getData');
 
 Route::prefix('rooms')
     ->middleware('auth')
