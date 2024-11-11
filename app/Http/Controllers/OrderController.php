@@ -48,10 +48,13 @@ class OrderController extends Controller
                 $startTime = microtime(true);
                 $startMemory = memory_get_usage();
 
-                // Start the query with necessary joins and selects
-                $data = OrdHead::with(['ordsku']) // Eager load only necessary relationships
-                    ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store') // Use leftJoin to keep ordhead records even if store is missing
-                    ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code') // Use leftJoin to keep ordhead records even if supplier is missing
+                // Initialize an empty array to hold the results
+                $result = collect();
+
+                // Use chunking to process records in smaller batches
+                OrdHead::with(['ordsku']) // Eager load necessary relationships
+                    ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store') // Join store table
+                    ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code') // Join supplier table
                     ->select(
                         'ordhead.*',
                         'store.store as store',
@@ -60,23 +63,28 @@ class OrderController extends Controller
                         'supplier.supp_name as supp_name',
                         'ordhead.not_after_date as expired_date',
                         'ordhead.approval_date as approval_date'
-                    ); // Select additional fields
+                    )
+                    ->chunk(1000, function ($chunk) use ($result) { // Process 1000 records at a time
+                        foreach ($chunk as $row) {
+                            $result->push($row); // Add each row to the result collection
+                        }
+                    });
 
                 // Prepare the data for DataTables
-                $result = DataTables::of($data)
-                    ->addColumn('action', function($row) {
+                $datatableResult = DataTables::of($result)
+                    ->addColumn('action', function ($row) {
                         return '<button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px" data-kt-docs-datatable-subtable="expand_row">
                                     <span class="svg-icon fs-3 m-0 toggle-off">...</span>
                                     <span class="svg-icon fs-3 m-0 toggle-on">...</span>
                                 </button>';
                     })
-                    ->editColumn('total_cost', function($row) {
+                    ->editColumn('total_cost', function ($row) {
                         return '$' . number_format($row->total_cost, 2);
                     })
-                    ->editColumn('total_retail', function($row) {
+                    ->editColumn('total_retail', function ($row) {
                         return '$' . number_format($row->total_retail, 2);
                     })
-                    ->editColumn('supp_name', function($row) {
+                    ->editColumn('supp_name', function ($row) {
                         return $row->supp_name ?? 'Not Found';
                     })
                     ->rawColumns(['status', 'action']) // Allow HTML rendering
@@ -86,13 +94,14 @@ class OrderController extends Controller
                 SystemUsageHelper::logUsage($startTime, $startMemory);
 
                 // Return the result to DataTables
-                return $result;
+                return $datatableResult;
 
             } catch (\Exception $e) {
                 return response()->json(['error' => 'An error occurred while fetching data. ' . $e->getMessage()], 500);
             }
         }
     }
+
 
 
     /**
