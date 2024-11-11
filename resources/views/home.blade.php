@@ -12,26 +12,57 @@
         <div class="row">
             <!-- Card for Pie chart -->
             <div class="col-md-6 mb-4">
-                <div class="card">
+                <div class="card card-custom" id="kt_card_2">
                     <div class="card-header">
-                        <h4>Total RAM Usage vs Remaining RAM</h4>
+                        <div class="card-title">
+                            <h3 class="card-label">Total RAM Usage vs Remaining RAM</h3>
+                        </div>
+                        <div class="card-toolbar">
+                            <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary mr-1" data-card-tool="toggle" data-toggle="tooltip" data-placement="top" title="Toggle Card">
+                                <i class="ki ki-arrow-down icon-nm"></i>
+                            </a>
+                            <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary mr-1" data-card-tool="reload" data-toggle="tooltip" data-placement="top" title="Reload Card">
+                                <i class="ki ki-reload icon-nm"></i>
+                            </a>
+                            <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary" data-card-tool="remove" data-toggle="tooltip" data-placement="top" title="Remove Card">
+                                <i class="ki ki-close icon-nm"></i>
+                            </a>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div id="ramUsagePieChart"></div>
                     </div>
                 </div>
+
             </div>
 
             <!-- Card for Bar chart -->
             <div class="col-md-6 mb-4">
-                <div class="card">
+                <div class="card card-custom" id="kt_card_1">
                     <div class="card-header">
-                        <h4>RAM Usage Over Time</h4>
+                        <div class="card-title">
+                            <h3 class="card-label">RAM Usage Over Time</h3>
+                        </div>
+                        <div class="card-toolbar">
+                            <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary mr-1"
+                                data-card-tool="toggle" data-toggle="tooltip" data-placement="top" title="Toggle Card">
+                                <i class="ki ki-arrow-down icon-nm"></i>
+                            </a>
+                            <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary mr-1"
+                                data-card-tool="reload" data-toggle="tooltip" data-placement="top" title="Reload Card">
+                                <i class="ki ki-reload icon-nm"></i>
+                            </a>
+                            <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary"
+                                data-card-tool="remove" data-toggle="tooltip" data-placement="top" title="Remove Card">
+                                <i class="ki ki-close icon-nm"></i>
+                            </a>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div id="ramUsageBarChart"></div>
                     </div>
                 </div>
+
             </div>
         </div>
 
