@@ -41,19 +41,18 @@ class ActivityController extends Controller
                         $ip = $_SERVER['REMOTE_ADDR'];
                     }
 
-                    // Get the geolocation information for the IP
-                    $url = "https://tools.keycdn.com/geo.json?host=$ip";
-                    $dt = file_get_contents($url);
-                    $dt = json_decode($dt, true);
+                    // Use the Google Maps Geocoding API to get location details
+                    $apiKey = 'AIzaSyBcWbh2Eng7P6-842kxBOUFiKGZt9x3WTA'; // Replace with your API key
+                    $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$ip&key=$apiKey";
+                    $response = file_get_contents($url);
+                    $data = json_decode($response, true);
 
-                    // Extract relevant location data
-                    $lat = $dt['data']['geo']['latitude'];
-                    $lng = $dt['data']['geo']['longitude'];
-                    $regional = $dt['data']['geo']['region_name'];
-                    $city_name = $dt['data']['geo']['city'];
-
-                    // Combine city and region to form the location
-                    $location = $city_name . " - " . $regional;
+                    // Check if the response contains location data
+                    if (isset($data['results'][0])) {
+                        $location = $data['results'][0]['formatted_address']; // Get the formatted address
+                    } else {
+                        $location = 'Location not found';
+                    }
 
                     // Add location data to the activity
                     $activity->location = $location;
@@ -87,6 +86,7 @@ class ActivityController extends Controller
             }
         }
     }
+
 
 
 }
