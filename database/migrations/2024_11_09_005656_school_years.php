@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rooms', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name')->unique();
-            $table->text('description')->nullable();
-            $table->softDeletes();
+        //
+        Schema::create('school_years', function (Blueprint $table) {
+            $table->id();
+            $table->string('tahun_ajaran', 9);
+            $table->enum('status', ['aktif', 'non-aktif']);
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('room');
+        //
     }
 };

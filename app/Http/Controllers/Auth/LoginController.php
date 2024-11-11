@@ -54,6 +54,7 @@ class LoginController extends Controller
                 'error' => 'Invalid credentials',
             ], 401);
         } catch (\Exception $e) {
+            dd($e->getMessage());
             LoginLog::create([
                 'email' => $request->email,
                 'ip_address' => $request->ip(),

@@ -36,6 +36,34 @@ return [
             'type'  => 'heading' // This represents a section heading (non-clickable)
         ],
 
+        [
+            'label'          => 'Master Data',        // Main menu label
+            'type'           => 'item',                   // Type item (clickable menu item)
+            'permission'     => [],                       // Permissions (empty implies no restrictions)
+            'permissionType' => 'gate',                   // Permission type (gate or policy)
+            'icon'           => 'fas',                    // Font Awesome icons class
+            'iconName'       => 'fa-database',               // Icon name for this main item
+            'iconPath'       => 4,                        // Optional icon size/path
+            'children'       => [                         // Sub-items (children)
+
+
+
+                // Adding "Tahun Pelajaran" (School Year) Menu
+                [
+                    'label'          => 'Tahun Pelajaran',  // New menu for managing academic years
+                    'type'           => 'item',             // Item type
+                    'route'          => 'tahun-pelajaran.index',  // Route for managing academic years
+                    'active'         => [],                 // Define when this item is active
+                    'permission'     => [],   // Permissions required to access this menu item
+                    'permissionType' => 'gate',             // Gate-based permission checking
+                    'icon'           => 'fas',
+                    'iconName'       => 'fa-calendar',
+                    'iconPath'       => 4,
+                ],
+            ]
+        ],
+
+
         // Management User menu item with sub-items (children)
         [
             'label'          => 'Management User',       // Main menu label
