@@ -88,8 +88,128 @@
                     margin: 10px 0;
                 }
             }
+
+            .modal-content {
+                background-color: #333;
+                /* Dark modal background */
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            }
+
+            .modal-header {
+                border-bottom: none;
+            }
+
+            .modal-title {
+                font-size: 1.75rem;
+                font-weight: bold;
+            }
+
+            .feature-slides {
+                text-align: center;
+            }
+
+            .feature-icon {
+                font-size: 3rem;
+                margin-bottom: 15px;
+            }
+
+            .feature-title {
+                font-size: 1.5rem;
+                margin-top: 10px;
+                font-weight: bold;
+            }
+
+            .feature-description {
+                font-size: 1rem;
+                color: #ccc;
+                /* Light text for description */
+            }
+
+            .modal-footer {
+                background-color: #444;
+                border-top: none;
+                padding: 15px;
+                border-bottom-left-radius: 10px;
+                border-bottom-right-radius: 10px;
+            }
+
+            .btn-close {
+                background: transparent;
+                color: #ffffff;
+                opacity: 0.8;
+                transition: opacity 0.3s;
+            }
+
+            .btn-close:hover {
+                opacity: 1;
+            }
+
+            .btn-outline-light {
+                color: #ffffff;
+                border-color: #ffffff;
+            }
+
+            .btn-outline-light:hover {
+                color: #333;
+                background-color: #ffffff;
+                border-color: #ffffff;
+            }
+
+            @media (max-width: 768px) {
+                .modal-dialog {
+                    margin: 1rem;
+                }
+
+                .feature-title {
+                    font-size: 1.2rem;
+                }
+
+                .feature-description {
+                    font-size: 0.9rem;
+                }
+            }
         </style>
     @endpush
+    <!-- Modal Structure with Custom Dark Theme -->
+    <div class="modal fade" tabindex="-1" id="kt_modal_1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-light bg-dark border-0">
+                <div class="modal-header border-0">
+                    <h3 class="modal-title" id="modalLabel">What's New</h3>
+
+                    <!-- Close Button with Updated Icon -->
+                    <button type="button" class="btn btn-icon btn-sm btn-active-light-primary ms-2"
+                        data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times fs-3 text-light"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="feature-slides">
+                        <!-- Slide 1 Example -->
+                        <div class="feature-slide active">
+                            <i class="feature-icon fas fa-chart-line text-primary"></i>
+                            <h4 class="feature-title">Improved Analytics Dashboard</h4>
+                            <p class="feature-description">The new analytics dashboard offers customizable insights,
+                                making data-driven decisions easier.</p>
+                        </div>
+                        <!-- Additional slides would go here -->
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 d-flex justify-content-between">
+                    <button id="nextBtn" class="btn btn-outline-light">Next</button>
+                    <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" id="dontShowAgain"> Don’t Show Again
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <div class="container">
         <h1 class="text-center mb-4">System RAM Usage Per Hour</h1>
 
@@ -167,8 +287,8 @@
                         <i class="ki ki-arrow-down icon-nm"></i>
                     </a>
                     <!-- Reload Card Button -->
-                    <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary mr-1" data-card-tool="reload"
-                        data-toggle="tooltip" data-placement="top" title="Reload Card">
+                    <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary mr-1"
+                        data-card-tool="reload" data-toggle="tooltip" data-placement="top" title="Reload Card">
                         <i class="ki ki-reload icon-nm"></i>
                     </a>
                     <!-- Remove Card Button -->
@@ -309,6 +429,33 @@
 
                 // Ensure the fetchDataLogin function is defined before calling it
                 fetchDataLogin();
+
+                const modal = new bootstrap.Modal(document.getElementById('kt_modal_1'));
+                const dontShowAgain = localStorage.getItem('dontShowFeatureModal') === 'true';
+
+                if (!dontShowAgain) {
+                    modal.show();
+                }
+
+                const slides = document.querySelectorAll('.feature-slide');
+                let currentSlide = 0;
+
+                function showSlide(index) {
+                    slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+                }
+
+                document.getElementById('nextBtn').addEventListener('click', () => {
+                    currentSlide = (currentSlide + 1) % slides.length;
+                    showSlide(currentSlide);
+
+                    if (currentSlide === 0) {
+                        modal.hide();
+                        if (document.getElementById('dontShowAgain').checked) {
+                            localStorage.setItem('dontShowFeatureModal', 'true');
+                        }
+                    }
+                });
+
             });
 
 

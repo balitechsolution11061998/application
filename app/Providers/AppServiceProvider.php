@@ -17,6 +17,10 @@ use App\Services\Rcv\RcvService;
 use App\Services\Rcv\RcvServiceImplement;
 use Illuminate\Database\Schema\Builder;
 use App\Repositories\OrdHead\OrdHeadRepositoryImplement;
+use App\Repositories\OrdSku\OrdSkuRepository;
+use App\Repositories\OrdSku\OrdSkuRepositoryImplement;
+use App\Services\Order\OrderService;
+use App\Services\Order\OrderServiceImplement;
 use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
@@ -49,6 +53,15 @@ class AppServiceProvider extends ServiceProvider
                 $app->make(RcvHeadRepository::class)
             );
         });
+        $this->app->bind(OrdSkuRepository::class, OrdSkuRepositoryImplement::class);
+
+        $this->app->singleton(OrderService::class, function ($app) {
+            return new OrderServiceImplement(
+                $app->make(OrdHeadRepository::class),
+                $app->make(OrdSkuRepository::class)
+            );
+        });
+
     }
 
     /**
