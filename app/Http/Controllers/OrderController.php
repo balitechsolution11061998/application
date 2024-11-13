@@ -4,11 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Helpers\SystemUsageHelper;
 use App\Models\OrdHead;
+use App\Services\Order\OrderService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class OrderController extends Controller
 {
+    private $orderService;
+    public function __construct(OrderService $orderService)
+    {
+        $this->orderService = $orderService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -31,6 +38,29 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         //
+
+            try {
+
+
+
+                $data = $request->all(); // Get the orders array
+
+                foreach ($data as $chunk) {
+                    // Call the orderService for each chunk
+                    $this->orderService->store($chunk);
+                }
+
+                // Return success response
+                return response()->json([
+                    'message' => 'Data po stored successfully',
+                    'title' => 'Po stored success',
+                ]);
+            } catch (Exception $e) {
+                // Log or handle the exception
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
+
+
     }
 
     /**
