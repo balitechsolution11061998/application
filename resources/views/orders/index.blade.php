@@ -83,16 +83,12 @@
                 display: block;
                 margin: auto;
             }
+
             #osmMap {
                 border: 1px solid #dee2e6;
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             }
-
         </style>
-          <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-          <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
     @endpush
     <!-- Card Start -->
     <div class="card rounded">
@@ -162,8 +158,12 @@
 
 
     @push('scripts')
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcWbh2Eng7P6-842kxBOUFiKGZt9x3WTA&callback=initMap&libraries=places&v=weekly"
+    async
+    defer>
+</script>
+
 
         @foreach (getGlobalAssets() as $path)
             {!! sprintf('<script src="%s"></script>', asset($path)) !!}
@@ -172,19 +172,6 @@
             {!! sprintf('<script src="%s"></script>', asset($path)) !!}
         @endforeach
         <script>
-            const warehouseIcon = L.divIcon({
-    className: 'fa fa-store',
-    iconSize: [30, 30],
-    iconAnchor: [15, 30],
-    popupAnchor: [0, -30]
-});
-const deviceIcon = L.divIcon({
-    className: 'fa fa-phone',
-    iconSize: [30, 30],
-    iconAnchor: [15, 30],
-    popupAnchor: [0, -30]
-});
-
             document.getElementById('syncDataBtn').addEventListener('click', function() {
                 const syncDate = document.getElementById('syncDateInput').value;
 
@@ -574,39 +561,40 @@ const deviceIcon = L.divIcon({
                 if (amount === null || amount === undefined) return 'N/A';
                 return 'Rp' + amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
             }
-            function showLoadingSpinner(button) {
-    const id = button.getAttribute("data-id");
-    console.log(`Fetching details for ID: ${id}`);
 
-    // Show a loading spinner in the modal content
-    document.getElementById("modalContent").innerHTML = `
+            function showLoadingSpinner(button) {
+                const id = button.getAttribute("data-id");
+                console.log(`Fetching details for ID: ${id}`);
+
+                // Show a loading spinner in the modal content
+                document.getElementById("modalContent").innerHTML = `
         <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
             <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
         </div>`;
 
-    // Fetch the details via AJAX
-    fetch(`/purchase-orders/edit/` + id)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            return response.json();
-        })
-        .then(rowData => {
-            if (!rowData || !rowData.data) {
-                document.getElementById("modalContent").innerHTML = `
+                // Fetch the details via AJAX
+                fetch(`/purchase-orders/edit/` + id)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
+                        }
+                        return response.json();
+                    })
+                    .then(rowData => {
+                        if (!rowData || !rowData.data) {
+                            document.getElementById("modalContent").innerHTML = `
                     <div class="alert alert-warning text-center" role="alert">
                         <strong>Warning!</strong> Details not found for the selected item.
                     </div>`;
-                return;
-            }
+                            return;
+                        }
 
-            const data = rowData.data;
+                        const data = rowData.data;
 
-            // Prepare Warehouse Information Layout
-            const warehouseInfoHtml = `
+                        // Prepare Warehouse Information Layout
+                        const warehouseInfoHtml = `
                 <div class="row text-white mb-3" style="background-color: #333; padding: 15px; border-radius: 8px;">
                     <div class="col-md-3">
                         <p><i class="bi bi-shop"></i> <strong>Warehouse No:</strong> ${data.order_details.store.store_no || 'N/A'}</p>
@@ -632,18 +620,20 @@ const deviceIcon = L.divIcon({
                     </div>
                 </div>`;
 
-            const latitude = data.order_details.store.latitude || null;
-            const longitude = data.order_details.store.longitude || null;
+                        let latitude = parseFloat(data.order_details.store.latitude);
+                        let longitude = parseFloat(data.order_details.store.longitude);
 
-            if (!latitude || !longitude) {
-                document.getElementById("modalContent").innerHTML = `
+                        // Check if the coordinates are valid numbers
+                        if (isNaN(latitude) || isNaN(longitude)) {
+                            document.getElementById("modalContent").innerHTML = `
                     <div class="alert alert-info">Map is unavailable for this warehouse.</div>`;
-                return;
-            }
+                            return;
+                        }
 
-            const mapHtml = `<div id="osmMap" style="height: 300px; margin-bottom: 20px;" class="rounded shadow-sm"></div>`;
+                        const mapHtml =
+                            `<div id="googleMap" style="height: 300px; margin-bottom: 20px;" class="rounded shadow-sm"></div>`;
 
-            document.getElementById("modalContent").innerHTML = `
+                        document.getElementById("modalContent").innerHTML = `
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white">
                         <h5 class="card-title mb-0 text-center">Order Details</h5>
@@ -658,82 +648,106 @@ const deviceIcon = L.divIcon({
                     </div>
                 </div>`;
 
-            // Initialize Leaflet map
-            const map = L.map('osmMap').setView([latitude, longitude], 15);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-
-            // Custom Warehouse Marker (Font Awesome store icon)
-            const warehouseIcon = L.divIcon({
-                className: 'fa fa-store',
-                iconSize: [30, 30],
-                iconAnchor: [15, 30],
-                popupAnchor: [0, -30]
-            });
-
-            L.marker([latitude, longitude], { icon: warehouseIcon }).addTo(map)
-                .bindPopup(`<strong>Warehouse Location:</strong><br>Latitude: ${latitude}<br>Longitude: ${longitude}`)
-                .openPopup();
-
-            // Add routing feature
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    position => {
-                        const deviceLat = position.coords.latitude;
-                        const deviceLon = position.coords.longitude;
-
-                        // Custom Device Marker (Font Awesome phone icon)
-                        const deviceIcon = L.divIcon({
-                            className: 'fa fa-phone',
-                            iconSize: [30, 30],
-                            iconAnchor: [15, 30],
-                            popupAnchor: [0, -30]
+                        // Initialize Google Map
+                        const map = new google.maps.Map(document.getElementById("googleMap"), {
+                            center: {
+                                lat: latitude,
+                                lng: longitude
+                            },
+                            zoom: 15
                         });
 
-                        L.marker([deviceLat, deviceLon], { icon: deviceIcon }).addTo(map)
-                            .bindPopup(`<strong>Your Location:</strong><br>Latitude: ${deviceLat}<br>Longitude: ${deviceLon}`)
-                            .openPopup();
-
-                        // Wait until the map tiles are loaded, then add the routing control
-                        map.whenReady(() => {
-                            L.Routing.control({
-                                waypoints: [
-                                    L.latLng(deviceLat, deviceLon), // User's location
-                                    L.latLng(latitude, longitude)    // Warehouse location
-                                ],
-                                routeWhileDragging: true,
-                                createMarker: function() { return null; } // Disable markers (optional)
-                            }).addTo(map);
+                        // Custom Warehouse Marker
+                        const warehouseMarker = new google.maps.Marker({
+                            position: {
+                                lat: latitude,
+                                lng: longitude
+                            },
+                            map: map,
+                            title: "Warehouse Location",
+                            icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png' // Use a custom icon for the warehouse marker
                         });
-                    },
-                    error => {
-                        console.error("Error getting device location:", error);
-                        alert("Unable to get device location.");
-                    }
-                );
-            } else {
-                alert("Geolocation is not supported by this browser.");
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching details:', error);
-            document.getElementById("modalContent").innerHTML = `
+
+                        const warehouseInfoWindow = new google.maps.InfoWindow({
+                            content: `<strong>Warehouse Location:</strong><br>Latitude: ${latitude}<br>Longitude: ${longitude}`
+                        });
+
+                        warehouseMarker.addListener("click", () => {
+                            warehouseInfoWindow.open(map, warehouseMarker);
+                        });
+
+                        // Add routing feature using Geolocation API
+                        if (navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition(
+                                position => {
+                                    const deviceLat = position.coords.latitude;
+                                    const deviceLon = position.coords.longitude;
+
+                                    // Custom Device Marker
+                                    const deviceMarker = new google.maps.Marker({
+                                        position: {
+                                            lat: deviceLat,
+                                            lng: deviceLon
+                                        },
+                                        map: map,
+                                        title: "Your Location",
+                                        icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/info-i_maps.png' // Use a custom icon for the device marker
+                                    });
+
+                                    const deviceInfoWindow = new google.maps.InfoWindow({
+                                        content: `<strong>Your Location:</strong><br>Latitude: ${deviceLat}<br>Longitude: ${deviceLon}`
+                                    });
+
+                                    deviceMarker.addListener("click", () => {
+                                        deviceInfoWindow.open(map, deviceMarker);
+                                    });
+
+                                    // Request routing directions
+                                    const directionsService = new google.maps.DirectionsService();
+                                    const directionsRenderer = new google.maps.DirectionsRenderer();
+                                    directionsRenderer.setMap(map);
+
+                                    const request = {
+                                        origin: {
+                                            lat: deviceLat,
+                                            lng: deviceLon
+                                        },
+                                        destination: {
+                                            lat: latitude,
+                                            lng: longitude
+                                        },
+                                        travelMode: google.maps.TravelMode.DRIVING
+                                    };
+
+                                    directionsService.route(request, (result, status) => {
+                                        if (status === google.maps.DirectionsStatus.OK) {
+                                            directionsRenderer.setDirections(result);
+                                        } else {
+                                            alert("Directions request failed due to " + status);
+                                        }
+                                    });
+                                },
+                                error => {
+                                    console.error("Error getting device location:", error);
+                                    alert("Unable to get device location.");
+                                }
+                            );
+                        } else {
+                            alert("Geolocation is not supported by this browser.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching details:', error);
+                        document.getElementById("modalContent").innerHTML = `
                 <div class="alert alert-danger text-center" role="alert">
                     <strong>Error!</strong> Unable to load details. Please try again later.
                 </div>`;
-        })
-        .finally(() => {
-            const modal = new bootstrap.Modal(document.getElementById("detailsModal"));
-            modal.show();
-        });
-}
-
-
-
-
+                    })
+                    .finally(() => {
+                        const modal = new bootstrap.Modal(document.getElementById("detailsModal"));
+                        modal.show();
+                    });
+            }
         </script>
     @endpush
 
