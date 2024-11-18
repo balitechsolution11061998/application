@@ -6,6 +6,7 @@ use App\Helpers\SystemUsageHelper;
 use App\Models\OrdHead;
 use App\Services\Order\OrderService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class OrderController extends Controller
@@ -39,28 +40,26 @@ class OrderController extends Controller
     {
         //
 
-            try {
+        try {
 
 
 
-                $data = $request->all(); // Get the orders array
+            $data = $request->all(); // Get the orders array
 
-                foreach ($data as $chunk) {
-                    // Call the orderService for each chunk
-                    $this->orderService->store($chunk);
-                }
-
-                // Return success response
-                return response()->json([
-                    'message' => 'Data po stored successfully',
-                    'title' => 'Po stored success',
-                ]);
-            } catch (Exception $e) {
-                // Log or handle the exception
-                return response()->json(['error' => $e->getMessage()], 500);
+            foreach ($data as $chunk) {
+                // Call the orderService for each chunk
+                $this->orderService->store($chunk);
             }
 
-
+            // Return success response
+            return response()->json([
+                'message' => 'Data po stored successfully',
+                'title' => 'Po stored success',
+            ]);
+        } catch (Exception $e) {
+            // Log or handle the exception
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -82,9 +81,10 @@ class OrderController extends Controller
                 $result = collect();
 
                 // Use chunking to process records in smaller batches
-                OrdHead::with(['ordsku']) // Eager load necessary relationships
-                    ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store') // Join store table
-                    ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code') // Join supplier table
+                DB::table('ordhead')
+                    ->leftJoin('ordsku', 'ordsku.order_no', '=', 'ordhead.order_no')
+                    ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store')
+                    ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code')
                     ->select(
                         'ordhead.*',
                         'store.store as store',
@@ -94,11 +94,14 @@ class OrderController extends Controller
                         'ordhead.not_after_date as expired_date',
                         'ordhead.approval_date as approval_date'
                     )
-                    ->chunk(1000, function ($chunk) use ($result) { // Process 1000 records at a time
+                    ->distinct()
+                    ->orderBy('approval_date', 'desc')
+                    ->chunk(1000, function ($chunk) use ($result) {
                         foreach ($chunk as $row) {
-                            $result->push($row); // Add each row to the result collection
+                            $result->push($row);
                         }
                     });
+
 
                 // Prepare the data for DataTables
                 $datatableResult = DataTables::of($result)
@@ -125,8 +128,8 @@ class OrderController extends Controller
 
                 // Return the result to DataTables
                 return $datatableResult;
-
             } catch (\Exception $e) {
+                dd($e->getMessage());
                 return response()->json(['error' => 'An error occurred while fetching data. ' . $e->getMessage()], 500);
             }
         }
@@ -137,10 +140,107 @@ class OrderController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($order_no)
     {
-        //
+        try {
+            // Fetch order details with related store and supplier information
+            $orderDetails = DB::table('ordhead')
+                ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store')
+                ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code')
+                ->select(
+                    'ordhead.*', // Select all columns from ordhead
+                    'store.store as store_code',
+                    'store.store_name as store_name',
+                    'store.store_add1 as store_address',
+                    'store.store_city as store_city',
+                    'store.latitude', // Include latitude
+                    'store.longitude', // Include longitude
+                    'supplier.supp_code as supplier_code',
+                    'supplier.supp_name as supplier_name',
+                    'supplier.contact_name as supplier_contact',
+                    'supplier.contact_phone as supplier_phone'
+                )
+                ->where('ordhead.order_no', $order_no)
+                ->first();
+
+            // Fetch all order items (ordsku details)
+            $orderItems = DB::table('ordsku')
+                ->where('ordsku.order_no', $order_no)
+                ->select(
+                    'ordsku.id',
+                    'ordsku.sku',
+                    'ordsku.sku_desc',
+                    'ordsku.upc',
+                    'ordsku.tag_code',
+                    'ordsku.unit_cost',
+                    'ordsku.unit_retail',
+                    'ordsku.vat_cost',
+                    'ordsku.luxury_cost',
+                    'ordsku.qty_ordered',
+                    'ordsku.qty_fulfilled',
+                    'ordsku.qty_received',
+                    'ordsku.unit_discount',
+                    'ordsku.unit_permanent_discount',
+                    'ordsku.purchase_uom',
+                    'ordsku.supp_pack_size',
+                    'ordsku.permanent_disc_pct',
+                    'ordsku.created_at',
+                    'ordsku.updated_at'
+                )
+                ->get();
+
+            // Check if the order exists
+            if (!$orderDetails) {
+                return response()->json([
+                    'message' => 'Order not found.',
+                    'data' => null,
+                    'code' => 404
+                ], 404);
+            }
+
+            // Prepare response with order details and line items
+            $response = [
+                'order_details' => [
+                    'orderDetails' => $orderDetails,
+                    'store' => [
+                        'store_code' => $orderDetails->store_code,
+                        'store_name' => $orderDetails->store_name,
+                        'store_address' => $orderDetails->store_address,
+                        'store_city' => $orderDetails->store_city,
+                        'latitude' => $orderDetails->latitude, // Add latitude
+                        'longitude' => $orderDetails->longitude, // Add longitude
+                    ],
+                    'supplier' => [
+                        'supplier_code' => $orderDetails->supplier_code,
+                        'supplier_name' => $orderDetails->supplier_name,
+                        'supplier_contact' => $orderDetails->supplier_contact,
+                        'supplier_phone' => $orderDetails->supplier_phone,
+                    ],
+                ],
+                'order_items' => $orderItems
+            ];
+
+            // Return success response
+            return response()->json([
+                'message' => 'Order details retrieved successfully.',
+                'data' => $response,
+                'code' => 200
+            ], 200);
+        } catch (\Exception $e) {
+            // Handle exceptions
+            return response()->json([
+                'message' => 'An error occurred while retrieving the order details.',
+                'data' => null,
+                'code' => 500,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
+
+
+
+
+
 
     /**
      * Update the specified resource in storage.
