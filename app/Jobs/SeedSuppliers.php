@@ -19,25 +19,47 @@ class SeedSuppliers implements ShouldQueue
         // Create a Faker instance with Indonesian locale
         $faker = Faker::create('id_ID');
 
-        // Generate 10,000 supplier entries
-        for ($i = 0; $i < 10000; $i++) {
+        // Insert the specified supplier entry as the first row
+        DB::table('supplier')->insert([
+            'supp_code' => '111133', // Static supplier code
+            'supp_name' => 'TRI DELTA DEWATA, CV', // Supplier name
+            'terms' => 30, // Payment terms
+            'contact_name' => 'YUDI BRAHMANTA- 081805561868', // Contact person
+            'contact_phone' => '0361-8562668', // Contact phone number
+            'contact_fax' => null, // Fax not available
+            'email' => 'data_not_found@example.com', // Placeholder email for "Data Not Found"
+            'address_1' => 'Jl. Gn. Mas III C6', // Address line 1
+            'address_2' => null, // Optional address line 2 not provided
+            'city' => $faker->city, // Random city
+            'post_code' => $faker->postcode, // Random postal code
+            'tax_ind' => 'N', // Tax indicator
+            'tax_no' => null, // No tax number
+            'retur_ind' => 'N', // Return indicator
+            'consig_ind' => 'N', // Consignment indicator
+            'status' => 'Y', // Status
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Generate 4,999 additional supplier entries
+        for ($i = 0; $i < 4999; $i++) {
             DB::table('supplier')->insert([
-                'supp_code' => $faker->unique()->randomNumber(8), // Unique supplier code
-                'supp_name' => $faker->company, // Generates a company name in Indonesian
-                'terms' => $faker->numberBetween(1, 30), // Payment terms
-                'contact_name' => $faker->name, // Contact person name
-                'contact_phone' => $faker->phoneNumber, // Contact phone number
+                'supp_code' => $faker->unique()->numerify('######'), // 6-digit unique supplier code
+                'supp_name' => $faker->company, // Random company name
+                'terms' => $faker->numberBetween(1, 30), // Random payment terms
+                'contact_name' => $faker->name, // Random contact person name
+                'contact_phone' => $faker->phoneNumber, // Random phone number
                 'contact_fax' => $faker->optional()->phoneNumber, // Optional fax number
-                'email' => $faker->unique()->safeEmail, // Unique email address
-                'address_1' => $faker->streetAddress, // Address line 1
+                'email' => $faker->unique()->safeEmail, // Random unique email address
+                'address_1' => $faker->streetAddress, // Random address line 1
                 'address_2' => $faker->optional()->streetAddress, // Optional address line 2
-                'city' => $faker->city, // City name
-                'post_code' => $faker->postcode, // Postal code
-                'tax_ind' => $faker->randomElement(['Y', 'N']), // Tax indicator
-                'tax_no' => $faker->optional()->randomNumber(10), // Optional tax number
-                'retur_ind' => $faker->randomElement(['Y', 'N']), // Return indicator
-                'consig_ind' => $faker->randomElement(['Y', 'N']), // Consignment indicator
-                'status' => $faker->randomElement(['Y', 'N']), // Status
+                'city' => $faker->city, // Random city name
+                'post_code' => $faker->postcode, // Random postal code
+                'tax_ind' => $faker->randomElement(['Y', 'N']), // Random tax indicator
+                'tax_no' => $faker->optional()->numerify('##########'), // Optional 10-digit tax number
+                'retur_ind' => $faker->randomElement(['Y', 'N']), // Random return indicator
+                'consig_ind' => $faker->randomElement(['Y', 'N']), // Random consignment indicator
+                'status' => $faker->randomElement(['Y', 'N']), // Random status
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

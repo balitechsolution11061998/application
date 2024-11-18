@@ -38,7 +38,61 @@
                 color: #ffdd57;
                 /* Optional: Change color during loading */
             }
+
+            /* General button styling for smooth transitions */
+            .btn {
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            /* Hover effect for scaling and shadow */
+            .btn:hover {
+                transform: scale(1.05);
+                /* Slightly enlarges the button */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                /* Adds a shadow */
+            }
+
+            /* Optional: add different hover color effects based on button classes */
+            .btn-info:hover {
+                background-color: #17a2b8;
+                /* Darker info color on hover */
+                color: white;
+            }
+
+            .btn-success:hover {
+                background-color: #28a745;
+                /* Darker success color on hover */
+                color: white;
+            }
+
+            .modal-content {
+                border-radius: 10px;
+                padding: 20px;
+            }
+
+            .modal-header {
+                border-bottom: none;
+                border-radius: 10px 10px 0 0;
+            }
+
+            .modal-footer {
+                border-top: none;
+            }
+
+            .spinner-border {
+                display: block;
+                margin: auto;
+            }
+            #osmMap {
+                border: 1px solid #dee2e6;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
         </style>
+          <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+          <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
     @endpush
     <!-- Card Start -->
     <div class="card rounded">
@@ -87,8 +141,30 @@
         </div>
     </div>
     <!-- Card End -->
+    <!-- Details Modal -->
+    <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel">Order Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalContent">
+                    <!-- Dynamic content will be injected here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
     @push('scripts')
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
         @foreach (getGlobalAssets() as $path)
             {!! sprintf('<script src="%s"></script>', asset($path)) !!}
         @endforeach
@@ -96,6 +172,19 @@
             {!! sprintf('<script src="%s"></script>', asset($path)) !!}
         @endforeach
         <script>
+            const warehouseIcon = L.divIcon({
+    className: 'fa fa-store',
+    iconSize: [30, 30],
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -30]
+});
+const deviceIcon = L.divIcon({
+    className: 'fa fa-phone',
+    iconSize: [30, 30],
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -30]
+});
+
             document.getElementById('syncDataBtn').addEventListener('click', function() {
                 const syncDate = document.getElementById('syncDateInput').value;
 
@@ -235,30 +324,97 @@
                     processing: true,
                     serverSide: true,
                     deferRender: true,
+                    responsive: true,
                     ajax: '{{ route('purchase-orders.data') }}',
                     columns: [{
                             data: null, // This will hold the buttons
                             orderable: false, // Disable sorting for this column
                             searchable: false, // Disable searching for this column
                             render: function(data, type, row) {
-                                return '<button class="btn btn-sm btn-info detail-btn" data-id="' + row
-                                    .id + '">' +
-                                    '<i class="fas fa-info-circle"></i> Details</button>' +
-                                    ' <button class="btn btn-sm btn-success confirm-btn" data-id="' +
-                                    row.id + '">' +
-                                    '<i class="fas fa-check"></i> Confirmed</button>';
+                                // HTML for the "Details" button
+                                let buttons = `
+                                    <button class="btn btn-sm btn-info detail-btn" data-id="${row.order_no}" onclick="showLoadingSpinner(this)">
+                                        <i class="fas fa-info-circle"></i> Details
+                                    </button>
+                                `;
+
+                                // Conditionally add the "Confirmed" button if status is "Progress"
+                                if (row.status === 'Progress') {
+                                    buttons += `
+                                        <button class="btn btn-sm btn-success confirm-btn" data-id="${row.order_no}" onclick="showLoadingSpinner(this)">
+                                            <i class="fas fa-check"></i> Confirmed
+                                        </button>
+                                    `;
+                                }
+
+                                // Conditionally add the "History Printed" button if status is "Printed"
+                                if (row.status === 'Printed') {
+                                    buttons += `
+                                        <button class="btn btn-sm btn-primary history-btn" data-id="${row.id}" onclick="showLoadingSpinner(this)">
+                                            <i class="fas fa-history"></i> History Printed
+                                        </button>
+                                    `;
+                                }
+
+                                return buttons;
                             }
-                        },
+                        }
+
+                        ,
+
+
                         {
                             data: 'order_no',
-                            name: 'order_no'
+                            name: 'order_no',
+                            render: function(data, type, row) {
+                                // If order_no exists, display it with styling; otherwise, show a default message
+                                let displayText = '';
+
+                                if (!data) {
+                                    displayText = `
+                                        <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 6px 12px; border-radius: 20px; background-color: #ffebee; color: #d32f2f;">
+                                            <i class="fas fa-exclamation-circle" style="font-size: 16px; color: #d32f2f;"></i>
+                                            Order number not available
+                                        </span>
+                                    `;
+                                } else {
+                                    // Display order number with a clipboard icon
+                                    displayText = `
+                                        <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 6px 12px; border-radius: 20px; background-color: #e0f7fa; color: #00796b;">
+                                            <i class="fas fa-clipboard-list" style="font-size: 16px; color: #00796b;"></i>
+                                            ${data}
+                                        </span>
+                                    `;
+                                }
+
+                                return displayText;
+                            }
                         },
                         {
                             data: 'store_name', // Assuming you have store_name in your data
                             name: 'store_name',
                             render: function(data, type, row) {
-                                return data + ' (' + row.store +
-                                    ')'; // Format as store_name(store_code)
+                                // Check if store_name exists; if not, provide a default message
+                                let displayText = '';
+
+                                if (!data) {
+                                    displayText = `
+                                        <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 6px 12px; border-radius: 20px; background-color: #f3e5f5; color: #8e24aa;">
+                                            <i class="fas fa-store-slash" style="font-size: 16px; color: #8e24aa;"></i>
+                                            Store not available
+                                        </span>
+                                    `;
+                                } else {
+                                    // Format as store_name (store_code)
+                                    displayText = `
+                                        <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 6px 12px; border-radius: 20px; background-color: #e3f2fd; color: #1565c0;">
+                                            <i class="fas fa-store" style="font-size: 16px; color: #1565c0;"></i>
+                                            ${data} (${row.store})
+                                        </span>
+                                    `;
+                                }
+
+                                return displayText;
                             }
                         },
 
@@ -266,28 +422,58 @@
                             data: 'supp_name', // Assuming you have supp_name in your data
                             name: 'supp_name',
                             render: function(data, type, row) {
+                                let displayText = '';
+
                                 // Check if supp_name exists; if not, return the custom message
                                 if (!data) {
-                                    return 'Tidak ada data supplier, silahkan untuk release supplier terlebih dahulu';
+                                    displayText = `
+                                        <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 6px 12px; border-radius: 20px; background-color: #ffebee; color: #d32f2f;">
+                                            <i class="fas fa-exclamation-circle" style="font-size: 16px; color: #d32f2f;"></i>
+                                            Tidak ada data supplier, silahkan untuk release supplier terlebih dahulu
+                                        </span>
+                                    `;
+                                } else {
+                                    // Format as supp_name(supp_code)
+                                    displayText = `
+                                        <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 6px 12px; border-radius: 20px; background-color: #e8f5e9; color: #388e3c;">
+                                            <i class="fas fa-warehouse" style="font-size: 16px; color: #388e3c;"></i>
+                                            ${data} (${row.supp_code})
+                                        </span>
+                                    `;
                                 }
-                                return data + ' (' + row.supp_code +
-                                    ')'; // Format as supp_name(supp_code)
+
+                                return displayText;
                             }
                         },
                         {
                             data: 'approval_date',
                             name: 'approval_date',
                             render: function(data, type, row) {
-                                return moment(data).format('DD MMMM YYYY'); // e.g., "23 Desember 2023"
+                                let formattedDate = moment(data).format(
+                                    'DD MMMM YYYY'); // e.g., "23 December 2023"
+                                return `
+                                    <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 5px 10px; border-radius: 15px; background-color: #f5f5f5; color: #4a4a4a;">
+                                        <i class="fas fa-calendar-alt" style="font-size: 16px; color: #ff7f50;"></i>
+                                        ${formattedDate}
+                                    </span>
+                                `;
                             }
                         },
                         {
                             data: 'expired_date',
                             name: 'expired_date',
                             render: function(data, type, row) {
-                                return moment(data).format('DD MMMM YYYY'); // e.g., "23 Desember 2023"
+                                let formattedDate = moment(data).format(
+                                    'DD MMMM YYYY'); // e.g., "23 December 2023"
+                                return `
+                                    <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 5px 10px; border-radius: 15px; background-color: #e0f7fa; color: #00796b;">
+                                        <i class="fas fa-calendar-times" style="font-size: 16px; color: #00796b;"></i>
+                                        ${formattedDate}
+                                    </span>
+                                `;
                             }
                         },
+
                         {
                             data: 'status',
                             name: 'status',
@@ -295,8 +481,17 @@
                                 let statusClass = '';
                                 let statusText = '';
                                 let icon = '';
+                                let badgeStyle = `
+                                    padding: 7px 15px;
+                                    font-size: 15px;
+                                    border-radius: 25px;
+                                    display: inline-flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                    font-weight: 600;
+                                `;
 
-                                // Determine the status class, text, and icon
+                                // Determine the status class, text, and icon based on the 'data' value
                                 switch (data) {
                                     case 'Confirmed':
                                         statusClass = 'badge badge-light-primary';
@@ -313,6 +508,31 @@
                                         statusText = 'Cancelled';
                                         icon = '<i class="fas fa-times-circle"></i>';
                                         break;
+                                    case 'Rejected':
+                                        statusClass = 'badge badge-light-danger';
+                                        statusText = 'Rejected';
+                                        icon = '<i class="fas fa-times-circle"></i>';
+                                        break;
+                                    case 'Printed':
+                                        statusClass = 'badge badge-light-info';
+                                        statusText = 'Printed';
+                                        icon = '<i class="fas fa-print"></i>';
+                                        break;
+                                    case 'Expired':
+                                        statusClass = 'badge badge-light-secondary';
+                                        statusText = 'Expired';
+                                        icon = '<i class="fas fa-calendar-times"></i>';
+                                        break;
+                                    case 'Completed':
+                                        statusClass = 'badge badge-light-success';
+                                        statusText = 'Completed';
+                                        icon = '<i class="fas fa-check-circle"></i>';
+                                        break;
+                                    case 'Incompleted':
+                                        statusClass = 'badge badge-light-danger';
+                                        statusText = 'Incompleted';
+                                        icon = '<i class="fas fa-times-circle"></i>';
+                                        break;
                                     default:
                                         statusClass = 'badge badge-light-secondary';
                                         statusText = 'Unknown';
@@ -320,11 +540,13 @@
                                         break;
                                 }
 
-                                // Return the status badge
-                                return '<span class="' + statusClass + '">' + icon + ' ' + statusText +
-                                    '</span>';
+                                // Return the status badge with icon, text, and improved styling
+                                return `<span class="${statusClass}" style="${badgeStyle}">${icon} ${statusText}</span>`;
                             }
                         }
+
+
+
                     ]
                 });
 
@@ -342,6 +564,176 @@
                     console.log('Confirm order ID:', orderId);
                 });
             }
+
+            function formatRupiah(amount) {
+                if (amount === null || amount === undefined) return 'N/A';
+                return 'Rp' + amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+
+            function formatRupiah(amount) {
+                if (amount === null || amount === undefined) return 'N/A';
+                return 'Rp' + amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+            function showLoadingSpinner(button) {
+    const id = button.getAttribute("data-id");
+    console.log(`Fetching details for ID: ${id}`);
+
+    // Show a loading spinner in the modal content
+    document.getElementById("modalContent").innerHTML = `
+        <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>`;
+
+    // Fetch the details via AJAX
+    fetch(`/purchase-orders/edit/` + id)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then(rowData => {
+            if (!rowData || !rowData.data) {
+                document.getElementById("modalContent").innerHTML = `
+                    <div class="alert alert-warning text-center" role="alert">
+                        <strong>Warning!</strong> Details not found for the selected item.
+                    </div>`;
+                return;
+            }
+
+            const data = rowData.data;
+
+            // Prepare Warehouse Information Layout
+            const warehouseInfoHtml = `
+                <div class="row text-white mb-3" style="background-color: #333; padding: 15px; border-radius: 8px;">
+                    <div class="col-md-3">
+                        <p><i class="bi bi-shop"></i> <strong>Warehouse No:</strong> ${data.order_details.store.store_no || 'N/A'}</p>
+                        <p><i class="bi bi-person"></i> <strong>Approval:</strong> ${data.order_details.approval || 'N/A'}</p>
+                        <p><i class="bi bi-card-list"></i> <strong>Status:</strong>
+                            <span class="badge bg-secondary">${data.order_details.status || 'N/A'}</span>
+                        </p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><i class="bi bi-building"></i> <strong>Warehouse Name:</strong> ${data.order_details.store.store_name || 'N/A'}</p>
+                        <p><i class="bi bi-calendar3"></i> <strong>Order Date:</strong> ${data.order_details.order_date || 'N/A'}</p>
+                        <p><i class="bi bi-person-badge"></i> <strong>Supplier:</strong> ${data.order_details.supplier || 'N/A'}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><i class="bi bi-building"></i> <strong>Warehouse Address:</strong> ${data.order_details.store.store_address || 'N/A'}</p>
+                        <p><i class="bi bi-hourglass-split"></i> <strong>Delivery Before:</strong> ${data.order_details.delivery_before || 'N/A'}</p>
+                        <p><i class="bi bi-person"></i> <strong>Contact Name:</strong> ${data.order_details.contact_name || 'N/A'}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><i class="bi bi-house"></i> <strong>Supplier Name:</strong> ${data.order_details.supplier_name || 'N/A'}</p>
+                        <p><i class="bi bi-map"></i> <strong>Supplier Address:</strong> ${data.order_details.supplier_address || 'N/A'}</p>
+                        <p><i class="bi bi-calendar-x"></i> <strong>Expired Date:</strong> ${data.order_details.expired_date || 'N/A'}</p>
+                    </div>
+                </div>`;
+
+            const latitude = data.order_details.store.latitude || null;
+            const longitude = data.order_details.store.longitude || null;
+
+            if (!latitude || !longitude) {
+                document.getElementById("modalContent").innerHTML = `
+                    <div class="alert alert-info">Map is unavailable for this warehouse.</div>`;
+                return;
+            }
+
+            const mapHtml = `<div id="osmMap" style="height: 300px; margin-bottom: 20px;" class="rounded shadow-sm"></div>`;
+
+            document.getElementById("modalContent").innerHTML = `
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0 text-center">Order Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Warehouse Information -->
+                        ${warehouseInfoHtml}
+
+                        <!-- Map Section -->
+                        <h5 class="mt-4 text-center"><i class="bi bi-building"></i> Warehouse Location</h5>
+                        ${mapHtml}
+                    </div>
+                </div>`;
+
+            // Initialize Leaflet map
+            const map = L.map('osmMap').setView([latitude, longitude], 15);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Custom Warehouse Marker (Font Awesome store icon)
+            const warehouseIcon = L.divIcon({
+                className: 'fa fa-store',
+                iconSize: [30, 30],
+                iconAnchor: [15, 30],
+                popupAnchor: [0, -30]
+            });
+
+            L.marker([latitude, longitude], { icon: warehouseIcon }).addTo(map)
+                .bindPopup(`<strong>Warehouse Location:</strong><br>Latitude: ${latitude}<br>Longitude: ${longitude}`)
+                .openPopup();
+
+            // Add routing feature
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const deviceLat = position.coords.latitude;
+                        const deviceLon = position.coords.longitude;
+
+                        // Custom Device Marker (Font Awesome phone icon)
+                        const deviceIcon = L.divIcon({
+                            className: 'fa fa-phone',
+                            iconSize: [30, 30],
+                            iconAnchor: [15, 30],
+                            popupAnchor: [0, -30]
+                        });
+
+                        L.marker([deviceLat, deviceLon], { icon: deviceIcon }).addTo(map)
+                            .bindPopup(`<strong>Your Location:</strong><br>Latitude: ${deviceLat}<br>Longitude: ${deviceLon}`)
+                            .openPopup();
+
+                        // Wait until the map tiles are loaded, then add the routing control
+                        map.whenReady(() => {
+                            L.Routing.control({
+                                waypoints: [
+                                    L.latLng(deviceLat, deviceLon), // User's location
+                                    L.latLng(latitude, longitude)    // Warehouse location
+                                ],
+                                routeWhileDragging: true,
+                                createMarker: function() { return null; } // Disable markers (optional)
+                            }).addTo(map);
+                        });
+                    },
+                    error => {
+                        console.error("Error getting device location:", error);
+                        alert("Unable to get device location.");
+                    }
+                );
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching details:', error);
+            document.getElementById("modalContent").innerHTML = `
+                <div class="alert alert-danger text-center" role="alert">
+                    <strong>Error!</strong> Unable to load details. Please try again later.
+                </div>`;
+        })
+        .finally(() => {
+            const modal = new bootstrap.Modal(document.getElementById("detailsModal"));
+            modal.show();
+        });
+}
+
+
+
+
         </script>
     @endpush
 

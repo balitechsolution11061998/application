@@ -177,6 +177,7 @@ Route::prefix('purchase-orders') // Prefix for all order routes
         // Standard CRUD routes for Orders
         Route::resource('/', OrderController::class)->parameters(['' => 'order'])->except(['show']);
         Route::post('/store', [OrderController::class, 'store']);
+        Route::get('/edit/{id}', [OrderController::class, 'edit'])->name('edit');
 
     });
 
