@@ -7,6 +7,9 @@
         {{ Breadcrumbs::render('orders') }}
     @endsection
     @push('styles')
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+
         <style>
             /* Button styling with smooth transition */
             .sync-btn {
@@ -84,9 +87,47 @@
                 margin: auto;
             }
 
-            #osmMap {
-                border: 1px solid #dee2e6;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* Customize Leaflet Map appearance */
+            #map {
+                height: 500px;
+                width: 100%;
+                border-radius: 10px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            }
+
+            .leaflet-container {
+                font-family: 'Poppins', sans-serif;
+            }
+
+            .leaflet-popup {
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                font-family: 'Poppins', sans-serif;
+                padding: 10px;
+                width: 250px;
+            }
+
+            .leaflet-popup-content {
+                font-size: 14px;
+            }
+
+            /* Custom marker styling */
+            .leaflet-div-icon {
+                background: transparent;
+                border: none;
+            }
+
+            .leaflet-marker-icon {
+                width: 32px;
+                height: 32px;
+            }
+
+            /* Custom style for map controls */
+            .leaflet-control-zoom {
+                background-color: rgba(255, 255, 255, 0.8);
+                border-radius: 50%;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             }
         </style>
     @endpush
@@ -139,7 +180,7 @@
     <!-- Card End -->
     <!-- Details Modal -->
     <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="detailsModalLabel">Order Details</h5>
@@ -158,11 +199,10 @@
 
 
     @push('scripts')
-    <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcWbh2Eng7P6-842kxBOUFiKGZt9x3WTA&callback=initMap&libraries=places&v=weekly"
-    async
-    defer>
-</script>
+        <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcWbh2Eng7P6-842kxBOUFiKGZt9x3WTA&v=beta&libraries=marker"
+            async defer></script>
+
 
 
         @foreach (getGlobalAssets() as $path)
@@ -563,19 +603,23 @@
             }
 
             function showLoadingSpinner(button) {
+                if (!button || !button.hasAttribute("data-id")) {
+                    console.error("Button is missing the 'data-id' attribute.");
+                    return;
+                }
+
                 const id = button.getAttribute("data-id");
                 console.log(`Fetching details for ID: ${id}`);
 
-                // Show a loading spinner in the modal content
+                // Show loading spinner
                 document.getElementById("modalContent").innerHTML = `
-        <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>`;
+            <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>`;
 
-                // Fetch the details via AJAX
-                fetch(`/purchase-orders/edit/` + id)
+                fetch(`/purchase-orders/edit/${id}`)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error("Network response was not ok");
@@ -585,163 +629,91 @@
                     .then(rowData => {
                         if (!rowData || !rowData.data) {
                             document.getElementById("modalContent").innerHTML = `
-                    <div class="alert alert-warning text-center" role="alert">
-                        <strong>Warning!</strong> Details not found for the selected item.
-                    </div>`;
+                        <div class="alert alert-warning text-center" role="alert">
+                            <strong>Warning!</strong> Details not found for the selected item.
+                        </div>`;
                             return;
                         }
 
                         const data = rowData.data;
+                        const latitude = parseFloat(data.order_details.store.latitude);
+                        const longitude = parseFloat(data.order_details.store.longitude);
 
-                        // Prepare Warehouse Information Layout
-                        const warehouseInfoHtml = `
-                <div class="row text-white mb-3" style="background-color: #333; padding: 15px; border-radius: 8px;">
-                    <div class="col-md-3">
-                        <p><i class="bi bi-shop"></i> <strong>Warehouse No:</strong> ${data.order_details.store.store_no || 'N/A'}</p>
-                        <p><i class="bi bi-person"></i> <strong>Approval:</strong> ${data.order_details.approval || 'N/A'}</p>
-                        <p><i class="bi bi-card-list"></i> <strong>Status:</strong>
-                            <span class="badge bg-secondary">${data.order_details.status || 'N/A'}</span>
-                        </p>
-                    </div>
-                    <div class="col-md-3">
-                        <p><i class="bi bi-building"></i> <strong>Warehouse Name:</strong> ${data.order_details.store.store_name || 'N/A'}</p>
-                        <p><i class="bi bi-calendar3"></i> <strong>Order Date:</strong> ${data.order_details.order_date || 'N/A'}</p>
-                        <p><i class="bi bi-person-badge"></i> <strong>Supplier:</strong> ${data.order_details.supplier || 'N/A'}</p>
-                    </div>
-                    <div class="col-md-3">
-                        <p><i class="bi bi-building"></i> <strong>Warehouse Address:</strong> ${data.order_details.store.store_address || 'N/A'}</p>
-                        <p><i class="bi bi-hourglass-split"></i> <strong>Delivery Before:</strong> ${data.order_details.delivery_before || 'N/A'}</p>
-                        <p><i class="bi bi-person"></i> <strong>Contact Name:</strong> ${data.order_details.contact_name || 'N/A'}</p>
-                    </div>
-                    <div class="col-md-3">
-                        <p><i class="bi bi-house"></i> <strong>Supplier Name:</strong> ${data.order_details.supplier_name || 'N/A'}</p>
-                        <p><i class="bi bi-map"></i> <strong>Supplier Address:</strong> ${data.order_details.supplier_address || 'N/A'}</p>
-                        <p><i class="bi bi-calendar-x"></i> <strong>Expired Date:</strong> ${data.order_details.expired_date || 'N/A'}</p>
-                    </div>
-                </div>`;
-
-                        let latitude = parseFloat(data.order_details.store.latitude);
-                        let longitude = parseFloat(data.order_details.store.longitude);
-
-                        // Check if the coordinates are valid numbers
                         if (isNaN(latitude) || isNaN(longitude)) {
                             document.getElementById("modalContent").innerHTML = `
-                    <div class="alert alert-info">Map is unavailable for this warehouse.</div>`;
+                        <div class="alert alert-info text-center" role="alert">
+                            <strong>Info:</strong> Map is unavailable for this store.
+                        </div>`;
                             return;
                         }
 
-                        const mapHtml =
-                            `<div id="googleMap" style="height: 300px; margin-bottom: 20px;" class="rounded shadow-sm"></div>`;
+                        const storeInfoHtml = `
+                    <div class="row">
+                        <div class="col-md-6"><strong>Store Name:</strong> ${data.order_details.store.store_name || "N/A"}</div>
+                        <div class="col-md-6"><strong>Status:</strong> ${data.order_details.status || "N/A"}</div>
+                    </div>`;
 
                         document.getElementById("modalContent").innerHTML = `
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="card-title mb-0 text-center">Order Details</h5>
-                    </div>
-                    <div class="card-body">
-                        <!-- Warehouse Information -->
-                        ${warehouseInfoHtml}
-
-                        <!-- Map Section -->
-                        <h5 class="mt-4 text-center"><i class="bi bi-building"></i> Warehouse Location</h5>
-                        ${mapHtml}
-                    </div>
-                </div>`;
+                    <div class="card">
+                        <div class="card-body">
+                            ${storeInfoHtml}
+                            <div id="map" style="height: 300px; width: 100%; border-radius: 8px;"></div>
+                        </div>
+                    </div>`;
 
                         // Initialize Google Map
-                        const map = new google.maps.Map(document.getElementById("googleMap"), {
+                        const map = new google.maps.Map(document.getElementById("map"), {
+                            zoom: 15,
                             center: {
                                 lat: latitude,
                                 lng: longitude
                             },
-                            zoom: 15
                         });
 
-                        // Custom Warehouse Marker
-                        const warehouseMarker = new google.maps.Marker({
-                            position: {
-                                lat: latitude,
-                                lng: longitude
-                            },
-                            map: map,
-                            title: "Warehouse Location",
-                            icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png' // Use a custom icon for the warehouse marker
-                        });
+                        // Handle AdvancedMarkerElement
+                        if (google.maps.marker && google.maps.marker.AdvancedMarkerElement) {
+                            const markerContent = document.createElement("div");
+                            markerContent.style.padding = "5px";
+                            markerContent.style.backgroundColor = "#fff";
+                            markerContent.style.borderRadius = "5px";
+                            markerContent.style.fontSize = "12px";
+                            markerContent.style.color = "#000";
+                            markerContent.textContent = "Store Location";
 
-                        const warehouseInfoWindow = new google.maps.InfoWindow({
-                            content: `<strong>Warehouse Location:</strong><br>Latitude: ${latitude}<br>Longitude: ${longitude}`
-                        });
-
-                        warehouseMarker.addListener("click", () => {
-                            warehouseInfoWindow.open(map, warehouseMarker);
-                        });
-
-                        // Add routing feature using Geolocation API
-                        if (navigator.geolocation) {
-                            navigator.geolocation.getCurrentPosition(
-                                position => {
-                                    const deviceLat = position.coords.latitude;
-                                    const deviceLon = position.coords.longitude;
-
-                                    // Custom Device Marker
-                                    const deviceMarker = new google.maps.Marker({
-                                        position: {
-                                            lat: deviceLat,
-                                            lng: deviceLon
-                                        },
-                                        map: map,
-                                        title: "Your Location",
-                                        icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/info-i_maps.png' // Use a custom icon for the device marker
-                                    });
-
-                                    const deviceInfoWindow = new google.maps.InfoWindow({
-                                        content: `<strong>Your Location:</strong><br>Latitude: ${deviceLat}<br>Longitude: ${deviceLon}`
-                                    });
-
-                                    deviceMarker.addListener("click", () => {
-                                        deviceInfoWindow.open(map, deviceMarker);
-                                    });
-
-                                    // Request routing directions
-                                    const directionsService = new google.maps.DirectionsService();
-                                    const directionsRenderer = new google.maps.DirectionsRenderer();
-                                    directionsRenderer.setMap(map);
-
-                                    const request = {
-                                        origin: {
-                                            lat: deviceLat,
-                                            lng: deviceLon
-                                        },
-                                        destination: {
-                                            lat: latitude,
-                                            lng: longitude
-                                        },
-                                        travelMode: google.maps.TravelMode.DRIVING
-                                    };
-
-                                    directionsService.route(request, (result, status) => {
-                                        if (status === google.maps.DirectionsStatus.OK) {
-                                            directionsRenderer.setDirections(result);
-                                        } else {
-                                            alert("Directions request failed due to " + status);
-                                        }
-                                    });
+                            const storeMarker = new google.maps.marker.AdvancedMarkerElement({
+                                position: {
+                                    lat: latitude,
+                                    lng: longitude
                                 },
-                                error => {
-                                    console.error("Error getting device location:", error);
-                                    alert("Unable to get device location.");
-                                }
-                            );
+                                map: map,
+                                content: markerContent,
+                            });
+
+                            const storeInfoWindow = new google.maps.InfoWindow({
+                                content: `<strong>Store Location:</strong><br>Latitude: ${latitude}<br>Longitude: ${longitude}`,
+                            });
+
+                            storeMarker.addEventListener("gmp-click", () => {
+                                storeInfoWindow.open(map, storeMarker);
+                            });
                         } else {
-                            alert("Geolocation is not supported by this browser.");
+                            console.warn("AdvancedMarkerElement is unavailable. Using standard Marker.");
+                            new google.maps.Marker({
+                                position: {
+                                    lat: latitude,
+                                    lng: longitude
+                                },
+                                map: map,
+                                title: "Store Location",
+                            });
                         }
                     })
                     .catch(error => {
-                        console.error('Error fetching details:', error);
+                        console.error("Error fetching details:", error);
                         document.getElementById("modalContent").innerHTML = `
-                <div class="alert alert-danger text-center" role="alert">
-                    <strong>Error!</strong> Unable to load details. Please try again later.
-                </div>`;
+                    <div class="alert alert-danger text-center" role="alert">
+                        <strong>Error!</strong> Unable to load details.
+                    </div>`;
                     })
                     .finally(() => {
                         const modal = new bootstrap.Modal(document.getElementById("detailsModal"));
