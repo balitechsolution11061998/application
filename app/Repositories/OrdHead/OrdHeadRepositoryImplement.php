@@ -49,6 +49,7 @@ class OrdHeadRepositoryImplement extends Eloquent implements OrdHeadRepository{
                 'outstand_cost' => $data['outstand_cost'],
                 'total_discount' => $data['total_discount'],
                 'comment_desc' => $data['comment_desc'],
+                'estimated_delivery_date' => $data['estimated_delivery_date'],
                 'buyer' => $data['buyer'],
                 'status' => $data['status'],
             ]
