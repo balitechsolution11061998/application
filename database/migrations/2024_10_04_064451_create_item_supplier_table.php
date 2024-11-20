@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('create_date')->nullable();
             $table->string('last_update_id')->nullable();
             $table->string('last_update_date')->nullable();
+            $table->enum('vat_ind', ['Y', 'N'])->default('N');
             $table->timestamps();
         });
     }
