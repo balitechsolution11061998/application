@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('last_update_date')->nullable();
             $table->enum('vat_ind', ['Y', 'N'])->default('N');
             $table->timestamps();
+
         });
     }
 
