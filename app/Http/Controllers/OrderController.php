@@ -152,13 +152,16 @@ class OrderController extends Controller
                     'store.store as store_code',
                     'store.store_name as store_name',
                     'store.store_add1 as store_address',
+                    'store.store_add2 as store_address1',
                     'store.store_city as store_city',
                     'store.latitude', // Include latitude
                     'store.longitude', // Include longitude
                     'supplier.supp_code as supplier_code',
                     'supplier.supp_name as supplier_name',
                     'supplier.contact_name as supplier_contact',
-                    'supplier.contact_phone as supplier_phone'
+                    'supplier.contact_phone as supplier_phone',
+                    'supplier.address_1 as supp_address',
+
                 )
                 ->where('ordhead.order_no', $order_no)
                 ->first();
@@ -206,6 +209,7 @@ class OrderController extends Controller
                         'store_code' => $orderDetails->store_code,
                         'store_name' => $orderDetails->store_name,
                         'store_address' => $orderDetails->store_address,
+                        'store_address1' => $orderDetails->store_address1,
                         'store_city' => $orderDetails->store_city,
                         'latitude' => $orderDetails->latitude, // Add latitude
                         'longitude' => $orderDetails->longitude, // Add longitude
@@ -215,6 +219,7 @@ class OrderController extends Controller
                         'supplier_name' => $orderDetails->supplier_name,
                         'supplier_contact' => $orderDetails->supplier_contact,
                         'supplier_phone' => $orderDetails->supplier_phone,
+                        'supp_address' => $orderDetails->supp_address,
                     ],
                 ],
                 'order_items' => $orderItems
