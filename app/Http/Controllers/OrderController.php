@@ -129,7 +129,6 @@ class OrderController extends Controller
                 // Return the result to DataTables
                 return $datatableResult;
             } catch (\Exception $e) {
-                dd($e->getMessage());
                 return response()->json(['error' => 'An error occurred while fetching data. ' . $e->getMessage()], 500);
             }
         }
