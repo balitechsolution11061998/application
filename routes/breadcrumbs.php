@@ -44,6 +44,10 @@ Breadcrumbs::for('tahun-pelajaran.edit', function (BreadcrumbTrail $trail, $tahu
     $trail->push('Edit Tahun Pelajaran', route('tahun-pelajaran.edit', $tahunPelajaran->id));
 });
 
+Breadcrumbs::for('pemilu-dashboard', function (BreadcrumbTrail $trail) {
+    $trail->push('Dashboard Pemilu', route('dashboard-pilkada.index'));
+});
+
 // Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
 //     $trail->push('Dashboard', route('example.dashboard.default'));
 // });

@@ -94,55 +94,51 @@
                 border-radius: 10px;
                 box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             }
-
-            .leaflet-container {
-                font-family: 'Poppins', sans-serif;
-            }
-
-            .leaflet-popup {
-                background-color: #fff;
-                border-radius: 8px;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-                font-family: 'Poppins', sans-serif;
-                padding: 10px;
-                width: 250px;
-            }
-
-            .leaflet-popup-content {
-                font-size: 14px;
-            }
-
-            /* Custom marker styling */
-            .leaflet-div-icon {
-                background: transparent;
-                border: none;
-            }
-
-            .leaflet-marker-icon {
-                width: 32px;
-                height: 32px;
-            }
-
-            /* Custom style for map controls */
-            .leaflet-control-zoom {
-                background-color: rgba(255, 255, 255, 0.8);
-                border-radius: 50%;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            }
         </style>
     @endpush
+    @if (session('message'))
+        <div class="alert alert-danger">
+            <strong>{{ session('message') }}</strong>
+            @if (session('error'))
+                <p>{{ session('error') }}</p>
+            @endif
+        </div>
+    @endif
+
     <!-- Card Start -->
     <div class="card rounded">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">Purchase Orders Management</h5>
-            <div class="d-flex align-items-center">
+        <div class="card-header d-flex justify-content-between align-items-center bg-light border-bottom-0">
+            <h5 class="card-title mb-0 text-primary">Purchase Orders Management</h5>
+            <div class="d-flex align-items-center gap-2">
                 <!-- Date input field for selecting the data sync date -->
-                <input type="date" id="syncDateInput" class="form-control form-control-sm mr-2" style="width: auto;">
-                <button class="btn btn-outline-primary btn-sm sync-btn" id="syncDataBtn">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-white border-secondary">
+                            <i class="fas fa-calendar-alt"></i>
+                        </span>
+                    </div>
+                    <input type="date" id="syncDateInput" class="form-control border-secondary"
+                        placeholder="Select Date">
+                </div>
+
+                <!-- Input field for filtering by order_no -->
+                <div class="input-group input-group-sm">
+                    <input type="text" id="filterOrderNo" class="form-control form-control-sm border-secondary"
+                        placeholder="Search by Order No.">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" id="filterDataBtn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sync data button -->
+                <button class="btn btn-outline-primary btn-sm" id="syncDataBtn">
                     <i class="fas fa-sync-alt"></i> Sync Data
                 </button>
             </div>
         </div>
+
 
 
 
@@ -199,9 +195,10 @@
 
 
     @push('scripts')
-        <script
+
+        {{-- <script
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcWbh2Eng7P6-842kxBOUFiKGZt9x3WTA&v=beta&libraries=marker"
-            async defer></script>
+            async defer></script> --}}
 
         {{-- <script src="https://maps.googleapis.com/maps/api/js?key==beta&libraries=marker" async defer></script> --}}
 
@@ -239,12 +236,7 @@
                     <p id="progressText" style="font-size: 16px; font-weight: 500; color: #666; text-align: center;">Starting...</p>
                 `,
                             allowOutsideClick: false,
-                            showConfirmButton: false,
-                            willOpen: () => {
-                                // Optional: Add a delay to start spinner animation smoothly
-                                document.querySelector('.fa-spinner').style.animationDuration =
-                                    '2s';
-                            }
+                            showConfirmButton: false
                         });
 
                         const progressElem = document.getElementById('progress');
@@ -264,6 +256,17 @@
                             .then(response => {
                                 const responseData = response.data
                                     .data; // Adjust based on actual response structure
+
+                                // Check if data is empty
+                                if (!responseData || responseData.length === 0) {
+                                    Swal.close(); // Close the progress modal
+                                    toastr.warning('No data available to sync.', 'Sync Warning!', {
+                                        closeButton: true,
+                                        progressBar: true,
+                                        timeOut: 5000
+                                    });
+                                    return; // Stop further execution
+                                }
 
                                 // Split data into chunks of 25 items
                                 const chunkSize = 25;
@@ -303,8 +306,9 @@
                                                         'Sync Complete!', {
                                                             closeButton: true,
                                                             progressBar: true,
-                                                            timeOut: 5000 // Duration in milliseconds
-                                                        });
+                                                            timeOut: 5000
+                                                        }
+                                                    );
 
                                                     fetchData();
                                                 }
@@ -336,8 +340,12 @@
 
 
 
-
             $(document).ready(function() {
+                fetchData();
+            });
+
+            // Event Listener for the Filter Button
+            $('#filterDataBtn').on('click', function() {
                 fetchData();
             });
 
@@ -352,7 +360,13 @@
                     serverSide: true,
                     deferRender: true,
                     responsive: true,
-                    ajax: '{{ route('purchase-orders.data') }}',
+                    ajax: {
+                        url: '{{ route('purchase-orders.data') }}',
+                        type: 'GET',
+                        data: function(d) {
+                            d.order_no = $('#filterOrderNo').val(); // Pass order number filter
+                        }
+                    },
                     columns: [{
                             data: null, // This will hold the buttons
                             orderable: false, // Disable sorting for this column
@@ -597,10 +611,6 @@
                 return 'Rp' + amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
             }
 
-            function formatRupiah(amount) {
-                if (amount === null || amount === undefined) return 'N/A';
-                return 'Rp' + amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            }
 
             function showLoadingSpinner(button) {
                 if (!button || !button.hasAttribute("data-id")) {
@@ -610,341 +620,31 @@
 
                 const id = button.getAttribute("data-id");
 
-                // Show loading spinner
-                document.getElementById("modalContent").innerHTML = `
-        <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>`;
+                // Base64 encode the ID
+                const encodedId = btoa(id); // Use btoa() to encode to Base64
 
-                fetch(`/purchase-orders/edit/${id}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("Network response was not ok");
-                        }
-                        return response.json();
-                    })
-                    .then(rowData => {
-                        if (!rowData || !rowData.data) {
-                            document.getElementById("modalContent").innerHTML = `
-                    <div class="alert alert-warning text-center" role="alert">
-                        <strong>Warning!</strong> Details not found for the selected item.
-                    </div>`;
-                            return;
-                        }
+                // Show SweetAlert loading indicator
+                Swal.fire({
+                    title: 'Loading...',
+                    html: '<div class="progress" style="border-radius: 10px; overflow: hidden; margin-top: 20px;">' +
+                        '  <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" ' +
+                        '       style="width: 100%; background-color: #007bff;"></div>' +
+                        '</div>',
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    customClass: {
+                        popup: 'rounded-swal' // Apply custom rounded class
+                    }
+                });
 
-                        const data = rowData.data;
-                        const latitude = parseFloat(data.order_details.store.latitude);
-                        const longitude = parseFloat(data.order_details.store.longitude);
-
-                        if (isNaN(latitude) || isNaN(longitude)) {
-                            document.getElementById("modalContent").innerHTML = `
-                    <div class="alert alert-info text-center" role="alert">
-                        <strong>Info:</strong> Map is unavailable for this store.
-                    </div>`;
-                            return;
-                        }
-
-                        // Format the date (23 Desember 2023 format)
-                        const formatDate = (dateStr) => {
-                            if (!dateStr) return "N/A";
-                            const months = [
-                                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-                                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-                            ];
-                            const date = new Date(dateStr);
-                            const day = date.getDate();
-                            const month = months[date.getMonth()];
-                            const year = date.getFullYear();
-                            return `${day} ${month} ${year}`;
-                        };
-
-                        const contentHtml = `
-                            <div class="container text-light" style="font-size: 14px; font-family: 'Poppins', sans-serif; line-height: 1.6;">
-                                <div class="row">
-                                    <!-- Top Left Column (Order No) -->
-                                    <div class="col-md-3">
-                                        <p>
-                                            <strong style="color: #adb5bd;">Order No:</strong>
-                                            <span style="color: #ffffff;">${data.order_details.orderDetails.order_no || "N/A"}</span>
-                                        </p>
-                                    </div>
-
-                                    <!-- Top Right Column (Delivery Date) -->
-                                    <div class="col-md-3 offset-md-6">
-                                        <p>
-                                            <strong style="color: #adb5bd;">Delivery Before:</strong>
-                                            <span style="color: #ffffff;">${formatDate(data.order_details.orderDetails.estimated_delivery_date) || "N/A"}</span>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <!-- Left Column -->
-                                    <div class="col-md-3">
-                                        <p>
-                                            <strong style="color: #adb5bd;">Store No:</strong>
-                                            <span style="color: #ffffff;">${data.order_details.store.store_code || "N/A"}</span>
-                                        </p>
-                                        <p>
-                                            <strong style="color: #adb5bd;">Approval:</strong>
-                                            <span style="color: #ffffff;">${data.order_details.orderDetails.approval_id || "N/A"}</span>
-                                        </p>
-                                        <p>
-                                            <strong style="color: #adb5bd;">Supplier:</strong>
-                                            <span style="color: #ffffff;">${data.order_details.supplier.supplier_id || "N/A"}</span>
-                                        </p>
-                                        <p>
-                                            <strong style="color: #adb5bd;">Status:</strong>
-                                            <span class="badge ${getStatusBadgeClass(data.order_details.orderDetails.status)}" style="font-size: 14px; padding: 5px 10px; border-radius: 12px;">
-                                                ${data.order_details.orderDetails.status || "N/A"}
-                                            </span>
-                                        </p>
-                                    </div>
-
-                                    <!-- Middle Left Column -->
-                                    <div class="col-md-3">
-                                        <p>
-                                            <strong style="color: #adb5bd;">Store Name:</strong>
-                                            <span style="color: #ffffff;">${data.order_details.store.store_name || "N/A"}</span>
-                                        </p>
-                                        <p>
-                                            <strong style="color: #adb5bd;">Order Date:</strong>
-                                            <span style="color: #ffffff;">${formatDate(data.order_details.orderDetails.approval_date) || "N/A"}</span>
-                                        </p>
-                                        <p>
-                                            <strong style="color: #adb5bd;">Supplier Name:</strong>
-                                            <span style="color: #ffffff;">${data.order_details.supplier.supplier_name || "N/A"}</span>
-                                        </p>
-                                    </div>
-
-                                    <!-- Middle Right Column -->
-                                    <div class="col-md-3">
-                                        <p>
-                                            <strong style="color: #adb5bd;">Store Address:</strong>
-                                            <span style="color: #ffffff;">${data.order_details.store.store_address || "N/A"}</span>
-                                        </p>
-                                        <p>
-                                            <strong style="color: #adb5bd;">Delivery Before:</strong>
-                                            <span style="color: #ffffff;">${formatDate(data.order_details.orderDetails.not_before_date) || "N/A"}</span>
-                                        </p>
-                                        <p>
-                                            <strong style="color: #adb5bd;">Supplier Address:</strong>
-                                            <span style="color: #ffffff;">${data.order_details.supplier.supp_address || "N/A"}</span>
-                                        </p>
-                                    </div>
-
-                                    <!-- Right Column (repeating store address) -->
-                                    <div class="col-md-3">
-                                        <p>
-                                            <strong style="color: #adb5bd;">Store Address (again):</strong>
-                                            <span style="color: #ffffff;">${data.order_details.store.store_address1 || "N/A"}</span>
-                                        </p>
-                                        <p>
-                                            <strong style="color: #adb5bd;">Expired Date:</strong>
-                                            <span style="color: #ffffff;">${formatDate(data.order_details.orderDetails.not_after_date) || "N/A"}</span>
-                                        </p>
-                                        <p>
-                                            <strong style="color: #adb5bd;">Contact Name:</strong>
-                                            <span style="color: #ffffff;">${data.order_details.supplier.supplier_contact || "N/A"}</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="map"
-                                style="height: 300px; width: 100%; border-radius: 8px; margin-top: 20px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
-                            </div>
-                        `;
-
-
-                        document.getElementById("modalContent").innerHTML = `
-                <div class="card">
-                    <div class="card-body">
-                        ${contentHtml}
-                        <div id="map" style="height: 300px; width: 100%; border-radius: 8px;"></div>
-                    </div>
-                </div>`;
-                        // Initialize Google Map with correct Map ID
-                        const map = new google.maps.Map(document.getElementById("map"), {
-                            zoom: 15,
-                            center: {
-                                lat: latitude,
-                                lng: longitude
-                            },
-                            mapId: "YOUR_MAP_ID" // Replace with your actual Map ID
-                        });
-
-                        // Add Custom Title for the Map
-                        const mapTitle = document.createElement("div");
-                        mapTitle.style.position = "absolute";
-                        mapTitle.style.top = "10px";
-                        mapTitle.style.left = "50%";
-                        mapTitle.style.transform = "translateX(-50%)";
-                        mapTitle.style.padding = "10px 20px";
-                        mapTitle.style.backgroundColor = "white";
-                        mapTitle.style.borderRadius = "5px";
-                        mapTitle.style.color = "black"; // Set title color to black
-                        mapTitle.style.fontSize = "18px";
-                        mapTitle.style.fontWeight = "bold";
-                        mapTitle.style.boxShadow = "0px 2px 6px rgba(0, 0, 0, 0.2)";
-                        mapTitle.innerText = "Wangaya Regional General Hospital";
-
-                        // Add the title to the map
-                        map.controls[google.maps.ControlPosition.TOP_CENTER].push(mapTitle);
-
-                        // Store Marker
-                        const storeMarkerContent = document.createElement("div");
-                        storeMarkerContent.style.display = "flex";
-                        storeMarkerContent.style.flexDirection = "column";
-                        storeMarkerContent.style.alignItems = "center";
-                        storeMarkerContent.innerHTML = `
-    <div style="background: #007bff; border-radius: 50%; padding: 10px; color: white;">
-        <i class="fas fa-store"></i>
-    </div>
-    <div style="margin-top: 5px; color: #000; font-size: 12px;">Store</div>
-`;
-                        new google.maps.marker.AdvancedMarkerElement({
-                            position: {
-                                lat: latitude,
-                                lng: longitude
-                            },
-                            map: map,
-                            content: storeMarkerContent
-                        });
-
-                        // User Location Marker
-                        if (navigator.geolocation) {
-                            navigator.geolocation.getCurrentPosition(position => {
-                                const userLat = position.coords.latitude;
-                                const userLng = position.coords.longitude;
-
-                                // User Location Marker
-                                const userMarkerContent = document.createElement("div");
-                                userMarkerContent.style.display = "flex";
-                                userMarkerContent.style.flexDirection = "column";
-                                userMarkerContent.style.alignItems = "center";
-                                userMarkerContent.innerHTML = `
-            <div style="background: green; border-radius: 50%; padding: 10px;">
-                <i class="fas fa-location" style="color: white;"></i>
-            </div>
-            <div style="margin-top: 5px; color: #000; font-size: 12px;">You are here</div>
-        `;
-                                new google.maps.marker.AdvancedMarkerElement({
-                                    position: {
-                                        lat: userLat,
-                                        lng: userLng
-                                    },
-                                    map: map,
-                                    content: userMarkerContent
-                                });
-
-                                // Directions Service to find the best route
-                                const directionsService = new google.maps.DirectionsService();
-                                const directionsRenderer = new google.maps.DirectionsRenderer({
-                                    map: map,
-                                    suppressMarkers: true, // Suppress default markers to use custom ones
-                                    polylineOptions: {
-                                        strokeColor: "#0000FF", // Main blue route color
-                                        strokeOpacity: 0.8,
-                                        strokeWeight: 6
-                                    }
-                                });
-
-                                // Additional polyline for padding effect
-                                const paddingPolyline = new google.maps.Polyline({
-                                    strokeColor: "#87CEEB", // Lighter blue for padding
-                                    strokeOpacity: 0.5,
-                                    strokeWeight: 10,
-                                    map: map
-                                });
-
-                                // Set up the directions request
-                                const request = {
-                                    origin: {
-                                        lat: userLat,
-                                        lng: userLng
-                                    }, // User's current location
-                                    destination: {
-                                        lat: latitude,
-                                        lng: longitude
-                                    }, // Store's location
-                                    travelMode: google.maps.TravelMode.DRIVING, // Driving mode
-                                    provideRouteAlternatives: false // Best route (no alternatives)
-                                };
-
-                                // Request the route and display it
-                                directionsService.route(request, (result, status) => {
-                                    if (status === google.maps.DirectionsStatus.OK) {
-                                        directionsRenderer.setDirections(result);
-
-                                        // Extract the path for the padding polyline
-                                        const routePath = result.routes[0].overview_path;
-                                        paddingPolyline.setPath(routePath);
-                                    } else {
-                                        console.warn("Directions request failed due to " + status);
-                                    }
-                                });
-
-                                // Adjust map bounds to fit both markers and route
-                                const bounds = new google.maps.LatLngBounds();
-                                bounds.extend({
-                                    lat: userLat,
-                                    lng: userLng
-                                });
-                                bounds.extend({
-                                    lat: latitude,
-                                    lng: longitude
-                                });
-                                map.fitBounds(bounds);
-
-                            });
-                        } else {
-                            console.warn("Geolocation is not supported by this browser.");
-                        }
-
-
-                    })
-                    .catch(error => {
-                        console.error("Error fetching details:", error);
-                        document.getElementById("modalContent").innerHTML = `
-                <div class="alert alert-danger text-center" role="alert">
-                    <strong>Error!</strong> Unable to load details.
-                </div>`;
-                    })
-                    .finally(() => {
-                        const modal = new bootstrap.Modal(document.getElementById("detailsModal"));
-                        modal.show();
-                    });
-            }
-
-            function getStatusBadgeClass(status) {
-                let iconClass = ''; // Font Awesome icon class
-                let badgeClass = ''; // Badge color class
-
-                // Customize icon and badge color based on status
-                switch (status) {
-                    case 'Progress':
-                        iconClass = 'fas fa-spinner fa-spin'; // Spinner icon for progress
-                        badgeClass = 'bg-warning text-dark'; // Yellow badge for progress
-                        break;
-                    case 'Completed':
-                        iconClass = 'fas fa-check-circle'; // Check circle icon for completed
-                        badgeClass = 'bg-success text-light'; // Green badge for completed
-                        break;
-                    case 'Pending':
-                        iconClass = 'fas fa-clock'; // Clock icon for pending
-                        badgeClass = 'bg-info text-dark'; // Blue badge for pending
-                        break;
-                    default:
-                        iconClass = 'fas fa-question-circle'; // Question mark icon for unknown status
-                        badgeClass = 'bg-secondary text-light'; // Default gray badge
-                        break;
-                }
-
-                // Return both the icon class and badge class with padding and rounded corners
-                return `<span class="badge ${badgeClass}" style="padding: 0.5rem 1rem; border-radius: 20px; font-size: 14px; display: flex; align-items: center; justify-content: center;">
-                <i class="${iconClass}" style="color: white; margin-right: 8px;"></i> ${status}
-            </span>`;
+                // Redirect to the new page after a short delay with the encoded ID as hash
+                setTimeout(() => {
+                    window.location.href =
+                        `/purchase-orders/show/${encodedId}`; // Adding the encoded ID as hash
+                }, 1500); // Adjust delay if needed
             }
         </script>
     @endpush

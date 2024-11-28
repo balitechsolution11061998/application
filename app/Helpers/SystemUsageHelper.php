@@ -7,7 +7,7 @@ use App\Models\SystemUsage;
 
 class SystemUsageHelper
 {
-    public static function logUsage($startTime, $startMemory)
+    public static function logUsage($startTime, $startMemory,$accessed_at,$functioon)
     {
         // End timing and memory tracking
         $endTime = microtime(true);
@@ -22,6 +22,7 @@ class SystemUsageHelper
             'memory_usage_mb' => $ramUsageMb,
             'load_time_ms' => $loadTimeMs,
             'accessed_at' => now(),
+            'function'=>$functioon
         ]);
     }
 }

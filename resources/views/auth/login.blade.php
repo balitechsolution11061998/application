@@ -21,6 +21,7 @@
 
     <!-- SweetAlert CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     <style>
         body {
@@ -64,6 +65,7 @@
             transform: scale(1.05);
         }
     </style>
+
 </head>
 
 <body class="min-h-screen flex items-center justify-center bg-gray-100 transition-colors duration-500 dark:bg-gray-900">
@@ -103,9 +105,9 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-envelope text-gray-400"></i>
                         </div>
-                        <input id="email" type="email" name="email" value="{{ old('email') }}"
-                            class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                            placeholder="Enter your email" required autofocus>
+                        <input id="login" type="text" name="login" value="{{ old('login') }}"
+                        class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                        placeholder="Enter your username or email" required autofocus>
                         @error('email')
                             <p class="mt-2 text-sm text-red-600">
                                 <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -174,6 +176,7 @@
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <script>
         $.ajaxSetup({
@@ -208,20 +211,17 @@
                         type: 'POST',
                         data: $('#loginForm').serialize(),
                         success: function(response) {
-                            Toastify({
-                                text: "Login successful!",
-                                backgroundColor: "green",
-                                className: "info",
-                            }).showToast();
+                            toastr.success(response.message, "Success");
                             // Redirect if needed
                             window.location.href = "/home";
                         },
-                        error: function() {
-                            Toastify({
-                                text: "Login failed! Check your credentials.",
-                                backgroundColor: "red",
-                                className: "info",
-                            }).showToast();
+                        error: function (xhr) {
+                            console.log(xhr,'xhr error');
+                            if (xhr.status === 401) {
+                                toastr.error("Invalid username, email, or password.", "Error");
+                            } else {
+                                toastr.error("An unexpected error occurred.", "Error");
+                            }
                         }
                     });
                 }

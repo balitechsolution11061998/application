@@ -19,24 +19,44 @@ return new class extends Migration
         });
 
         Schema::create('users', function (Blueprint $table) {
-            $table->id(); // Primary key
-            $table->string('name'); // User's full name
-            $table->string('username'); // Unique username for user login
-            $table->string('email'); // Unique email address for login
-            $table->string('profile_picture')->nullable(); // Optional profile picture URL
-            $table->timestamp('email_verified_at')->nullable(); // Email verification timestamp
-            $table->string('password'); // Password for login (hashed)
-            $table->string('password_show')->nullable(); // Optional: store password in plaintext (not recommended)
-            $table->string('phone_number')->nullable();
-            $table->rememberToken(); // Token for "remember me" functionality
-            $table->foreignId('region_id')->constrained('region')->onDelete('cascade'); // Cascade on delete
-            $table->text('address')->nullable();
-            $table->timestamps(); // Created_at and updated_at timestamps
+            $table->bigIncrements('id'); // Primary key
+            $table->string('username', 191); // Username
+            $table->string('name', 191); // Full name
+            $table->string('email', 191); // Email
+            $table->string('photo', 191)->nullable(); // Photo
+            $table->timestamp('email_verified_at')->nullable(); // Email verified timestamp
+            $table->string('whatshapp_no', 191)->nullable(); // WhatsApp number
+            $table->string('channel_id', 191)->nullable(); // Channel ID
+            $table->enum('status', ['y', 'n']); // Status
+            $table->enum('all_supplier', ['y', 'n']); // All supplier flag
+            $table->string('password', 191)->nullable(); // Password
+            $table->string('password_show', 255)->nullable(); // Password (plaintext)
+            $table->string('link_whatshapps', 191)->nullable(); // WhatsApp link
+            $table->string('api_key_whatshapps', 191)->nullable(); // WhatsApp API key
+            $table->string('link_sync', 191)->nullable(); // Synchronization link
+            $table->unsignedBigInteger('region')->nullable(); // Foreign key to region
+            $table->text('address')->nullable(); // Address
+            $table->double('latitude')->nullable(); // Latitude
+            $table->double('longitude')->nullable(); // Longitude
+            $table->text('about_us')->nullable(); // About us section
+            $table->string('phone_number', 16)->nullable(); // Phone number
+            $table->string('remember_token', 100)->nullable(); // Remember token
+            $table->integer('login_attempts')->nullable(); // Login attempts
+            $table->integer('last_activity')->nullable(); // Last activity timestamp
+            $table->string('profile_picture')->nullable(); // Remember token
+            $table->timestamps(); // Created at and updated at timestamps
+
+            // Adding soft deletes
+            $table->softDeletes(); // Adds `deleted_at` column
 
             // Adding indices for faster lookups
             $table->index('email');
             $table->index('username');
+
+            // Foreign key for `region`
+            $table->foreign('region')->references('id')->on('region')->onDelete('cascade'); // Cascade on delete
         });
+
     }
 
     /**

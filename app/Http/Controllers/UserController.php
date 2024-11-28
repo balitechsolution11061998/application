@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Activitylog\Models\Activity;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -64,11 +65,88 @@ class UserController extends Controller
 
     public function profile()
     {
-        // Fetch the authenticated user's details
-        $user = auth()->user();
-        // Return the profile view with the user's data
-        return view('management_user.users.profile', compact('user'));
+        // Generate a batch UUID
+        $batchUuid = Str::uuid();
+
+        // Start timing and memory tracking
+        $startTime = microtime(true);
+        $startMemory = memory_get_usage();
+
+        try {
+            // Fetch the authenticated user's details
+            $user = auth()->user();
+
+            if (!$user) {
+                // Throw an exception if the user is not authenticated
+                throw new \Exception('User is not authenticated.');
+            }
+
+            // Log the activity with a specific log name, event, properties, and subject type
+            activity('User Profile') // Set the log_name
+                ->causedBy($user)    // Set the authenticated user as the causer
+                ->performedOn($user) // Set the subject as the authenticated user
+                ->event('view')      // Set the event name
+                ->withProperties([
+                    'user_id' => $user->id,
+                    'email'   => $user->email,
+                    'action'  => 'Viewed their profile',
+                ])
+                ->log('Viewed their profile.');
+
+            // End timing and memory tracking
+            $endTime = microtime(true);
+            $endMemory = memory_get_usage();
+
+            // Calculate load time in milliseconds and memory usage in MB
+            $loadTimeMs = round(($endTime - $startTime) * 1000);
+            $ramUsageMb = round(($endMemory - $startMemory) / 1024 / 1024, 2);
+
+            // Log system usage
+            SystemUsage::create([
+                'memory_usage_mb' => $ramUsageMb,
+                'load_time_ms'    => $loadTimeMs,
+                'accessed_at'     => now(),
+                'function'        => 'profile',
+            ]);
+
+            // Return the profile view with the user's data
+            return view('management_user.users.profile', compact('user'));
+
+        } catch (\Exception $e) {
+            // Log the error activity with a specific log name and properties
+            activity('User Profile') // Set the log_name
+                ->causedBy(auth()->user() ?? null) // Ensure a valid causer even if null
+                ->event('error')      // Set the event name
+                ->withProperties([
+                    'error_message' => $e->getMessage(),
+                    'action'        => 'Failed to load profile page',
+                ])
+                ->log('Failed to load the profile page: ' . $e->getMessage());
+
+            // End timing and memory tracking in case of failure
+            $endTime = microtime(true);
+            $endMemory = memory_get_usage();
+
+            // Calculate load time and memory usage
+            $loadTimeMs = round(($endTime - $startTime) * 1000);
+            $ramUsageMb = round(($endMemory - $startMemory) / 1024 / 1024, 2);
+
+            // Log system usage
+            SystemUsage::create([
+                'memory_usage_mb' => $ramUsageMb,
+                'load_time_ms'    => $loadTimeMs,
+                'accessed_at'     => now(),
+                'function'        => 'profile',
+
+            ]);
+
+            // Redirect the user to a fallback page or show an error message
+            return redirect()->back()->with('error', 'Failed to load profile page.');
+        }
     }
+
+
+
 
     public function deleteEmail(Request $request)
     {
@@ -109,13 +187,23 @@ class UserController extends Controller
     {
         if ($request->ajax()) {
             try {
+                // Log user activity
+                activity()
+                    ->causedBy(auth()->user()) // Log the authenticated user
+                    ->withProperties([
+                        'ip' => $request->ip(),
+                        'url' => $request->fullUrl(),
+                        'action' => 'Accessed getUsersData function',
+                    ])
+                    ->log('User accessed the getUsersData function');
+
                 // Start timing and memory tracking
                 $startTime = microtime(true);
                 $startMemory = memory_get_usage();
 
-                // Your existing data processing logic
+                // Fetch user data with relationships
                 $data = User::with(['roles', 'region', 'userEmails'])
-                    ->select('id', 'profile_picture', 'username', 'name', 'email', 'password_show', 'region_id', 'created_at');
+                    ->select('id', 'profile_picture', 'username', 'name', 'email', 'password_show', 'region', 'created_at');
 
                 $result = Datatables::of($data)
                     ->addColumn('role_ids', function ($row) {
@@ -124,9 +212,7 @@ class UserController extends Controller
                     ->addColumn('role_names', function ($row) {
                         return $row->roles->pluck('name')->implode(', ');
                     })
-                    ->addColumn('region', function ($row) {
-                        return $row->region ? $row->region->id : 'N/A';
-                    })
+
                     ->addColumn('userEmails', function ($row) {
                         $emails = $row->userEmails->where('is_primary', 1)->pluck('email')->implode(', ');
                         return $emails ?: 'No active emails';
@@ -136,21 +222,23 @@ class UserController extends Controller
                         $isAdmin = in_array('superadministrator', $userRoles);
 
                         $actions = '';
+                        $rowId = e($row->id); // Escape row ID
+
                         if ($isAdmin) {
                             $actions .= '
-                                <button type="button" class="btn btn-sm btn-primary" onclick="editUser(' . $row->id . ')">
+                                <button type="button" class="btn btn-sm btn-primary" onclick="editUser(' . $rowId . ')">
                                     <i class="fas fa-edit"></i> Edit
                                 </button>
-                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteUser(' . $row->id . ')">
+                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteUser(' . $rowId . ')">
                                     <i class="fas fa-trash"></i> Delete
                                 </button>
-                                <button type="button" class="btn btn-sm btn-warning" onclick="changePassword(' . $row->id . ')">
+                                <button type="button" class="btn btn-sm btn-warning" onclick="changePassword(' . $rowId . ')">
                                     <i class="fas fa-key"></i> Change Password
                                 </button>
                             ';
                         } else {
                             $actions .= '
-                                <button type="button" class="btn btn-sm btn-primary" onclick="editUser(' . $row->id . ')">
+                                <button type="button" class="btn btn-sm btn-primary" onclick="editUser(' . $rowId . ')">
                                     <i class="fas fa-edit"></i> Edit
                                 </button>
                             ';
@@ -166,25 +254,47 @@ class UserController extends Controller
                 $endMemory = memory_get_usage();
 
                 // Calculate load time in milliseconds and memory usage in MB
-                $loadTimeMs = round(($endTime - $startTime) * 1000); // Convert seconds to milliseconds
+                $loadTimeMs = round(($endTime - $startTime) * 1000);
                 $ramUsageMb = round(($endMemory - $startMemory) / 1024 / 1024, 2);
 
-                // Log memory usage, load time, and access time to the database
+                // Log system usage
                 SystemUsage::create([
                     'memory_usage_mb' => $ramUsageMb,
                     'load_time_ms' => $loadTimeMs,
                     'accessed_at' => now(),
                 ]);
 
-                // Return the result to DataTables
                 return $result;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) { // Catch broader exceptions including fatal errors
+                // Log the error details for debugging
+                \Log::error('Error fetching users data', [
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
 
-                return response()->json(['error' => 'An error occurred while fetching user data.'.$e->getMessage()], 500);
+                // Log the error activity
+                activity()
+                    ->causedBy(auth()->user())
+                    ->withProperties([
+                        'ip' => $request->ip(),
+                        'url' => $request->fullUrl(),
+                        'action' => 'Failed to access getUsersData function',
+                        'error' => $e->getMessage(),
+                    ])
+                    ->log('Error occurred while accessing getUsersData function');
+
+                // Return JSON error response
+                return response()->json([
+                    'error' => 'An error occurred while fetching user data.',
+                    'message' => $e->getMessage(),
+                ], 500);
             }
         }
-    }
 
+        return response()->json(['error' => 'Invalid request type'], 400);
+    }
 
 
 
@@ -297,7 +407,7 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
+
         // Validate the request data
         $rules = [
             'username' => 'required|string|max:255',
@@ -350,7 +460,7 @@ class UserController extends Controller
                 'password' => bcrypt($validated['password']),
                 'password_show' => $validated['password'],
                 'address' => $validated['address'] ?? null, // Use null coalescing operator
-                'region_id' => $validated['region_id'],
+                'region' => $validated['region_id'],
                 'profile_picture' => $profilePicturePath,
             ]);
         } else {
@@ -365,7 +475,7 @@ class UserController extends Controller
                 'password' => $validated['password'] ? bcrypt($validated['password']) : $user->password,
                 'password_show' => $validated['password'],
                 'address' => $validated['address'] ?? null, // Use null coalescing operator
-                'region_id' => $validated['region_id'],
+                'region' => $validated['region_id'],
                 'profile_picture' => $profilePicturePath,
             ]);
         }
@@ -414,7 +524,7 @@ class UserController extends Controller
                 'email' => $user->email,
                 'roles' => $user->roles->pluck('name'), // Assuming roles are fetched by name
                 'address' => $user->address,
-                'region' => $user->region_id,
+                'region' => $user->region,
             ]);
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
@@ -15,7 +16,6 @@ class LoginController extends Controller
     {
         return view('auth.login'); // Points to your custom login form
     }
-
     public function login(Request $request)
     {
         try {
@@ -44,7 +44,7 @@ class LoginController extends Controller
 
             // Log failed login attempt
             LoginLog::create([
-                'email' => $request->email,
+                'email' => $request->login, // Adjusted to match the login field
                 'ip_address' => $request->ip(),
                 'status' => 'failed',
                 'logged_at' => now(),
@@ -54,9 +54,8 @@ class LoginController extends Controller
                 'error' => 'Invalid credentials',
             ], 401);
         } catch (\Exception $e) {
-            dd($e->getMessage());
             LoginLog::create([
-                'email' => $request->email,
+                'email' => $request->login,
                 'ip_address' => $request->ip(),
                 'status' => 'error',
                 'logged_at' => now(),
@@ -72,14 +71,19 @@ class LoginController extends Controller
     {
         // Validate the login request
         $request->validate([
-            'email' => 'required|email',
+            'login' => 'required|string', // Adjusted to accept the login field
             'password' => 'required|string|min:6',
         ]);
     }
 
     protected function attemptLogin(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
+        $login = $request->login;
+
+        // Attempt login with email or username
+        $user = User::where('email', $login)
+            ->orWhere('username', $login)
+            ->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
             // Log the user in manually
@@ -93,7 +97,7 @@ class LoginController extends Controller
     protected function sendFailedLoginResponse(Request $request)
     {
         throw ValidationException::withMessages([
-            'email' => [trans('auth.failed')],
+            'login' => [trans('auth.failed')],
         ]);
     }
 
@@ -105,7 +109,6 @@ class LoginController extends Controller
             // Log the logout event
             $user->is_logged_in = false;
             $user->save();
-
         }
 
         Auth::logout();

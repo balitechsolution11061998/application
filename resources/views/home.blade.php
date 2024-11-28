@@ -169,44 +169,122 @@
                     font-size: 0.9rem;
                 }
             }
+
+            .modal-content {
+                border-radius: 12px;
+                background-color: #1c1c1c;
+                /* Darker background for better contrast */
+            }
+
+            .modal-header {
+                border-bottom: none;
+                padding: 1.5rem 1.5rem 0;
+            }
+
+            .modal-body {
+                padding: 2rem 1.5rem;
+            }
+
+            .feature-slide {
+                padding: 1rem;
+                animation: fadeIn 0.5s ease-in-out;
+            }
+
+            .feature-icon {
+                font-size: 2.5rem;
+            }
+
+            .feature-title {
+                margin-top: 1rem;
+                font-weight: 700;
+            }
+
+            .feature-description {
+                margin-top: 0.5rem;
+                font-size: 0.95rem;
+                color: #b0b0b0;
+            }
+
+            .modal-footer {
+                padding: 1.5rem 1.5rem;
+            }
+
+            .btn-outline-primary {
+                border-color: #007bff;
+                color: #007bff;
+            }
+
+            .btn-outline-primary:hover {
+                background-color: #007bff;
+                color: #fff;
+            }
+
+            .form-check-input {
+                border-radius: 4px;
+                border-color: #6c757d;
+                background-color: transparent;
+                outline: none;
+            }
+
+            .form-check-input:checked {
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
         </style>
     @endpush
     <!-- Modal Structure with Custom Dark Theme -->
     <div class="modal fade" tabindex="-1" id="kt_modal_1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content text-light bg-dark border-0">
+            <div class="modal-content text-light bg-dark border-0 shadow-lg rounded">
+                <!-- Modal Header -->
                 <div class="modal-header border-0">
-                    <h3 class="modal-title" id="modalLabel">What's New</h3>
-
-                    <!-- Close Button with Updated Icon -->
+                    <h3 class="modal-title" id="modalLabel">✨ What's New</h3>
                     <button type="button" class="btn btn-icon btn-sm btn-active-light-primary ms-2"
                         data-bs-dismiss="modal" aria-label="Close">
-                        <i class="fas fa-times fs-3 text-light"></i>
+                        <i class="fas fa-times fs-4 text-light"></i>
                     </button>
                 </div>
 
+                <!-- Modal Body -->
                 <div class="modal-body">
                     <div class="feature-slides">
                         <!-- Slide 1 Example -->
-                        <div class="feature-slide active">
-                            <i class="feature-icon fas fa-chart-line text-primary"></i>
-                            <h4 class="feature-title">Improved Analytics Dashboard</h4>
-                            <p class="feature-description">The new analytics dashboard offers customizable insights,
-                                making data-driven decisions easier.</p>
+                        <div class="feature-slide active text-center">
+                            <i class="feature-icon fas fa-chart-line text-primary fs-1 mb-3"></i>
+                            <h4 class="feature-title fw-bold">Improved Analytics Dashboard</h4>
+                            <p class="feature-description text-muted">
+                                The new analytics dashboard offers customizable insights, making data-driven decisions
+                                easier than ever.
+                            </p>
                         </div>
                         <!-- Additional slides would go here -->
                     </div>
                 </div>
 
-                <div class="modal-footer border-0 d-flex justify-content-between">
-                    <button id="nextBtn" class="btn btn-outline-light">Next</button>
-                    <label class="form-check-label">
-                        <input type="checkbox" class="form-check-input" id="dontShowAgain"> Don’t Show Again
+                <!-- Modal Footer -->
+                <div class="modal-footer border-0 d-flex justify-content-between align-items-center">
+                    <button id="nextBtn" class="btn btn-outline-primary px-4 rounded-pill">Next</button>
+                    <label class="form-check-label text-muted d-flex align-items-center">
+                        <input type="checkbox" class="form-check-input me-2" id="dontShowAgain">
+                        Don’t Show Again
                     </label>
                 </div>
             </div>
         </div>
     </div>
+
 
 
 
@@ -486,7 +564,11 @@
                         type: 'GET'
                     },
                     columns: [{
-                            data: 'id'
+                            data: null,
+                            render: function(data, type, row, meta) {
+                                return meta.row + 1; // Row number
+                            },
+                            title: "No." // Optional: Set a column header
                         },
                         {
                             data: 'user'

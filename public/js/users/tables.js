@@ -28,18 +28,20 @@ dataTableHelper("#users_table", "/users/data", [
         data: "profile_picture",
         name: "profile_picture",
         render: function (data) {
-            const imgSrc = data
+            console.log(data, 'data'); // Debugging the incoming data
+            const imgSrc = data && data.trim() // Ensure data exists and is not empty
                 ? `/storage/${data}`
-                : "/path/to/default/profile.png";
+                : "/img/background/blank.jpg"; // Fallback image path
             return `
-<a href="${imgSrc}" data-lightbox="profile-picture-${data}">
-    <img src="${imgSrc}" alt="Profile Picture" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
-</a>
-`;
+    <a href="${imgSrc}" data-lightbox="profile-picture-${data || 'default'}">
+        <img src="${imgSrc}" alt="Profile Picture" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+    </a>
+            `;
         },
         orderable: false,
         searchable: false,
     },
+
     {
         data: "username",
         name: "username",
@@ -551,15 +553,29 @@ async function tambahUser(username) {
 function fetchRegions() {
     // Fetch regions from your API or server
     fetch("/regions/data") // Update the URL to your API endpoint
-        .then((response) => response.json())
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch regions");
+            }
+            return response.json();
+        })
         .then((data) => {
             const regionSelect = document.getElementById("region");
-            regionSelect.innerHTML = '<option value="">Select Region</option>'; // Reset options
 
+            // Reset options
+            regionSelect.innerHTML = '<option value="">Select Region</option>';
+
+            // Populate select options dynamically
             data.forEach((region) => {
                 const option = document.createElement("option");
                 option.value = region.id;
                 option.textContent = region.name;
+
+                // Preselect the region if it matches the user's current region
+                if (region.id === parseInt(regionSelect.dataset.selectedRegion, 10)) {
+                    option.selected = true;
+                }
+
                 regionSelect.appendChild(option);
             });
         })

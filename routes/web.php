@@ -3,16 +3,23 @@
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DashboardPilkadaController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\KabupatenController;
+use App\Http\Controllers\KecamatanController;
+use App\Http\Controllers\KelurahanController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\SyncDataController;
 use App\Http\Controllers\SystemUsageController;
 use App\Http\Controllers\TahunPelajaranController;
+use App\Http\Controllers\TpsController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -96,6 +103,18 @@ Route::prefix('/users')
 
     });
 
+Route::prefix('dashboard-pilkada')
+    ->middleware('auth')
+    ->as('dashboard-pilkada.')
+    ->group(function () {
+        // Dashboard Pilkada main route
+        Route::get('/', [DashboardPilkadaController::class, 'index'])->name('index');
+
+        // Additional routes related to Dashboard Pilkada
+        Route::get('/fetchData', [DashboardPilkadaController::class, 'fetchData'])->name('fetchData');
+    });
+
+
 
 // Role management routes
 Route::prefix('roles')
@@ -178,6 +197,7 @@ Route::prefix('purchase-orders') // Prefix for all order routes
         Route::resource('/', OrderController::class)->parameters(['' => 'order'])->except(['show']);
         Route::post('/store', [OrderController::class, 'store']);
         Route::get('/edit/{id}', [OrderController::class, 'edit'])->name('edit');
+        Route::get('/show/{id}', [OrderController::class, 'show'])->name('show');
 
     });
 
@@ -192,3 +212,25 @@ Route::post('/verify-superadmin-password', [UserController::class, 'verifySupera
 Route::get('/docs', function () {
     return view('docs.index'); // File Markdown bisa Anda buat di sini
 });
+Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
+    \UniSharp\LaravelFilemanager\Lfm::routes();
+});
+Route::get('/sync-provinces', [ProvinceController::class, 'syncProvinces']);
+Route::get('/data-provinces', [ProvinceController::class, 'dataProvinces']);
+
+Route::get('/sync-kabupaten/{province}', [KabupatenController::class, 'syncKabupaten']);
+Route::get('/data-kabupaten', [KabupatenController::class, 'dataKabupaten']);
+
+
+Route::get('/sync-kecamatan/{provinceId}/{kabupatenId}', [KecamatanController::class, 'syncKecamatan']);
+Route::get('/data-kecamatan', [KecamatanController::class, 'dataKecamatan']);
+
+
+Route::get('/sync-kelurahan/{provinceId}/{kabupatenId}/{kecamatanId}', [KelurahanController::class, 'syncKelurahan']);
+Route::get('/data-kelurahan', [KelurahanController::class, 'dataKelurahan']);
+
+Route::get('/sync-tps/{provinceId}/{kabupatenId}/{kecamatanId}/{kelurahanId}', [TpsController::class, 'syncTps']);
+Route::get('/data-tps', [TpsController::class, 'dataTps']);
+
+Route::get('/sync-pilkada/{provinceId}/{kabupatenId}/{kecamatanId}/{kelurahanId}/{tpsId}', [SyncDataController::class, 'syncDataPemilihan']);
+Route::get('/data-pilkada', [SyncDataController::class, 'dataPilkada']);

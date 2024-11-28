@@ -22,6 +22,7 @@ use App\Repositories\OrdSku\OrdSkuRepositoryImplement;
 use App\Services\Order\OrderService;
 use App\Services\Order\OrderServiceImplement;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Blade;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -75,6 +76,14 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('viewPulse', function (User $user) {
             return $user->hasRole('superadministrator');
+        });
+
+        Blade::directive('formatRupiah', function ($amount) {
+            return "<?php echo 'Rp' . number_format($amount, 0, ',', '.'); ?>";
+        });
+          // You can use the Blade facade to create a custom directive
+        Blade::directive('formattedDate', function ($expression) {
+            return "<?php echo \App\Helpers\DateHelper::formatDate($expression); ?>";
         });
     }
 }

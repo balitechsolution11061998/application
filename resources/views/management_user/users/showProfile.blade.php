@@ -161,7 +161,7 @@
                         <select class="form-select form-control-lg border border-secondary rounded-3 shadow-sm"
                             id="region" name="region_id" data-control="select2"
                             data-placeholder="Select an option">
-                            <option value="">Select your region</option>
+                            <option value="{{ $user->region ?? '' }}">Select your region</option>
                             <!-- Options will be populated dynamically by JavaScript -->
                         </select>
                     </div>
@@ -384,9 +384,9 @@
             .then((response) => response.json())
             .then((data) => {
                 const regionSelect = document.getElementById("region");
-                const userRegionId =
-                    "{{ $user->region_id ?? '' }}"; // Get user's region ID or default to an empty string
-                regionSelect.innerHTML = '<option value="">Select Region</option>'; // Reset options
+                const userRegionId = "{{ $user->region ?? '' }}";
+                console.log(userRegionId, 'userRegionId');
+                regionSelect.innerHTML = '<option value="">Select Region</option>';
 
                 data.forEach((region) => {
                     const option = document.createElement("option");
@@ -501,6 +501,12 @@
                             escapeMarkup: false, // Allow HTML for the icon
                             stopOnFocus: true,
                         }).showToast();
+
+                        // Redirect to /users after the toast duration
+                        setTimeout(() => {
+                            window.location.href = '/users'; // Adjust the path as needed
+                        }, 3000); // Match the duration of the toast
+
                     },
                     error: function() {
                         // Hide the loading toast if there's an error
