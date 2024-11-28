@@ -46,7 +46,8 @@ class ActivityController extends Controller
                     ->make(true);
 
                 // Log memory usage and load time using the helper function
-                SystemUsageHelper::logUsage($startTime, $startMemory);
+                SystemUsageHelper::logUsage($startTime, $startMemory,now(),'getData');
+
 
                 // Return the result to DataTables
                 return $result;

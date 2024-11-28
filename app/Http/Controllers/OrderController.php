@@ -8,6 +8,9 @@ use App\Services\Order\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+use Spatie\Activitylog\Facades\Activity;
+use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -38,26 +41,33 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
-
         try {
-
-
-
             $data = $request->all(); // Get the orders array
 
             foreach ($data as $chunk) {
                 // Call the orderService for each chunk
                 $this->orderService->store($chunk);
+
+                // Log each action in Spatie Activity Log
+                activity()
+                    ->causedBy(auth()->user()) // Log the user who performed the action
+                    ->withProperties(['chunk' => $chunk]) // Optional: Log chunk details
+                    ->log('Stored a new Purchase Order');
             }
 
             // Return success response
             return response()->json([
-                'message' => 'Data po stored successfully',
-                'title' => 'Po stored success',
+                'message' => 'Data PO stored successfully',
+                'title' => 'PO Stored Success',
             ]);
         } catch (Exception $e) {
-            // Log or handle the exception
+            // Log the exception in Spatie Activity Log
+            activity()
+                ->causedBy(auth()->user())
+                ->withProperties(['error' => $e->getMessage()])
+                ->log('Failed to store Purchase Order');
+
+            // Return error response
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
@@ -65,9 +75,103 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($order_no)
     {
-        //
+        $order_no = base64_decode($order_no);
+
+        try {
+            // Log activity: User is viewing an order
+            activity()
+                ->causedBy(Auth::user()) // Associate the logged activity with the authenticated user
+                ->performedOn(new OrdHead()) // You can optionally specify the model if needed (here, using Order model)
+                ->withProperties(['order_no' => $order_no]) // Add extra properties for context
+                ->log('Viewed order details');
+
+            // Fetch order details with related store and supplier information
+            $orderDetails = DB::table('ordhead')
+                ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store')
+                ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code')
+                ->select(
+                    'ordhead.*', // Select all columns from ordhead
+                    'store.store as store_code',
+                    'store.store_name as store_name',
+                    'store.store_add1 as store_address',
+                    'store.store_add2 as store_address1',
+                    'store.store_city as store_city',
+                    'store.latitude', // Include latitude
+                    'store.longitude', // Include longitude
+                    'supplier.supp_code as supplier_code',
+                    'supplier.supp_name as supplier_name',
+                    'supplier.contact_name as supplier_contact',
+                    'supplier.contact_phone as supplier_phone',
+                    'supplier.address_1 as supp_address',
+                )
+                ->where('ordhead.order_no', $order_no)
+                ->first();
+
+            // Fetch all order items (ordsku details)
+            $orderItems = DB::table('ordsku')
+                ->where('ordsku.order_no', $order_no)
+                ->select(
+                    'ordsku.id',
+                    'ordsku.sku',
+                    'ordsku.sku_desc',
+                    'ordsku.upc',
+                    'ordsku.tag_code',
+                    'ordsku.unit_cost',
+                    'ordsku.unit_retail',
+                    'ordsku.vat_cost',
+                    'ordsku.luxury_cost',
+                    'ordsku.qty_ordered',
+                    'ordsku.qty_fulfilled',
+                    'ordsku.qty_received',
+                    'ordsku.unit_discount',
+                    'ordsku.unit_permanent_discount',
+                    'ordsku.purchase_uom',
+                    'ordsku.supp_pack_size',
+                    'ordsku.permanent_disc_pct',
+                    'ordsku.created_at',
+                    'ordsku.updated_at'
+                )
+                ->get();
+
+            // Check if the order exists
+            if (!$orderDetails) {
+                return view('orders.notfound'); // Render a "not found" view
+            }
+
+            // Prepare data for the view
+            $data = [
+                'orderDetails' => $orderDetails,
+                'store' => [
+                    'store_code' => $orderDetails->store_code,
+                    'store_name' => $orderDetails->store_name,
+                    'store_address' => $orderDetails->store_address,
+                    'store_address1' => $orderDetails->store_address1,
+                    'store_city' => $orderDetails->store_city,
+                    'latitude' => $orderDetails->latitude, // Add latitude
+                    'longitude' => $orderDetails->longitude, // Add longitude
+                ],
+                'supplier' => [
+                    'supplier_code' => $orderDetails->supplier_code,
+                    'supplier_name' => $orderDetails->supplier_name,
+                    'supplier_contact' => $orderDetails->supplier_contact,
+                    'supplier_phone' => $orderDetails->supplier_phone,
+                    'supp_address' => $orderDetails->supp_address,
+                ],
+                'orderItems' => $orderItems,
+            ];
+
+            // Return the view with data
+            return view('orders.show', compact('data'));
+        } catch (\Exception $e) {
+            // Return back with an error message and status code
+            return redirect()->back()->with([
+                'message' => 'An error occurred while retrieving the order details.',
+                'error' => $e->getMessage(),
+                'code' => 500,
+            ]);
+        }
     }
     public function data(Request $request)
     {
@@ -81,7 +185,7 @@ class OrderController extends Controller
                 $result = collect();
 
                 // Use chunking to process records in smaller batches
-                DB::table('ordhead')
+                $query = DB::table('ordhead')
                     ->leftJoin('ordsku', 'ordsku.order_no', '=', 'ordhead.order_no')
                     ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store')
                     ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code')
@@ -95,13 +199,19 @@ class OrderController extends Controller
                         'ordhead.approval_date as approval_date'
                     )
                     ->distinct()
-                    ->orderBy('approval_date', 'desc')
-                    ->chunk(1000, function ($chunk) use ($result) {
-                        foreach ($chunk as $row) {
-                            $result->push($row);
-                        }
-                    });
+                    ->orderBy('approval_date', 'desc');
 
+                // Apply the where clause if order_no is not null
+                if (!empty($request->order_no)) {
+                    $query->where('ordhead.order_no', $request->order_no);
+                }
+
+                // Chunk the results
+                $query->chunk(1000, function ($chunk) use ($result) {
+                    foreach ($chunk as $row) {
+                        $result->push($row);
+                    }
+                });
 
                 // Prepare the data for DataTables
                 $datatableResult = DataTables::of($result)
@@ -124,7 +234,7 @@ class OrderController extends Controller
                     ->make(true);
 
                 // Log memory usage and load time using the helper function
-                SystemUsageHelper::logUsage($startTime, $startMemory);
+                SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderData');
 
                 // Return the result to DataTables
                 return $datatableResult;

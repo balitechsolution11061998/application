@@ -21,6 +21,7 @@
         "spatie/laravel-activitylog": "^4.8",
         "spatie/laravel-server-monitor": "^1.10",
         "torann/geoip": "^3.0",
+        "unisharp/laravel-filemanager": "^2.9",
         "vinkla/hashids": "^11.0",
         "yajra/laravel-datatables-oracle": "^10.11",
         "yaza/laravel-repository-service": "^5.1"

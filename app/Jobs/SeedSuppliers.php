@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
@@ -26,17 +25,17 @@ class SeedSuppliers implements ShouldQueue
             'terms' => 30, // Payment terms
             'contact_name' => 'YUDI BRAHMANTA- 081805561868', // Contact person
             'contact_phone' => '0361-8562668', // Contact phone number
-            'contact_fax' => null, // Fax not available
+            'contact_fax' => '0361-432410/8632178', // Contact fax
             'email' => 'data_not_found@example.com', // Placeholder email for "Data Not Found"
             'address_1' => 'Jl. Gn. Mas III C6', // Address line 1
             'address_2' => null, // Optional address line 2 not provided
-            'city' => $faker->city, // Random city
-            'post_code' => $faker->postcode, // Random postal code
-            'tax_ind' => 'N', // Tax indicator
-            'tax_no' => null, // No tax number
+            'city' => 'Denpasar', // City from the form
+            'post_code' => '80361', // Postal code (you can adjust it as needed)
+            'tax_ind' => 'Y', // Tax indicator
+            'tax_no' => null, // No tax number provided
             'retur_ind' => 'N', // Return indicator
             'consig_ind' => 'N', // Consignment indicator
-            'status' => 'Y', // Status
+            'status' => 'Y', // Active status
             'created_at' => now(),
             'updated_at' => now(),
         ]);

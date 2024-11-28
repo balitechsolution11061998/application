@@ -151,7 +151,6 @@
 <body class="bg-gray-100 font-sans leading-normal tracking-normal">
     <div class="max-w-3xl mx-auto my-8 p-6 bg-white shadow-lg rounded-lg relative">
         <!-- Profile Section -->
-        <!-- Profile Section -->
         <div class="max-w-3xl mx-auto my-8 p-6 bg-white shadow-lg rounded-lg relative" id="resume-content">
             <!-- Loading Spinner -->
             <div id="loading" class="flex justify-center items-center h-32">
@@ -159,7 +158,7 @@
             </div>
 
             <!-- Profile Content (Initially hidden until loading is complete) -->
-            <div id="profile-content" class="profile-content flex flex-col items-center mb-6">
+            <div id="profile-content" class="profile-content flex flex-col items-center mb-6 opacity-0 transform translate-y-4 transition-all duration-500 ease-in-out rounded-lg">
                 <img src="https://via.placeholder.com/200" alt="Profile Photo" class="w-32 h-32 rounded-full shadow-md mb-4 photo-effect profile-image" id="profile-image">
                 <h1 class="text-4xl font-semibold text-gray-800">I Wayan Bayu Sulaksana</h1>
                 <p class="text-xl text-gray-600">Informatics Student & Full Stack Developer</p>
@@ -176,11 +175,10 @@
                 <img src="" id="lightbox-image" class="lightbox-img">
             </div>
         </div>
+
         <section class="mb-8">
             <h2 class="text-2xl font-semibold text-gray-700">Profile</h2>
-            <p class="text-gray-700 mt-2">An Informatics student passionate about web and application development, with
-                skills in programming, data analysis, and developing modern technology-based applications. Focused on
-                problem-solving and creating efficient, user-friendly applications.</p>
+            <p class="text-gray-700 mt-2">An Informatics student passionate about web and application development, with skills in programming, data analysis, and developing modern technology-based applications. Focused on problem-solving and creating efficient, user-friendly applications.</p>
         </section>
 
         <section class="mb-8">
@@ -235,8 +233,7 @@
                 <p class="text-gray-600">Head of IT Division | 2022 - Present</p>
                 <ul class="list-disc list-inside mt-2 text-gray-700">
                     <li>Coordinating the team to manage the organization’s website and membership database.</li>
-                    <li>Leading the development of a web-based application for the student activity information system.
-                    </li>
+                    <li>Leading the development of a web-based application for the student activity information system.</li>
                 </ul>
             </div>
         </section>
@@ -257,13 +254,11 @@
             <h2 class="text-2xl font-semibold text-gray-700">Projects</h2>
             <div class="mt-4">
                 <h3 class="text-xl font-semibold text-gray-800">Personal Portfolio Website</h3>
-                <p class="text-gray-600">Created a personal portfolio using HTML, CSS, and JavaScript to showcase
-                    projects and skills.</p>
+                <p class="text-gray-600">Created a personal portfolio using HTML, CSS, and JavaScript to showcase projects and skills.</p>
             </div>
             <div class="mt-4">
                 <h3 class="text-xl font-semibold text-gray-800">E-commerce Information System (Final Project)</h3>
-                <p class="text-gray-600">Built a prototype of an e-commerce platform using the MERN stack, including
-                    user authentication, shopping cart, and payment integration features.</p>
+                <p class="text-gray-600">Built a prototype of an e-commerce platform using the MERN stack, including user authentication, shopping cart, and payment integration features.</p>
             </div>
         </section>
 
@@ -293,12 +288,20 @@
 
         <footer class="text-center mt-8">
             <p class="text-gray-600">Contact me at:
-                <a href="https://www.linkedin.com/in/wayanbayu" class="text-blue-600">LinkedIn</a> |
-                <a href="https://github.com/wayanbayu" class="text-blue-600">GitHub</a>
+                <a href="mailto:wayan.bayu@example.com" class="text-blue-500 hover:underline">wayan.bayu@example.com</a>
             </p>
-            <p class="text-gray-600">© 2024 I Wayan Bayu Sulaksana</p>
+            <p class="text-gray-600">Follow me on social media:</p>
+            <div class="flex justify-center space-x-4 mt-2">
+                <a href="https://linkedin.com/in/wayanbayusulaksana" class="text-blue-500 hover:text-blue-700">
+                    <i class="fab fa-linkedin"></i> LinkedIn
+                </a>
+                <a href="https://github.com/wayanbayu" class="text-gray-800 hover:text-gray-600">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
         </footer>
     </div>
+
 
 
     <script>
