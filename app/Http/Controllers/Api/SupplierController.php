@@ -4,14 +4,17 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SupplierController extends Controller
 {
     //
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $data = $request->data;
         $response = [];
-         try {
+
+        try {
             foreach ($data as $key => $value) {
                 // Check if the supplier already exists
                 $cekDataSupplier = DB::table('supplier')->where('supp_code', $value['supp_code'])->first();
@@ -35,37 +38,39 @@ class SupplierController extends Controller
                 $dataInsert['post_code'] = ($value['post_code'] != '-----') ? $value['post_code'] : null;
                 $dataInsert['tax_no'] = (!empty($value['collect_tax_no'])) ? $value['collect_tax_no'] : "N";
 
-                // Update or insert the supplier data
                 if ($cekDataSupplier != null) {
                     // Update existing supplier
-                    $supplier = $this->supplierService->updateSupplier($dataInsert, $cekDataSupplier->id);
+                    DB::table('supplier')
+                        ->where('id', $cekDataSupplier->id)
+                        ->update($dataInsert);
+
                     $response = [
                         'message' => 'Supplier berhasil diperbaharui',
                         'status' => true,
-                                            'success'=>true
+                        'success' => true,
                     ];
                 } else {
                     // Insert new supplier
                     $dataInsert['supp_code'] = $value['supp_code']; // Only set supp_code for new records
-                    $supplier = $this->supplierService->createSupplier($dataInsert);
+                    DB::table('supplier')->insert($dataInsert);
+
                     $response = [
                         'message' => 'Sukses menambahkan supplier',
                         'status' => true,
-                        'success'=>true
+                        'success' => true,
                     ];
                 }
             }
         } catch (\Exception $e) {
-            return $e->getMessage();
-            // Log the error message
-            \Log::error('Error processing supplier data: ' . $e->getMessage());
-            // You can also return an error response if needed
+
+            // Return an error response
             $response = [
                 'message' => 'Error processing supplier data',
                 'status' => false,
             ];
         }
-        return response()->json($response);
 
+        return response()->json($response);
     }
+
 }

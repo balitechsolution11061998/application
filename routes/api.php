@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\PoController;
 use App\Http\Controllers\Api\RcvController;
 use App\Http\Controllers\Api\StoreController;
 use App\Http\Controllers\Api\ItemSupplierController;
+use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\PurchaseRequisitionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

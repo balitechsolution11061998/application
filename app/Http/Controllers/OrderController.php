@@ -177,14 +177,11 @@ class OrderController extends Controller
     {
         if ($request->ajax()) {
             try {
-                // Start timing and memory tracking
+                // Start tracking performance
                 $startTime = microtime(true);
                 $startMemory = memory_get_usage();
 
-                // Initialize an empty array to hold the results
-                $result = collect();
-
-                // Use chunking to process records in smaller batches
+                // Base query with joins and selections
                 $query = DB::table('ordhead')
                     ->leftJoin('ordsku', 'ordsku.order_no', '=', 'ordhead.order_no')
                     ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store')
@@ -201,20 +198,26 @@ class OrderController extends Controller
                     ->distinct()
                     ->orderBy('approval_date', 'desc');
 
-                // Apply the where clause if order_no is not null
+                // Apply filters
                 if (!empty($request->order_no)) {
                     $query->where('ordhead.order_no', $request->order_no);
                 }
 
-                // Chunk the results
-                $query->chunk(1000, function ($chunk) use ($result) {
+                if (!empty($request->filterDate)) {
+                    [$startDate, $endDate] = explode(' - ', $request->filterDate);
+                    $query->whereBetween('ordhead.approval_date', [$startDate, $endDate]);
+                }
+
+                // Prepare results for DataTables using chunking
+                $results = [];
+                $query->chunk(1000, function ($chunk) use (&$results) {
                     foreach ($chunk as $row) {
-                        $result->push($row);
+                        $results[] = $row;
                     }
                 });
 
-                // Prepare the data for DataTables
-                $datatableResult = DataTables::of($result)
+                // Transform the results for DataTables
+                return DataTables::of($results)
                     ->addColumn('action', function ($row) {
                         return '<button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px" data-kt-docs-datatable-subtable="expand_row">
                                     <span class="svg-icon fs-3 m-0 toggle-off">...</span>
@@ -230,20 +233,17 @@ class OrderController extends Controller
                     ->editColumn('supp_name', function ($row) {
                         return $row->supp_name ?? 'Not Found';
                     })
-                    ->rawColumns(['status', 'action']) // Allow HTML rendering
+                    ->rawColumns(['action']) // Allow HTML rendering
                     ->make(true);
 
-                // Log memory usage and load time using the helper function
-                SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderData');
-
-                // Return the result to DataTables
-                return $datatableResult;
             } catch (\Exception $e) {
                 return response()->json(['error' => 'An error occurred while fetching data. ' . $e->getMessage()], 500);
+            } finally {
+                // Log performance metrics
+                SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderData');
             }
         }
     }
-
 
 
     /**
