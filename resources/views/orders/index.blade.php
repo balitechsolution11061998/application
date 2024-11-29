@@ -110,15 +110,15 @@
         <div class="card-header d-flex justify-content-between align-items-center bg-light border-bottom-0">
             <h5 class="card-title mb-0 text-primary">Purchase Orders Management</h5>
             <div class="d-flex align-items-center gap-2">
-                <!-- Date input field for selecting the data sync date -->
+                <!-- Date Range Picker for Filtering -->
                 <div class="input-group input-group-sm">
                     <div class="input-group-prepend">
                         <span class="input-group-text bg-white border-secondary">
                             <i class="fas fa-calendar-alt"></i>
                         </span>
                     </div>
-                    <input type="date" id="syncDateInput" class="form-control border-secondary"
-                        placeholder="Select Date">
+                    <input type="text" id="filterDateRange" class="form-control border-secondary"
+                        placeholder="Select Date Range">
                 </div>
 
                 <!-- Input field for filtering by order_no -->
@@ -132,12 +132,24 @@
                     </div>
                 </div>
 
+                <!-- Date Picker for Syncing -->
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-white border-secondary">
+                            <i class="fas fa-calendar-alt"></i>
+                        </span>
+                    </div>
+                    <input type="date" id="syncDatePicker" class="form-control border-secondary"
+                        placeholder="Sync Date">
+                </div>
+
                 <!-- Sync data button -->
                 <button class="btn btn-outline-primary btn-sm" id="syncDataBtn">
                     <i class="fas fa-sync-alt"></i> Sync Data
                 </button>
             </div>
         </div>
+
 
 
 
@@ -210,7 +222,7 @@
         @endforeach
         <script>
             document.getElementById('syncDataBtn').addEventListener('click', function() {
-                const syncDate = document.getElementById('syncDateInput').value;
+                const syncDate = document.getElementById('syncDatePicker').value;
 
                 // Show confirmation dialog with SweetAlert2
                 Swal.fire({
@@ -342,6 +354,19 @@
 
             $(document).ready(function() {
                 fetchData();
+
+                $('#filterDateRange').daterangepicker({
+                    locale: {
+                        format: 'YYYY-MM-DD'
+                    },
+                    opens: 'left',
+                    maxDate: moment().add(1,
+                    'month'), // Membatasi hanya sampai satu bulan dari tanggal hari ini
+                }, function(start, end) {
+                    // Ketika pengguna memilih tanggal, update `maxDate` untuk membatasi hingga satu bulan dari `start`
+                    $('#filterDateRange').data('daterangepicker').setEndDate(moment(start).add(1, 'month'));
+                });
+
             });
 
             // Event Listener for the Filter Button
@@ -365,6 +390,7 @@
                         type: 'GET',
                         data: function(d) {
                             d.order_no = $('#filterOrderNo').val(); // Pass order number filter
+                            d.filterDate = $("#filterDateRange").val();
                         }
                     },
                     columns: [{

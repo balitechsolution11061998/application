@@ -1,88 +1,105 @@
 <x-default-layout>
     <link href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
 
-    <div class="container-fluid">
-        <div class="dashboard-header text-center mb-4">
-            <h2>Dashboard Pilkada</h2>
-            <p class="lead">View and sync the latest voting data</p>
+    <div class="container-fluid py-5 bg-light">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header text-center mb-5">
+            <h1 class="display-4 fw-bold">Dashboard Pilkada</h1>
+            <p class="lead text-muted">Monitor and sync the latest voting data seamlessly</p>
         </div>
 
-        <!-- Sync Data Buttons with Font Awesome Icons -->
-        <div class="d-flex justify-content-center mb-4">
-            <button id="syncProvinsiButton" class="btn btn-lg btn-primary shadow-sm mx-2">
-                <i class="fas fa-sync"></i> Sync Provinsi Data
+        <!-- Sync Data Buttons Section -->
+        <div class="d-flex justify-content-center flex-wrap gap-3 mb-5">
+            <button id="syncProvinsiButton" class="btn btn-primary btn-lg d-flex align-items-center gap-2 shadow">
+                <i class="fas fa-sync"></i>
+                <span>Sync Provinsi Data</span>
             </button>
-            <button id="syncKabupatenButton" class="btn btn-lg btn-success shadow-sm mx-2">
-                <i class="fas fa-sync"></i> Sync Kabupaten Data
+            <button id="syncKabupatenButton" class="btn btn-success btn-lg d-flex align-items-center gap-2 shadow">
+                <i class="fas fa-sync"></i>
+                <span>Sync Kabupaten Data</span>
             </button>
-            <button id="syncKecamatanButton" class="btn btn-lg btn-info shadow-sm mx-2">
-                <i class="fas fa-sync"></i> Sync Kecamatan Data
+            <button id="syncKecamatanButton" class="btn btn-info btn-lg d-flex align-items-center gap-2 shadow">
+                <i class="fas fa-sync"></i>
+                <span>Sync Kecamatan Data</span>
             </button>
-
-            <button id="syncKelurahanButton" class="btn btn-lg btn-secondary shadow-sm mx-2">
-                <i class="fas fa-sync"></i> Sync Kelurahan Data
+            <button id="syncKelurahanButton" class="btn btn-secondary btn-lg d-flex align-items-center gap-2 shadow">
+                <i class="fas fa-sync"></i>
+                <span>Sync Kelurahan Data</span>
             </button>
-
-            <button id="syncTpsButton" class="btn btn-lg btn-secondary shadow-sm mx-2">
-                <i class="fas fa-sync"></i> Sync TPS Data
+            <button id="syncTpsButton" class="btn btn-warning btn-lg d-flex align-items-center gap-2 shadow">
+                <i class="fas fa-sync"></i>
+                <span>Sync TPS Data</span>
             </button>
-
-            <button id="syncPilkadaButton" class="btn btn-lg btn-secondary shadow-sm mx-2">
-                <i class="fas fa-sync"></i> Sync Pilkada
+            <button id="syncPilkadaButton" class="btn btn-dark btn-lg d-flex align-items-center gap-2 shadow">
+                <i class="fas fa-sync"></i>
+                <span>Sync Pilkada</span>
             </button>
         </div>
 
         @if (count($provinces) > 1)
-            <!-- Province Select Dropdown -->
-            <div class="form-floating border rounded">
-                <select id="provinceSelect" class="form-select form-select-solid" placeholder="..."
-                    data-control="select2">
-                    <option></option> <!-- Placeholder -->
-                    @foreach ($provinces as $province)
-                        <option value="{{ $province->kode }}" data-kt-select2-country="{{ $province->flag_url ?? '' }}">
-                            {{ $province->nama }}
-                        </option>
-                    @endforeach
-                </select>
-                <label for="provinceSelect">Select a province</label>
-            </div>
-            <div class="form-floating border rounded mt-3">
-                <select id="kabupatenSelect" class="form-select form-select-solid" placeholder="Select a kabupaten"
-                    data-control="select2">
-                    <option></option> <!-- Placeholder -->
-                </select>
-                <label for="kabupatenSelect">Select a kabupaten</label>
+            <!-- Province and Location Select Dropdowns -->
+            <div class="row gy-4">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select id="provinceSelect" class="form-select" data-control="select2">
+                            <option></option>
+                            @foreach ($provinces as $province)
+                                <option value="{{ $province->kode }}" data-kt-select2-country="{{ $province->flag_url ?? '' }}">
+                                    {{ $province->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <label for="provinceSelect">Select a Province</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select id="kabupatenSelect" class="form-select" data-control="select2">
+                            <option></option>
+                        </select>
+                        <label for="kabupatenSelect">Select a Kabupaten</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select id="kecamatanSelect" class="form-select">
+                            <option></option>
+                        </select>
+                        <label for="kecamatanSelect">Select a Kecamatan</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select id="kelurahanSelect" class="form-select">
+                            <option></option>
+                        </select>
+                        <label for="kelurahanSelect">Select a Kelurahan</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select id="tpsSelect" class="form-select">
+                            <option></option>
+                        </select>
+                        <label for="tpsSelect">Select a TPS</label>
+                    </div>
+                </div>
             </div>
 
-            <!-- Kecamatan Select Dropdown -->
-            <div class="form-floating border rounded mt-3">
-                <select id="kecamatanSelect" class="form-select form-select-solid" placeholder="Select a kecamatan">
-                    <option></option> <!-- Placeholder -->
-                </select>
-                <label for="kecamatanSelect">Select a kecamatan</label>
-            </div>
-
-            <div class="form-floating border rounded mt-3">
-                <select id="kelurahanSelect" class="form-select form-select-solid" placeholder="Select a Kelurahan">
-                    <option></option> <!-- Placeholder -->
-                </select>
-                <label for="kelurahanSelect">Select a Kelurahan</label>
-            </div>
-
-            <div class="form-floating border rounded mt-3">
-                <select id="tpsSelect" class="form-select form-select-solid" placeholder="Select a TPS">
-                    <option></option> <!-- Placeholder -->
-                </select>
-                <label for="tpsSelect">Select a TPS</label>
-            </div>
-
-            <div class="container mt-4">
-                <h3 class="mb-4">Ringkasan Data TPS</h3>
-                <div id="summary" class="mb-4"></div>
-                <div id="chart" class="mt-4"></div>
+            <!-- Summary and Chart Section -->
+            <div class="container mt-5">
+                <h3 class="mb-4 text-center">Ringkasan Data TPS</h3>
+                <div id="summary" class="mb-4 p-4 border rounded bg-white shadow-sm">
+                    <p class="text-muted text-center">Summary will appear here</p>
+                </div>
+                <div id="chart" class="p-4 border rounded bg-white shadow-sm">
+                    <p class="text-muted text-center">Chart will be displayed here</p>
+                </div>
             </div>
         @endif
     </div>
+
 
     @push('scripts')
         <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
