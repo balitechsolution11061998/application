@@ -230,9 +230,7 @@ class OrderController extends Controller
                     ->editColumn('total_retail', function ($row) {
                         return '$' . number_format($row->total_retail, 2);
                     })
-                    ->editColumn('supp_name', function ($row) {
-                        return $row->supp_name ?? 'Not Found';
-                    })
+
                     ->rawColumns(['action']) // Allow HTML rendering
                     ->make(true);
 
