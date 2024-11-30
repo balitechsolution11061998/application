@@ -146,6 +146,29 @@
                 margin-right: 0.5rem;
                 /* Add space between the icon and text */
             }
+            .detail-column table {
+    font-size: 0.875rem; /* Slightly smaller font for compact look */
+}
+
+.detail-column .table th,
+.detail-column .table td {
+    padding: 0.75rem; /* Balanced padding */
+}
+
+.detail-column .table-hover tbody tr:hover {
+    background-color: #f8f9fa; /* Light hover effect */
+}
+
+.detail-column .table thead th {
+    background: linear-gradient(90deg, #343a40, #495057); /* Gradient header */
+    border-bottom: 2px solid #6c757d;
+}
+
+.detail-column .table-bordered th,
+.detail-column .table-bordered td {
+    border-color: #dee2e6;
+}
+
         </style>
     @endpush
 
@@ -189,7 +212,7 @@
                                 <div class="detail-value">
                                     <!-- Check if the delivery date is null -->
                                     <span id="deliveryDate">
-                                        @if($data['orderDetails']->estimated_delivery_date)
+                                        @if ($data['orderDetails']->estimated_delivery_date)
                                             @formattedDate($data['orderDetails']->estimated_delivery_date)
                                         @else
                                             <span class="text-muted">Not Available</span>
@@ -197,7 +220,8 @@
                                     </span>
 
                                     <!-- Spinner shown when data is being loaded or if null -->
-                                    <div id="spinnerDelivery" class="spinner-border spinner-border-sm text-primary d-none" role="status">
+                                    <div id="spinnerDelivery"
+                                        class="spinner-border spinner-border-sm text-primary d-none" role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                 </div>
@@ -240,13 +264,15 @@
                             <div class="detail-row">
                                 <div class="detail-label">Status</div>
                                 <div class="detail-value">
-                                    <span class="badge-status badge
+                                    <span
+                                        class="badge-status badge
                                         @if ($data['orderDetails']->status === 'Progress') badge-warning
                                         @elseif ($data['orderDetails']->status === 'Completed') badge-success
                                         @elseif ($data['orderDetails']->status === 'Expired') badge-danger
                                         @elseif ($data['orderDetails']->status === 'Printed') badge-info
                                         @else badge-secondary @endif text-white">
-                                        <i class="fas
+                                        <i
+                                            class="fas
                                             @if ($data['orderDetails']->status === 'Progress') fa-spinner fa-spin
                                             @elseif ($data['orderDetails']->status === 'Completed') fa-check-circle
                                             @elseif ($data['orderDetails']->status === 'Expired') fa-times-circle
@@ -318,15 +344,56 @@
                                 <div class="detail-value">{{ $data['supplier']['contact_name'] ?? 'N/A' }}</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
+                        <div class="col-md-12 detail-column">
+
+                            <div class="table-responsive">
+                                <table id="kt_datatable_both_scrolls" class="table gy-5 gs-7">
+                                    <thead class="table-dark">
+                                        <tr class="text-center">
+                                            <th>#</th>
+                                            <th>SKU</th>
+                                            <th>Description</th>
+                                            <th>UPC</th>
+                                            <th>Tag</th>
+                                            <th>Unit Cost</th>
+                                            <th>Unit Retail</th>
+                                            <th>VAT Cost</th>
+                                            <th>Quantity Ordered</th>
+                                            <th>Purchase UOM</th>
+                                            <th>Created At</th>
+                                            <th>Updated At</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($data['orderItems'] as $index => $item)
+                                            <tr>
+                                                <td class="text-center">{{ $index + 1 }}</td>
+                                                <td class="text-wrap">{{ $item->sku }}</td>
+                                                <td class="text-wrap">{{ $item->sku_desc }}</td>
+                                                <td class="text-center">{{ $item->upc }}</td>
+                                                <td class="text-center">{{ $item->tag_code }}</td>
+                                                <td class="text-end">{{ number_format($item->unit_cost, 2) }}</td>
+                                                <td class="text-end">{{ number_format($item->unit_retail, 2) }}</td>
+                                                <td class="text-end">{{ number_format($item->vat_cost, 2) }}</td>
+                                                <td class="text-center">{{ $item->qty_ordered }}</td>
+                                                <td class="text-center">{{ $item->purchase_uom }}</td>
+                                                <td class="text-center">{{ $item->created_at }}</td>
+                                                <td class="text-center">{{ $item->updated_at }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
                     </div>
+
                 </div>
             </div>
 
 
         </div>
+
 
 
 

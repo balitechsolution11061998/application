@@ -28,7 +28,6 @@ class DashboardPilkadaController extends Controller
         $response = Http::get($url);
         if ($response->ok()) {
             $data = $response->json();
-            dd($data);
 
             // Simpan data ke database
             Tungsura::create([

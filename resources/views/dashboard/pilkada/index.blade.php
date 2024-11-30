@@ -44,7 +44,8 @@
                         <select id="provinceSelect" class="form-select" data-control="select2">
                             <option></option>
                             @foreach ($provinces as $province)
-                                <option value="{{ $province->kode }}" data-kt-select2-country="{{ $province->flag_url ?? '' }}">
+                                <option value="{{ $province->kode }}"
+                                    data-kt-select2-country="{{ $province->flag_url ?? '' }}">
                                     {{ $province->nama }}
                                 </option>
                             @endforeach
@@ -91,11 +92,16 @@
             <div class="container mt-5">
                 <h3 class="mb-4 text-center">Ringkasan Data TPS</h3>
                 <div id="summary" class="mb-4 p-4 border rounded bg-white shadow-sm">
-                    <p class="text-muted text-center">Summary will appear here</p>
+                    <p class="text-center text-black">Summary will appear here</p>
                 </div>
+
                 <div id="chart" class="p-4 border rounded bg-white shadow-sm">
-                    <p class="text-muted text-center">Chart will be displayed here</p>
+                    <p class="text-muted text-center">Bar Chart will be displayed here</p>
                 </div>
+                <div id="pieChart" class="p-4 border rounded bg-white shadow-sm mt-4">
+                    <p class="text-muted text-center">Pie Chart will be displayed here</p>
+                </div>
+
             </div>
         @endif
     </div>
@@ -187,6 +193,7 @@
                     if (provinceId) {
                         fetchData(`/data-kabupaten?province_id=${provinceId}`, kabupatenSelect, "Kabupaten")
                             .then(() => {
+                                fetchChartData(provinceId);
                                 $('#kabupatenSelect').on('change.select2', function() {
                                     const kabupatenId = this.value;
                                     if (kabupatenId) {
@@ -194,6 +201,7 @@
                                                 `/data-kecamatan?province_id=${provinceId}&kabupaten_id=${kabupatenId}`,
                                                 kecamatanSelect, "Kecamatan")
                                             .then(() => {
+                                                fetchChartData(provinceId,kabupatenId);
                                                 $('#kecamatanSelect').on('change.select2',
                                                     function() {
                                                         const kecamatanId = this.value;
@@ -203,6 +211,7 @@
                                                                     kelurahanSelect,
                                                                     "Kelurahan")
                                                                 .then(() => {
+                                                                    fetchChartData(provinceId,kabupatenId,kecamatanId);
                                                                     $('#kelurahanSelect')
                                                                         .on('change.select2',
                                                                             function() {
@@ -448,19 +457,21 @@
 
             // Fetch data for the chart
             let chart; // Declare the chart instance globally or outside the function to reuse it.
+            let pieChart; // Declare the pie chart instance globally.
 
-            function fetchChartData(provinceId, kabupatenId, kecamatanId, kelurahanId, tpsId = null) {
+            function fetchChartData(provinceId, kabupatenId = null, kecamatanId = null, kelurahanId = null, tpsId = null) {
                 Swal.fire({
                     title: "Loading data...",
                     text: "Please wait while the data is being loaded.",
                     didOpen: () => Swal.showLoading(),
                 });
 
-                let apiUrl =
-                    `/data-pilkada?province_id=${provinceId}&kabupaten_id=${kabupatenId}&kecamatan_id=${kecamatanId}&kelurahan_id=${kelurahanId}`;
-                if (tpsId) {
-                    apiUrl += `&tps_id=${tpsId}`;
-                }
+                // Construct the API URL based on available parameters
+                let apiUrl = `/data-pilkada?province_id=${provinceId}`;
+                if (kabupatenId) apiUrl += `&kabupaten_id=${kabupatenId}`;
+                if (kecamatanId) apiUrl += `&kecamatan_id=${kecamatanId}`;
+                if (kelurahanId) apiUrl += `&kelurahan_id=${kelurahanId}`;
+                if (tpsId) apiUrl += `&tps_id=${tpsId}`;
 
                 fetch(apiUrl)
                     .then((response) => {
@@ -481,30 +492,41 @@
                             };
 
                             const chartData = data.data.reduce((acc, tps) => {
-                                const tungsuraData = JSON.parse(tps.tungsura_administrasi);
-                                summaryTotals.suara_sah += tungsuraData.suara_sah;
-                                summaryTotals.suara_total += tungsuraData.suara_total;
-                                summaryTotals.pemilih_dpt_l += tungsuraData.pemilih_dpt_l;
-                                summaryTotals.pemilih_dpt_j += tungsuraData.pemilih_dpt_j;
+                                // Check if tungsura_administrasi is valid and parse it
+                                let tungsuraData = null;
+                                try {
+                                    tungsuraData = JSON.parse(tps.tungsura_administrasi);
+                                } catch (e) {
+                                    console.error("Error parsing tungsura_administrasi:", e);
+                                }
 
-                                const tpsChartData = JSON.parse(tps.tungsura_chart);
-                                Object.entries(tpsChartData).forEach(([id, vote]) => {
-                                    if (!acc[id]) acc[id] = 0;
-                                    acc[id] += vote;
-                                });
+                                // Only proceed if tungsuraData is valid
+                                if (tungsuraData) {
+                                    summaryTotals.suara_sah += tungsuraData.suara_sah || 0;
+                                    summaryTotals.suara_total += tungsuraData.suara_total || 0;
+                                    summaryTotals.pemilih_dpt_l += tungsuraData.pemilih_dpt_l || 0;
+                                    summaryTotals.pemilih_dpt_j += tungsuraData.pemilih_dpt_j || 0;
+
+                                    const tpsChartData = JSON.parse(tps.tungsura_chart);
+                                    Object.entries(tpsChartData).forEach(([id, vote]) => {
+                                        if (!acc[id]) acc[id] = 0;
+                                        acc[id] += vote;
+                                    });
+                                }
                                 return acc;
                             }, {});
 
                             const summaryHtml = `
-                    <p><strong>Suara Sah:</strong> ${summaryTotals.suara_sah}</p>
-                    <p><strong>Suara Total:</strong> ${summaryTotals.suara_total}</p>
-                    <p><strong>Pemilih DPT (Laki-laki):</strong> ${summaryTotals.pemilih_dpt_l}</p>
-                    <p><strong>Pemilih DPT (Perempuan):</strong> ${summaryTotals.pemilih_dpt_j}</p>
+                    <p><strong style="color: black;">Suara Sah:</strong  style="color: black;> ${summaryTotals.suara_sah}</p>
+                    <p><strong style="color: black;">Suara Total:</strong  style="color: black;> ${summaryTotals.suara_total}</p>
+                    <p><strong style="color: black;">Pemilih DPT (Laki-laki):</strong  style="color: black;> ${summaryTotals.pemilih_dpt_l}</p>
+                    <p><strong style="color: black;">Pemilih DPT (Perempuan):</strong  style="color: black;> ${summaryTotals.pemilih_dpt_j}</p>
                 `;
                             document.querySelector("#summary").innerHTML = summaryHtml;
 
                             const totalVotes = Object.values(chartData).reduce((sum, vote) => sum + vote, 0);
-                            const totalVotesHtml = `<p><strong>Total Votes:</strong> ${totalVotes}</p>`;
+                            const totalVotesHtml =
+                                `<p><strong style="color: black;">Total Votes:</strong> ${totalVotes}</p>`;
                             document.querySelector("#summary").innerHTML += totalVotesHtml;
 
                             const candidateMapping = {
@@ -520,11 +542,17 @@
                                 if (id !== "null" && candidateMapping[id]) {
                                     categories.push(candidateMapping[id]);
                                     votes.push(vote);
-                                    colors.push(id === "1000037" ? "#003f5c" : "#d45087");
+                                    // Set color based on candidate
+                                    if (id === "1000037") {
+                                        colors.push("#0000FF"); // Blue for Paslon No. 1
+                                    } else if (id === "1000038") {
+                                        colors.push("#FF0000"); // Red for Paslon No. 2
+                                    }
                                 }
                             });
 
-                            const options = {
+                            // Bar Chart Options
+                            const barOptions = {
                                 chart: {
                                     type: 'bar',
                                     height: 350,
@@ -543,7 +571,7 @@
                                     },
                                 },
                                 title: {
-                                    text: 'Pilkada Kecamatan Voting Result',
+                                    text: 'Pilkada Voting Result (Bar Chart)',
                                     align: 'center'
                                 },
                                 xaxis: {
@@ -558,7 +586,7 @@
                                     name: "Votes",
                                     data: votes
                                 }],
-                                colors,
+                                colors, // Use the colors array with specific colors
                                 dataLabels: {
                                     enabled: true
                                 },
@@ -570,21 +598,61 @@
                                 },
                             };
 
+                            // Pie Chart Options
+                            const pieOptions = {
+                                chart: {
+                                    type: 'pie',
+                                    height: 350,
+                                },
+                                title: {
+                                    text: 'Pilkada Voting Result (Pie Chart)',
+                                    align: 'center'
+                                },
+                                series: votes,
+                                labels: categories,
+                                colors, // Use the colors array with specific colors
+                                dataLabels: {
+                                    enabled: true
+                                },
+                                tooltip: {
+                                    theme: 'light',
+                                    y: {
+                                        formatter: (val) => `${val} Votes`
+                                    },
+                                },
+                            };
+
+                            // Render Bar Chart
                             if (chart) {
-                                // Update the existing chart
-                                chart.updateOptions(options);
+                                // Update the existing bar chart
+                                chart.updateOptions(barOptions);
                                 chart.updateSeries([{
                                     name: "Votes",
                                     data: votes
                                 }]);
                             } else {
-                                // Create a new chart
-                                chart = new ApexCharts(document.querySelector("#chart"), options);
+                                // Create a new bar chart
+                                chart = new ApexCharts(document.querySelector("#chart"), barOptions);
                                 chart.render();
                             }
 
-                            toastr.success("Chart updated successfully.");
+                            // Render Pie Chart
+                            if (pieChart) {
+                                // Update the existing pie chart
+                                pieChart.updateOptions(pieOptions);
+                                pieChart.updateSeries(votes);
+                            } else {
+                                // Create a new pie chart
+                                pieChart = new ApexCharts(document.querySelector("#pieChart"), pieOptions);
+                                pieChart.render();
+                            }
+
+                            toastr.success("Charts updated successfully.");
                         } else {
+                            document.querySelector("#summary").innerHTML =
+                                "<p>No data available for the selected filters.</p>";
+                            if (chart) chart.destroy(); // Destroy chart if no data
+                            if (pieChart) pieChart.destroy(); // Destroy pie chart if no data
                             toastr.error(data.message || "No data available for the selected filters.");
                         }
                     })

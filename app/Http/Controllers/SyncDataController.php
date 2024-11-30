@@ -82,19 +82,22 @@ class SyncDataController extends Controller
         $kecamatanId = $request->query('kecamatan_id');
         $kelurahanId = $request->query('kelurahan_id');
         $tpsId = $request->query('tps_id');
-        if (!$provinceId || !$kabupatenId || !$kecamatanId || !$kelurahanId) {
-            return response()->json([
-                'message' => 'Province ID, Kabupaten ID, Kecamatan ID, and Kelurahan ID are required.'
-            ], 400);
-        }
 
         // Build the query
-        $query = SyncData::where('province_id', (int)$provinceId)
-            ->where('kabupaten_id', (int)$kabupatenId)
-            ->where('kecamatan_id', (int)$kecamatanId)
-            ->where('kelurahan_id', (int)$kelurahanId);
-        // Apply TPS ID filter only if it's not "all"
-        if ($tpsId) {
+        $query = SyncData::where('province_id', (int)$provinceId);
+
+        // Apply filters only if they are not null
+        if ($kabupatenId !== null) {
+            $query->where('kabupaten_id', (int)$kabupatenId);
+        }
+        if ($kecamatanId !== null) {
+            $query->where('kecamatan_id', (int)$kecamatanId);
+        }
+        if ($kelurahanId !== null) {
+            $query->where('kelurahan_id', (int)$kelurahanId);
+        }
+        // Apply TPS ID filter only if it's not null
+        if ($tpsId !== null) {
             $query->where('tps_id', (int)$tpsId);
         }
 

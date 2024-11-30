@@ -5,81 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CV of I Wayan Bayu Sulaksana</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.2.2/cdn.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        /* Progress bar animation and design */
-        .progress-bar-container {
-            width: 100%;
-            background-color: #e5e7eb;
+        /* Custom styles */
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+        }
+
+        .profile-image {
+            transition: transform 0.3s ease;
+            border: 4px solid #3b82f6; /* Blue border */
+        }
+
+        .profile-image:hover {
+            transform: scale(1.1);
+        }
+
+        .progress {
+            height: 1.5rem;
             border-radius: 9999px;
-            overflow: hidden;
-            position: relative;
         }
 
-        .progress-bar {
-            height: 1rem;
-            border-radius: 9999px;
-            background-image: linear-gradient(90deg, #3b82f6, #60a5fa);
-            animation: fillProgress 2s ease forwards;
-            background-size: 200% 100%;
-        }
-
-        .progress-bar::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 100%;
-            background-image: linear-gradient(45deg,
-                    rgba(255, 255, 255, 0.2) 25%,
-                    transparent 25%,
-                    transparent 50%,
-                    rgba(255, 255, 255, 0.2) 50%,
-                    rgba(255, 255, 255, 0.2) 75%,
-                    transparent 75%,
-                    transparent);
-            background-size: 1rem 1rem;
-            animation: stripe 1s linear infinite;
-        }
-
-        @keyframes fillProgress {
-            from {
-                width: 0;
-            }
-
-            to {
-                width: var(--progress-width);
-            }
-        }
-
-        @keyframes stripe {
-            from {
-                background-position: 1rem 0;
-            }
-
-            to {
-                background-position: 0 0;
-            }
-        }
-
-      /* Loading Spinner */
-      .loading {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f4f6;
-            border-top: 4px solid #4caf50;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Lightbox Styling */
         .lightbox-overlay {
             display: none;
             position: fixed;
@@ -92,6 +45,7 @@
             align-items: center;
             z-index: 1000;
         }
+
         .lightbox-img {
             max-width: 90%;
             max-height: 90%;
@@ -99,6 +53,7 @@
             opacity: 0;
             transition: opacity 0.5s ease; /* Fade-in effect */
         }
+
         .lightbox-close {
             position: absolute;
             top: 20px;
@@ -109,200 +64,198 @@
             cursor: pointer;
         }
 
-        /* Spinner Styling */
-        .spinner-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 2000;
+        .section-title {
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: #3b82f6;
         }
 
-        /* Profile Section Animation */
-        .profile-content {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-        .profile-content.visible {
-            opacity: 1;
-            transform: translateY(0);
+        .project-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
         }
 
-        /* Profile Image Fade-In and Zoom Effect */
-        .profile-image {
-            opacity: 0;
-            transform: scale(0.8);
-            transition: opacity 0.6s ease, transform 0.6s ease;
+        .project-card:hover {
+            transform: translateY(-5px);
         }
 
-        .profile-image.visible {
-            opacity: 1;
-            transform: scale(1);
+        footer {
+            background-color: #f1f1f1;
+            padding: 20px 0;
+            border-radius: 0 0 15px 15px;
         }
 
-        /* Zoom effect for profile image hover */
-        .profile-image:hover {
-            transform: scale(1.1);
+        .btn-custom {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .btn-custom:hover {
+            background-color: #2563eb;
         }
     </style>
 </head>
 
-<body class="bg-gray-100 font-sans leading-normal tracking-normal">
-    <div class="max-w-3xl mx-auto my-8 p-6 bg-white shadow-lg rounded-lg relative">
-        <!-- Profile Section -->
-        <div class="max-w-3xl mx-auto my-8 p-6 bg-white shadow-lg rounded-lg relative" id="resume-content">
+<body>
+    <div class="container my-5">
+        <div class="card shadow-lg">
             <!-- Loading Spinner -->
-            <div id="loading" class="flex justify-center items-center h-32">
-                <div class="loading"></div>
+            <div id="loading" class="d-flex justify-content-center align-items-center" style="height: 200px;">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
 
             <!-- Profile Content (Initially hidden until loading is complete) -->
-            <div id="profile-content" class="profile-content flex flex-col items-center mb-6 opacity-0 transform translate-y-4 transition-all duration-500 ease-in-out rounded-lg">
-                <img src="https://via.placeholder.com/200" alt="Profile Photo" class="w-32 h-32 rounded-full shadow-md mb-4 photo-effect profile-image" id="profile-image">
-                <h1 class="text-4xl font-semibold text-gray-800">I Wayan Bayu Sulaksana</h1>
-                <p class="text-xl text-gray-600">Informatics Student & Full Stack Developer</p>
-                <p class="text-gray-500 mt-2">Jl. Raya Ubud No.123, Ubud, Bali, Indonesia</p>
-                <p class="text-gray-500">Phone: +62 812 3456 7890 | Email: wayan.bayu@example.com</p>
+            <div id="profile-content" class="profile-content text-center mb-4 opacity-0" style="transition: opacity 0.5s ease;">
+                <img src="https://via.placeholder.com/200" alt="Profile Photo" class="profile-image rounded-circle mb-4" id="profile-image">
+                <h1 class="display-4">I Wayan Bayu Sulaksana</h1>
+                <p class="lead">Informatics Student & Full Stack Developer</p>
+                <p class="text-muted">Jl. Raya Ubud No.123, Ubud, Bali, Indonesia</p>
+                <p class="text-muted">Phone: +62 812 3456 7890 | Email: wayan.bayu@example.com</p>
             </div>
 
             <!-- Lightbox -->
             <div class="lightbox-overlay" id="lightbox">
                 <span class="lightbox-close" id="close-lightbox">✖</span>
-                <div class="spinner-container" id="spinner-container">
-                    <div class="loading"></div> <!-- Spinner -->
-                </div>
                 <img src="" id="lightbox-image" class="lightbox-img">
             </div>
+
+            <div class="card-body">
+                <section class="mb-4">
+                    <h2 class="h4 section-title">Profile</h2>
+                    <p>An Informatics student passionate about web and application development, with skills in programming, data analysis, and developing modern technology-based applications. Focused on problem-solving and creating efficient, user-friendly applications.</p>
+                </section>
+
+                <section class="mb-4">
+                    <h2 class="h4 section-title">Education</h2>
+                    <div>
+                        <h5>Bachelor's Degree in Informatics Engineering</h5>
+                        <p class="text-muted">Udayana University, Bali | 2020 - Present</p>
+                        <p class="text-muted">GPA: 3.8/4.0</p>
+                    </div>
+                </section>
+
+                <section class="mb-4">
+                    <h2 class="h4 section-title">Skills</h2>
+                    <div class="mb-3">
+                        <p>HTML</p>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 90%;" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <p>CSS & Tailwind</p>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <p>JavaScript</p>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 88%;" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <p>React & Node.js</p>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <p>Python & Machine Learning</p>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="mb-4 bg-light p-3 rounded">
+                    <h2 class="h4 section-title">Projects</h2>
+                    <div class="mt-3">
+                        <div class="d-flex align-items-start mb-3">
+                            <img src="https://via.placeholder.com/100" alt="Project 1" class="me-3" style="width: 100px; height: 100px;">
+                            <div>
+                                <h5>Personal Portfolio Website</h5>
+                                <p class="text-muted">Created a personal portfolio using HTML, CSS, and JavaScript to showcase projects and skills.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start mb-3">
+                            <img src="https://via.placeholder.com/100" alt="Project 2" class="me-3" style="width: 100px; height: 100px;">
+                            <div>
+                                <h5>E-commerce Information System</h5>
+                                <p class="text-muted">Built a prototype of an e-commerce platform using the MERN stack, including user authentication, shopping cart, and payment integration features.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start mb-3">
+                            <img src="https://via.placeholder.com/100" alt="Project 3" class="me-3" style="width: 100px; height: 100px;">
+                            <div>
+                                <h5>Task Management App</h5>
+                                <p class="text-muted">Developed a task management application using React and Firebase for real-time data synchronization.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start mb-3">
+                            <img src="https://via.placeholder.com/100" alt="Project 4" class="me-3" style="width: 100px; height: 100px;">
+                            <div>
+                                <h5>Blog Platform</h5>
+                                <p class="text-muted">Created a blogging platform with user authentication, allowing users to create, edit, and delete posts.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="mb-4">
+                    <h2 class="h4 section-title">Certifications</h2>
+                    <div class="mt-3">
+                        <p class="text-gray-800">Google IT Support Professional Certificate</p>
+                        <p class="text-muted">Issued by Google | Completed in 2022</p>
+                    </div>
+                    <div class="mt-3">
+                        <p class="text-gray-800">JavaScript and Web Development Certificate</p>
+                        <p class="text-muted">Issued by Udemy | Completed in 2023</p>
+                    </div>
+                </section>
+
+                <section class="mb-4">
+                    <h2 class="h4 section-title">Extracurriculars</h2>
+                    <div class="mt-3">
+                        <h5>Member of Game Development Club</h5>
+                        <p class="text-muted">Udayana University | 2021 - Present</p>
+                        <ul class="list-unstyled">
+                            <li>Participated in a project to create simple games using Unity and C#.</li>
+                            <li>Improved skills in programming and game design.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <footer class="text-center mt-4">
+                    <p class="text-muted">Contact me at:
+                        <a href="mailto:wayan.bayu@example.com" class="text-primary">wayan.bayu@example.com</a>
+                    </p>
+                    <p class="text-muted">Follow me on social media:</p>
+                    <div class="d-flex justify-content-center mt-2">
+                        <a href="https://linkedin.com/in/wayanbayusulaksana" class="text-primary me-3">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="https://github.com/wayanbayu" class="text-dark">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </footer>
+
+                <!-- Login Button -->
+                <div class="text-center mt-4">
+                    <a href="/login/form" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt me-2"></i> Login
+                    </a>
+                </div>
+            </div>
         </div>
-
-        <section class="mb-8">
-            <h2 class="text-2xl font-semibold text-gray-700">Profile</h2>
-            <p class="text-gray-700 mt-2">An Informatics student passionate about web and application development, with skills in programming, data analysis, and developing modern technology-based applications. Focused on problem-solving and creating efficient, user-friendly applications.</p>
-        </section>
-
-        <section class="mb-8">
-            <h2 class="text-2xl font-semibold text-gray-700">Education</h2>
-            <div class="mt-4">
-                <h3 class="text-xl font-semibold text-gray-800">Bachelor's Degree in Informatics Engineering</h3>
-                <p class="text-gray-600">Udayana University, Bali | 2020 - Present</p>
-                <p class="text-gray-600">GPA: 3.8/4.0</p>
-            </div>
-        </section>
-
-        <section class="mb-8">
-            <h2 class="text-2xl font-semibold text-gray-700">Skills</h2>
-            <div class="mt-4">
-                <div class="mb-4">
-                    <p class="text-gray-800">HTML</p>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" style="--progress-width: 90%;"></div>
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <p class="text-gray-800">CSS & Tailwind</p>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" style="--progress-width: 85%;"></div>
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <p class="text-gray-800">JavaScript</p>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" style="--progress-width: 88%;"></div>
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <p class="text-gray-800">React & Node.js</p>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" style="--progress-width: 80%;"></div>
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <p class="text-gray-800">Python & Machine Learning</p>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" style="--progress-width: 70%;"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="mb-8">
-            <h2 class="text-2xl font-semibold text-gray-700">Organizational Experience</h2>
-            <div class="mt-4">
-                <h3 class="text-xl font-semibold text-gray-800">Informatics Student Association (HIMATIKA)</h3>
-                <p class="text-gray-600">Head of IT Division | 2022 - Present</p>
-                <ul class="list-disc list-inside mt-2 text-gray-700">
-                    <li>Coordinating the team to manage the organization’s website and membership database.</li>
-                    <li>Leading the development of a web-based application for the student activity information system.</li>
-                </ul>
-            </div>
-        </section>
-
-        <section class="mb-8">
-            <h2 class="text-2xl font-semibold text-gray-700">Work Experience</h2>
-            <div class="mt-4">
-                <h3 class="text-xl font-semibold text-gray-800">Web Development Intern</h3>
-                <p class="text-gray-600">PT. Techno Solution, Bali | Jan 2023 - Present</p>
-                <ul class="list-disc list-inside mt-2 text-gray-700">
-                    <li>Participated in the development of a responsive web application using React and Node.js.</li>
-                    <li>Collaborated with designers for implementing user-friendly UI.</li>
-                </ul>
-            </div>
-        </section>
-
-        <section class="mb-8">
-            <h2 class="text-2xl font-semibold text-gray-700">Projects</h2>
-            <div class="mt-4">
-                <h3 class="text-xl font-semibold text-gray-800">Personal Portfolio Website</h3>
-                <p class="text-gray-600">Created a personal portfolio using HTML, CSS, and JavaScript to showcase projects and skills.</p>
-            </div>
-            <div class="mt-4">
-                <h3 class="text-xl font-semibold text-gray-800">E-commerce Information System (Final Project)</h3>
-                <p class="text-gray-600">Built a prototype of an e-commerce platform using the MERN stack, including user authentication, shopping cart, and payment integration features.</p>
-            </div>
-        </section>
-
-        <section class="mb-8">
-            <h2 class="text-2xl font-semibold text-gray-700">Certifications</h2>
-            <div class="mt-4">
-                <p class="text-gray-800">Google IT Support Professional Certificate</p>
-                <p class="text-gray-600">Issued by Google | Completed in 2022</p>
-            </div>
-            <div class="mt-4">
-                <p class="text-gray-800">JavaScript and Web Development Certificate</p>
-                <p class="text-gray-600">Issued by Udemy | Completed in 2023</p>
-            </div>
-        </section>
-
-        <section class="mb-8">
-            <h2 class="text-2xl font-semibold text-gray-700">Extracurriculars</h2>
-            <div class="mt-4">
-                <h3 class="text-xl font-semibold text-gray-800">Member of Game Development Club</h3>
-                <p class="text-gray-600">Udayana University | 2021 - Present</p>
-                <ul class="list-disc list-inside mt-2 text-gray-700">
-                    <li>Participated in a project to create simple games using Unity and C#.</li>
-                    <li>Improved skills in programming and game design.</li>
-                </ul>
-            </div>
-        </section>
-
-        <footer class="text-center mt-8">
-            <p class="text-gray-600">Contact me at:
-                <a href="mailto:wayan.bayu@example.com" class="text-blue-500 hover:underline">wayan.bayu@example.com</a>
-            </p>
-            <p class="text-gray-600">Follow me on social media:</p>
-            <div class="flex justify-center space-x-4 mt-2">
-                <a href="https://linkedin.com/in/wayanbayusulaksana" class="text-blue-500 hover:text-blue-700">
-                    <i class="fab fa-linkedin"></i> LinkedIn
-                </a>
-                <a href="https://github.com/wayanbayu" class="text-gray-800 hover:text-gray-600">
-                    <i class="fab fa-github"></i> GitHub
-                </a>
-            </div>
-        </footer>
     </div>
-
-
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
