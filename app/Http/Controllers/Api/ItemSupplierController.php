@@ -12,14 +12,10 @@ class ItemSupplierController extends Controller
     public function getData()
     {
         try {
-            $itemSuppliers = [];
 
             // Fetch item suppliers in chunks
-            DB::table('item_supplier')->orderBy('id')->chunk(2000, function ($suppliers) use (&$itemSuppliers) {
-                foreach ($suppliers as $supplier) {
-                    $itemSuppliers[] = $supplier;
-                }
-            });
+            $itemSuppliers = DB::table('item_supplier')->orderBy('id')->get();
+
 
             return response()->json([
                 'data' => $itemSuppliers,

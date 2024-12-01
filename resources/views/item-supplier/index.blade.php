@@ -44,6 +44,7 @@
                 <thead>
                     <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
                         <th class="min-w-100px">#</th>
+
                         <th class="min-w-100px">Supplier</th>
                         <th class="min-w-100px">Supplier Name</th>
                         <th class="min-w-100px">SKU</th>
@@ -53,6 +54,7 @@
                         <th class="min-w-100px">Created At</th>
                         <th class="min-w-100px">Updated At</th>
                         <th class="min-w-100px">VAT IND</th>
+                        <th class="min-w-100px">Action</th>
                     </tr>
                 </thead>
                 <tbody class="fw-bold text-gray-600">
@@ -66,7 +68,6 @@
     @push('scripts')
         <script>
             $(document).ready(function() {
-                // Initialize DataTable
                 const table = $('#po_table').DataTable({
                     processing: true,
                     serverSide: true,
@@ -116,15 +117,76 @@
                             data: 'vat_ind',
                             name: 'vat_ind',
                             render: function(data, type, row) {
-                                // Check if vat_ind is "Y"
                                 if (data === "Y") {
-                                    return '<span class="badge bg-success">Yes</span>'; // Bootstrap success badge
+                                    return '<span class="badge bg-success">Yes</span>';
                                 } else {
-                                    return '<span class="badge bg-danger">No</span>'; // Bootstrap danger badge
+                                    return '<span class="badge bg-danger">No</span>';
+                                }
+                            }
+                        },
+                        {
+                            data: null,
+                            orderable: false,
+                            searchable: false,
+                            render: function(data, type, row) {
+                                // Check if the SKU is a duplicate
+                                const isDuplicate = data.skuCount >
+                                1; // This will be set in drawCallback
+                                if (isDuplicate) {
+                                    return '<i class="fas fa-trash text-danger btn-delete" data-id="' +
+                                        row.id + '" style="cursor: pointer;"></i>';
+                                } else {
+                                    return ''; // No icon for non-duplicate entries
                                 }
                             }
                         }
                     ],
+                    drawCallback: function(settings) {
+                        const data = this.api().rows().data();
+                        const skuCount = {};
+
+                        // Count occurrences of each SKU
+                        data.each(function(item) {
+                            if (skuCount[item.sku]) {
+                                skuCount[item.sku]++;
+                            } else {
+                                skuCount[item.sku] = 1;
+                            }
+                        });
+
+                        // Highlight duplicates and set skuCount for rendering
+                        data.each(function(item, index) {
+                            if (skuCount[item.sku] > 1) {
+                                $(table.row(index).node()).addClass(
+                                'table-danger'); // Add Bootstrap danger class
+                                item.skuCount = skuCount[item.sku]; // Set skuCount for rendering
+                            } else {
+                                item.skuCount = 1; // Set to 1 for non-duplicates
+                            }
+                        });
+                    }
+                });
+
+                // Handle delete button click
+                $(document).on('click', '.btn-delete', function() {
+                    const itemId = $(this).data('id');
+
+                    // Confirm deletion
+                    if (confirm('Are you sure you want to delete this item?')) {
+                        $.ajax({
+                            url: '/item-suppliers/' + itemId, // Adjust the URL to your delete route
+                            type: 'DELETE',
+                            success: function(response) {
+                                // Refresh the DataTable
+                                table.ajax.reload();
+                                alert(response.message); // Show success message
+                            },
+                            error: function(xhr) {
+                                alert('Error deleting item: ' + xhr
+                                .responseText); // Show error message
+                            }
+                        });
+                    }
                 });
 
                 // Sync Data Button Click Event
@@ -164,8 +226,10 @@
                             });
 
                             // Send the data to your backend in chunks
-                            const chunkSize = 2000; // Define your chunk size
+                            const chunkSize = 100; // Define your chunk size
                             const totalChunks = Math.ceil(items.length / chunkSize);
+                            console.log('API Response:', items.length,totalChunks); // Log the response
+
                             let currentChunk = 0;
 
                             const sendChunk = () => {
@@ -184,7 +248,7 @@
                                         } else {
                                             // All chunks sent
                                             document.getElementById('progress').style.width =
-                                            '100%';
+                                                '100%';
                                             document.getElementById('progressText').innerText =
                                                 'Data synced successfully!';
                                             table.ajax.reload();
