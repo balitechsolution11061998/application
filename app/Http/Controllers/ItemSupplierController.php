@@ -9,70 +9,66 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ItemSupplierController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         return view('item-supplier.index');
     }
     public function store(Request $request)
     {
+        // Uncomment the line below for debugging
+        // dd($request->all());
+
         try {
-            $dataItem = '';
             $startTime = microtime(true);
             $datas = $request->all();
-            foreach ($datas as $data) {
+            $chunkSize = 100; // Define the size of each chunk
 
-                $itemSupplier = [
-                    'supplier' => $data['supplier'],
-                    'sup_name' => $data['sup_name'],
-                    'sku' => $data['sku'],
-                    'sku_desc' => $data['sku_desc'],
-                    'upc' => $data['upc'],
-                    'unit_cost' => $data['unit_cost'],
-                    'create_id' => $data['create_id'],
-                    'create_date' => $data['create_date'],
-                    'last_update_id' => $data['last_update_id'],
-                    'last_update_date' => $data['last_update_date'],
-                ];
-
-
-                // Check if the item exists in the database
-                $existingItem = DB::table('item_supplier')
-                    ->where('supplier', $data['supplier'])
-                    ->where('sup_name', $data['sup_name'])
-                    ->where('sku', $data['sku'])
-                    ->where('sku_desc', $data['sku_desc'])
-                    ->where('upc', $data['upc'])
-                    ->first();
-
-                if ($existingItem) {
-                    // If the item exists, update the fields without updating unit_cost
-                    DB::table('item_supplier')
-                        ->where('id', $existingItem->id)
-                        ->update([
+            // Process the data in chunks
+            foreach (array_chunk($datas, $chunkSize) as $chunk) {
+                foreach ($chunk as $data) {
+                    // Create or update the item supplier using Eloquent
+                    $itemSupplier = ItemSupplier::updateOrCreate(
+                        [
                             'supplier' => $data['supplier'],
                             'sup_name' => $data['sup_name'],
                             'sku' => $data['sku'],
                             'sku_desc' => $data['sku_desc'],
                             'upc' => $data['upc'],
+                        ],
+                        [
+                            'unit_cost' => $data['unit_cost'],
                             'create_id' => $data['create_id'],
                             'create_date' => $data['create_date'],
                             'last_update_id' => $data['last_update_id'],
                             'last_update_date' => $data['last_update_date'],
-                        ]);
-                } else {
-                    // If the item does not exist, insert the new item
-                    DB::table('item_supplier')->insert($itemSupplier);
+                            'vat_ind' => $data['vat_ind'],
+                        ]
+                    );
+
+                    // Log the activity based on whether it was created or updated
+                    if ($itemSupplier->wasRecentlyCreated) {
+                        activity()
+                            ->performedOn($itemSupplier)
+                            ->log('Inserted new item supplier: ' . $data['sku']);
+                    } else {
+                        activity()
+                            ->performedOn($itemSupplier)
+                            ->log('Updated item supplier: ' . $data['sku']);
+                    }
                 }
-
             }
-
 
             return response()->json([
                 'message' => 'Sukses insert item supplier',
                 'success' => true,
             ]);
         } catch (\Throwable $th) {
+            // Log the error activity
+            activity()
+                ->log('Failed to insert item supplier: ' . $th->getMessage());
+
             return response()->json([
-                'message' => 'Gagal insert item supplier',
+                'message' => 'Gagal insert item supplier: ' . $th->getMessage(),
                 'success' => false,
             ]);
         }
