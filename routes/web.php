@@ -128,6 +128,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('item-suppliers')->as('item-suppliers.')->group(function () {
         Route::get('/index', [ItemSupplierController::class, 'index'])->name('index');
         Route::get('/data', [ItemSupplierController::class, 'data'])->name('data');
+        Route::post('/store', [ItemSupplierController::class, 'store'])->name('store');
     });
 
     // Profile Picture Management Routes
