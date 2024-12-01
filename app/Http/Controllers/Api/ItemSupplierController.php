@@ -9,11 +9,17 @@ use Illuminate\Support\Facades\DB;
 
 class ItemSupplierController extends Controller
 {
-    public function get()
+    public function getData()
     {
         try {
-            // Fetch all item suppliers from the database
-            $itemSuppliers = DB::table('item_supplier')->get();
+            $itemSuppliers = [];
+
+            // Fetch item suppliers in chunks
+            DB::table('item_supplier')->orderBy('id')->chunk(100, function ($suppliers) use (&$itemSuppliers) {
+                foreach ($suppliers as $supplier) {
+                    $itemSuppliers[] = $supplier;
+                }
+            });
 
             return response()->json([
                 'data' => $itemSuppliers,
@@ -21,7 +27,7 @@ class ItemSupplierController extends Controller
             ]);
         } catch (\Throwable $th) {
             return response()->json([
-                'message' => 'Gagal mengambil data item supplier',
+                'message' => 'Gagal mengambil data item supplier: ' . $th->getMessage(),
                 'success' => false,
             ]);
         }

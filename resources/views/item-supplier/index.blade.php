@@ -11,6 +11,18 @@
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
         <style>
             /* Your existing styles */
+            .progress-bar-container {
+                width: 100%;
+                background-color: #f3f3f3;
+                border-radius: 10px;
+                overflow: hidden;
+                margin-top: 10px;
+            }
+            .progress-inner {
+                height: 20px;
+                background-color: #4caf50;
+                transition: width 0.3s ease;
+            }
         </style>
     @endpush
 
@@ -75,34 +87,52 @@
 
                 // Sync Data Button Click Event
                 $('#syncDataBtn').on('click', function() {
-                    // Show loading spinner or message
+                    // Show initial loading message
                     Swal.fire({
-                        title: 'Syncing Data...',
-                        text: 'Please wait while we sync data from the API.',
+                        title: 'Fetching Data...',
+                        text: 'Please wait while we fetch data from the API.',
                         allowOutsideClick: false,
-                        onBeforeOpen: () => {
+                        didOpen: () => {
                             Swal.showLoading();
                         }
                     });
 
                     // Fetch data from the API
-                    axios.get('https://publicconcerns.online/api/item-suppliers/getData') // Replace with your API endpoint
+                    axios.get('https://publicconcerns.online/api/itemsupplier/getData') // Replace with your API endpoint
                         .then(response => {
-                            // Assuming response.data contains the array of items
+                            console.log('response',response);
                             const items = response.data;
+
+                            // Show progress bar after data is fetched
+                            Swal.fire({
+                                title: 'Syncing Data...',
+                                html: `
+                                    <div class="progress-bar-container">
+                                        <div id="progress" class="progress-inner" style="width: 0%;"></div>
+                                    </div>
+                                    <p id="progressText" style="text-align: center;">Starting...</p>
+                                `,
+                                allowOutsideClick: false,
+                                showConfirmButton: false,
+                            });
 
                             // Send the data to your backend for insertion
                             return axios.post('{{ route('item-suppliers.store') }}', items);
                         })
                         .then(() => {
+                            // Update progress bar to 100%
+                            document.getElementById('progress').style.width = '100%';
+                            document.getElementById('progressText').innerText = 'Data synced successfully!';
+
+                            // Refresh the DataTable
+                            table.ajax.reload();
+
+                            // Show success message
                             Swal.fire({
                                 title: 'Success!',
                                 text: 'Data synced successfully.',
                                 icon: 'success',
                             });
-
-                            // Refresh the DataTable
-                            table.ajax.reload();
                         })
                         .catch(error => {
                             console.error('Error syncing data:', error);
