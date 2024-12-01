@@ -15,7 +15,7 @@ class ItemSupplierController extends Controller
             $itemSuppliers = [];
 
             // Fetch item suppliers in chunks
-            DB::table('item_supplier')->orderBy('id')->chunk(100, function ($suppliers) use (&$itemSuppliers) {
+            DB::table('item_supplier')->orderBy('id')->chunk(2000, function ($suppliers) use (&$itemSuppliers) {
                 foreach ($suppliers as $supplier) {
                     $itemSuppliers[] = $supplier;
                 }
