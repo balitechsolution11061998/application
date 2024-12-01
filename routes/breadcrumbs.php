@@ -48,6 +48,10 @@ Breadcrumbs::for('pemilu-dashboard', function (BreadcrumbTrail $trail) {
     $trail->push('Dashboard Pemilu', route('dashboard-pilkada.index'));
 });
 
+Breadcrumbs::for('item-suppliers', function (BreadcrumbTrail $trail) {
+    $trail->push('Item Supplier', route('item-suppliers.index'));
+});
+
 // Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
 //     $trail->push('Dashboard', route('example.dashboard.default'));
 // });

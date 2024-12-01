@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardPilkadaController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ItemSupplierController;
 use App\Http\Controllers\KabupatenController;
 use App\Http\Controllers\KecamatanController;
 use App\Http\Controllers\KelurahanController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\SystemUsageController;
 use App\Http\Controllers\TahunPelajaranController;
 use App\Http\Controllers\TpsController;
 use App\Http\Controllers\UserController;
+use App\Models\ItemSupplier;
 use Illuminate\Support\Facades\Route;
 
 // Web Routes
@@ -78,6 +80,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('/', RoleController::class)->parameters(['' => 'role'])->except(['show']);
     });
 
+    Route::prefix('activities')->as('activities.')->group(function () {
+        Route::get('/data', [ActivityController::class, 'getData'])->name('data');
+    });
+
     // Tahun Pelajaran Routes
     Route::resource('tahun-pelajaran', TahunPelajaranController::class);
     Route::get('tahun-pelajaran/data', [TahunPelajaranController::class, 'getData'])->name('tahun-pelajaran.getData');
@@ -114,7 +120,14 @@ Route::middleware('auth')->group(function () {
     Route::prefix('purchase-orders')->as('purchase-orders.')->group(function () {
         Route::get('/getOrders', [OrderController::class, 'getOrders'])->name('getOrders');
         Route::get('/data', [OrderController::class, 'data'])->name('data');
-        Route::resource('/', OrderController::class)->parameters(['' => 'order'])->except(['show']);
+        Route::post('/store', [OrderController::class, 'store'])->name('store');
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+        Route::get('/show/{id}', [OrderController::class, 'show'])->name('show');
+    });
+
+    Route::prefix('item-suppliers')->as('item-suppliers.')->group(function () {
+        Route::get('/index', [ItemSupplierController::class, 'index'])->name('index');
+        Route::get('/data', [ItemSupplierController::class, 'data'])->name('data');
     });
 
     // Profile Picture Management Routes

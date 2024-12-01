@@ -9,6 +9,23 @@ use Illuminate\Support\Facades\DB;
 
 class ItemSupplierController extends Controller
 {
+    public function get()
+    {
+        try {
+            // Fetch all item suppliers from the database
+            $itemSuppliers = DB::table('item_supplier')->get();
+
+            return response()->json([
+                'data' => $itemSuppliers,
+                'success' => true,
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Gagal mengambil data item supplier',
+                'success' => false,
+            ]);
+        }
+    }
     //
     public function store(Request $request)
     {
@@ -62,7 +79,6 @@ class ItemSupplierController extends Controller
                     // If the item does not exist, insert the new item
                     DB::table('item_supplier')->insert($itemSupplier);
                 }
-
             }
 
             // $executionTime = $endTime - $startTime;
