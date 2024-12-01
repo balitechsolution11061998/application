@@ -48,7 +48,7 @@ Route::prefix('po')->group(function () {
 
 // Item Supplier Routes
 Route::post('/itemsupplier/store', [ItemSupplierController::class, 'store']);
-Route::get('/itemsupplier/get', [ItemSupplierController::class, 'get']);
+Route::get('/itemsupplier/getData', [ItemSupplierController::class, 'get']);
 
 
 // Receive (RCV) Routes
