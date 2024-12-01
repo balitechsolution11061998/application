@@ -21,6 +21,11 @@
       background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
       backdrop-filter: blur(10px); /* Optional: adds a blur effect */
       z-index: 1000; /* Ensure navbar is above other elements */
+      transition: background-color 0.3s ease; /* Smooth transition */
+    }
+
+    .navbar.scrolled {
+      background-color: rgba(255, 255, 255, 1); /* Solid white when scrolled */
     }
 
     .navbar-nav .nav-link {
@@ -32,9 +37,16 @@
       transform: scale(1.1); /* Slightly scale up on hover */
     }
 
+    .logo {
+      width: 100px; /* Set a fixed width */
+      height: 100px; /* Set a fixed height */
+      object-fit: cover; /* Ensure the image covers the area */
+      border-radius: 50%; /* Make logo rounded */
+    }
+
     .hero-section {
-      background: linear-gradient(rgba(255, 223, 0, 0.8), rgba(255, 223, 0, 0.8)), url('background-image.jpg') no-repeat center center;
-      background-size: cover;
+      background: url('img/background/backgroundkoperasi.jpg') no-repeat center center; /* Set your background image */
+      background-size: cover; /* Cover the entire section */
       color: white;
       min-height: 100vh;
       display: flex;
@@ -44,38 +56,20 @@
       position: relative;
     }
 
-    .hero-title {
-      font-size: 3rem;
-      font-weight: bold;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    }
-
-    .hero-subtitle {
-      font-size: 1.5rem;
-      margin-top: 10px;
-      color: #f8f9fa;
-    }
-
-    .logo {
+    .hero-section::before {
+      content: '';
       position: absolute;
-      top: 20px;
-      left: 20px;
-      width: 100px;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+      z-index: 1; /* Ensure the overlay is above the background but below the text */
     }
 
     .animated-title {
-      animation: fadeInDown 2s;
-    }
-
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-50px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      position: relative; /* Position relative to allow z-index to work */
+      z-index: 2; /* Ensure text is above the overlay */
     }
 
     .content-section {
@@ -109,103 +103,6 @@
       color: #ffc107;
     }
 
-    .testimonial {
-      background-color: #e9ecef;
-      border-radius: 10px;
-      padding: 20px;
-      margin: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .about-section {
-      display: none; /* Initially hidden */
-      animation: fadeIn 0.5s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-
-    /* Custom styles for the loan calculation section */
-    .loan-calculation-card {
-      background-color: #ffffff;
-      border-radius: 10px;
-      padding: 30px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .loan-calculation-card h2 {
-      margin-bottom: 20px;
-      color: #007bff; /* Primary color */
-      font-family: 'Montserrat', sans-serif; /* Use Montserrat for headings */
-    }
-
-    .result {
-      margin-top: 20px;
-      padding: 15px;
-      border: 1px solid #ced4da;
-      border-radius: 10px; /* Rounded corners */
-      background-color: #f8f9fa;
-      text-align: left; /* Align text to the left */
-      animation: fadeIn 0.5s ease-in-out; /* Animation for showing results */
-    }
-
-    .input-group-text {
-      background-color: #007bff; /* Primary color */
-      color: white;
-    }
-
-    .btn-primary {
-      background-color: #007bff; /* Primary color */
-      border-color: #007bff;
-    }
-
-    .btn-primary:hover {
-      background-color: #0056b3; /* Darker shade on hover */
-      border-color: #0056b3;
-    }
-
-    /* Styles for Contact Us section */
-    .contact-card {
-      background-color: #e9ecef; /* Light background color */
-      border-radius: 10px;
-      padding: 30px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      margin-top: 40px;
-    }
-
-    .contact-card h2 {
-      margin-bottom: 20px;
-      color: #007bff; /* Primary color */
-      font-family: 'Montserrat', sans-serif; /* Use Montserrat for headings */
-    }
-
-    .form-control {
-      border-radius: 5px; /* Rounded corners for input fields */
-    }
-
-    .btn-left {
-      float: left; /* Align button to the left */
-    }
-
-    /* Styles for Testimonials Section */
-    .testimonial-card {
-      background-color: #ffffff; /* White background for testimonials */
-      border-radius: 10px;
-      padding: 20px;
-      margin: 10px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .testimonial-card h5 {
-      color: #007bff; /* Primary color */
-    }
-
     /* Back to Top Button */
     #backToTop {
       position: fixed;
@@ -225,18 +122,35 @@
     #backToTop:hover {
       background-color: #0056b3; /* Darker shade on hover */
     }
+
+    /* Fade-in Animation */
+    .fade-in {
+      opacity: 0; /* Start hidden */
+      transform: translateY(20px); /* Start slightly below */
+      transition: opacity 0.5s ease, transform 0.5s ease; /* Transition for opacity and position */
+    }
+
+    .fade-in.visible {
+      opacity: 1; /* Fully visible */
+      transform: translateY(0); /* Move to original position */
+    }
   </style>
 </head>
 <body>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg bg-transparent position-absolute w-100 px-4">
+  <nav class="navbar navbar-expand-lg bg-transparent position-fixed w-100 px-4">
     <div class="container">
-      <img src="{{ asset('img/logo/logokoperasi.png') }}" alt="Logo" class="logo">
-      <div class="navbar-nav ms-auto">
-        <a href="#aboutSection" class="nav-link"><i class="fas fa-info-circle"></i> About</a>
-        <a href="#contactSection" class="nav-link"><i class="fas fa-envelope"></i> Contact Us</a>
-        <a href="#" class="nav-link"><i class="fas fa-home"></i> Home</a>
-        <a href="#" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+      <img src="{{ asset('img/logo/logokoperasi.png') }}" alt="Logo" class="logo"> <!-- Logo with rounded style -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="navbar-nav ms-auto">
+          <a href="#aboutSection" class="nav-link"><i class="fas fa-info-circle"></i> About</a>
+          <a href="#contactSection" class="nav-link"><i class="fas fa-envelope"></i> Contact Us</a>
+          <a href="#" class="nav-link"><i class="fas fa-home"></i> Home</a>
+          <a href="#" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+        </div>
       </div>
     </div>
   </nav>
@@ -257,7 +171,7 @@
   </section>
 
   <!-- About Section -->
-  <section id="aboutSection" class="content-section collapse about-section">
+  <section id="aboutSection" class="content-section fade-in">
     <div class="container text-center">
       <h2>About Us</h2>
       <p class="mt-4">Koperasi Artha Niaga is a cooperative that provides financial services to its members. Our mission is to promote savings and provide loans to help our members achieve their financial goals.</p>
@@ -267,7 +181,7 @@
   </section>
 
   <!-- Loan Calculation Section -->
-  <section class="content-section">
+  <section class="content-section fade-in">
     <div class="container text-center">
       <div class="loan-calculation-card">
         <h2><i class="fas fa-calculator"></i> Hitung Pinjaman</h2>
@@ -284,7 +198,7 @@
   </section>
 
   <!-- Testimonials Section -->
-  <section class="content-section" style="background-color: #f0f4ff;"> <!-- Set a soft background color -->
+  <section class="content-section fade-in" style="background-color: #f0f4ff;"> <!-- Set a soft background color -->
     <div class="container text-center">
       <h2 class="mb-4" style="font-family: 'Montserrat', sans-serif; color: #007bff;">What Our Members Say</h2>
       <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000" style="max-width: 800px; margin: auto;"> <!-- Set max width and center the carousel -->
@@ -333,7 +247,7 @@
   </section>
 
   <!-- Contact Us Section -->
-  <section id="contactSection" class="content-section">
+  <section id="contactSection" class="content-section fade-in">
     <div class="container text-center">
       <div class="contact-card">
         <h2><i class="fas fa-envelope"></i> Contact Us</h2>
@@ -366,7 +280,7 @@
   </section>
 
   <!-- Services Section -->
-  <section class="content-section">
+  <section class="content-section fade-in">
     <div class="container text-center">
       <h2>Our Services</h2>
       <div class="row mt-4">
@@ -461,11 +375,24 @@
     // Back to Top Functionality
     window.onscroll = function() {
       const backToTopButton = document.getElementById("backToTop");
+      const navbar = document.querySelector('.navbar');
+      const fadeInElements = document.querySelectorAll('.fade-in');
+
       if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
         backToTopButton.style.display = "block"; // Show button
+        navbar.classList.add('scrolled'); // Add class when scrolled down
       } else {
         backToTopButton.style.display = "none"; // Hide button
+        navbar.classList.remove('scrolled'); // Remove class when at the top
       }
+
+      // Show fade-in elements
+      fadeInElements.forEach(element => {
+        const rect = element.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          element.classList.add('visible'); // Add visible class when in view
+        }
+      });
     };
 
     function scrollToTop() {
