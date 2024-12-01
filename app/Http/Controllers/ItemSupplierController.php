@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ItemSupplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class ItemSupplierController extends Controller
 {
+    public function index(){
+        return view('item-supplier.index');
+    }
     public function store(Request $request)
     {
         try {
@@ -71,5 +76,14 @@ class ItemSupplierController extends Controller
                 'success' => false,
             ]);
         }
+    }
+
+    public function data()
+    {
+        $query = ItemSupplier::select('supplier', 'sup_name', 'sku', 'sku_desc', 'upc', 'unit_cost', 'create_date', 'last_update_date');
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->make(true);
     }
 }

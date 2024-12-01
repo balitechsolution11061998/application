@@ -146,27 +146,48 @@
                 margin-right: 0.5rem;
                 /* Add space between the icon and text */
             }
-            .detail-column table {
-    font-size: 0.875rem; /* Slightly smaller font for compact look */
+
+            .table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.detail-column .table th,
-.detail-column .table td {
-    padding: 0.75rem; /* Balanced padding */
+.table-dark {
+    background-color: #343a40; /* Warna latar belakang untuk header */
 }
 
-.detail-column .table-hover tbody tr:hover {
-    background-color: #f8f9fa; /* Light hover effect */
+.table-dark th {
+    color: white; /* Warna teks untuk header */
 }
 
-.detail-column .table thead th {
-    background: linear-gradient(90deg, #343a40, #495057); /* Gradient header */
-    border-bottom: 2px solid #6c757d;
+.table th, .table td {
+    border: 1px solid #ddd; /* Garis batas */
+    padding: 8px; /* Jarak dalam sel */
+    text-align: left; /* Rata kiri untuk teks */
 }
 
-.detail-column .table-bordered th,
-.detail-column .table-bordered td {
-    border-color: #dee2e6;
+.table tr:nth-child(even) {
+    background-color: #f2f2f2; /* Warna latar belakang untuk baris genap */
+}
+
+.table tr:hover {
+    background-color: #e9ecef; /* Warna latar belakang saat hover */
+}
+
+.text-center {
+    text-align: center; /* Rata tengah untuk teks */
+}
+
+.text-end {
+    text-align: right; /* Rata kanan untuk teks */
+}
+
+.text-wrap {
+    word-wrap: break-word; /* Memungkinkan teks panjang untuk dibungkus */
+}
+
+.black-text {
+    color: black; /* Warna teks hitam */
 }
 
         </style>
@@ -347,7 +368,7 @@
                         <div class="col-md-12 detail-column">
 
                             <div class="table-responsive">
-                                <table id="kt_datatable_both_scrolls" class="table gy-5 gs-7">
+                                <table id="kt_datatable_both_scrolls" class="table gy-5 gs-7 black-text">
                                     <thead class="table-dark">
                                         <tr class="text-center">
                                             <th>#</th>
@@ -383,6 +404,8 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+
+
                             </div>
                         </div>
 
