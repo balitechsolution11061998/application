@@ -392,11 +392,11 @@
                                             <th>Regular Discount</th>
                                             <th>Total</th>
                                             <th>Total PPN</th>
-                                            <th>Sub Total</th>
                                             <th>Total Discount</th> <!-- New column for Total Discount -->
+                                            <th>Sub Total</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody style="background-color: white; color: black;">
                                         @php
                                             $totalCost = 0; // Initialize total cost
                                             $totalPPN = 0; // Initialize total PPN
@@ -406,19 +406,13 @@
                                             @php
                                                 // Calculate item total before discount
                                                 $itemTotal = $item->qty_ordered * $item->unit_cost; // Total before discount
-                                                $discountAmount =
-                                                    $item->permanent_disc_pct > 0
-                                                        ? $itemTotal * ($item->permanent_disc_pct / 100)
-                                                        : 0; // Calculate discount amount
+                                                $discountAmount = ($item->permanent_disc_pct > 0) ? ($itemTotal * ($item->permanent_disc_pct / 100)) : 0; // Calculate discount amount
                                                 $itemTotalAfterDiscount = $itemTotal - $discountAmount; // Adjust item total after discount
                                                 $totalCost += $itemTotalAfterDiscount; // Add item total to total cost
 
                                                 // Calculate VAT total based on the original item total
                                                 $vatAmount = $item->vat_cost * $item->qty_ordered; // Total VAT before discount
-                                                $discountAmountPPN =
-                                                    $item->permanent_disc_pct > 0
-                                                        ? $vatAmount * ($item->permanent_disc_pct / 100)
-                                                        : 0; // Calculate discount amount for VAT
+                                                $discountAmountPPN = ($item->permanent_disc_pct > 0) ? ($vatAmount * ($item->permanent_disc_pct / 100)) : 0; // Calculate discount amount for VAT
 
                                                 $vat_costTotal = $vatAmount - $discountAmountPPN; // Adjust VAT cost after discount
                                                 $totalPPN += $vat_costTotal; // Add to total PPN
@@ -431,46 +425,42 @@
                                             @endphp
                                             <tr>
                                                 <td class="text-center">{{ $index + 1 }}</td>
-                                                <td class="text-wrap">{{ $item->sku }}</td>
+                                                <td class="text-wrap">
+                                                    <i class="fas fa-tag" style="color: #007bff;"></i> {{ $item->sku }}
+                                                </td>
                                                 <td class="text-wrap">{{ $item->sku_desc }}</td>
-                                                <td class="text-center">{{ $item->upc }}</td>
+                                                <td class="text-center">
+                                                    <i class="fas fa-barcode" style="color: #28a745;"></i> {{ $item->upc }}
+                                                </td>
                                                 <td class="text-center">{{ $item->tag_code }}</td>
                                                 <td class="text-end">{{ number_format($item->unit_cost, 2) }}</td>
                                                 <td class="text-end">{{ number_format($item->unit_retail, 2) }}</td>
                                                 <td class="text-center">
                                                     @if (is_null($item->itemSupplier))
                                                         <span class="badge bg-secondary">
-                                                            <i class="fas fa-exclamation-circle"
-                                                                style="color: red;"></i> Tidak Ada Data
+                                                            <i class="fas fa-exclamation-circle" style="color: red;"></i> Tidak Ada Data
                                                         </span>
                                                     @elseif($item->itemSupplier->vat_ind === 'Y')
                                                         <span class="badge bg-success">
-                                                            <i class="fas fa-check-circle" style="color: red;"></i>
-                                                            PPN
+                                                            <i class="fas fa-check-circle" style="color: green;"></i> PPN
                                                         </span>
                                                     @else
                                                         <span class="badge bg-danger">
-                                                            <i class="fas fa-times-circle" style="color: red;"></i> No
-                                                            PPN
+                                                            <i class="fas fa-times-circle" style="color: red;"></i> No PPN
                                                         </span>
                                                     @endif
                                                 </td>
-                                                <td class="text-end">{{ number_format($vat_costTotal, 2) }}</td>
-                                                <!-- Total PPN for the item -->
+                                                <td class="text-end">{{ number_format($vat_costTotal, 2) }}</td> <!-- Total PPN for the item -->
                                                 <td class="text-center">{{ $item->qty_ordered }}</td>
                                                 <td class="text-center">{{ $item->purchase_uom }}</td>
                                                 <td class="text-center">
                                                     {{ $item->permanent_disc_pct > 0 ? $item->permanent_disc_pct . '%' : '0%' }}
                                                 </td> <!-- Displaying percentage -->
 
-                                                <td class="text-end">{{ number_format($itemTotalAfterDiscount, 2) }}
-                                                </td> <!-- Total for the item after discount -->
-                                                <td class="text-end">{{ number_format($vat_costTotal, 2) }}</td>
-                                                <!-- Total PPN for the item -->
-                                                <td class="text-end">{{ number_format($subTotal, 2) }}</td>
-                                                <!-- Sub Total for the item -->
-                                                <td class="text-end">{{ number_format($discountAmount, 2) }}</td>
-                                                <!-- Total Discount for the item -->
+                                                <td class="text-end">{{ number_format($itemTotalAfterDiscount, 2) }}</td> <!-- Total for the item after discount -->
+                                                <td class="text-end">{{ number_format($vat_costTotal, 2) }}</td> <!-- Total PPN for the item -->
+                                                <td class="text-end">{{ number_format($discountAmount, 2) }}</td> <!-- Total Discount for the item -->
+                                                <td class="text-end">{{ number_format($subTotal, 2) }}</td> <!-- Sub Total for the item -->
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -480,20 +470,26 @@
                                             $grandTotal = $totalCost + $totalPPN; // Grand total without discount
                                         @endphp
                                         <tr class="table-dark">
-                                            <td colspan="12" class="text-end text-white"><strong>Grand
-                                                    Total:</strong></td>
-                                            <td class="text-end text-white">{{ number_format($totalCost, 2) }}</td>
-                                            <!-- Total Cost before discount -->
-                                            <td class="text-end text-white">{{ number_format($totalPPN, 2) }}</td>
-                                            <!-- Total PPN -->
-                                            <td class="text-end text-white">{{ number_format($grandTotal, 2) }}</td>
-                                            <!-- Grand Total after discount -->
-                                            <td class="text-end text-white">{{ number_format($totalDiscount, 2) }}
-                                            </td> <!-- Grand Total after discount -->
-
+                                            <td colspan="15" class="text-end text-white"><strong>TOTAL DISCOUNT:</strong></td>
+                                            <td class="text-end text-white">{{ number_format($totalDiscount, 2) }}</td> <!-- Total Discount for all items -->
+                                        </tr>
+                                        <tr class="table-dark">
+                                            <td colspan="15" class="text-end text-white"><strong>TOTAL (before PPN):</strong></td>
+                                            <td class="text-end text-white">{{ number_format($totalCost, 2) }}</td> <!-- Total Cost before discount -->
+                                        </tr>
+                                        <tr class="table-dark">
+                                            <td colspan="15" class="text-end text-white"><strong>PPN:</strong></td>
+                                            <td class="text-end text-white">{{ number_format($totalPPN, 2) }}</td> <!-- Total PPN -->
+                                        </tr>
+                                        <tr class="table-dark">
+                                            <td colspan="15" class="text-end text-white"><strong>TOTAL (after PPN - Discount):</strong></td>
+                                            <td class="text-end text-white">{{ number_format($grandTotal, 2) }}</td> <!-- Grand Total after discount -->
                                         </tr>
                                     </tfoot>
                                 </table>
+
+
+
 
 
 
@@ -527,12 +523,7 @@
                 }, 2000); // Adjust the time as needed
             };
 
-            $(document).ready(function() {
-                $('#kt_datatable_both_scrolls').DataTable({
-                    responsive: true,
-                    // You can add more options here if needed
-                });
-            });
+
         </script>
     @endpush
 </x-default-layout>
