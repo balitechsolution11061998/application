@@ -39,16 +39,6 @@
             border-bottom-right-radius: 1rem;
         }
 
-        .rounded-l-xl {
-            border-top-left-radius: 1rem;
-            border-bottom-left-radius: 1rem;
-        }
-
-        .rounded-r-xl {
-            border-top-right-radius: 1rem;
-            border-bottom-right-radius: 1rem;
-        }
-
         .shadow-lg {
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
@@ -73,7 +63,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 w-full max-w-4xl mx-auto animate__animated animate__fadeInUp">
         <!-- Kolom Kiri: Gambar Ponsel -->
         <div
-            class="flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-l-xl overflow-hidden shadow-lg transition-transform transform hover:scale-105">
+            class="hidden md:flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-l-xl overflow-hidden shadow-lg transition-transform transform hover:scale-105">
             <img src="{{ asset('img/background/about-img.png') }}" alt="Phone Image" class="w-3/4 md:w-2/3">
         </div>
 
@@ -99,16 +89,16 @@
                 @csrf
 
                 <div class="mb-5">
-                    <label for="email"
-                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                    <label for="login"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email or Username</label>
                     <div class="relative mt-2">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-envelope text-gray-400"></i>
+                            <i class="fas fa-user text-gray-400"></i>
                         </div>
                         <input id="login" type="text" name="login" value="{{ old('login') }}"
                         class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                         placeholder="Enter your username or email" required autofocus>
-                        @error('email')
+                        @error('login')
                             <p class="mt-2 text-sm text-red-600">
                                 <i class="fas fa-exclamation-circle"></i> {{ $message }}
                             </p>
@@ -145,9 +135,9 @@
                         Me</label>
                 </div>
 
-                <div class=" mb-4">
+                <div class="mb-4">
                     <button type="button" id="loginButton"
-                        class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600">
+                        class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 transition duration-300 ease-in-out">
                         <i class="fas fa-sign-in-alt"></i> Login
                     </button>
                 </div>

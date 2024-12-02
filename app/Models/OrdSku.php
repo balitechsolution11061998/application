@@ -10,4 +10,9 @@ class OrdSku extends Model
     use HasFactory;
     protected $table = 'ordsku';
     public $guarded = [];
+
+    public function itemSupplier()
+    {
+        return $this->belongsTo(ItemSupplier::class, 'sku', 'sku');
+    }
 }

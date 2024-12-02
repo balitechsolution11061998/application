@@ -21,18 +21,22 @@ class ItemSupplierController extends Controller
         try {
             $startTime = microtime(true);
             $datas = $request->all(); // Get all data from the request
+            // Log the total number of items received
+
             // Process the data without chunking
             foreach ($datas as $data) {
+                // Log each item being processed
+
                 // Create or update the item supplier using Eloquent
                 $itemSupplier = ItemSupplier::updateOrCreate(
                     [
                         'supplier' => $data['supplier'],
-                        'sup_name' => $data['sup_name'],
                         'sku' => $data['sku'],
-                        'sku_desc' => $data['sku_desc'],
                         'upc' => $data['upc'],
                     ],
                     [
+                        'sup_name' => $data['sup_name'],
+                        'sku_desc' => $data['sku_desc'],
                         'unit_cost' => $data['unit_cost'],
                         'create_id' => $data['create_id'],
                         'create_date' => $data['create_date'],
@@ -60,8 +64,7 @@ class ItemSupplierController extends Controller
             ]);
         } catch (\Throwable $th) {
             // Log the error activity
-            activity()
-                ->log('Failed to insert item supplier: ' . $th->getMessage());
+            \Log::error('Failed to insert item supplier: ' . $th->getMessage());
 
             return response()->json([
                 'message' => 'Gagal insert item supplier: ' . $th->getMessage(),
@@ -69,6 +72,7 @@ class ItemSupplierController extends Controller
             ]);
         }
     }
+
 
     public function data()
     {

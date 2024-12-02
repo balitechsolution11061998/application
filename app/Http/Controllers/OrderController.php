@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\SystemUsageHelper;
 use App\Models\OrdHead;
+use App\Models\OrdSku;
 use App\Services\Order\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -110,19 +111,18 @@ class OrderController extends Controller
                 ->first();
 
             // Fetch all order items (ordsku details)
-            $orderItems = DB::table('ordsku')
-                ->where('ordsku.order_no', $order_no)
+            $orderItems = OrdSku::with('itemSupplier')->where('ordsku.order_no', $order_no)
                 ->select(
-                    'ordsku.id',
                     'ordsku.sku',
                     'ordsku.sku_desc',
                     'ordsku.upc',
                     'ordsku.tag_code',
-                    'ordsku.unit_cost',
+                    DB::raw('SUM(ordsku.qty_ordered) as qty_ordered'), // Aggregate function
+                    DB::raw('SUM(ordsku.unit_cost) as unit_cost'), // Aggregate function
+                    // Add other aggregates as needed
                     'ordsku.unit_retail',
                     'ordsku.vat_cost',
                     'ordsku.luxury_cost',
-                    'ordsku.qty_ordered',
                     'ordsku.qty_fulfilled',
                     'ordsku.qty_received',
                     'ordsku.unit_discount',
@@ -133,6 +133,7 @@ class OrderController extends Controller
                     'ordsku.created_at',
                     'ordsku.updated_at'
                 )
+                ->groupBy('ordsku.sku', 'ordsku.sku_desc', 'ordsku.upc', 'ordsku.tag_code', 'ordsku.unit_retail', 'ordsku.vat_cost', 'ordsku.luxury_cost', 'ordsku.qty_fulfilled', 'ordsku.qty_received', 'ordsku.unit_discount', 'ordsku.unit_permanent_discount', 'ordsku.purchase_uom', 'ordsku.supp_pack_size', 'ordsku.permanent_disc_pct', 'ordsku.created_at', 'ordsku.updated_at')
                 ->get();
 
             // Check if the order exists
@@ -233,7 +234,6 @@ class OrderController extends Controller
 
                     ->rawColumns(['action']) // Allow HTML rendering
                     ->make(true);
-
             } catch (\Exception $e) {
                 return response()->json(['error' => 'An error occurred while fetching data. ' . $e->getMessage()], 500);
             } finally {

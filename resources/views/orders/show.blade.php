@@ -147,48 +147,54 @@
                 /* Add space between the icon and text */
             }
 
-            .table {
-    width: 100%;
-    border-collapse: collapse;
-}
+            table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
-.table-dark {
-    background-color: #343a40; /* Warna latar belakang untuk header */
-}
+        thead {
+            background-color: #343a40;
+            color: white;
+        }
 
-.table-dark th {
-    color: white; /* Warna teks untuk header */
-}
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #dee2e6;
+        }
 
-.table th, .table td {
-    border: 1px solid #ddd; /* Garis batas */
-    padding: 8px; /* Jarak dalam sel */
-    text-align: left; /* Rata kiri untuk teks */
-}
+        th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
 
-.table tr:nth-child(even) {
-    background-color: #f2f2f2; /* Warna latar belakang untuk baris genap */
-}
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
 
-.table tr:hover {
-    background-color: #e9ecef; /* Warna latar belakang saat hover */
-}
+        .text-end {
+            text-align: right;
+        }
 
-.text-center {
-    text-align: center; /* Rata tengah untuk teks */
-}
+        .text-wrap {
+            word-wrap: break-word;
+        }
 
-.text-end {
-    text-align: right; /* Rata kanan untuk teks */
-}
+        .black-text {
+            color: #212529;
+        }
 
-.text-wrap {
-    word-wrap: break-word; /* Memungkinkan teks panjang untuk dibungkus */
-}
-
-.black-text {
-    color: black; /* Warna teks hitam */
-}
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            th, td {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
 
         </style>
     @endpush
@@ -366,7 +372,6 @@
                             </div>
                         </div>
                         <div class="col-md-12 detail-column">
-
                             <div class="table-responsive">
                                 <table id="kt_datatable_both_scrolls" class="table gy-5 gs-7 black-text">
                                     <thead class="table-dark">
@@ -378,15 +383,42 @@
                                             <th>Tag</th>
                                             <th>Unit Cost</th>
                                             <th>Unit Retail</th>
-                                            <th>VAT Cost</th>
+                                            <th>Status PPN</th>
+                                            <th>PPN Cost</th>
                                             <th>Quantity Ordered</th>
                                             <th>Purchase UOM</th>
-                                            <th>Created At</th>
-                                            <th>Updated At</th>
+                                            <th>Regular Discount</th>
+                                            <th>Total</th>
+                                            <th>Total PPN</th>
+                                            <th>Sub Total</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            $totalCost = 0; // Initialize total cost
+                                            $totalPPN = 0; // Initialize total PPN
+                                            $totalDiscount = 0; // Initialize total discount
+                                        @endphp
                                         @foreach ($data['orderItems'] as $index => $item)
+                                            @php
+                                                // Calculate item total before discount
+                                                $itemTotal = $item->qty_ordered * $item->unit_cost; // Total before discount
+                                                $discountAmount = ($item->permanent_disc_pct > 0) ? ($itemTotal * ($item->permanent_disc_pct / 100)) : 0; // Calculate discount amount
+                                                $itemTotal = $itemTotal - $discountAmount;
+                                                // Calculate VAT total based on the original item total
+                                                $vatAmount = ($item->vat_cost * $item->qty_ordered); // Total VAT before discount
+                                                $vat_costTotal = $vatAmount; // Assuming VAT is calculated on the original cost
+                                                $totalPPN += $vat_costTotal; // Add to total PPN
+
+                                                // Calculate discount amount
+
+                                                // Calculate subtotal after discount
+                                                $subTotal = $itemTotal + $vat_costTotal - $discountAmount; // Subtotal after discount
+
+                                                // Update total cost and total discount
+                                                $totalCost += $itemTotal; // Add item total to total cost
+                                                $totalDiscount += $discountAmount; // Accumulate total discount
+                                            @endphp
                                             <tr>
                                                 <td class="text-center">{{ $index + 1 }}</td>
                                                 <td class="text-wrap">{{ $item->sku }}</td>
@@ -395,19 +427,51 @@
                                                 <td class="text-center">{{ $item->tag_code }}</td>
                                                 <td class="text-end">{{ number_format($item->unit_cost, 2) }}</td>
                                                 <td class="text-end">{{ number_format($item->unit_retail, 2) }}</td>
-                                                <td class="text-end">{{ number_format($item->vat_cost, 2) }}</td>
+                                                <td class="text-center">
+                                                    @if(is_null($item->itemSupplier))
+                                                        <span class="badge bg-secondary">
+                                                            <i class="fas fa-exclamation-circle" style="color: red;"></i> Tidak Ada Data
+                                                        </span>
+                                                        <small class="text-danger d-block">Silahkan sinkronkan data terlebih dahulu.</small>
+                                                    @elseif($item->itemSupplier->vat_ind === 'Y')
+                                                        <span class="badge bg-success">
+                                                            <i class="fas fa-check-circle" style="color: red;"></i> PPN
+                                                        </span>
+                                                    @else
+                                                        <span class="badge bg-danger">
+                                                            <i class="fas fa-times-circle" style="color: red;"></i> No PPN
+                                                        </span>
+                                                    @endif
+                                                </td>
+                                                                                                <td class="text-end">{{ number_format($item->vat_cost, 2) }}</td>
                                                 <td class="text-center">{{ $item->qty_ordered }}</td>
                                                 <td class="text-center">{{ $item->purchase_uom }}</td>
-                                                <td class="text-center">{{ $item->created_at }}</td>
-                                                <td class="text-center">{{ $item->updated_at }}</td>
+                                                <td class="text-center">{{ $item->permanent_disc_pct > 0 ? $item->permanent_disc_pct . '%' : '0%' }}</td> <!-- Displaying percentage -->
+
+                                                <td class="text-end">{{ number_format($itemTotal, 2) }}</td> <!-- Total for the item before discount -->
+                                                <td class="text-end">{{ number_format($vat_costTotal, 2) }}</td> <!-- Total PPN for the item -->
+                                                <td class="text-end">{{ number_format($subTotal, 2) }}</td> <!-- Sub Total after discount -->
                                             </tr>
                                         @endforeach
                                     </tbody>
+                                    <tfoot>
+                                        @php
+                                            // Calculate final grand total after subtracting total discount
+                                            $grandTotal = ($totalCost + $totalPPN) - $totalDiscount;
+                                        @endphp
+                                        <tr class="table-dark">
+                                            <td colspan="11" class="text-end text-white"><strong>Grand Total:</strong></td>
+                                            <td class="text-end text-white">{{ number_format($totalCost, 2) }}</td> <!-- Total Cost before discount -->
+                                            <td class="text-end text-white">{{ number_format($totalPPN, 2) }}</td> <!-- Total PPN -->
+                                            <td class="text-end text-white">{{ number_format($grandTotal, 2) }}</td> <!-- Grand Total after discount -->
+                                        </tr>
+                                    </tfoot>
                                 </table>
-
-
                             </div>
                         </div>
+
+
+
 
                     </div>
 
