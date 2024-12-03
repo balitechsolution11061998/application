@@ -198,6 +198,9 @@
                     font-size: 14px;
                 }
             }
+            .icon-white {
+       color: white;
+   }
         </style>
     @endpush
 
@@ -205,7 +208,7 @@
         <!-- Back Button -->
         <div class="mb-3">
             <a href="{{ route('purchase-orders.index') }}" class="btn-back">
-                <i class="fas fa-arrow-left"></i> Back to Orders
+                <i class="fas fa-arrow-left icon-white"></i> Back to Orders
             </a>
         </div>
 

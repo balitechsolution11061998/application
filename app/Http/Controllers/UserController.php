@@ -262,6 +262,7 @@ class UserController extends Controller
                     'memory_usage_mb' => $ramUsageMb,
                     'load_time_ms' => $loadTimeMs,
                     'accessed_at' => now(),
+                    'function'        => 'data',
                 ]);
 
                 return $result;

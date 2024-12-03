@@ -46,7 +46,6 @@
                         <th class="min-w-100px">#</th>
 
                         <th class="min-w-100px">Supplier</th>
-                        <th class="min-w-100px">Supplier Name</th>
                         <th class="min-w-100px">SKU</th>
                         <th class="min-w-100px">SKU Description</th>
                         <th class="min-w-100px">UPC</th>
@@ -82,16 +81,20 @@
                             searchable: false
                         },
                         {
-                            data: 'supplier',
-                            name: 'supplier'
-                        },
-                        {
-                            data: 'sup_name',
-                            name: 'sup_name'
+                            data: null, // Change to null since we are combining two fields
+                            name: 'supplier_info', // You can name it as you like
+                            render: function(data) {
+                                return data.supplier + ' (' + data.sup_name +
+                                ')'; // Combine supplier and sup_name
+                            }
                         },
                         {
                             data: 'sku',
-                            name: 'sku'
+                            name: 'sku',
+                            render: function(data) {
+                                return '<i class="fas fa-barcode" style="margin-right: 0.5em;"></i>' +
+                                    data; // Add Font Awesome icon for SKU
+                            }
                         },
                         {
                             data: 'sku_desc',
@@ -99,11 +102,18 @@
                         },
                         {
                             data: 'upc',
-                            name: 'upc'
+                            name: 'upc',
+                            render: function(data) {
+                                return '<i class="fas fa-qrcode" style="margin-right: 0.5em;"></i>' +
+                                    data; // Add Font Awesome icon for UPC
+                            }
                         },
                         {
                             data: 'unit_cost',
-                            name: 'unit_cost'
+                            name: 'unit_cost',
+                            render: function(data) {
+                                return formatRupiah(data); // Format unit cost in Rupiah
+                            }
                         },
                         {
                             data: 'create_date',
@@ -118,9 +128,9 @@
                             name: 'vat_ind',
                             render: function(data, type, row) {
                                 if (data === "Y") {
-                                    return '<span class="badge bg-success">Yes</span>';
+                                    return '<span class="badge bg-success" style="padding: 0.5em 1em; border-radius: 0.5em; display: inline-flex; align-items: center;"><i class="fas fa-check-circle" style="margin-right: 0.5em; color: white;"></i> Yes</span>';
                                 } else {
-                                    return '<span class="badge bg-danger">No</span>';
+                                    return '<span class="badge bg-danger" style="padding: 0.5em 1em; border-radius: 0.5em; display: inline-flex; align-items: center;"><i class="fas fa-times-circle" style="margin-right: 0.5em; color: white;"></i> No</span>';
                                 }
                             }
                         },
@@ -133,8 +143,8 @@
                                 const isDuplicate = data.skuCount >
                                 1; // This will be set in drawCallback
                                 if (isDuplicate) {
-                                    return '<i class="fas fa-trash text-danger btn-delete" data-id="' +
-                                        row.id + '" style="cursor: pointer;"></i>';
+                                    return '<span class="text-danger" style="cursor: pointer;" title="Delete"><i class="fas fa-trash" data-id="' +
+                                        row.id + '"></i></span>';
                                 } else {
                                     return ''; // No icon for non-duplicate entries
                                 }
@@ -167,6 +177,27 @@
                     }
                 });
 
+                // Function to format numbers as Rupiah
+                function formatRupiah(amount) {
+                    const formatter = new Intl.NumberFormat('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR',
+                        minimumFractionDigits: 0
+                    });
+                    return formatter.format(amount);
+                }
+
+                // Function to format numbers as Rupiah
+                function formatRupiah(amount) {
+                    const formatter = new Intl.NumberFormat('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR',
+                        minimumFractionDigits: 0
+                    });
+                    return formatter.format(amount);
+                }
+
+
                 // Handle delete button click
                 $(document).on('click', '.btn-delete', function() {
                     const itemId = $(this).data('id');
@@ -183,7 +214,7 @@
                             },
                             error: function(xhr) {
                                 alert('Error deleting item: ' + xhr
-                                .responseText); // Show error message
+                                    .responseText); // Show error message
                             }
                         });
                     }
@@ -228,7 +259,7 @@
                             // Send the data to your backend in chunks
                             const chunkSize = 100; // Define your chunk size
                             const totalChunks = Math.ceil(items.length / chunkSize);
-                            console.log('API Response:', items.length,totalChunks); // Log the response
+                            console.log('API Response:', items.length, totalChunks); // Log the response
 
                             let currentChunk = 0;
 
