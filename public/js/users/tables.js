@@ -109,26 +109,30 @@ dataTableHelper("#users_table", "/users/data", [
                 manager: "fa-users-cog",
                 editor: "fa-edit",
                 viewer: "fa-eye",
+                supplier: "fa-user-tag", // Add icon for supplier
             };
+
+            // Check if the user has the supplier role
+            const hasSupplierRole = data.some(role => role.name === "supplier");
 
             return data
                 .map(
                     (role) => `
                 <div class="d-inline-flex align-items-center me-2">
                     <span class="badge rounded-pill bg-dark text-white" style="font-size: 0.9em; display: inline-flex; align-items: center; padding: 0.4em 0.7em 0.4em 1.2em; white-space: nowrap;">
-                        <i class="fas ${
-                            roleIcons[role.name] || "fa-user"
-                        } me-1"></i> ${role.name}
-                        <button class="btn btn-sm btn-danger ms-2" style="border-radius: 50%; padding: 0.2em 0.5em; line-height: 1;" role="button" aria-label="Delete ${
-                            role.name
-                        }" onclick="deleteRole('${role.id}',${
-                        row.id
-                    })"><i class="fas fa-times"></i></button>
+                        <i class="fas ${roleIcons[role.name] || "fa-user"} me-1"></i> ${role.name}
+                        <button class="btn btn-sm btn-danger ms-2" style="border-radius: 50%; padding: 0.2em 0.5em; line-height: 1;" role="button" aria-label="Delete ${role.name}" onclick="deleteRole('${role.id}', ${row.id})"><i class="fas fa-times"></i></button>
                     </span>
                 </div>
             `
                 )
-                .join(" ");
+                .join(" ") + (hasSupplierRole ? `
+                <div class="d-inline-flex align-items-center me-2">
+                    <button class="btn btn-sm btn-success" onclick="addSupplier(${row.id})" title="Add Supplier">
+                        <i class="fas fa-plus"></i> Add Supplier
+                    </button>
+                </div>
+            ` : '');
         },
     },
     {
