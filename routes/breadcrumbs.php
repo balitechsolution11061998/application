@@ -52,6 +52,11 @@ Breadcrumbs::for('item-suppliers', function (BreadcrumbTrail $trail) {
     $trail->push('Item Supplier', route('item-suppliers.index'));
 });
 
+Breadcrumbs::for('receiving', function (BreadcrumbTrail $trail) {
+    $trail->push('Receiving', route('receiving.index'));
+});
+
+
 // Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
 //     $trail->push('Dashboard', route('example.dashboard.default'));
 // });

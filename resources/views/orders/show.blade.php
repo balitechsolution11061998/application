@@ -279,7 +279,7 @@
                         </button>
                     @endif
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="detail-row">
                                 <div class="detail-label">
                                     <i class="fas fa-hashtag"></i> Order Number:
@@ -292,7 +292,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="detail-row">
                                 <div class="detail-label">
                                     <i class="fas fa-calendar-alt"></i> Estimated Delivery Date:
@@ -311,6 +311,27 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-md-4">
+                            <div class="detail-row">
+                                <div class="detail-label">
+                                    <i class="fas fa-calendar-alt"></i> Receive Date:
+                                </div>
+                                <div class="detail-value">
+                                    <span id="deliveryDate">
+                                        @if ($data['orderDetails']->estimated_delivery_date)
+                                            @formattedDate($data['orderDetails']->estimated_delivery_date)
+                                        @else
+                                            <span class="text-muted">Not Available</span>
+                                        @endif
+                                    </span>
+                                    <div id="spinnerDelivery" class="spinner-border spinner-border-sm text-primary d-none" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
 
                         <div class="col-md-3 detail-column">
                             <div class="detail-row">
@@ -376,8 +397,23 @@
 
                             <div class="detail-row">
                                 <div class="detail-label">Supplier Name</div>
+
                                 <div class="detail-value">{{ $data['supplier']['supp_name'] ?? 'N/A' }}</div>
                             </div>
+                            <div class="detail-row mb-3">
+                                <div class="detail-label">Status Pajak</div>
+                                <div class="detail-value">
+                                    @php
+                                        $taxStatus = $data['supplier']['tax_ind'] ?? 'N/A';
+                                        $badgeClass = $taxStatus === 'Y' ? 'badge-success' : ($taxStatus === 'N' ? 'badge-danger' : 'badge-secondary');
+                                        $iconClass = $taxStatus === 'Y' ? 'fas fa-check-circle' : ($taxStatus === 'N' ? 'fas fa-times-circle' : 'fas fa-question-circle');
+                                    @endphp
+                                    <span class="badge {{ $badgeClass }} d-flex align-items-center" style="padding: 5px 10px;">
+                                        <i class="{{ $iconClass }}" style="margin-right: 5px;"></i> {{ $taxStatus }}
+                                    </span>
+                                </div>
+                            </div>
+
                         </div>
 
                         <div class="col-md-3 detail-column">

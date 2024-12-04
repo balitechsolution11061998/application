@@ -92,6 +92,7 @@ class OrderController extends Controller
             $orderDetails = DB::table('ordhead')
                 ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store')
                 ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code')
+                ->join('rcvhead', 'ordhead.order_no', '=', 'ordhead.order_no')
                 ->select(
                     'ordhead.*', // Select all columns from ordhead
                     'store.store as store_code',
@@ -106,6 +107,7 @@ class OrderController extends Controller
                     'supplier.contact_name as supplier_contact',
                     'supplier.contact_phone as supplier_phone',
                     'supplier.address_1 as supp_address',
+                    'supplier.tax_ind as tax_ind',
                 )
                 ->where('ordhead.order_no', $order_no)
                 ->first();
@@ -159,6 +161,7 @@ class OrderController extends Controller
                     'supplier_contact' => $orderDetails->supplier_contact,
                     'supplier_phone' => $orderDetails->supplier_phone,
                     'supp_address' => $orderDetails->supp_address,
+                    'tax_ind' => $orderDetails->tax_ind,
                 ],
                 'orderItems' => $orderItems,
             ];

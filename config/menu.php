@@ -39,7 +39,17 @@ return [
             'active'         => ['purchase-orders.*'],           // Define conditions when this item is active (e.g., all purchase order routes)
             'iconPath'       => 4,                               // Path for the icon (if applicable)
         ],
-
+        [
+            'label'          => 'Receiving',                     // Menu label for Receiving
+            'type'           => 'item',                          // Type (item represents a clickable menu option)
+            'permission'     => [],                              // Permissions required to view this item
+            'permissionType' => 'gate',                          // Permission type (gate or policy)
+            'icon'           => 'fas',                           // Font Awesome Solid icons (FA class)
+            'iconName'       => 'fa-box',                       // Updated icon for the Receiving section
+            'route'          => 'receiving.index',               // Route for the receiving index page
+            'active'         => ['receiving.*'],                 // Define conditions when this item is active (e.g., all receiving routes)
+            'iconPath'       => 4,                               // Path for the icon (if applicable)
+        ],
         [
             'label'          => 'Item Supplier',                  // Menu label for Item Supplier
             'type'           => 'item',                           // Type (item represents a clickable menu option)
