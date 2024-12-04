@@ -39,9 +39,10 @@
     @endforeach
     <!--end::Custom Stylesheets-->
 
-    <!--end::Custom Javascript-->
     @stack('styles')
-    <!--end::Javascript-->
+    <style>
+        /* Add your existing styles here */
+    </style>
 </head>
 <!--end::Head-->
 
@@ -52,55 +53,124 @@
 
 @yield('content')
 
+<!-- Button to Open Chat Modal -->
+<button id="openChatModal" class="btn btn-primary" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+    <i class="fas fa-comments" style="color: black;"></i> Chat
+</button>
+
+<!-- Chat Modal -->
+<div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="chatModalLabel">Chat with Us</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex">
+                <!-- Contacts List -->
+                <div class="contacts-list" style="width: 30%;">
+                    <h6>Contacts</h6>
+                    <ul class="list-group">
+                        <li class="list-group-item" data-user="User 1">
+                            <i class="fas fa-user-circle me-2" style="color: black;"></i>
+                            User 1
+                        </li>
+                        <li class="list-group-item" data-user="User 2">
+                            <i class="fas fa-user-circle me-2" style="color: black;"></i>
+                            User 2
+                        </li>
+                        <li class="list-group-item" data-user="User 3">
+                            <i class="fas fa-user-circle me-2" style="color: black;"></i>
+                            User 3
+                        </li>
+                        <li class="list-group-item" data-user="User 4">
+                            <i class="fas fa-user-circle me-2" style="color: black;"></i>
+                            User 4
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Chat Area -->
+                <div class="chat-area" style="width: 70%; padding-left: 10px;">
+                    <div class="chat-container" id="chatContainer">
+                        <div class="chat-message">
+                            <div class="message sender">
+                                <strong>Support:</strong> Welcome to our chat! How can we assist you today?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="userMessage" placeholder="Type your message..." aria-label="User's message">
+                        <button class="btn btn-primary" id="sendMessage" type="button">
+                            <i class="fas fa-paper-plane" style="color: white;"></i> Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!--begin::Javascript-->
-<!--begin::Global Javascript Bundle(mandatory for all pages)-->
 @foreach(getGlobalAssets() as $path)
     {!! sprintf('<script src="%s"></script>', asset($path)) !!}
 @endforeach
-<!--end::Global Javascript Bundle-->
 
-<!--begin::Vendors Javascript(used by this page)-->
 @foreach(getVendors('js') as $path)
     {!! sprintf('<script src="%s"></script>', asset($path)) !!}
 @endforeach
-<!--end::Vendors Javascript-->
 
-<!--begin::Custom Javascript(optional)-->
 @foreach(getCustomJs() as $path)
     {!! sprintf('<script src="%s"></script>', asset($path)) !!}
 @endforeach
 
-<script> var hostUrl = "{{ asset('/assets') }}/";        </script>
+<script> var hostUrl = "{{ asset('/assets') }}/"; </script>
 
-<!--end::Custom Javascript-->
 @stack('scripts')
-<!--end::Javascript-->
 
 <script>
-    document.addEventListener('livewire:load', () => {
-        Livewire.on('success', (message) => {
-            toastr.success(message);
+    // Open chat modal with animation
+    document.getElementById('openChatModal').addEventListener('click', function() {
+        $('#chatModal').modal({
+            backdrop: 'static',
+            keyboard: false
         });
-        Livewire.on('error', (message) => {
-            toastr.error(message);
-        });
+        $('#chatModal').modal('show');
+    });
 
-        Livewire.on('swal', (message, icon, confirmButtonText) => {
-            if (typeof icon === 'undefined') {
-                icon = 'success';
-            }
-            if (typeof confirmButtonText === 'undefined') {
-                confirmButtonText = 'Ok, got it!';
-            }
-            Swal.fire({
-                text: message,
-                icon: icon,
-                buttonsStyling: false,
-                confirmButtonText: confirmButtonText,
-                customClass: {
-                    confirmButton: 'btn btn-primary'
-                }
-            });
+    // Send message to OpenAI
+    document.getElementById('sendMessage').addEventListener('click', function() {
+        const message = document.getElementById('userMessage').value;
+        if (message.trim() === '') return;
+
+        // Display user message
+        const userMessageDiv = document.createElement('div');
+        userMessageDiv.className = 'chat-message';
+        userMessageDiv.innerHTML = `<div class="message receiver"><strong>You:</strong> ${message}</div>`;
+        document.getElementById('chatContainer').appendChild(userMessageDiv);
+
+        // Clear input
+        document.getElementById('userMessage').value = '';
+
+        // Send message to server
+        fetch('/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ prompt: message }) // Change 'message' to 'prompt'
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Display OpenAI response
+            const responseMessageDiv = document.createElement('div');
+            responseMessageDiv.className = 'chat-message';
+            responseMessageDiv.innerHTML = `<div class="message sender"><strong>Support:</strong> ${data.choices[0].text}</div>`;
+            document.getElementById('chatContainer').appendChild(responseMessageDiv);
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
     });
 </script>

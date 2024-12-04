@@ -8,6 +8,8 @@ use App\Models\OrdHead;
 use App\Models\RcvDetail;
 use App\Models\RcvHead;
 use App\Models\User;
+use App\Repositories\OpenAI\OpenAIRepository;
+use App\Repositories\OpenAI\OpenAIRepositoryImplement;
 use App\Repositories\OrdHead\OrdHeadRepository;
 use App\Repositories\RcvDetail\RcvDetailRepository;
 use App\Repositories\RcvDetail\RcvDetailRepositoryImplement;
@@ -19,6 +21,8 @@ use Illuminate\Database\Schema\Builder;
 use App\Repositories\OrdHead\OrdHeadRepositoryImplement;
 use App\Repositories\OrdSku\OrdSkuRepository;
 use App\Repositories\OrdSku\OrdSkuRepositoryImplement;
+use App\Services\OpenAI\OpenAIService;
+use App\Services\OpenAI\OpenAIServiceImplement;
 use App\Services\Order\OrderService;
 use App\Services\Order\OrderServiceImplement;
 use Illuminate\Support\Facades\Gate;
@@ -62,6 +66,9 @@ class AppServiceProvider extends ServiceProvider
                 $app->make(OrdSkuRepository::class)
             );
         });
+
+
+
 
     }
 

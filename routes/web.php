@@ -9,6 +9,7 @@ use App\Http\Controllers\ItemSupplierController;
 use App\Http\Controllers\KabupatenController;
 use App\Http\Controllers\KecamatanController;
 use App\Http\Controllers\KelurahanController;
+use App\Http\Controllers\OpenAIController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
@@ -152,9 +153,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/sync-pilkada/{provinceId}/{kabupatenId}/{kecamatanId}/{kelurahanId}/{tpsId}', [SyncDataController::class, 'syncDataPemilihan']);
     Route::get('/data-pilkada', [SyncDataController::class, 'dataPilkada']);
 });
+Route::post('/generate', [OpenAIController::class, 'generate']);
 
 // Documentation Route
 Route::get('/docs', fn() => view('docs.index'));
+
+
 
 // Laravel File Manager Routes
 Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
