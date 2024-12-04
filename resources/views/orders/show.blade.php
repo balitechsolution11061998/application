@@ -397,7 +397,6 @@
 
                             <div class="detail-row">
                                 <div class="detail-label">Supplier Name</div>
-                                {{ dd($data['supplier']) }}
                                 <div class="detail-value">{{ $data['supplier']['supplier_name'] ?? 'N/A' }}</div>
                             </div>
                             <div class="detail-row mb-3">
@@ -466,7 +465,7 @@
 
                             <div class="detail-row">
                                 <div class="detail-label">Contact Name</div>
-                                <div class="detail-value">{{ $data['supplier']['contact_name'] ?? 'N/A' }}</div>
+                                <div class="detail-value">{{ $data['supplier']['supplier_contact'] ?? 'N/A' }}</div>
                             </div>
                         </div>
                         <div class="col-md-12 detail-column">
