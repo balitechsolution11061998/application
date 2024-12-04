@@ -402,17 +402,20 @@
                             </div>
                             <div class="detail-row mb-3">
                                 <div class="detail-label">Status Pajak</div>
-                                <div class="detail-value">
+                                <div class="detail-value d-flex align-items-center">
                                     @php
                                         $taxStatus = $data['supplier']['tax_ind'] ?? 'N/A';
                                         $badgeClass = $taxStatus === 'Y' ? 'badge-success' : ($taxStatus === 'N' ? 'badge-danger' : 'badge-secondary');
                                         $iconClass = $taxStatus === 'Y' ? 'fas fa-check-circle' : ($taxStatus === 'N' ? 'fas fa-times-circle' : 'fas fa-question-circle');
+                                        $statusText = $taxStatus === 'Y' ? 'Pajak Berlaku' : ($taxStatus === 'N' ? 'Pajak Tidak Berlaku' : 'Data Tidak Tersedia');
                                     @endphp
-                                    <span class="badge {{ $badgeClass }} d-flex align-items-center" style="padding: 5px 10px;">
+                                    <span class="badge {{ $badgeClass }} d-flex align-items-center" style="padding: 5px 10px; margin-right: 10px;">
                                         <i class="{{ $iconClass }}" style="margin-right: 5px;"></i> {{ $taxStatus }}
                                     </span>
+                                    <span class="text-muted">{{ $statusText }}</span>
                                 </div>
                             </div>
+
 
                         </div>
 
