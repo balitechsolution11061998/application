@@ -89,15 +89,15 @@
                 @csrf
 
                 <div class="mb-5">
-                    <label for="login"
-                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email or Username</label>
+                    <label for="login" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email or
+                        Username</label>
                     <div class="relative mt-2">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-user text-gray-400"></i>
                         </div>
                         <input id="login" type="text" name="login" value="{{ old('login') }}"
-                        class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                        placeholder="Enter your username or email" required autofocus>
+                            class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                            placeholder="Enter your username or email" required autofocus>
                         @error('login')
                             <p class="mt-2 text-sm text-red-600">
                                 <i class="fas fa-exclamation-circle"></i> {{ $message }}
@@ -183,9 +183,8 @@
             this.querySelector('i').classList.toggle('fa-eye');
             this.querySelector('i').classList.toggle('fa-eye-slash');
         });
-        $('#loginButton').on('click', function(e) {
-            e.preventDefault();
-
+        // Function to handle login button click and Enter key press
+        function handleLogin() {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "Confirm login attempt",
@@ -205,8 +204,8 @@
                             // Redirect if needed
                             window.location.href = "/home";
                         },
-                        error: function (xhr) {
-                            console.log(xhr,'xhr error');
+                        error: function(xhr) {
+                            console.log(xhr, 'xhr error');
                             if (xhr.status === 401) {
                                 toastr.error("Invalid username, email, or password.", "Error");
                             } else {
@@ -216,6 +215,20 @@
                     });
                 }
             });
+        }
+
+        // Trigger login on button click
+        $('#loginButton').on('click', function(e) {
+            e.preventDefault();
+            handleLogin();
+        });
+
+        // Trigger login on Enter key press
+        $('#loginForm').on('keypress', function(e) {
+            if (e.which === 13) { // 13 is the Enter key
+                e.preventDefault(); // Prevent the default form submission
+                handleLogin();
+            }
         });
 
         const themeToggle = document.getElementById('themeToggle');
