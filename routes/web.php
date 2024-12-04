@@ -14,6 +14,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProvinceController;
+use App\Http\Controllers\ReceivingController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoomController;
@@ -125,6 +126,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [OrderController::class, 'index'])->name('index');
         Route::get('/show/{id}', [OrderController::class, 'show'])->name('show');
     });
+
+    Route::prefix('receiving')->as('receiving.')->group(function () {
+        Route::get('/data', [ReceivingController::class, 'data'])->name('data');
+        Route::post('/store', [ReceivingController::class, 'store'])->name('store');
+        Route::get('/', [ReceivingController::class, 'index'])->name('index');
+        Route::get('/show/{id}', [ReceivingController::class, 'show'])->name('show');
+    });
+
 
     Route::prefix('item-suppliers')->as('item-suppliers.')->group(function () {
         Route::get('/index', [ItemSupplierController::class, 'index'])->name('index');
