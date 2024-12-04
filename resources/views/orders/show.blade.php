@@ -555,7 +555,7 @@
                         </div>
                         <div class="col-md-12 approved-by text-end">
                             <span>Approved by,</span>
-                            <span class="fw-bold ms-2">>{{ $data['orderDetails']->approval_id ?? 'N/A' }}</span>
+                            <span class="fw-bold ms-2">{{ $data['orderDetails']->approval_id ?? 'N/A' }}</span>
                         </div>
                     </div>
 
