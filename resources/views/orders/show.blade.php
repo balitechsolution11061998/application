@@ -405,16 +405,30 @@
                                 <div class="detail-value d-flex align-items-center">
                                     @php
                                         $taxStatus = $data['supplier']['tax_ind'] ?? 'N/A';
-                                        $badgeClass = $taxStatus === 'Y' ? 'badge-success' : ($taxStatus === 'N' ? 'badge-danger' : 'badge-secondary');
-                                        $iconClass = $taxStatus === 'Y' ? 'fas fa-check-circle' : ($taxStatus === 'N' ? 'fas fa-times-circle' : 'fas fa-question-circle');
-                                        $statusText = $taxStatus === 'Y' ? 'Pajak Berlaku' : ($taxStatus === 'N' ? 'Pajak Tidak Berlaku' : 'Data Tidak Tersedia');
+                                        $badgeClass = '';
+                                        $iconClass = '';
+                                        $statusText = '';
+
+                                        if ($taxStatus === 'Y') {
+                                            $badgeClass = 'badge-success';
+                                            $iconClass = 'fas fa-check-circle';
+                                            $statusText = 'Pajak Berlaku'; // Tax Applicable
+                                        } elseif ($taxStatus === 'N') {
+                                            $badgeClass = 'badge-danger';
+                                            $iconClass = 'fas fa-times-circle';
+                                            $statusText = 'Pajak Tidak Berlaku'; // Tax Not Applicable
+                                        } else {
+                                            $badgeClass = 'badge-secondary';
+                                            $iconClass = 'fas fa-question-circle';
+                                            $statusText = 'Data Tidak Tersedia'; // Data Not Available
+                                        }
                                     @endphp
                                     <span class="badge {{ $badgeClass }} d-flex align-items-center" style="padding: 5px 10px; margin-right: 10px;">
-                                        <i class="{{ $iconClass }}" style="margin-right: 5px;"></i> {{ $taxStatus }}
+                                        <i class="{{ $iconClass }}" style="margin-right: 5px;"></i> {{ $statusText }}
                                     </span>
-                                    <span class="text-muted">{{ $statusText }}</span>
                                 </div>
                             </div>
+
 
 
                         </div>
