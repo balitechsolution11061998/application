@@ -161,6 +161,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/data-tps', [TpsController::class, 'dataTps']);
     Route::get('/sync-pilkada/{provinceId}/{kabupatenId}/{kecamatanId}/{kelurahanId}/{tpsId}', [SyncDataController::class, 'syncDataPemilihan']);
     Route::get('/data-pilkada', [SyncDataController::class, 'dataPilkada']);
+
+    Route::get('/get-ram-usage', [SystemUsageController::class, 'getRamUsageData']);
+
 });
 Route::post('/generate', [OpenAIController::class, 'generate']);
 

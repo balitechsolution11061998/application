@@ -366,6 +366,10 @@
                     // Destroy the existing DataTable instance
                     $('#rcvtable').DataTable().clear().destroy();
                 }
+
+                // Show the loading spinner
+                $('#loadingSpinner').show();
+
                 var table = $('#rcvtable').DataTable({
                     processing: true,
                     serverSide: true,
@@ -377,6 +381,10 @@
                         data: function(d) {
                             d.order_no = $('#filterOrderNo').val(); // Pass order number filter
                             d.filterDate = $("#filterDateRange").val();
+                        },
+                        complete: function() {
+                            // Hide the loading spinner after data is loaded
+                            $('#loadingSpinner').hide();
                         }
                     },
                     columns: [{
@@ -385,13 +393,13 @@
                             searchable: false,
                             render: function(data, type, row) {
                                 let buttons = `
-                        <button class="btn btn-sm btn-info detail-btn" data-id="${row.order_no}">
+                        <button class="btn btn-sm btn-info btn-rounded detail-btn" data-id="${row.order_no}">
                             <i class="fas fa-info-circle"></i> Details
                         </button>
                     `;
                                 if (row.status === 'Progress') {
                                     buttons += `
-                            <button class="btn btn-sm btn-success confirm-btn" data-id="${row.order_no}">
+                            <button class="btn btn-sm btn-success btn-rounded confirm-btn" data-id="${row.order_no}">
                                 <i class="fas fa-check"></i> Confirmed
                             </button>
                         `;
@@ -401,29 +409,35 @@
                         },
                         {
                             data: 'receive_no',
-                            name: 'receive_no'
+                            name: 'receive_no',
+                            render: function(data, type, row) {
+                                return `<i class="fas fa-receipt"></i> ${data}`; // Display the receive_no with an icon
+                            }
                         },
                         {
                             data: 'receive_date',
                             name: 'receive_date',
                             render: function(data) {
-                                return moment(data).format('DD MMMM YYYY'); // Format date
+                                return `<i class="fas fa-calendar"></i> ${moment(data).format('DD MMMM YYYY')}`; // Format date with icon
                             }
                         },
                         {
                             data: 'order_no',
-                            name: 'order_no'
+                            name: 'order_no',
+                            render: function(data) {
+                                return `<i class="fas fa-receipt"></i> ${data}`; // Adding an icon for order_no
+                            }
                         },
                         {
                             data: 'store', // Assuming store contains both name and code
                             render: function(data, type, row) {
-                                return `${row.store_name} (${row.store})`; // Adjust based on your data structure
+                                return `<i class="fas fa-store"></i> ${row.store_name} (${row.store})`; // Adding store icon
                             }
                         },
                         {
                             data: 'supplier', // Assuming supplier contains both name and code
                             render: function(data, type, row) {
-                                return `${row.sup_name} (${row.supplier})`; // Adjust based on your data structure
+                                return `<i class="fas fa-truck"></i> ${row.sup_name} (${row.supplier})`; // Adding supplier icon
                             }
                         },
                         {
