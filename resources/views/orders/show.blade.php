@@ -332,8 +332,6 @@
                             </div>
                         </div>
 
-
-
                         <div class="col-md-3 detail-column">
                             <div class="detail-row">
                                 <div class="detail-label">Store No</div>
@@ -359,6 +357,18 @@
                                 <div class="detail-value">
                                     <span id="supplierName">{{ $data['orderDetails']->supplier ?? 'N/A' }}</span>
                                     <div id="spinnerSupplier" class="spinner-border spinner-border-sm text-primary d-none" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">Receive No</div>
+                                <div class="detail-value">
+                                    <span id="receiveNo">
+                                        <i class="fas fa-receipt" style="margin-right: 5px;"></i> <!-- Icon for Receive No -->
+                                        {{ $data['orderDetails']->receive_no ?? 'N/A' }}
+                                    </span>
+                                    <div id="spinnerReceive" class="spinner-border spinner-border-sm text-primary d-none" role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                 </div>
@@ -428,9 +438,6 @@
                                     </span>
                                 </div>
                             </div>
-
-
-
                         </div>
 
                         <div class="col-md-3 detail-column">
@@ -586,6 +593,8 @@
                             </div>
                         </div>
                     </div>
+
+
 
                     <!-- Note Section -->
                     <div class="note-section">

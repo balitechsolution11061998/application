@@ -135,7 +135,8 @@ class OrderController extends Controller
                 'supplier.contact_phone as supplier_phone',
                 'supplier.address_1 as supp_address',
                 'supplier.tax_ind as tax_ind',
-                'rcvhead.receive_date as receive_date'
+                'rcvhead.receive_date as receive_date',
+                'rcvhead.receive_no as receive_no'
             )
             ->where('ordhead.order_no', $order_no)
             ->first();
