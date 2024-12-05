@@ -538,11 +538,11 @@
                                                         </span>
                                                     @elseif($item->itemSupplier->vat_ind === 'Y')
                                                         <span class="badge bg-success">
-                                                            <i class="fas fa-check-circle" style="color: green;"></i> PPN
+                                                            <i class="fas fa-check-circle" style="color: green;"></i> BKP
                                                         </span>
                                                     @else
                                                         <span class="badge bg-danger">
-                                                            <i class="fas fa-times-circle" style="color: red;"></i> No PPN
+                                                            <i class="fas fa-times-circle" style="color: red;"></i> NON BKP
                                                         </span>
                                                     @endif
                                                 </td>
