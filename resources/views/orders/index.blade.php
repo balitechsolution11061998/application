@@ -361,7 +361,7 @@
                     },
                     opens: 'left',
                     maxDate: moment().add(1,
-                    'month'), // Membatasi hanya sampai satu bulan dari tanggal hari ini
+                        'month'), // Membatasi hanya sampai satu bulan dari tanggal hari ini
                 }, function(start, end) {
                     // Ketika pengguna memilih tanggal, update `maxDate` untuk membatasi hingga satu bulan dari `start`
                     $('#filterDateRange').data('daterangepicker').setEndDate(moment(start).add(1, 'month'));
@@ -650,7 +650,7 @@
                 const encodedId = btoa(id); // Use btoa() to encode to Base64
 
                 // Show SweetAlert loading indicator
-                Swal.fire({
+                const swalInstance = Swal.fire({
                     title: 'Loading...',
                     html: '<div class="progress" style="border-radius: 10px; overflow: hidden; margin-top: 20px;">' +
                         '  <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" ' +
@@ -666,10 +666,27 @@
                     }
                 });
 
-                // Redirect to the new page after a short delay with the encoded ID as hash
+                // Simulate an asynchronous operation (e.g., an AJAX request)
+                // Replace this with your actual success condition
                 setTimeout(() => {
-                    window.location.href =
-                        `/purchase-orders/show/${encodedId}`; // Adding the encoded ID as hash
+                    // Here you can check for success or failure
+                    const success = true; // Simulate success condition
+
+                    if (success) {
+                        // Hide the SweetAlert loading spinner
+                        Swal.close();
+
+                        // Redirect to the new page with the encoded ID as hash
+                        window.location.href = `/purchase-orders/show/${encodedId}`; // Adding the encoded ID as hash
+                    } else {
+                        // Handle failure case (optional)
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'An error occurred while processing your request.',
+                            confirmButtonText: 'OK'
+                        });
+                    }
                 }, 1500); // Adjust delay if needed
             }
         </script>

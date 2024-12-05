@@ -302,7 +302,7 @@
                                         @if ($data['orderDetails']->estimated_delivery_date)
                                             @formattedDate($data['orderDetails']->estimated_delivery_date)
                                         @else
-                                            <span class="text-muted">Not Available</span>
+                                            <span class="text-muted">Data Tidak Tersedia</span>
                                         @endif
                                     </span>
                                     <div id="spinnerDelivery" class="spinner-border spinner-border-sm text-primary d-none" role="status">
@@ -315,22 +315,23 @@
                         <div class="col-md-4">
                             <div class="detail-row">
                                 <div class="detail-label">
-                                    <i class="fas fa-calendar-alt"></i> Receive Date:
+                                    <i class="fas fa-calendar-alt"></i> Tanggal Terima:
                                 </div>
-                                <div class="detail-value">
-                                    <span id="deliveryDate">
-                                        @if ($data['orderDetails']->estimated_delivery_date)
-                                            @formattedDate($data['orderDetails']->estimated_delivery_date)
+                                <div class="detail-value d-flex align-items-center">
+                                    <span id="deliveryDate" class="me-2">
+                                        @if ($data['orderDetails']->receive_date)
+                                            @formattedDate($data['orderDetails']->receive_date)
                                         @else
-                                            <span class="text-muted">Not Available</span>
+                                            <span class="text-muted">Data Tidak Tersedia</span>
                                         @endif
                                     </span>
                                     <div id="spinnerDelivery" class="spinner-border spinner-border-sm text-primary d-none" role="status">
-                                        <span class="sr-only">Loading...</span>
+                                        <span class="sr-only">Memuat...</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
 
 
                         <div class="col-md-3 detail-column">
@@ -411,11 +412,11 @@
                                         if ($taxStatus === 'Y') {
                                             $badgeClass = 'badge-success';
                                             $iconClass = 'fas fa-check-circle';
-                                            $statusText = 'Pajak Berlaku'; // Tax Applicable
+                                            $statusText = 'PPN'; // Tax Applicable
                                         } elseif ($taxStatus === 'N') {
                                             $badgeClass = 'badge-danger';
                                             $iconClass = 'fas fa-times-circle';
-                                            $statusText = 'Pajak Tidak Berlaku'; // Tax Not Applicable
+                                            $statusText = 'Non PPN'; // Tax Not Applicable
                                         } else {
                                             $badgeClass = 'badge-secondary';
                                             $iconClass = 'fas fa-question-circle';

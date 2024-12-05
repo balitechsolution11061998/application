@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\SystemUsageHelper;
 use App\Models\RcvDetail;
 use App\Models\RcvHead;
 use Illuminate\Http\Request;
@@ -15,28 +16,39 @@ class ReceivingController extends Controller
     }
     public function data(Request $request)
     {
-        // Query to get the receiving head data
-        $query = RcvHead::with('details'); // Assuming you have a relationship defined
+        // Start tracking performance
+        $startTime = microtime(true);
+        $startMemory = memory_get_usage();
 
-        // Apply filters if any
-        if ($request->has('order_no') && $request->order_no != '') {
-            $query->where('order_no', 'like', '%' . $request->order_no . '%');
+        try {
+            // Query to get the receiving head data
+            $query = RcvHead::with('details'); // Assuming you have a relationship defined
+
+            // Apply filters if any
+            if ($request->has('order_no') && $request->order_no != '') {
+                $query->where('order_no', 'like', '%' . $request->order_no . '%');
+            }
+
+            if ($request->has('filterDate') && $request->filterDate != '') {
+                $dates = explode(' - ', $request->filterDate);
+                $query->whereBetween('approval_date', [trim($dates[0]), trim($dates[1])]);
+            }
+
+            // Prepare results for DataTables
+            return DataTables::of($query)
+                ->addColumn('action', function ($row) {
+                    return '<button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px" data-kt-docs-datatable-subtable="expand_row">
+                                <span class="svg-icon fs-3 m-0 toggle-off">...</span>
+                                <span class="svg-icon fs-3 m-0 toggle-on">...</span>
+                            </button>';
+                })
+                ->make(true);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'An error occurred while fetching data. ' . $e->getMessage()], 500);
+        } finally {
+            // Log performance metrics
+            SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'receivingData');
         }
-
-        if ($request->has('filterDate') && $request->filterDate != '') {
-            $dates = explode(' - ', $request->filterDate);
-            $query->whereBetween('approval_date', [trim($dates[0]), trim($dates[1])]);
-        }
-
-        return DataTables::of($query)
-        ->addColumn('action', function ($row) {
-            return '<button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px" data-kt-docs-datatable-subtable="expand_row">
-                        <span class="svg-icon fs-3 m-0 toggle-off">...</span>
-                        <span class="svg-icon fs-3 m-0 toggle-on">...</span>
-                    </button>';
-        })
-
-            ->make(true);
     }
 
     public function store(Request $request)
