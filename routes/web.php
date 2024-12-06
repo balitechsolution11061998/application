@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ActivityLogContoller;
+use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardPilkadaController;
@@ -68,6 +69,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/{id}/addstore', [UserController::class, 'addStore'])->name('addstore');
         Route::get('/{id}/addemail', [UserController::class, 'addEmailView'])->name('addEmailView');
         Route::get('/{id}/formUser', [UserController::class, 'formUser'])->name('formUser');
+        Route::post('/add-suppliers', [UserController::class, 'addSuppliers'])->name('add-suppliers');
+
     });
 
     // Dashboard Pilkada Routes
@@ -105,7 +108,12 @@ Route::middleware('auth')->group(function () {
 
     // Supplier Management Routes
     Route::prefix('suppliers')->as('suppliers.')->group(function () {
-        Route::post('/import', [UserController::class, 'import'])->name('import');
+        Route::get('/index', [SupplierController::class, 'index'])->name('index');
+        Route::get('/data', [SupplierController::class, 'data'])->name('data');
+        Route::get('/selectData', [SupplierController::class, 'selectData'])->name('selectData');
+        Route::get('/edit', [SupplierController::class, 'edit'])->name('edit');
+        Route::delete('/destroy', [SupplierController::class, 'destroy'])->name('destroy');
+
     });
 
     // Store Management Routes

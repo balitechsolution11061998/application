@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Imports\UsersImport;
 use App\Jobs\UsersImportJob;
 use App\Models\Role;
+use App\Models\Supplier;
 use App\Models\SystemUsage;
 use App\Models\User;
 use Illuminate\Http\Request;
 use DataTables;
 use Exception;
 use Hashids\Hashids;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -34,6 +36,79 @@ class UserController extends Controller
         });
 
         return view('management_user.users.index', compact('rolesWithUserCount'));
+    }
+
+    public function addSuppliers(Request $request)
+    {
+        // Start measuring time and memory usage
+        $startTime = microtime(true);
+        $startMemory = memory_get_usage();
+
+        // Validate the incoming request
+        $request->validate([
+            'userId' => 'required|integer|exists:users,id', // Ensure userId exists in users table
+            'suppliers' => 'required|array', // Ensure suppliers is an array
+            'suppliers.*' => 'string', // Each supplier should be a string
+        ]);
+
+        try {
+            // Get the user ID and suppliers from the request
+            $userId = $request->input('userId');
+            $suppliers = $request->input('suppliers');
+
+            // Convert the array of suppliers to a string, separated by commas
+            $supplierIdsString = implode(',', $suppliers); // Join the supplier codes into a string
+            $supplierNames = [];
+
+            foreach ($suppliers as $supplier) {
+                // Search for the supplier by supp_code
+                $foundSupplier = Supplier::where('supp_code', $supplier)->first();
+
+                if ($foundSupplier) {
+                    // If supplier exists, add its name to the array
+                    $supplierNames[] = $foundSupplier->supp_name; // Use the name from the found supplier
+                } else {
+                    // If supplier not found, return an error response
+                    return response()->json(['success' => false, 'message' => 'Supplier with code ' . $supplier . ' not found.'], 404);
+                }
+            }
+
+            // Convert the arrays to strings, separated by commas
+            $supplierNamesString = implode(',', $supplierNames); // Join the supplier names into a string
+
+            // Update the user with the supplier_ids string and additional properties
+            $user = User::find($userId);
+            $user->supplier_id = $supplierIdsString; // Set the supplier_id as a string
+            $user->supplier_names = $supplierNamesString; // Set the supplier_names as a string
+            $user->suppliers_added_at = now(); // Set the timestamp for when suppliers were added
+            $user->save(); // Save the changes
+
+            // Calculate processing time and memory usage
+            $endTime = microtime(true);
+            $endMemory = memory_get_usage();
+            $executionTime = $endTime - $startTime; // Time in seconds
+            $memoryUsed = $endMemory - $startMemory; // Memory used in bytes
+
+            // Log the activity with additional information
+            activity()
+                ->performedOn($user)
+                ->causedBy(Auth::user()) // Log the user who performed the action
+                ->log('Subject: User ID ' . $userId . ' - Added suppliers: ' . $supplierIdsString . ' (Names: ' . $supplierNamesString . ') to user ID: ' . $userId .
+                      '. Execution time: ' . round($executionTime, 2) . ' seconds. Memory used: ' . $memoryUsed . ' bytes.');
+
+            return response()->json(['success' => true, 'message' => 'Suppliers added successfully.']);
+        } catch (Exception $e) {
+            // Log the error message
+            \Log::error('Error adding suppliers: ' . $e->getMessage());
+
+            // Log the activity for error
+            activity()
+                ->performedOn(User::find($userId))
+                ->causedBy(Auth::user())
+                ->log('Subject: User ID ' . $userId . ' - Error adding suppliers: ' . $e->getMessage());
+
+            return response()->json(['success' => false, 'message' => 'Failed to add suppliers.'], 500);
+        }
     }
 
     // Method to handle user import
@@ -203,7 +278,7 @@ class UserController extends Controller
 
                 // Fetch user data with relationships
                 $data = User::with(['roles', 'region', 'userEmails'])
-                    ->select('id', 'profile_picture', 'username', 'name', 'email', 'password_show', 'region', 'created_at');
+                    ->select('id', 'profile_picture', 'username', 'name', 'email', 'password_show', 'region', 'created_at','supplier_id','supplier_names');
 
                 $result = Datatables::of($data)
                     ->addColumn('role_ids', function ($row) {

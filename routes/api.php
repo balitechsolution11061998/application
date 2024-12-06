@@ -29,10 +29,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/pr/store', [PurchaseRequisitionController::class, 'store']);
 // Supplier Routes
-Route::prefix('supplier')->group(function () {
-    Route::post('/store', [SupplierController::class, 'store']);
-    Route::get('/get', [SupplierController::class, 'getData']);
-});
+
 
 // Store Routes
 Route::prefix('stores')->group(function () {
@@ -50,7 +47,8 @@ Route::prefix('po')->group(function () {
 Route::post('/itemsupplier/store', [ItemSupplierController::class, 'store']);
 Route::get('/itemsupplier/getData', [ItemSupplierController::class, 'getData']);
 
-
+Route::post('/supplier/store', [SupplierController::class, 'store']);
+Route::get('/supplier/get', [SupplierController::class, 'getData']);
 // Receive (RCV) Routes
 Route::prefix('rcv')->group(function () {
     Route::post('/store', [RcvController::class, 'store']);

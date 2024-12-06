@@ -115,26 +115,56 @@ dataTableHelper("#users_table", "/users/data", [
             // Check if the user has the supplier role
             const hasSupplierRole = data.some(role => role.name === "supplier");
 
-            return data
-                .map(
-                    (role) => `
-                <div class="d-inline-flex align-items-center me-2">
-                    <span class="badge rounded-pill bg-dark text-white" style="font-size: 0.9em; display: inline-flex; align-items: center; padding: 0.4em 0.7em 0.4em 1.2em; white-space: nowrap;">
-                        <i class="fas ${roleIcons[role.name] || "fa-user"} me-1"></i> ${role.name}
-                        <button class="btn btn-sm btn-danger ms-2" style="border-radius: 50%; padding: 0.2em 0.5em; line-height: 1;" role="button" aria-label="Delete ${role.name}" onclick="deleteRole('${role.id}', ${row.id})"><i class="fas fa-times"></i></button>
-                    </span>
+            // Fetch supplier names from the row (assuming supplier_names is a string or an array in the row)
+            let supplierNames = row.supplier_names || []; // Default to an empty array
+
+            // Check if supplierNames is a string and convert it to an array
+            if (typeof supplierNames === 'string') {
+                // Split by comma but keep "TRI DELTA DEWATA, CV" as a single entity
+                supplierNames = supplierNames.split(/,(?!\s*CV)/).map(name => name.trim());
+            }
+
+            // Ensure supplierNames is an array
+            if (!Array.isArray(supplierNames)) {
+                supplierNames = []; // Reset to an empty array if it's not
+            }
+
+            console.log(supplierNames, 'supplier_names');
+
+            // Create a string for supplier names
+            const supplierNamesString = supplierNames.length > 0
+                ? supplierNames.map(name => `<span class="badge bg-info text-dark me-1">${name}</span>`).join(" ")
+                : '<span class="badge bg-secondary">No Suppliers</span>';
+
+            return `
+                <div class="d-inline-flex flex-wrap align-items-center">
+                    ${data.map(role => `
+                        <span class="badge rounded-pill bg-dark text-white me-2" style="font-size: 0.9em; display: inline-flex; align-items: center; padding: 0.4em 0.7em;">
+                            <i class="fas ${roleIcons[role.name] || "fa-user"} me-1"></i> ${role.name}
+                            <button class="btn btn-sm btn-danger ms-2" style="border-radius: 50%; padding: 0.2em 0.5em; line-height: 1;" role="button" aria-label="Delete ${role.name}" onclick="deleteRole('${role.id}', ${row.id})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </span>
+                    `).join(" ")}
+
+                    ${hasSupplierRole ? `
+                        <div class="d-inline-flex align-items-center me-2">
+                            <button class="btn btn-sm btn-success" onclick="addSupplier(${row.id})" title="Add Supplier">
+                                <i class="fas fa-plus"></i> Add Supplier
+                            </button>
+                        </div>
+                    ` : ''}
+
+                    <div class="d-inline-flex align-items-center mt-2">
+                        <span class="fw-bold me-1">Suppliers:</span>
+                        ${supplierNamesString}
+                    </div>
                 </div>
-            `
-                )
-                .join(" ") + (hasSupplierRole ? `
-                <div class="d-inline-flex align-items-center me-2">
-                    <button class="btn btn-sm btn-success" onclick="addSupplier(${row.id})" title="Add Supplier">
-                        <i class="fas fa-plus"></i> Add Supplier
-                    </button>
-                </div>
-            ` : '');
+            `;
         },
     },
+
+
     {
         data: "region",
         name: "region",
@@ -253,6 +283,95 @@ if ($(window).width() < 768) {
     // Append the custom styles to the document head
     $("head").append(tooltipStyles);
 }
+
+function addSupplier(userId) {
+    document.getElementById('userId').value = userId;
+
+    // Set the user ID in the hidden input field
+
+    // Fetch suppliers and populate the select dropdown
+    fetch('/suppliers/data') // Adjust the URL to your API endpoint
+        .then(response => response.json())
+        .then(data => {
+            const supplierSelect = $('#supplierSelect');
+            supplierSelect.empty(); // Clear previous options
+            supplierSelect.append('<option value="">Select suppliers</option>'); // Add default option
+
+            data.suppliers.forEach(supplier => {
+                // Format the option text as "supp_code (supp_name)"
+                const optionText = `${supplier.supp_code} (${supplier.supp_name})`;
+                const option = new Option(optionText, supplier.supp_code, false, false);
+                supplierSelect.append(option);
+            });
+
+            // Initialize Select2
+            supplierSelect.select2({
+                placeholder: "Select suppliers",
+                allowClear: true
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching suppliers:', error);
+        });
+
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('addSupplierModal'));
+    modal.show();
+}
+
+
+// Handle form submission
+document.getElementById('addSupplierForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    const selectedSuppliers = Array.from(document.getElementById('supplierSelect').selectedOptions).map(option => option.value);
+    const userId = document.getElementById('userId').value;
+    // Use SweetAlert to confirm the action
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You are about to add the selected suppliers.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, add them!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Make an AJAX request to add the selected suppliers
+            fetch('/users/add-suppliers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                    suppliers: selectedSuppliers, // Send the array of selected supplier codes
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close the modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addSupplierModal'));
+                    modal.hide();
+
+                    // Show success message with Toastr
+                    toastr.success('Suppliers added successfully!', 'Success');
+                } else {
+                    // Show error message with Toastr
+                    toastr.error('Error adding suppliers: ' + data.message, 'Error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                toastr.error('An error occurred while adding the suppliers.', 'Error');
+            });
+        }
+    });
+});
+
+
 
 
 $(document).ready(function () {

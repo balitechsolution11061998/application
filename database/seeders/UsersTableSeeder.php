@@ -14,7 +14,7 @@ class UsersTableSeeder extends Seeder
         $regions = Region::all();
 
         // Calculate the number of users to create per region
-        $totalUsers = 1000;
+        $totalUsers = 2;
         $usersPerRegion = intval($totalUsers / $regions->count()); // Users per region
         // Dispatch a job to create users for each region
         foreach ($regions as $region) {

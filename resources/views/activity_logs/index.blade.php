@@ -61,7 +61,7 @@
 
     @push('scripts')
         <script>
-   $(document).ready(function() {
+$(document).ready(function() {
     // Initialize DataTable for activity logs with server-side processing
     var table = $('#activityLogTable').DataTable({
         processing: true,
@@ -69,7 +69,11 @@
         responsive: true,
         ajax: {
             url: '{{ route('activity-logs.data') }}', // Adjust this route as necessary
-            type: 'GET'
+            type: 'GET',
+            dataSrc: function(json) {
+                console.log(json); // Log the entire data object to the console
+                return json.data; // Return the data array for DataTables
+            }
         },
         columns: [
             { data: 'id', name: 'id' },
@@ -77,9 +81,9 @@
             { data: 'description', name: 'description' },
             { data: 'subject_type', name: 'subject_type' },
             { data: 'event', name: 'event' },
-            { data: 'subject', name: 'subject' }, // Ensure this is handled correctly
+            { data: 'subject.order_no', name: 'subject.order_no' }, // Accessing order_no from subject
             { data: 'causer_type', name: 'causer_type' },
-            { data: 'causer.name', name: 'causer.name' }, // Change to causer's name
+            { data: 'causer.name', name: 'causer.name' }, // Accessing name from causer
             { data: 'properties', name: 'properties' },
             { data: 'batch_uuid', name: 'batch_uuid' },
             { data: 'created_at', name: 'created_at' },
@@ -138,6 +142,7 @@
         table.search(this.value).draw();
     });
 });
+
 
         </script>
     @endpush
