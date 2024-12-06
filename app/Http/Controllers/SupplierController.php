@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+use Spatie\Activitylog\Facades\Activity; // Import the Activity facade
 
 class SupplierController extends Controller
 {
@@ -52,7 +53,12 @@ class SupplierController extends Controller
                         ->where('id', $cekDataSupplier->id)
                         ->update($dataInsert);
 
-                    $response = [
+                    // Log the update activity with user context
+                    activity()
+                        ->causedBy($request->user()) // Log the user who caused the action
+                        ->log('Updated supplier: ' . $value['supp_code']); // Log the update message
+
+                    $response[] = [
                         'message' => 'Supplier berhasil diperbaharui',
                         'status' => true,
                         'success' => true,
@@ -62,7 +68,12 @@ class SupplierController extends Controller
                     $dataInsert['supp_code'] = $value['supp_code']; // Only set supp_code for new records
                     DB::table('supplier')->insert($dataInsert);
 
-                    $response = [
+                    // Log the insert activity with user context
+                    activity()
+                        ->causedBy($request->user()) // Log the user who caused the action
+                        ->log('Added new supplier: ' . $value['supp_code']); // Log the insert message
+
+                    $response[] = [
                         'message' => 'Sukses menambahkan supplier',
                         'status' => true,
                         'success' => true,
@@ -70,10 +81,14 @@ class SupplierController extends Controller
                 }
             }
         } catch (\Exception $e) {
+            // Log the error with user context
+            activity()
+                ->causedBy($request->user()) // Log the user who caused the error
+                ->log('Error processing supplier data: ' . $e->getMessage()); // Log the error message
 
-            // Return an error response
+            // Return an error response with the error message
             $response = [
-                'message' => 'Error processing supplier data',
+                'message' => 'Error processing supplier data: ' . $e->getMessage(),
                 'status' => false,
             ];
         }

@@ -179,6 +179,8 @@
 
             function syncSupplier() {
                 var syncUrl = "https://publicconcerns.online/api/supplier/get"; // Ensure this URL is correct
+                var saveUrl = "/suppliers/store"; // URL to your Laravel endpoint for saving suppliers
+
                 Swal.fire({
                     title: 'Are you sure?',
                     text: "Do you want to sync this supplier with the API?",
@@ -189,8 +191,19 @@
                     confirmButtonText: 'Yes, sync it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        // Show loading spinner
+                        Swal.fire({
+                            title: 'Syncing...',
+                            html: 'Please wait while we sync the supplier data.',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading(); // Show loading spinner
+                            }
+                        });
+
+                        // Fetch supplier data from the API
                         fetch(syncUrl, {
-                                method: 'GET', // Change to GET
+                                method: 'GET',
                                 headers: {
                                     'Content-Type': 'application/json',
                                     'X-CSRF-TOKEN': '{{ csrf_token() }}' // Include CSRF token for security
@@ -205,14 +218,43 @@
                             .then(data => {
                                 console.log(data);
                                 if (data.status) {
+                                    // Send the supplier data to your Laravel backend to save it
+                                    return fetch(saveUrl, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}' // Include CSRF token for security
+                                        },
+                                        body: JSON.stringify({
+                                            data: data.data
+                                        }) // Assuming the API returns an array of suppliers in data.data
+                                    });
+                                } else {
+                                    Swal.fire('Error!', data.message ||
+                                        'There was an error fetching the supplier data.', 'error');
+                                    throw new Error(data.message || 'Error fetching supplier data');
+                                }
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok ' + response.statusText);
+                                }
+                                return response.json();
+                            })
+                            .then(saveData => {
+                                // Close the loading spinner
+                                Swal.close();
+                                if (saveData.status) {
                                     Swal.fire('Synced!', 'The supplier has been synced successfully.', 'success');
                                     dt.ajax.reload(); // Refresh the DataTable
                                 } else {
-                                    Swal.fire('Error!', data.message || 'There was an error syncing the supplier.',
-                                        'error');
+                                    Swal.fire('Error!', saveData.message ||
+                                        'There was an error saving the supplier data.', 'error');
                                 }
                             })
                             .catch(error => {
+                                // Close the loading spinner
+                                Swal.close();
                                 Swal.fire('Error!', 'There was an error syncing the supplier: ' + error.message,
                                     'error');
                             });
