@@ -6,9 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\JsonResponse;
-use Yajra\DataTables\Facades\DataTables;
-
+use Spatie\Activitylog\Models\Activity; // Import the Activity model
 class SupplierController extends Controller
 {
 
@@ -114,7 +112,9 @@ class SupplierController extends Controller
             });
 
             // Log the activity
-            \Log::info('Supplier data retrieved successfully.', ['user_id' => $request->user()->id]);
+            activity()
+                ->causedBy($request->user()) // Log the user who caused the activity
+                ->log('Retrieved supplier data successfully.'); // Log the activity message
 
         } catch (\Exception $e) {
             // Handle any errors that occur during the query
@@ -122,10 +122,9 @@ class SupplierController extends Controller
             $response['message'] = 'Error retrieving supplier data: ' . $e->getMessage();
 
             // Log the error
-            \Log::error('Error retrieving supplier data.', [
-                'error' => $e->getMessage(),
-                'user_id' => $request->user()->id,
-            ]);
+            activity()
+                ->causedBy($request->user()) // Log the user who caused the error
+                ->log('Error retrieving supplier data: ' . $e->getMessage()); // Log the error message
         }
 
         // Return the response as JSON
