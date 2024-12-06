@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\ActivityLogContoller;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardPilkadaController;
@@ -139,6 +140,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/index', [ItemSupplierController::class, 'index'])->name('index');
         Route::get('/data', [ItemSupplierController::class, 'data'])->name('data');
         Route::post('/store', [ItemSupplierController::class, 'store'])->name('store');
+    });
+
+    Route::prefix('activity-logs')->as('activity-logs.')->group(function () {
+        Route::get('/index', [ActivityLogContoller::class, 'index'])->name('index');
+        Route::get('/data', [ActivityLogContoller::class, 'data'])->name('data');
+
     });
 
     // Profile Picture Management Routes

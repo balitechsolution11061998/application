@@ -29,6 +29,18 @@ return [
             'iconPath'       => 4,                             // Additional metadata (optional)
         ],
         [
+            'label'          => 'Activity Logs',                // Menu label
+            'type'           => 'item',                         // Type of menu (item represents a clickable menu option)
+            'permission'     => [],                             // Permissions required to view this item
+            'permissionType' => 'gate',                         // Permission type (gate or policy)
+            'icon'           => 'fas',                          // Font Awesome Solid icons (FA class)
+            'iconName'       => 'fa-list-alt',                  // Icon for Activity Logs
+            'route'          => 'activity-logs.index',          // Route to the activity logs
+            'active'         => [],                             // Define conditions when this item is active
+            'iconPath'       => 4,                              // Additional metadata (optional)
+        ],
+
+        [
             'label'          => 'Purchase Order',               // Menu label for Purchase Order
             'type'           => 'item',                          // Type (item represents a clickable menu option)
             'permission'     => [],                              // Permissions required to view this item
