@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ActivityLogContoller;
-use App\Http\Controllers\Api\SupplierController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardPilkadaController;

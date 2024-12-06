@@ -1,18 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Supplier;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Facades\DataTables;
 
 class SupplierController extends Controller
 {
-
-
+    //
+    public function index()
+    {
+        return view('supplier.index');
+    }
     //
     public function store(Request $request)
     {
@@ -78,56 +81,69 @@ class SupplierController extends Controller
         return response()->json($response);
     }
 
-    public function data(Request $request)
+    public function selectData(): JsonResponse
     {
-        // Initialize the response array
-        $response = [
-            'data' => [],
-            'status' => true,
-            'message' => 'Data retrieved successfully.',
-        ];
-
         try {
-            // Query the suppliers table
-            $query = DB::table('supplier');
-
-            // Chunk the data to handle large datasets
-            $chunkSize = 100; // Define the size of each chunk
-            $query->chunk($chunkSize, function ($suppliers) use (&$response) {
-                foreach ($suppliers as $supplier) {
-                    $response['data'][] = [
-                        'id' => $supplier->id,
+            $suppliers = [];
+            // Fetch suppliers in chunks
+            Supplier::select('supp_code', 'supp_name')->chunk(100, function ($chunk) use (&$suppliers) {
+                foreach ($chunk as $supplier) {
+                    $suppliers[] = [
+                        'supp_code' => $supplier->supp_code,
                         'supp_name' => $supplier->supp_name,
-                        'terms' => $supplier->terms,
-                        'contact_name' => $supplier->contact_name,
-                        'contact_phone' => $supplier->contact_phone,
-                        'contact_fax' => $supplier->contact_fax,
-                        'address_1' => $supplier->address_1,
-                        'address_2' => $supplier->address_2,
-                        'city' => $supplier->city,
-                        'post_code' => $supplier->post_code,
-                        'tax_no' => $supplier->tax_no,
-                        'tax_ind' => $supplier->tax_ind,
-                        'consig_ind' => $supplier->consig_ind,
-                        'status' => $supplier->status,
                     ];
                 }
             });
 
-            // Log the activity
+            // Log the successful retrieval of suppliers
+            activity()
+                ->performedOn(new Supplier())
+                ->log('Fetched all suppliers successfully.');
 
-        } catch (\Exception $e) {
-            // Handle any errors that occur during the query
-            $response['status'] = false;
-            $response['message'] = 'Error retrieving supplier data: ' . $e->getMessage();
+            // Return the suppliers as a JSON response
+            return response()->json(['suppliers' => $suppliers]);
+        } catch (Exception $e) {
+            // Log the error message
 
-            // Log the error
+            // Log the activity for error
+            activity()
+                ->performedOn(new Supplier())
+                ->log('Error fetching suppliers: ' . $e->getMessage());
 
+            // Return a JSON response with an error message
+            return response()->json(['error' => 'Failed to fetch suppliers.'], 500);
         }
-
-        // Return the response as JSON
-        return response()->json($response);
     }
 
+    public function data(Request $request)
+    {
+        // Query the suppliers table
+        $query = DB::table('supplier');
 
+        // Use DataTables to handle server-side processing
+        return DataTables::of($query)
+            ->addIndexColumn() // Add an index column for row numbering
+            ->editColumn('status', function ($supplier) {
+                return $supplier->status === 'Y' ? 'Active' : 'Inactive'; // Customize status display
+            })
+            ->addColumn('actions', function ($supplier) {
+                $editUrl = route('suppliers.edit', $supplier->id);
+                $deleteUrl = route('suppliers.destroy', $supplier->id);
+
+                return '
+                <a href="' . $editUrl . '" class="btn btn-warning btn-sm">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <form action="' . $deleteUrl . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Are you sure?\');">
+                    ' . csrf_field() . '
+                    ' . method_field('DELETE') . '
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
+            ';
+            })
+            ->rawColumns(['actions']) // Allow HTML in the actions column
+            ->make(true);
+    }
 }
