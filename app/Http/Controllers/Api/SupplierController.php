@@ -90,11 +90,12 @@ class SupplierController extends Controller
             $query = DB::table('supplier')->orderBy('id'); // Specify the order by clause
 
             // Chunk the data to handle large datasets
-            $chunkSize = 100; // Define the size of each chunk
+            $chunkSize = 1000; // Define the size of each chunk
             $query->chunk($chunkSize, function ($suppliers) use (&$response) {
                 foreach ($suppliers as $supplier) {
                     $response['data'][] = [
                         'id' => $supplier->id,
+                        'supp_code' => $supplier->supp_code,
                         'supp_name' => $supplier->supp_name,
                         'terms' => $supplier->terms,
                         'contact_name' => $supplier->contact_name,
@@ -107,6 +108,7 @@ class SupplierController extends Controller
                         'tax_no' => $supplier->tax_no,
                         'tax_ind' => $supplier->tax_ind,
                         'consig_ind' => $supplier->consig_ind,
+                        'status' => $supplier->status,
                     ];
                 }
             });

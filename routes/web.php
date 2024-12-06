@@ -109,6 +109,7 @@ Route::middleware('auth')->group(function () {
     // Supplier Management Routes
     Route::prefix('suppliers')->as('suppliers.')->group(function () {
         Route::get('/index', [SupplierController::class, 'index'])->name('index');
+        Route::post('/store', [SupplierController::class, 'store'])->name('store');
         Route::get('/data', [SupplierController::class, 'data'])->name('data');
         Route::get('/selectData', [SupplierController::class, 'selectData'])->name('selectData');
         Route::get('/edit', [SupplierController::class, 'edit'])->name('edit');
