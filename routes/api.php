@@ -48,7 +48,7 @@ Route::post('/itemsupplier/store', [ItemSupplierController::class, 'store']);
 Route::get('/itemsupplier/getData', [ItemSupplierController::class, 'getData']);
 
 Route::post('/supplier/store', [SupplierController::class, 'store']);
-Route::get('/supplier/get', [SupplierController::class, 'getData']);
+Route::get('/supplier/get', [SupplierController::class, 'data']);
 // Receive (RCV) Routes
 Route::prefix('rcv')->group(function () {
     Route::post('/store', [RcvController::class, 'store']);
