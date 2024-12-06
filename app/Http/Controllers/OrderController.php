@@ -80,13 +80,41 @@ class OrderController extends Controller
     {
         $order_no = base64_decode($order_no);
 
+        // Capture start time and memory usage
+        $startTime = microtime(true);
+        $startMemory = memory_get_usage(); // Memory in bytes
+
         try {
+            // Check if the user is authenticated
+            if (!Auth::check()) {
+                return redirect()->route('login'); // Redirect to login if not authenticated
+            }
+
+            // Fetch the order to log it as the subject
+            $order = OrdHead::where('order_no', $order_no)->first();
+            if (!$order) {
+                return redirect()->back()->with([
+                    'message' => 'Order not found.',
+                    'code' => 404,
+                ]);
+            }
+
+            // Get the user's IP address
+            $userIp = request()->ip();
+
             // Log activity: User is viewing an order
             activity()
                 ->causedBy(Auth::user())
-                ->performedOn(new OrdHead())
-                ->withProperties(['order_no' => $order_no])
-                ->log('Viewed order details');
+                ->performedOn($order) // Set the subject to the order
+                ->withProperties([
+                    'order_no' => $order_no,
+                    'execution_time_ms' => round((microtime(true) - $startTime) * 1000, 2), // Time in ms
+                    'memory_usage_m' => round($startMemory / 1024 / 1024, 2), // Memory in M
+                    'timestamp' => now(),
+                    'log_name' => 'Custom Log Name: Viewed Order', // Custom log name
+                    'user_ip' => $userIp, // Add user IP address
+                ])
+                ->log('User accessed order details'); // Custom log message
 
             // Fetch order details with related store and supplier information
             $orderDetails = $this->getOrderDetails($order_no);
@@ -102,9 +130,29 @@ class OrderController extends Controller
             // Prepare data for the view
             $data = $this->prepareOrderData($orderDetails, $orderItems);
 
+            // Log system usage
+            SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderData');
+
             // Return the view with data
             return view('orders.show', compact('data'));
         } catch (\Exception $e) {
+            // Log system usage in case of an error
+            SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderDataError');
+
+            // Log the exception details for debugging
+            activity()
+                ->causedBy(Auth::user())
+                ->withProperties([
+                    'order_no' => $order_no,
+                    'error' => $e->getMessage(),
+                    'execution_time_ms' => round((microtime(true) - $startTime) * 1000, 2), // Time in ms
+                    'memory_usage_m' => round($startMemory / 1024 / 1024, 2), // Memory in M
+                    'timestamp' => now(),
+                    'log_name' => 'Custom Log Name: Error Viewing Order', // Custom log name
+                    'user_ip' => $userIp, // Add user IP address
+                ])
+                ->log('Error accessing order details'); // Custom log message
+
             // Return back with an error message and status code
             return redirect()->back()->with([
                 'message' => 'An error occurred while retrieving the order details.',
@@ -113,6 +161,12 @@ class OrderController extends Controller
             ]);
         }
     }
+
+
+
+
+
+
 
     private function getOrderDetails($order_no)
     {
@@ -259,6 +313,26 @@ class OrderController extends Controller
                 return response()->json(['error' => 'An error occurred while fetching data. ' . $e->getMessage()], 500);
             } finally {
                 // Log performance metrics
+                // Calculate performance metrics
+                // Calculate performance metrics
+                $executionTimeMs = round((microtime(true) - $startTime) * 1000, 2); // Time in ms
+                $memoryUsageM = round((memory_get_usage() - $startMemory) / 1024 / 1024, 2); // Memory in MB
+
+                // Log performance metrics
+                $lastOrder = OrdHead::latest()->first(); // Get the last order for logging
+                if ($lastOrder) {
+                    activity()
+                        ->causedBy(Auth::user()) // Log the user who triggered the action
+                        ->performedOn($lastOrder) // Log the last order as the subject
+                        ->withProperties([
+                            'execution_time' => $executionTimeMs . " MS",
+                            'memory_usage' => $memoryUsageM . " MB",
+                            'timestamp' => now(),
+                            'log_name' => 'Custom Log Name: Order Data Fetch', // Custom log name
+                        ])
+                        ->log('Fetched order data'); // Custom log message
+                }
+
                 SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderData');
             }
         }

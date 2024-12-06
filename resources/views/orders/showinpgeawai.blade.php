@@ -91,25 +91,110 @@
                 color: white;
             }
 
-            .supplier-card {
-                background-color: #e9f7fe; /* Light blue background */
-                border: 1px solid #007bff; /* Blue border */
-                border-radius: 12px;
-                padding: 20px;
-                margin-bottom: 24px;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            .tracking-section {
+                margin-top: 24px;
             }
 
-            .supplier-header {
-                font-size: 1.5rem;
-                font-weight: bold;
-                color: #007bff; /* Blue text */
+            .tracking-step {
+                display: flex;
+                align-items: center;
+                gap: 16px;
                 margin-bottom: 12px;
             }
 
-            .supplier-detail {
+            .tracking-icon {
+                font-size: 1.5rem;
+                color: #007bff;
+            }
+
+            .tracking-description {
                 font-size: 1rem;
                 color: #495057;
+            }
+
+            .btn-back {
+                display: inline-flex;
+                align-items: center;
+                font-size: 0.9rem;
+                padding: 8px 16px;
+                background-color: #6c757d;
+                color: white;
+                border-radius: 8px;
+                text-decoration: none;
+                transition: background-color 0.3s ease;
+            }
+
+            .btn-back:hover {
+                background-color: #5a6268;
+            }
+
+            .btn-back i {
+                margin-right: 6px;
+            }
+
+            #printPOButton {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.875rem;
+                border-radius: 0.25rem;
+            }
+
+            #printPOButton i {
+                margin-right: 0.5rem;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            thead {
+                background-color: #343a40;
+                color: white;
+            }
+
+            th,
+            td {
+                padding: 12px 15px;
+                text-align: center;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+            th {
+                position: sticky;
+                top: 0;
+                z-index: 10;
+            }
+
+            tbody tr:hover {
+                background-color: #f1f1f1;
+            }
+
+            .text-end {
+                text-align: right;
+            }
+
+            .text-wrap {
+                word-wrap: break-word;
+            }
+
+            .black-text {
+                color: #212529;
+            }
+
+            @media (max-width: 768px) {
+
+                th,
+                td {
+                    padding: 8px;
+                    font-size: 14px;
+                }
+            }
+
+            .icon-white {
+                color: white;
             }
 
             .note-section {
@@ -130,7 +215,56 @@
                 color: #212529;
             }
 
-            /* Other existing styles... */
+            .comment-section {
+                margin-top: 24px;
+                padding: 16px;
+                background-color: #f8f9fa;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+            }
+
+            .comment-section h5 {
+                margin-bottom: 12px;
+                color: #495057;
+            }
+
+            .comment-section p {
+                margin: 0;
+                color: #212529;
+            }
+
+            .comment-section .approved-by {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 16px;
+            }
+
+            .comment-section {
+                background-color: #007bff;
+                /* Primary color */
+                padding: 16px;
+                border-radius: 8px;
+            }
+
+            .comment-section h5 {
+                margin-bottom: 12px;
+                color: white;
+                /* White text */
+            }
+
+            .comment-section p {
+                margin: 0;
+                color: white;
+                /* White text */
+            }
+
+            .approved-by {
+                margin-top: 16px;
+                font-size: 1rem;
+                color: #495057;
+                /* Dark color for contrast */
+            }
         </style>
     @endpush
 
@@ -142,6 +276,7 @@
             </a>
         </div>
 
+
         <div class="container mt-4">
             <div class="card bg-white shadow-sm rounded-4">
                 <div class="card-body">
@@ -150,8 +285,6 @@
                             <i class="fas fa-print"></i> Print PO
                         </button>
                     @endif
-
-                    <!-- Alert for Incorrect Data -->
                     @php
                         $hasError = false;
                         foreach ($data['orderItems'] as $item) {
@@ -164,10 +297,10 @@
 
                     @if ($hasError)
                         <div class="alert alert-danger" role="alert">
-                            <strong>Data yang direlase salah!</strong> Silahkan periksa Vega untuk memeriksa data yang benar, dan silahkan infokan ke user terkait.
+                            <strong>Data yang direlase salah!</strong> Silahkan periksa Vega untuk memeriksa data yang
+                            benar, dan silahkan infokan ke user terkait.
                         </div>
                     @endif
-
                     <div class="row">
                         <div class="col-md-4">
                             <div class="detail-row">
@@ -176,7 +309,8 @@
                                 </div>
                                 <div class="detail-value">
                                     <span id="orderNumber">{{ $data['orderDetails']->order_no ?? 'N/A' }}</span>
-                                    <div id="spinnerOrder" class="spinner-border spinner-border-sm text-primary d-none" role="status">
+                                    <div id="spinnerOrder" class="spinner-border spinner-border-sm text-primary d-none"
+                                        role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                 </div>
@@ -195,7 +329,8 @@
                                             <span class="text-muted">Data Tidak Tersedia</span>
                                         @endif
                                     </span>
-                                    <div id="spinnerDelivery" class="spinner-border spinner-border-sm text-primary d-none" role="status">
+                                    <div id="spinnerDelivery"
+                                        class="spinner-border spinner-border-sm text-primary d-none" role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                 </div>
@@ -215,7 +350,8 @@
                                             <span class="text-muted">Data Tidak Tersedia</span>
                                         @endif
                                     </span>
-                                    <div id="spinnerDelivery" class="spinner-border spinner-border-sm text-primary d-none" role="status">
+                                    <div id="spinnerDelivery"
+                                        class="spinner-border spinner-border-sm text-primary d-none" role="status">
                                         <span class="sr-only">Memuat...</span>
                                     </div>
                                 </div>
@@ -227,7 +363,8 @@
                                 <div class="detail-label">Store No</div>
                                 <div class="detail-value">
                                     <span id="storeCode">{{ $data['store']['store_code'] ?? 'N/A' }}</span>
-                                    <div id="spinnerStore" class="spinner-border spinner-border-sm text-primary d-none" role="status">
+                                    <div id="spinnerStore" class="spinner-border spinner-border-sm text-primary d-none"
+                                        role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                 </div>
@@ -237,7 +374,8 @@
                                 <div class="detail-label">Approval</div>
                                 <div class="detail-value">
                                     <span id="approval">{{ $data['orderDetails']->approval_id ?? 'N/A' }}</span>
-                                    <div id="spinnerApproval" class="spinner-border spinner-border-sm text-primary d-none" role="status">
+                                    <div id="spinnerApproval"
+                                        class="spinner-border spinner-border-sm text-primary d-none" role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                 </div>
@@ -246,7 +384,8 @@
                                 <div class="detail-label">Supplier</div>
                                 <div class="detail-value">
                                     <span id="supplierName">{{ $data['orderDetails']->supplier ?? 'N/A' }}</span>
-                                    <div id="spinnerSupplier" class="spinner-border spinner-border-sm text-primary d-none" role="status">
+                                    <div id="spinnerSupplier"
+                                        class="spinner-border spinner-border-sm text-primary d-none" role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                 </div>
@@ -255,10 +394,12 @@
                                 <div class="detail-label">Receive No</div>
                                 <div class="detail-value">
                                     <span id="receiveNo">
-                                        <i class="fas fa-receipt" style="margin-right: 5px;"></i> <!-- Icon for Receive No -->
+                                        <i class="fas fa-receipt" style="margin-right: 5px;"></i>
+                                        <!-- Icon for Receive No -->
                                         {{ $data['orderDetails']->receive_no ?? 'N/A' }}
                                     </span>
-                                    <div id="spinnerReceive" class="spinner-border spinner-border-sm text-primary d-none" role="status">
+                                    <div id="spinnerReceive"
+                                        class="spinner-border spinner-border-sm text-primary d-none" role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                 </div>
@@ -266,13 +407,15 @@
                             <div class="detail-row">
                                 <div class="detail-label">Status</div>
                                 <div class="detail-value">
-                                    <span class="badge-status badge
+                                    <span
+                                        class="badge-status badge
                                         @if ($data['orderDetails']->status === 'Progress') badge-warning
                                         @elseif ($data['orderDetails']->status === 'Completed') badge-success
                                         @elseif ($data['orderDetails']->status === 'Expired') badge-danger
                                         @elseif ($data['orderDetails']->status === 'Printed') badge-info
                                         @else badge-secondary @endif text-white">
-                                        <i class="fas
+                                        <i
+                                            class="fas
                                             @if ($data['orderDetails']->status === 'Progress') fa-spinner fa-spin
                                             @elseif ($data['orderDetails']->status === 'Completed') fa-check-circle
                                             @elseif ($data['orderDetails']->status === 'Expired') fa-times-circle
@@ -323,8 +466,10 @@
                                             $statusText = 'Data Tidak Tersedia'; // Data Not Available
                                         }
                                     @endphp
-                                    <span class="badge {{ $badgeClass }} d-flex align-items-center" style="padding: 5px 10px; margin-right: 10px;">
-                                        <i class="{{ $iconClass }}" style="margin-right: 5px;"></i> {{ $statusText }}
+                                    <span class="badge {{ $badgeClass }} d-flex align-items-center"
+                                        style="padding: 5px 10px; margin-right: 10px;">
+                                        <i class="{{ $iconClass }}" style="margin-right: 5px;"></i>
+                                        {{ $statusText }}
                                     </span>
                                 </div>
                             </div>
@@ -399,13 +544,19 @@
                                             @php
                                                 // Calculate item total before discount
                                                 $itemTotal = $item->qty_ordered * $item->unit_cost; // Total before discount
-                                                $discountAmount = ($item->permanent_disc_pct > 0) ? ($itemTotal * ($item->permanent_disc_pct / 100)) : 0; // Calculate discount amount
+                                                $discountAmount =
+                                                    $item->permanent_disc_pct > 0
+                                                        ? $itemTotal * ($item->permanent_disc_pct / 100)
+                                                        : 0; // Calculate discount amount
                                                 $itemTotalAfterDiscount = $itemTotal - $discountAmount; // Adjust item total after discount
                                                 $totalCost += $itemTotalAfterDiscount; // Add item total to total cost
 
                                                 // Calculate VAT total based on the original item total
                                                 $vatAmount = $item->vat_cost * $item->qty_ordered; // Total VAT before discount
-                                                $discountAmountPPN = ($item->permanent_disc_pct > 0) ? ($vatAmount * ($item->permanent_disc_pct / 100)) : 0; // Calculate discount amount for VAT
+                                                $discountAmountPPN =
+                                                    $item->permanent_disc_pct > 0
+                                                        ? $vatAmount * ($item->permanent_disc_pct / 100)
+                                                        : 0; // Calculate discount amount for VAT
 
                                                 $vat_costTotal = $vatAmount - $discountAmountPPN; // Adjust VAT cost after discount
                                                 $totalPPN += $vat_costTotal; // Add to total PPN
@@ -419,11 +570,13 @@
                                             <tr>
                                                 <td class="text-center">{{ $index + 1 }}</td>
                                                 <td class="text-wrap">
-                                                    <i class="fas fa-tag" style="color: #007bff;"></i> {{ $item->sku }}
+                                                    <i class="fas fa-tag" style="color: #007bff;"></i>
+                                                    {{ $item->sku }}
                                                 </td>
                                                 <td class="text-wrap">{{ $item->sku_desc }}</td>
                                                 <td class="text-center">
-                                                    <i class="fas fa-barcode" style="color: #28a745;"></i> {{ $item->upc }}
+                                                    <i class="fas fa-barcode" style="color: #28a745;"></i>
+                                                    {{ $item->upc }}
                                                 </td>
                                                 <td class="text-center">{{ $item->tag_code }}</td>
                                                 <td class="text-end">{{ number_format($item->unit_cost, 2) }}</td>
@@ -431,29 +584,37 @@
                                                 <td class="text-center">
                                                     @if (is_null($item->itemSupplier))
                                                         <span class="badge bg-secondary">
-                                                            <i class="fas fa-exclamation-circle" style="color: red;"></i> Tidak Ada Data
+                                                            <i class="fas fa-exclamation-circle"
+                                                                style="color: red;"></i> Tidak Ada Data
                                                         </span>
                                                     @elseif($item->itemSupplier->vat_ind === 'Y')
                                                         <span class="badge bg-success">
-                                                            <i class="fas fa-check-circle" style="color: green;"></i> BKP
+                                                            <i class="fas fa-check-circle" style="color: green;"></i>
+                                                            BKP
                                                         </span>
                                                     @else
                                                         <span class="badge bg-danger">
-                                                            <i class="fas fa-times-circle" style="color: red;"></i> NON BKP
+                                                            <i class="fas fa-times-circle" style="color: red;"></i>
+                                                            NON BKP
                                                         </span>
                                                     @endif
                                                 </td>
-                                                <td class="text-end">{{ number_format($vat_costTotal, 2) }}</td> <!-- Total PPN for the item -->
+                                                <td class="text-end">{{ number_format($vat_costTotal, 2) }}</td>
+                                                <!-- Total PPN for the item -->
                                                 <td class="text-center">{{ $item->qty_ordered }}</td>
                                                 <td class="text-center">{{ $item->purchase_uom }}</td>
                                                 <td class="text-center">
                                                     {{ $item->permanent_disc_pct > 0 ? $item->permanent_disc_pct . '%' : '0%' }}
                                                 </td> <!-- Displaying percentage -->
 
-                                                <td class="text-end">{{ number_format($itemTotalAfterDiscount, 2) }}</td> <!-- Total for the item after discount -->
-                                                <td class="text-end">{{ number_format($vat_costTotal, 2) }}</td> <!-- Total PPN for the item -->
-                                                <td class="text-end">{{ number_format($discountAmount, 2) }}</td> <!-- Total Discount for the item -->
-                                                <td class="text-end">{{ number_format($subTotal, 2) }}</td> <!-- Sub Total for the item -->
+                                                <td class="text-end">{{ number_format($itemTotalAfterDiscount, 2) }}
+                                                </td> <!-- Total for the item after discount -->
+                                                <td class="text-end">{{ number_format($vat_costTotal, 2) }}</td>
+                                                <!-- Total PPN for the item -->
+                                                <td class="text-end">{{ number_format($discountAmount, 2) }}</td>
+                                                <!-- Total Discount for the item -->
+                                                <td class="text-end">{{ number_format($subTotal, 2) }}</td>
+                                                <!-- Sub Total for the item -->
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -463,20 +624,27 @@
                                             $grandTotal = $totalCost + $totalPPN; // Grand total without discount
                                         @endphp
                                         <tr class="table-dark">
-                                            <td colspan="15" class="text-end text-white"><strong>TOTAL DISCOUNT:</strong></td>
-                                            <td class="text-end text-white">{{ number_format($totalDiscount, 2) }}</td> <!-- Total Discount for all items -->
+                                            <td colspan="15" class="text-end text-white"><strong>TOTAL
+                                                    DISCOUNT:</strong></td>
+                                            <td class="text-end text-white">{{ number_format($totalDiscount, 2) }}
+                                            </td> <!-- Total Discount for all items -->
                                         </tr>
                                         <tr class="table-dark">
-                                            <td colspan="15" class="text-end text-white"><strong>TOTAL (before PPN):</strong></td>
-                                            <td class="text-end text-white">{{ number_format($totalCost, 2) }}</td> <!-- Total Cost before discount -->
+                                            <td colspan="15" class="text-end text-white"><strong>TOTAL (before
+                                                    PPN):</strong></td>
+                                            <td class="text-end text-white">{{ number_format($totalCost, 2) }}</td>
+                                            <!-- Total Cost before discount -->
                                         </tr>
                                         <tr class="table-dark">
                                             <td colspan="15" class="text-end text-white"><strong>PPN:</strong></td>
-                                            <td class="text-end text-white">{{ number_format($totalPPN, 2) }}</td> <!-- Total PPN -->
+                                            <td class="text-end text-white">{{ number_format($totalPPN, 2) }}</td>
+                                            <!-- Total PPN -->
                                         </tr>
                                         <tr class="table-dark">
-                                            <td colspan="15" class="text-end text-white"><strong>TOTAL (after PPN - Discount):</strong></td>
-                                            <td class="text-end text-white">{{ number_format($grandTotal, 2) }}</td> <!-- Grand Total after discount -->
+                                            <td colspan="15" class="text-end text-white"><strong>TOTAL (after PPN -
+                                                    Discount):</strong></td>
+                                            <td class="text-end text-white">{{ number_format($grandTotal, 2) }}</td>
+                                            <!-- Grand Total after discount -->
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -484,15 +652,21 @@
                         </div>
                     </div>
 
+
+
                     <!-- Note Section -->
                     <div class="note-section">
                         <h5>Note: IMPORTANT</h5>
                         <p>* Dokumen ini tidak perlu tanda tangan karena di cetak melalui sistem.</p>
-                        <p>* Jika harga barang tidak sama dengan harga di PO mohon segera menghubungi bagian merchandising sebelum barang dikirimkan.</p>
+                        <p>* Jika harga barang tidak sama dengan harga di PO mohon segera menghubungi bagian
+                            merchandising sebelum barang dikirimkan.</p>
                         <p>* Jika terdapat perubahan harga mohon diinformasikan paling lambat 14 hari sebelumnya.</p>
-                        <p>* Apabila tidak ada informasi perubahan harga yang diberikan ke bagian merchandising, maka harga yang diakui adalah harga terendah.</p>
-                        <p>* Nota retur yang sudah diterbitkan oleh Minimat akan langsung dipotong pada faktur tagihan suppliers tanpa pemberitahuan terlebih dahulu sesuai dengan perjanjian yang disepakati.</p>
-                        <p>* Barang yang tidak diambil atas nota retur yang sudah dibuat menjadi tanggung jawab suppliers.</p>
+                        <p>* Apabila tidak ada informasi perubahan harga yang diberikan ke bagian merchandising, maka
+                            harga yang diakui adalah harga terendah.</p>
+                        <p>* Nota retur yang sudah diterbitkan oleh Minimat akan langsung dipotong pada faktur tagihan
+                            suppliers tanpa pemberitahuan terlebih dahulu sesuai dengan perjanjian yang disepakati.</p>
+                        <p>* Barang yang tidak diambil atas nota retur yang sudah dibuat menjadi tanggung jawab
+                            suppliers.</p>
                     </div>
 
                     <!-- Comment and Approval Section -->
