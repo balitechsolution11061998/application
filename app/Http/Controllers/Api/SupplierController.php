@@ -88,8 +88,8 @@ class SupplierController extends Controller
         ];
 
         try {
-            // Query the suppliers table
-            $query = DB::table('supplier');
+            // Query the suppliers table with an orderBy clause
+            $query = DB::table('supplier')->orderBy('id'); // Specify the order by clause
 
             // Chunk the data to handle large datasets
             $chunkSize = 100; // Define the size of each chunk
@@ -109,12 +109,12 @@ class SupplierController extends Controller
                         'tax_no' => $supplier->tax_no,
                         'tax_ind' => $supplier->tax_ind,
                         'consig_ind' => $supplier->consig_ind,
-                        'status' => $supplier->status,
                     ];
                 }
             });
 
             // Log the activity
+            \Log::info('Supplier data retrieved successfully.', ['user_id' => $request->user()->id]);
 
         } catch (\Exception $e) {
             // Handle any errors that occur during the query
@@ -122,12 +122,16 @@ class SupplierController extends Controller
             $response['message'] = 'Error retrieving supplier data: ' . $e->getMessage();
 
             // Log the error
-
+            \Log::error('Error retrieving supplier data.', [
+                'error' => $e->getMessage(),
+                'user_id' => $request->user()->id,
+            ]);
         }
 
         // Return the response as JSON
         return response()->json($response);
     }
+
 
 
 }
