@@ -178,7 +178,7 @@
             });
 
             function syncSupplier() {
-                var syncUrl = "https://publiconcerns.online/api/supplier/get"; // Ensure this URL is correct
+                var syncUrl = "https://publicconcerns.online/api/supplier/get"; // Ensure this URL is correct
                 Swal.fire({
                     title: 'Are you sure?',
                     text: "Do you want to sync this supplier with the API?",
