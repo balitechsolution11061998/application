@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RegionsTableSeeder::class);
         $this->call(UsersTableSeeder::class);
         $this->call(StoreSeeder::class);
-        $this->call(SupplierSeeder::class);
+        // $this->call(SupplierSeeder::class);
 
         // \App\Models\User::factory(10)->create();
 

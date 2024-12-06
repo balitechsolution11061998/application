@@ -101,7 +101,6 @@
             .progress-text {
                 position: absolute;
                 /* Position text absolutely */
-                width: 100%;
                 /* Full width */
                 text-align: center;
                 /* Center text */

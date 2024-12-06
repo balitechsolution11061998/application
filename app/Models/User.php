@@ -32,7 +32,10 @@ class User extends Authenticatable implements LaratrustUser
         'password_show',
         'profile_picture',
         'address',
-        'region_id',
+        'region',
+        'supplier_id',
+        'supplier_names',
+
     ];
 
     /**

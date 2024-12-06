@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.1",
         "binafy/laravel-user-monitoring": "^1.1",
+        "fakerphp/faker": "^1.24",
         "geoip2/geoip2": "^3.0",
         "graham-campbell/markdown": "^15.2",
         "guzzlehttp/guzzle": "^7.2",
@@ -27,7 +28,6 @@
         "yaza/laravel-repository-service": "^5.1"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.9.1",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",

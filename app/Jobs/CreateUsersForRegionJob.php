@@ -9,6 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Faker\Factory as Faker;
 
 class CreateUsersForRegionJob implements ShouldQueue
 {
@@ -39,11 +40,14 @@ class CreateUsersForRegionJob implements ShouldQueue
         // Fetch role IDs
         $roleIds = DB::table('roles')->whereIn('name', $roles)->pluck('id', 'name');
 
-        // Predefined users
+        // Initialize Faker
+        $faker = Faker::create('id_ID'); // Use Indonesian locale
+
+        // Predefined users with actual names
         $predefinedUsers = [
             [
-                'username' => 99, // Integer username
-                'name' => 'Administrator',
+                'username' => 99,
+                'name' => 'Admin Notification',
                 'email' => 'notification@supplier.m-mart.co.id',
                 'status' => 'y',
                 'all_supplier' => 'y',
@@ -54,26 +58,64 @@ class CreateUsersForRegionJob implements ShouldQueue
                 'address' => 'Jl. Merdeka No.1, Jakarta',
                 'phone_number' => '081234567890',
                 'profile_picture' => '/logo.png',
-                'role' => 'superadministrator',
+                'role' => 'administrator',
             ],
             [
-                'username' => 219811991, // Integer username
+                'username' => 219811991,
                 'name' => 'I Wayan Bayu Sulaksana',
                 'email' => 'sulaksana60@gmail.com',
                 'status' => 'y',
                 'all_supplier' => 'y',
-                'password' => Hash::make('password'),
-                'password_show' => 'password',
+                'password' => Hash::make('Superman2000@'),
+                'password_show' => 'Superman2000@',
                 'link_sync' => null,
                 'region' => $regionId,
                 'address' => 'Jl. Bali Merdeka',
                 'phone_number' => '081219811991',
-                'role' => 'administrator',
+                'role' => 'superadministrator',
             ],
-            // Other predefined users...
+            [
+                'username' => 219811992, // Predefined supplier user
+                'name' => 'SUKANDA DJAYA, PT',
+                'email' => 'dpssmspv@diamond.co.id',
+                'status' => 'y',
+                'all_supplier' => 'y',
+                'password' => Hash::make('219811992@123'), // Set password for supplier
+                'password_show' => '219811992@123',
+                'link_sync' => null,
+                'region' => $regionId,
+                'address' => 'Jl. Supplier No.1, Jakarta',
+                'phone_number' => '081234567891',
+                'role' => 'supplier',
+            ],
         ];
 
-        DB::transaction(function () use ($predefinedUsers, $usersPerRegion, $regionId, $roleIds) {
+        // Generate additional users with Faker
+        for ($i = 0; $i < $usersPerRegion - count($predefinedUsers); $i++) {
+            $name = $faker->name; // Generate a random Indonesian name
+            $username = strtolower(str_replace(' ', '.', $name)); // Create username from name
+            $email = strtolower(str_replace(' ', '.', $name)) . '@example.com'; // Create email from name
+
+            // Randomly assign role as either 'user' or 'supplier'
+            $role = $faker->randomElement(['supplier']);
+
+            $predefinedUsers[] = [
+                'username' => $username, // Use the generated username
+                'name' => $name, // Use the generated name
+                'email' => $email, // Use the generated email
+                'status' => 'y',
+                'all_supplier' => 'n',
+                'password' => Hash::make('password'),
+                'password_show' => 'password',
+                'link_sync' => null,
+                'region' => $regionId,
+                'address' => $faker->address, // Generate a random address
+                'phone_number' => '081' . str_pad($i, 8, '0', STR_PAD_RIGHT),
+                'role' => $role, // Assign the randomly selected role
+            ];
+        }
+
+        DB::transaction(function () use ($predefinedUsers, $regionId, $roleIds) {
             // Insert predefined users first
             $users = [];
             foreach ($predefinedUsers as $user) {
@@ -81,27 +123,6 @@ class CreateUsersForRegionJob implements ShouldQueue
                 if (!DB::table('users')->where('username', $user['username'])->exists()) {
                     $users[] = $user;
                 }
-            }
-
-            // Generate random users with integer usernames
-            $maxUsername = DB::table('users')->max('username') ?? 1000;
-
-            for ($i = count($users); $i < $usersPerRegion; $i++) {
-                $users[] = [
-                    'username' => ++$maxUsername, // Increment integer username
-                    'name' => "User Region {$regionId} - {$i}",
-                    'email' => "user_region{$regionId}_{$maxUsername}@example.com",
-                    'photo' => '/default.png',
-                    'status' => 'y',
-                    'all_supplier' => 'n',
-                    'password' => Hash::make('password'),
-                    'password_show' => 'password',
-                    'link_sync' => null,
-                    'region' => $regionId,
-                    'address' => "Jl. Region {$regionId} - {$i}",
-                    'phone_number' => '081' . str_pad($i, 8, '0', STR_PAD_RIGHT),
-                    'role' => 'user',
-                ];
             }
 
             // Insert users and assign roles

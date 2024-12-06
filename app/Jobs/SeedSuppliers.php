@@ -41,27 +41,6 @@ class SeedSuppliers implements ShouldQueue
         ]);
 
         // Generate 4,999 additional supplier entries
-        for ($i = 0; $i < 4999; $i++) {
-            DB::table('supplier')->insert([
-                'supp_code' => $faker->unique()->numerify('######'), // 6-digit unique supplier code
-                'supp_name' => $faker->company, // Random company name
-                'terms' => $faker->numberBetween(1, 30), // Random payment terms
-                'contact_name' => $faker->name, // Random contact person name
-                'contact_phone' => $faker->phoneNumber, // Random phone number
-                'contact_fax' => $faker->optional()->phoneNumber, // Optional fax number
-                'email' => $faker->unique()->safeEmail, // Random unique email address
-                'address_1' => $faker->streetAddress, // Random address line 1
-                'address_2' => $faker->optional()->streetAddress, // Optional address line 2
-                'city' => $faker->city, // Random city name
-                'post_code' => $faker->postcode, // Random postal code
-                'tax_ind' => $faker->randomElement(['Y', 'N']), // Random tax indicator
-                'tax_no' => $faker->optional()->numerify('##########'), // Optional 10-digit tax number
-                'retur_ind' => $faker->randomElement(['Y', 'N']), // Random return indicator
-                'consig_ind' => $faker->randomElement(['Y', 'N']), // Random consignment indicator
-                'status' => $faker->randomElement(['Y', 'N']), // Random status
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
+
     }
 }

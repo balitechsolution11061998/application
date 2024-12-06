@@ -73,6 +73,17 @@ return [
             'active'         => ['item-suppliers.*'],            // Define conditions when this item is active (e.g., all item supplier routes)
             'iconPath'       => 4,                                // Path for the icon (if applicable)
         ],
+        [
+            'label'          => 'Supplier',                       // Menu label for Supplier
+            'type'           => 'item',                           // Type (item represents a clickable menu option)
+            'permission'     => [],                               // Permissions required to view this item
+            'permissionType' => 'gate',                           // Permission type (gate or policy)
+            'icon'           => 'fas',                            // Font Awesome Solid icons (FA class)
+            'iconName'       => 'fa-user-tag',                   // Updated icon for the supplier section
+            'route'          => 'suppliers.index',          // Route for the item supplier index page
+            'active'         => ['suppliers.*'],            // Define conditions when this item is active (e.g., all item supplier routes)
+            'iconPath'       => 4,                                // Path for the icon (if applicable)
+        ],
         // Pages section heading
         [
             'label' => 'Pages',
