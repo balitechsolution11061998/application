@@ -2,13 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CcextDetail;
+use App\Models\CcextHead;
 use Illuminate\Http\Request;
+use Spatie\Activitylog\Models\Activity;
 
 class CostChangeController extends Controller
 {
     //
     public function store(Request $request)
     {
+        // Start time measurement
+        $startTime = microtime(true);
+
+        // Get initial memory usage
+        $initialMemory = memory_get_usage();
+
         // Validate the incoming request
         $request->validate([
             'cost_change_no' => 'required|integer',
@@ -45,6 +54,15 @@ class CostChangeController extends Controller
                 'created_at' => now(),
             ]);
         }
+
+        // Log the activity
+        activity()
+            ->performedOn($head)
+            ->withProperties([
+                'execution_time' => microtime(true) - $startTime,
+                'memory_used' => memory_get_usage() - $initialMemory,
+            ])
+            ->log('Inserted cost change data');
 
         return response()->json(['message' => 'Data inserted successfully'], 201);
     }
