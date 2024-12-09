@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('savings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('member_id')->constrained()->onDelete('cascade');
-            $table->decimal('amount', 10, 2);
-            $table->date('saving_date');
-            $table->enum('type', ['mandatory', 'voluntary']);
+            $table->foreignId('member_id')->constrained()->onDelete('cascade'); // ID Anggota
+            $table->decimal('amount', 10, 2); // Jumlah Simpanan
+            $table->date('saving_date'); // Tanggal Simpanan
+            $table->enum('type', ['mandatory', 'voluntary']); // Tipe Simpanan
+            $table->string('description')->nullable(); // Keterangan (opsional)
             $table->timestamps();
         });
     }
