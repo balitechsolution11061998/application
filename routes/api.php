@@ -55,4 +55,4 @@ Route::prefix('rcv')->group(function () {
     Route::post('/store', [RcvController::class, 'store']);
     Route::get('/getData', [RcvController::class, 'getData']);
 });
-Route::post('/cost-change', [CostChangeController::class, 'store']);
+Route::post('/cost-change/store', [CostChangeController::class, 'store']);
