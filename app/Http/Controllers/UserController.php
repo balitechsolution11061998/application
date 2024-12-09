@@ -483,7 +483,6 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-
         // Validate the request data
         $rules = [
             'username' => 'required|string|max:255',
@@ -493,7 +492,7 @@ class UserController extends Controller
             'address' => 'nullable|string|max:255',
             'region_id' => 'required|integer',
             'roles' => 'required',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'profile_picture' => 'nullable|integer',
         ];
 
         // Validate the input
