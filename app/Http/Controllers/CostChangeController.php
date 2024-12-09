@@ -20,7 +20,7 @@ class CostChangeController extends Controller
 
         // Validate the incoming request
         $request->validate([
-            'cost_change_no' => 'required|integer',
+            'ccext_no' => 'required|integer',
             'cost_change_desc' => 'required|string',
             'reason' => 'required|integer',
             'status' => 'required|integer',
@@ -38,9 +38,9 @@ class CostChangeController extends Controller
 
             // Update or create the head record
             $head = CcextHead::updateOrCreate(
-                ['cost_change_no' => $request->cost_change_no],
+                ['ccext_no' => $request->ccext_no],
                 [
-                    'cost_change_desc' => $request->cost_change_desc,
+                    'ccext_no' => $request->ccext_no,
                     'reason' => $request->reason,
                     'status' => $request->status,
                     'active_date' => $activeDate->format('Y-m-d'), // Convert to YYYY-MM-DD
@@ -56,7 +56,7 @@ class CostChangeController extends Controller
             DB::beginTransaction();
 
             // Delete existing details that are not in the incoming request
-            $existingDetails = CcextDetail::where('cost_change_no', $request->cost_change_no)->get();
+            $existingDetails = CcextDetail::where('ccext_no', $request->ccext_no)->get();
             $existingCcextNos = $existingDetails->pluck('ccext_no')->toArray();
 
             // Delete records that are not present in the incoming request
