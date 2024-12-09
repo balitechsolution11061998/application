@@ -2,6 +2,7 @@
 
 namespace App\Core;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Laratrust\LaratrustFacade as Laratrust;
 
@@ -423,6 +424,7 @@ class Theme
     function permissionExist(array $permission) {
 
         $ablities = collect(Gate::abilities())->keys();
+
         if(!collect($permission)->some(function($ability) use ($ablities) {
             return collect($ablities)->contains($ability);
         })){
@@ -438,14 +440,22 @@ class Theme
         $master_active = [];
 
         foreach ($menus as $menu) {
-
             # Cek Permission
             if(isset($menu['permission']) && count($menu['permission']) > 0 && isset($menu['permissionType'])) {
+
                 if($menu['permissionType'] == 'laratrust'){
                     # Cek permission menu dengan laratrust
                     if(!Laratrust::can($menu['permission']))
                         continue;
-                } else {
+                }
+                else if($menu['permissionType'] == 'gate'){
+                    // dd($menu['permission']);
+                    # Cek permission menu dengan laratrust
+                    if(!Auth::user()->hasPermission($menu['permission']))
+                        continue;
+                }
+                else {
+
                     # Cek permission menu dengan gate
                     if(!self::permissionExist($menu['permission']))
                         continue;

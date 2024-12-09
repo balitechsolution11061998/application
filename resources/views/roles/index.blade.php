@@ -17,16 +17,20 @@
             <div class="d-flex flex-stack mb-4">
                 <!--begin::Search-->
                 <div class="d-flex align-items-center position-relative my-1">
-                    <i class="ki-duotone ki-magnifier fs-1 position-absolute ms-6"><span class="path1"></span><span class="path2"></span></i>
-                    <input type="text" data-kt-docs-table-filter="search" class="form-control form-control-solid w-250px ps-15" placeholder="Search Roles" />
+                    <i class="ki-duotone ki-magnifier fs-1 position-absolute ms-6"><span class="path1"></span><span
+                            class="path2"></span></i>
+                    <input type="text" data-kt-docs-table-filter="search"
+                        class="form-control form-control-solid w-250px ps-15" placeholder="Search Roles" />
                 </div>
                 <!--end::Search-->
 
                 <!--begin::Toolbar-->
                 <div class="d-flex justify-content-end" data-kt-docs-table-toolbar="base">
                     <!--begin::Filter-->
-                    <button type="button" class="btn btn-light-primary me-3" data-bs-toggle="tooltip" title="Coming Soon">
-                        <i class="ki-duotone ki-filter fs-2"><span class="path1"></span><span class="path2"></span></i>
+                    <button type="button" class="btn btn-light-primary me-3" data-bs-toggle="tooltip"
+                        title="Coming Soon">
+                        <i class="ki-duotone ki-filter fs-2"><span class="path1"></span><span
+                                class="path2"></span></i>
                         Filter
                     </button>
                     <!--end::Filter-->
@@ -72,13 +76,27 @@
                 serverSide: true,
                 responsive: true,
                 ajax: '{{ route('roles.data') }}',
-                columns: [
-                    { data: 'name', name: 'name' },
+                columns: [{
+                        data: 'name',
+                        name: 'name'
+                    },
                     {
                         data: 'permissions',
                         name: 'permissions',
-                        render: function(data) {
-                            return data.map(p => `<span class="badge bg-info">${p.name}</span>`).join(' ');
+                        render: function(data, type, row, meta) {
+                            if (type === 'display') {
+                                let badges = data.map(permission => {
+                                    return `<span class="badge badge-info" style="margin: 5px;">${permission.replace('-', ' ').toUpperCase()}</span>`;
+                                }).join(' ');
+
+                                return `
+                                    <div>
+                                        <strong>${row.name}</strong>
+                                        <div>${badges}</div>
+                                    </div>
+                                `;
+                            }
+                            return data;
                         }
                     },
                     {

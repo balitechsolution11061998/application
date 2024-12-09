@@ -34,7 +34,7 @@ class SupplierController extends Controller
                     'city' => $value['city'],
                     'tax_ind' => $value['tax_ind'],
                     'consig_ind' => $value['consig_ind'],
-                    'status' => 'Y',
+                    'status' => $value['status'],
                 ];
 
                 // Handle optional fields

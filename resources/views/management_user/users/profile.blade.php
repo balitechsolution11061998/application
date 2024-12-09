@@ -16,8 +16,13 @@
             <div class="col-md-8">
                 <div class="card shadow-lg border-0 animate__animated animate__fadeIn animate__faster">
                     <div class="card-header bg-gradient-primary text-white text-center py-4">
-                        <h4 class="mb-0">User Profile</h4>
+                        <h4 class="mb-0">
+                            <i class="fas fa-user-circle fa-2x"></i> <!-- Font Awesome User Icon -->
+                            <br>
+                            User Profile
+                        </h4>
                     </div>
+
                     <div class="card-body">
                         <div class="text-center mb-4">
                             <!-- Current Profile Picture -->
@@ -131,9 +136,65 @@
                                     @empty
                                         <span class="text-muted">No roles assigned</span>
                                     @endforelse
+
+                                    @if ($user->roles->contains('name', 'supplier'))
+                                        <div class="mt-2">
+                                            <span class="fw-bold">Suppliers:</span>
+                                            @if ($user->supplier_names)
+                                                @php
+                                                    // Split the supplier_names string into an array
+                                                    $supplierNamesArray = explode(',', $user->supplier_names);
+                                                    $combinedSuppliers = []; // Array to hold combined supplier names
+                                                    $currentSupplier = ''; // Variable to hold the current supplier name
+
+                                                    foreach ($supplierNamesArray as $supplier) {
+                                                        $trimmedSupplier = trim($supplier); // Trim spaces
+
+                                                        // Check if the current supplier ends with "PT" or "DIAMOND"
+                                                        if (
+                                                            str_ends_with($trimmedSupplier, 'PT') ||
+                                                            str_ends_with($trimmedSupplier, 'DIAMOND')
+                                                        ) {
+                                                            // Combine with the previous supplier
+                                                            $currentSupplier .=
+                                                                ($currentSupplier ? ', ' : '') . $trimmedSupplier;
+                                                        } else {
+                                                            // If there's a current supplier, push it to the combined array
+                                                            if ($currentSupplier) {
+                                                                $combinedSuppliers[] = $currentSupplier;
+                                                            }
+                                                            // Start a new current supplier
+                                                            $currentSupplier = $trimmedSupplier;
+                                                        }
+                                                    }
+
+                                                    // Add the last supplier if exists
+                                                    if ($currentSupplier) {
+                                                        $combinedSuppliers[] = $currentSupplier;
+                                                    }
+                                                @endphp
+
+                                                @foreach ($combinedSuppliers as $supplier)
+                                                    <span
+                                                        class="badge bg-info text-white rounded-pill d-inline-flex align-items-center me-1 px-3 py-2"
+                                                        style="font-family: 'Arial', sans-serif; font-size: 1em;">
+                                                        <i class="fas fa-user-tag me-2"></i>
+                                                        {{ $supplier }} <!-- Display the combined supplier name -->
+                                                    </span>
+                                                @endforeach
+                                            @else
+                                                <span class="text-muted">No Suppliers</span>
+                                            @endif
+                                        </div>
+                                    @endif
+
+
+
                                 </p>
                             </div>
                         </div>
+
+
 
                         <div class="row mb-4 align-items-center">
                             <label class="col-md-3 fw-bold text-end">

@@ -13,6 +13,9 @@ return [
 
     'roles_structure' => [
         'superadministrator' => [
+            'management'=>'usr',
+            'roles' => 'c,r,u,d',
+            'permissions' => 'c,r,u,d',
             'users' => 'c,r,u,d',
             'profile' => 'r,u',
             'home' => 's,u',
@@ -62,7 +65,6 @@ return [
             'profile' => 'r,u',
         ],
         'supplier' => [
-            'supplier_management' => 'c,r,u,d',
             'profile' => 'r,u',
         ],
         'wh' => [
@@ -77,5 +79,6 @@ return [
         'u' => 'update',
         'd' => 'delete',
         's' => 'show',
+        'usr' =>'user',
     ],
 ];
