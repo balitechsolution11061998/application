@@ -50,7 +50,7 @@ Route::get('/koperasi', fn() => view('koperasi'));
 // Home Route
 
 // Grouping Authenticated Routes
-Route::middleware('auth')->group(function () {
+Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 

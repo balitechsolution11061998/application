@@ -1,67 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV of I Wayan Bayu Sulaksana</title>
+    <title>Sistem Manajemen Sekolah</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Custom styles */
         body {
             background-color: #f8f9fa;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Poppins', sans-serif; /* Apply Poppins font */
         }
 
-        .card {
-            border: none;
-            border-radius: 15px;
+        .hero {
+            background-image: url('img/background/schollbackground.jpg'); /* Set the background image */
+            background-size: cover; /* Cover the entire hero area */
+            background-position: center; /* Center the image */
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+            position: relative;
+            border-radius: 0 0 20px 20px; /* Rounded corners only at the bottom */
+            overflow: hidden; /* Ensure child elements respect the border radius */
+            height: 60vh; /* Set height to 60% of the viewport height for responsiveness */
         }
 
-        .profile-image {
-            transition: transform 0.3s ease;
-            border: 4px solid #3b82f6; /* Blue border */
-        }
-
-        .profile-image:hover {
-            transform: scale(1.1);
-        }
-
-        .progress {
-            height: 1.5rem;
-            border-radius: 9999px;
-        }
-
-        .lightbox-overlay {
-            display: none;
-            position: fixed;
+        .hero .overlay {
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
+            z-index: 1; /* Ensure overlay is above the background image */
         }
 
-        .lightbox-img {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 8px;
-            opacity: 0;
-            transition: opacity 0.5s ease; /* Fade-in effect */
+        .hero .container {
+            position: relative;
+            z-index: 2; /* Ensure text is above the overlay */
         }
 
-        .lightbox-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 50%;
-            padding: 10px;
-            cursor: pointer;
+        .navbar {
+            transition: background-color 0.3s, box-shadow 0.3s;
+            background-color: transparent; /* Start with transparent */
+            border-radius: 0 0 20px 20px; /* Rounded corners only at the bottom */
+        }
+
+        .navbar.scrolled {
+            background-color: #007bff; /* Change to blue on scroll */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Add shadow */
+        }
+
+        .navbar .navbar-brand {
+            color: white; /* Set brand text color to white */
+            font-weight: bold; /* Make brand text bold */
+        }
+
+        .navbar .navbar-nav .nav-link {
+            color: white; /* Set text color to white */
+            font-weight: bold; /* Make text bold */
+            transition: color 0.3s, background-color 0.3s; /* Smooth transition for color and background */
+            padding: 10px 15px; /* Add padding for better hover effect */
+        }
+
+        .navbar .nav-link:hover {
+            color: #ffc107; /* Change text color on hover */
+            background-color: rgba(255, 255, 255, 0.2); /* Add a semi-transparent background on hover */
+            border-radius: 5px; /* Rounded corners for hover effect */
         }
 
         .section-title {
@@ -71,255 +79,326 @@
             color: #3b82f6;
         }
 
-        .project-card {
-            background-color: #ffffff;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-
-        .project-card:hover {
-            transform: translateY(-5px);
-        }
-
         footer {
             background-color: #f1f1f1;
             padding: 20px 0;
-            border-radius: 0 0 15px 15px;
+            border-radius: 15px 15px 0 0;
         }
 
         .btn-custom {
-            background-color: #3b82f6;
+            background-color: #007bff; /* Change button color to blue */
             color: white;
+            transition: background-color 0.3s, transform 0.3s;
+            border-radius: 20px; /* Rounded button */
         }
 
         .btn-custom:hover {
-            background-color: #2563eb;
+            background-color: #0056b3; /* Darker blue on hover */
+            transform: scale(1.05);
+        }
+
+        .card {
+            transition: transform 0.3s;
+            border-radius: 15px; /* Rounded card */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .progress {
+            height: 1.5rem;
+            border-radius: 9999px;
+        }
+
+        /* Loader Styles */
+        .loader {
+            width: 80px;
+            aspect-ratio: 1;
+            padding: 10px;
+            box-sizing: border-box;
+            background: #fff;
+            display: grid;
+            filter: blur(5px) contrast(15) hue-rotate(120deg);
+            mix-blend-mode: darken;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999; /* Ensure loader is on top */
+        }
+
+        .loader:before,
+        .loader:after {
+            content: "";
+            grid-area: 1/1;
+            margin: 5px;
+            background: #ff00ff;
+        }
+
+        .loader:after {
+            margin: 17px;
+            animation: l9 2s infinite;
+        }
+
+        @keyframes l9 {
+            12.5% {
+                transform: translate(-60%, 60%)
+            }
+            25% {
+                transform: translate(65%, -65%)
+            }
+            37.5% {
+                transform: translate(0, 0)
+            }
+            50% {
+                transform: translate(60%, 60%)
+            }
+            67.5% {
+                transform: translate(-65%, -70%)
+            }
+            75% {
+                transform: translate(60%, -60%)
+            }
+        }
+
+        /* Carousel Styles */
+        .carousel-inner {
+            background-color: #007bff; /* Set carousel background color to blue */
+        }
+
+        .carousel-caption {
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for better readability */
+            border-radius: 10px; /* Rounded corners for caption background */
+            padding: 10px; /* Padding for caption */
+        }
+
+        /* Logo Styles */
+        .navbar-brand img,
+        .carousel-logo {
+            width: 40px; /* Set logo width */
+            height: 40px; /* Set logo height */
+            border-radius: 50%; /* Make logo rounded */
+            margin-right: 10px; /* Space between logo and text */
+        }
+
+        .school-introduction {
+            background-color: #007bff; /* Blue background for the introduction */
+            color: white; /* White text color */
+            padding: 20px; /* Padding for the introduction */
+            border-radius: 15px; /* Rounded corners */
+            margin: 20px 0; /* Margin for spacing */
+            animation: fadeIn 1s ease-in-out; /* Fade-in animation */
+        }
+
+        /* Title Animation */
+        .title-animated {
+            color: transparent; /* Start with transparent */
+            transition: color 0.5s ease; /* Smooth transition for color */
+        }
+
+        .title-animated.scrolled {
+            color: white; /* Change to white when scrolled */
         }
     </style>
 </head>
 
 <body>
-    <div class="container my-5">
-        <div class="card shadow-lg">
-            <!-- Loading Spinner -->
-            <div id="loading" class="d-flex justify-content-center align-items-center" style="height: 200px;">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
+    <!-- Loader -->
+    <div class="loader" id="loader" style="display: none;">
+        <i class="fas fa-spinner fa-spin"></i> <!-- Font Awesome spinner -->
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="{{ asset('img/logo/logo.png') }}" alt="School Logo"> <!-- Add your logo image here -->
+                SMP N 1 Kuta Selatan
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Beranda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#visi-misi">Visi & Misi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#sejarah">Sejarah</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#guru">Guru</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pegawai">Pegawai</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#berita">Berita</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#gallery">Galeri</a>
+                    </li>
+                </ul>
+                <a href="/login/form" class="btn btn-custom ms-3">Login <i class="fas fa-sign-in-alt"></i></a>
             </div>
+        </div>
+    </nav>
 
-            <!-- Profile Content (Initially hidden until loading is complete) -->
-            <div id="profile-content" class="profile-content text-center mb-4 opacity-0" style="transition: opacity 0.5s ease;">
-                <img src="https://via.placeholder.com/200" alt="Profile Photo" class="profile-image rounded-circle mb-4" id="profile-image">
-                <h1 class="display-4">I Wayan Bayu Sulaksana</h1>
-                <p class="lead">Informatics Student & Full Stack Developer</p>
-                <p class="text-muted">Jl. Raya Ubud No.123, Ubud, Bali, Indonesia</p>
-                <p class="text-muted">Phone: +62 812 3456 7890 | Email: wayan.bayu@example.com</p>
-            </div>
-
-            <!-- Lightbox -->
-            <div class="lightbox-overlay" id="lightbox">
-                <span class="lightbox-close" id="close-lightbox">✖</span>
-                <img src="" id="lightbox-image" class="lightbox-img">
-            </div>
-
-            <div class="card-body">
-                <section class="mb-4">
-                    <h2 class="h4 section-title">Profile</h2>
-                    <p>An Informatics student passionate about web and application development, with skills in programming, data analysis, and developing modern technology-based applications. Focused on problem-solving and creating efficient, user-friendly applications.</p>
-                </section>
-
-                <section class="mb-4">
-                    <h2 class="h4 section-title">Education</h2>
-                    <div>
-                        <h5>Bachelor's Degree in Informatics Engineering</h5>
-                        <p class="text-muted">Udayana University, Bali | 2020 - Present</p>
-                        <p class="text-muted">GPA: 3.8/4.0</p>
-                    </div>
-                </section>
-
-                <section class="mb-4">
-                    <h2 class="h4 section-title">Skills</h2>
-                    <div class="mb-3">
-                        <p>HTML</p>
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: 90%;" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <p>CSS & Tailwind</p>
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <p>JavaScript</p>
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: 88%;" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <p>React & Node.js</p>
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <p>Python & Machine Learning</p>
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="mb-4 bg-light p-3 rounded">
-                    <h2 class="h4 section-title">Projects</h2>
-                    <div class="mt-3">
-                        <div class="d-flex align-items-start mb-3">
-                            <img src="https://via.placeholder.com/100" alt="Project 1" class="me-3" style="width: 100px; height: 100px;">
-                            <div>
-                                <h5>Personal Portfolio Website</h5>
-                                <p class="text-muted">Created a personal portfolio using HTML, CSS, and JavaScript to showcase projects and skills.</p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-start mb-3">
-                            <img src="https://via.placeholder.com/100" alt="Project 2" class="me-3" style="width: 100px; height: 100px;">
-                            <div>
-                                <h5>E-commerce Information System</h5>
-                                <p class="text-muted">Built a prototype of an e-commerce platform using the MERN stack, including user authentication, shopping cart, and payment integration features.</p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-start mb-3">
-                            <img src="https://via.placeholder.com/100" alt="Project 3" class="me-3" style="width: 100px; height: 100px;">
-                            <div>
-                                <h5>Task Management App</h5>
-                                <p class="text-muted">Developed a task management application using React and Firebase for real-time data synchronization.</p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-start mb-3">
-                            <img src="https://via.placeholder.com/100" alt="Project 4" class="me-3" style="width: 100px; height: 100px;">
-                            <div>
-                                <h5>Blog Platform</h5>
-                                <p class="text-muted">Created a blogging platform with user authentication, allowing users to create, edit, and delete posts.</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="mb-4">
-                    <h2 class="h4 section-title">Certifications</h2>
-                    <div class="mt-3">
-                        <p class="text-gray-800">Google IT Support Professional Certificate</p>
-                        <p class="text-muted">Issued by Google | Completed in 2022</p>
-                    </div>
-                    <div class="mt-3">
-                        <p class="text-gray-800">JavaScript and Web Development Certificate</p>
-                        <p class="text-muted">Issued by Udemy | Completed in 2023</p>
-                    </div>
-                </section>
-
-                <section class="mb-4">
-                    <h2 class="h4 section-title">Extracurriculars</h2>
-                    <div class="mt-3">
-                        <h5>Member of Game Development Club</h5>
-                        <p class="text-muted">Udayana University | 2021 - Present</p>
-                        <ul class="list-unstyled">
-                            <li>Participated in a project to create simple games using Unity and C#.</li>
-                            <li>Improved skills in programming and game design.</li>
-                        </ul>
-                    </div>
-                </section>
-
-                <footer class="text-center mt-4">
-                    <p class="text-muted">Contact me at:
-                        <a href="mailto:wayan.bayu@example.com" class="text-primary">wayan.bayu@example.com</a>
-                    </p>
-                    <p class="text-muted">Follow me on social media:</p>
-                    <div class="d-flex justify-content-center mt-2">
-                        <a href="https://linkedin.com/in/wayanbayusulaksana" class="text-primary me-3">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                        <a href="https://github.com/wayanbayu" class="text-dark">
-                            <i class="fab fa-github"></i>
-                        </a>
-                    </div>
-                </footer>
-
-                <!-- Login Button -->
-                <div class="text-center mt-4">
-                    <a href="/login/form" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt me-2"></i> Login
-                    </a>
-                </div>
-            </div>
+    <div class="hero">
+        <div class="overlay"></div>
+        <div class="container">
+            <img src="{{ asset('img/logo/logo.png') }}" alt="School Logo" class="mb-4" style="width: 100px; height: auto;"> <!-- Logo above the welcome message -->
+            <h1 class="display-4">Selamat Datang di SMP N 1 Kuta Selatan</h1> <!-- Changed to school name -->
+            <p class="lead">Kelola pembayaran biaya sekolah Anda dengan mudah dan efisien.</p>
         </div>
     </div>
 
+    <div class="container my-5">
+        <!-- Home Section -->
+        <section id="home">
+            <h2 class="h4 section-title">Beranda</h2>
+            <p>Selamat datang di situs resmi SMP N 1 Kuta Selatan. Di sini Anda dapat menemukan semua informasi yang Anda butuhkan tentang sekolah kami.</p>
+        </section>
+
+        <!-- Visi & Misi Section -->
+        <section id="visi-misi" class="mt-5">
+            <h2 class="h4 section-title">Visi & Misi</h2>
+            <p>Visi kami adalah menjadi lembaga pendidikan terkemuka yang membina siswa untuk menjadi individu yang bertanggung jawab dan sukses. Misi kami adalah memberikan pendidikan berkualitas dan membina lingkungan belajar yang mendukung.</p>
+        </section>
+
+        <!-- Sejarah Section -->
+        <section id="sejarah" class="mt-5">
+            <h2 class="h4 section-title">Sejarah</h2>
+            <p>SMP N 1 Kuta Selatan didirikan pada [Tahun]. Sejak saat itu, kami berkomitmen untuk memberikan pendidikan berkualitas dan membina kecintaan terhadap belajar di antara siswa kami.</p>
+        </section>
+
+        <!-- Guru Section -->
+        <section id="guru" class="mt-5">
+            <h2 class="h4 section-title">Guru</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="{{ asset('img/guru1.jpg') }}" class="card-img-top" alt="Guru 1"> <!-- Image for Teacher 1 -->
+                        <div class="card-body">
+                            <h5 class="card-title">Budi Santoso</h5>
+                            <p class="card-text">Guru Matematika dengan pengalaman lebih dari 10 tahun dalam mengajar.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="{{ asset('img/guru2.jpg') }}" class="card-img-top" alt="Guru 2"> <!-- Image for Teacher 2 -->
+                        <div class="card-body">
+                            <h5 class="card-title">Siti Aminah</h5>
+                            <p class="card-text">Guru Bahasa Inggris yang berkomitmen untuk meningkatkan kemampuan berbahasa siswa.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <img src="{{ asset('img/guru3.jpg') }}" class="card-img-top" alt="Guru 3"> <!-- Image for Teacher 3 -->
+                        <div class="card-body">
+                            <h5 class="card-title">Ahmad Rizal</h5>
+                            <p class="card-text">Guru IPA yang selalu berusaha membuat pelajaran menjadi menarik dan menyenangkan.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Pegawai Section -->
+        <section id="pegawai" class="mt-5">
+            <h2 class="h4 section-title">Pegawai</h2>
+            <p>Staf administrasi kami bekerja tanpa lelah di belakang layar untuk memastikan semuanya berjalan lancar di SMP N 1 Kuta Selatan.</p>
+        </section>
+
+        <!-- Berita Section -->
+        <section id="berita" class="mt-5">
+            <h2 class="h4 section-title">Berita</h2>
+            <p>Ikuti berita terbaru dan acara yang terjadi di sekolah kami. Kami secara rutin memposting pembaruan di situs web dan saluran media sosial kami.</p>
+        </section>
+
+        <!-- Gallery Section -->
+        <section id="gallery" class="mt-5">
+            <h2 class="h4 section-title">Galeri</h2>
+            <p>Jelajahi galeri kami untuk melihat foto-foto acara sekolah, kegiatan, dan kehidupan yang dinamis di SMP N 1 Kuta Selatan.</p>
+        </section>
+
+        <!-- About Our School Section -->
+        <section class="school-introduction mt-5">
+            <h2 class="h4 section-title" style="color: white;">Tentang Sekolah Kami</h2>
+            <p>
+                SMP N 1 Kuta Selatan berkomitmen untuk memberikan pendidikan berkualitas tinggi yang mendorong keunggulan akademis dan pertumbuhan pribadi. Misi kami adalah menciptakan lingkungan yang mendukung di mana siswa dapat berkembang dan mengembangkan keterampilan mereka untuk masa depan.
+            </p>
+            <p>
+                Kami menawarkan kurikulum yang komprehensif yang mencakup berbagai mata pelajaran, kegiatan ekstrakurikuler, dan peluang keterlibatan masyarakat. Guru-guru kami yang berpengalaman berkomitmen untuk membimbing siswa melalui perjalanan pendidikan mereka, memastikan mereka siap menghadapi tantangan di depan.
+            </p>
+            <p>
+                Di SMP N 1 Kuta Selatan, kami percaya akan pentingnya pengembangan karakter dan penanaman nilai-nilai seperti rasa hormat, tanggung jawab, dan integritas. Kami berusaha untuk menciptakan komunitas yang mendukung yang mendorong kolaborasi dan pembelajaran seumur hidup.
+            </p>
+        </section>
+    </div>
+
+    <footer class="text-center mt-4">
+        <p class="text-muted">Hubungi kami di:
+            <a href="mailto:info@sppmanagement.com" class="text-primary">info@sppmanagement.com</a>
+        </p>
+        <p class="text-muted">Ikuti kami di media sosial:</p>
+        <div class="d-flex justify-content-center mt-2">
+            <a href="#" class="text-primary me-3">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="text-primary me-3">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="text-primary">
+                <i class="fab fa-instagram"></i>
+            </a>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.width = entry.target.style.getPropertyValue(
-                            '--progress-width');
-                    }
-                });
-            }, {
-                threshold: 0.2
-            });
-
-            document.querySelectorAll(".progress-bar").forEach((bar) => {
-                observer.observe(bar);
-            });
-        });
-
-        // Simulate content loading
+        // Hide loader after the page is fully loaded
         window.onload = function() {
-            // Simulating a delay for loading
-            setTimeout(function() {
-                document.getElementById('loading').style.display = 'none'; // Hide the loading animation
-                document.getElementById('profile-content').classList.add('visible'); // Add animation class to show profile content
-                document.getElementById('profile-image').classList.add('visible'); // Add animation to show profile image
-            }, 1500); // Adjust the delay as needed
+            document.getElementById('loader').style.display = 'none'; // Hide the loader
         };
 
-        // Lightbox functionality
-        const profileImage = document.getElementById('profile-image');
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImage = document.getElementById('lightbox-image');
-        const closeLightbox = document.getElementById('close-lightbox');
-        const spinnerContainer = document.getElementById('spinner-container');
-
-        // Open lightbox when image is clicked
-        profileImage.addEventListener('click', function() {
-            lightbox.style.display = 'flex';
-            lightboxImage.src = profileImage.src; // Set the large image source
-
-            // Show the spinner while the image is loading
-            spinnerContainer.style.display = 'flex';
-            lightboxImage.style.opacity = 0; // Ensure the image is initially invisible
-
-            // Once the image is fully loaded, hide the spinner and show the image with fade-in
-            lightboxImage.onload = function() {
-                spinnerContainer.style.display = 'none'; // Hide spinner
-                lightboxImage.style.opacity = 1; // Fade-in the image
-            };
-        });
-
-        // Close lightbox when the close button is clicked
-        closeLightbox.addEventListener('click', function() {
-            lightbox.style.display = 'none';
-            lightboxImage.style.opacity = 0; // Fade-out the lightbox image
-        });
-
-        // Close lightbox when clicking outside the image
-        lightbox.addEventListener('click', function(event) {
-            if (event.target === lightbox) {
-                lightbox.style.display = 'none';
-                lightboxImage.style.opacity = 0; // Fade-out the lightbox image
+        // Change navbar color on scroll
+        window.onscroll = function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
             }
+        };
+
+        // Show loader on navbar link click
+        const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                document.getElementById('loader').style.display = 'grid'; // Show the loader
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none'; // Hide the loader after 1 second
+                }, 1000); // Adjust the duration as needed
+            });
         });
     </script>
 </body>

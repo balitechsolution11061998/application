@@ -33,7 +33,6 @@ class CreateUsersForRegionJob implements ShouldQueue
         $roles = [
             'superadministrator',
             'administrator',
-            'user',
             'supplier',
         ];
 
@@ -75,13 +74,13 @@ class CreateUsersForRegionJob implements ShouldQueue
                 'role' => 'superadministrator',
             ],
             [
-                'username' => 219811992, // Predefined supplier user
+                'username' => 111095, // Predefined supplier user
                 'name' => 'SUKANDA DJAYA, PT',
                 'email' => 'dpssmspv@diamond.co.id',
                 'status' => 'y',
                 'all_supplier' => 'y',
-                'password' => Hash::make('219811992@123'), // Set password for supplier
-                'password_show' => '219811992@123',
+                'password' => Hash::make('111095@123'), // Set password for supplier
+                'password_show' => '111095@123',
                 'link_sync' => null,
                 'region' => $regionId,
                 'address' => 'Jl. Supplier No.1, Jakarta',

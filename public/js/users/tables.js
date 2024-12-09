@@ -115,25 +115,23 @@ dataTableHelper("#users_table", "/users/data", [
             // Check if the user has the supplier role
             const hasSupplierRole = data.some(role => role.name === "supplier");
 
-            // Fetch supplier names from the row (assuming supplier_names is a string or an array in the row)
+            // Fetch supplier names from the row (assuming supplier_names is an array in the row)
             let supplierNames = row.supplier_names || []; // Default to an empty array
-
-            // Check if supplierNames is a string and convert it to an array
-            if (typeof supplierNames === 'string') {
-                // Split by comma but keep "TRI DELTA DEWATA, CV" as a single entity
-                supplierNames = supplierNames.split(/,(?!\s*CV)/).map(name => name.trim());
-            }
 
             // Ensure supplierNames is an array
             if (!Array.isArray(supplierNames)) {
-                supplierNames = []; // Reset to an empty array if it's not
+                supplierNames = [supplierNames]; // Convert to array if it's not
             }
 
             console.log(supplierNames, 'supplier_names');
 
-            // Create a string for supplier names
+            // Create a string for supplier names with icons
             const supplierNamesString = supplierNames.length > 0
-                ? supplierNames.map(name => `<span class="badge bg-info text-dark me-1">${name}</span>`).join(" ")
+                ? supplierNames.map(name => `
+                    <span class="badge bg-info text-dark me-1" style="display: inline-flex; align-items: center;">
+                        <i class="fas fa-user-tag me-1"></i> ${name}
+                    </span>
+                `).join(" ")
                 : '<span class="badge bg-secondary">No Suppliers</span>';
 
             return `
@@ -150,20 +148,19 @@ dataTableHelper("#users_table", "/users/data", [
                     ${hasSupplierRole ? `
                         <div class="d-inline-flex align-items-center me-2">
                             <button class="btn btn-sm btn-success" onclick="addSupplier(${row.id})" title="Add Supplier">
-                                <i class="fas fa-plus"></i> Add Supplier
+                                <i class="fas fa-plus"></i> Tambah Supplier
                             </button>
                         </div>
                     ` : ''}
 
                     <div class="d-inline-flex align-items-center mt-2">
-                        <span class="fw-bold me-1">Suppliers:</span>
+                        <span class="fw-bold me-1">Supplier:</span>
                         ${supplierNamesString}
                     </div>
                 </div>
             `;
         },
     },
-
 
     {
         data: "region",
@@ -285,9 +282,7 @@ if ($(window).width() < 768) {
 }
 
 function addSupplier(userId) {
-    document.getElementById('userId').value = userId;
-
-    // Set the user ID in the hidden input field
+    document.getElementById('userId').value = userId; // Set the user ID in the hidden input field
 
     // Fetch suppliers and populate the select dropdown
     fetch('/suppliers/data') // Adjust the URL to your API endpoint
@@ -296,28 +291,36 @@ function addSupplier(userId) {
             const supplierSelect = $('#supplierSelect');
             supplierSelect.empty(); // Clear previous options
             supplierSelect.append('<option value="">Select suppliers</option>'); // Add default option
+            console.log(data,'masuk sini');
+            // Check if suppliers data is available
+            if (data.data && data.data.length > 0) {
+                data.data.forEach(supplier => {
+                    // Format the option text as "supp_code (supp_name)"
+                    const optionText = `${supplier.supp_code} (${supplier.supp_name})`;
+                    const option = new Option(optionText, supplier.supp_code, false, false);
+                    supplierSelect.append(option);
+                });
 
-            data.suppliers.forEach(supplier => {
-                // Format the option text as "supp_code (supp_name)"
-                const optionText = `${supplier.supp_code} (${supplier.supp_name})`;
-                const option = new Option(optionText, supplier.supp_code, false, false);
-                supplierSelect.append(option);
-            });
+                // Initialize Select2
+                supplierSelect.select2({
+                    placeholder: "Select suppliers",
+                    allowClear: true
+                });
 
-            // Initialize Select2
-            supplierSelect.select2({
-                placeholder: "Select suppliers",
-                allowClear: true
-            });
+                // Show the modal
+                const modal = new bootstrap.Modal(document.getElementById('addSupplierModal'));
+                modal.show();
+            } else {
+                // Show toastr notification if no suppliers are available
+                toastr.warning('Please sync suppliers first to add a supplier.'); // Adjust the message as needed
+            }
         })
         .catch(error => {
             console.error('Error fetching suppliers:', error);
+            toastr.error('An error occurred while fetching suppliers.'); // Show error message
         });
-
-    // Show the modal
-    const modal = new bootstrap.Modal(document.getElementById('addSupplierModal'));
-    modal.show();
 }
+
 
 
 // Handle form submission
@@ -358,6 +361,7 @@ document.getElementById('addSupplierForm').addEventListener('submit', function (
 
                     // Show success message with Toastr
                     toastr.success('Suppliers added successfully!', 'Success');
+                    dataTableHelper();
                 } else {
                     // Show error message with Toastr
                     toastr.error('Error adding suppliers: ' + data.message, 'Error');

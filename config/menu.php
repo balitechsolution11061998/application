@@ -122,7 +122,7 @@ return [
         [
             'label'          => 'Management User',       // Main menu label
             'type'           => 'item',                  // Type item (clickable menu item)
-            'permission'     => [],                      // Permissions (empty implies no restrictions)
+            'permission'     => ['user-management'],                      // Permissions (empty implies no restrictions)
             'permissionType' => 'gate',                  // Permission type (gate or policy)
             'icon'           => 'fas',                   // Font Awesome icons class
             'iconName'       => 'fa-users',              // Icon name for this main item
@@ -163,7 +163,7 @@ return [
         [
             'label'          => 'Profile',
             'type'           => 'item',
-            'permission'     => [],
+            'permission'     => ['read-profile'],
             'permissionType' => 'gate',
             'icon'           => 'fas',
             'iconName'       => 'fa-user',

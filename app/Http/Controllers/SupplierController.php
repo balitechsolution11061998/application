@@ -22,6 +22,7 @@ class SupplierController extends Controller
     {
         $data = $request->data;
         $response = [];
+        $overallStatus = true; // Initialize overall status
 
         try {
             foreach ($data as $key => $value) {
@@ -40,7 +41,7 @@ class SupplierController extends Controller
                     'city' => $value['city'],
                     'tax_ind' => $value['tax_ind'],
                     'consig_ind' => $value['consig_ind'],
-                    'status' => 'Y',
+                    'status' => $value['status'],
                 ];
 
                 // Handle optional fields
@@ -60,8 +61,6 @@ class SupplierController extends Controller
 
                     $response[] = [
                         'message' => 'Supplier berhasil diperbaharui',
-                        'status' => true,
-                        'success' => true,
                     ];
                 } else {
                     // Insert new supplier
@@ -75,8 +74,6 @@ class SupplierController extends Controller
 
                     $response[] = [
                         'message' => 'Sukses menambahkan supplier',
-                        'status' => true,
-                        'success' => true,
                     ];
                 }
             }
@@ -86,15 +83,23 @@ class SupplierController extends Controller
                 ->causedBy($request->user()) // Log the user who caused the error
                 ->log('Error processing supplier data: ' . $e->getMessage()); // Log the error message
 
+            // Set overall status to false
+            $overallStatus = false;
+
             // Return an error response with the error message
-            $response = [
+            $response[] = [
                 'message' => 'Error processing supplier data: ' . $e->getMessage(),
-                'status' => false,
             ];
         }
 
-        return response()->json($response);
+        return response()->json([
+            'status' => $overallStatus, // Return overall status
+            'data' => $response // Return the response messages
+        ]);
     }
+
+
+
 
     public function selectData(): JsonResponse
     {
@@ -138,9 +143,7 @@ class SupplierController extends Controller
         // Use DataTables to handle server-side processing
         return DataTables::of($query)
             ->addIndexColumn() // Add an index column for row numbering
-            ->editColumn('status', function ($supplier) {
-                return $supplier->status === 'Y' ? 'Active' : 'Inactive'; // Customize status display
-            })
+
             ->addColumn('actions', function ($supplier) {
                 $editUrl = route('suppliers.edit', $supplier->id);
                 $deleteUrl = route('suppliers.destroy', $supplier->id);
