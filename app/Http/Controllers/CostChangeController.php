@@ -33,37 +33,51 @@ class CostChangeController extends Controller
             'cost_change_detail.*.old_unit_cost' => 'required|integer',
         ]);
 
-        // Insert into ccext_head
-        $head = CcextHead::create([
-            'cost_change_no' => $request->cost_change_no,
-            'cost_change_desc' => $request->cost_change_desc,
-            'reason' => $request->reason,
-            'status' => $request->status,
-            'active_date' => $request->active_date,
-            'create_date' => now(),
-        ]);
-
-        // Insert into ccext_detail
-        foreach ($request->cost_change_detail as $detail) {
-            CcextDetail::create([
-                'ccext_no' => $detail['ccext_no'],
-                'supplier' => $detail['supplier'],
-                'sku' => $detail['sku'],
-                'unit_cost' => $detail['unit_cost'],
-                'old_unit_cost' => $detail['old_unit_cost'],
-                'created_at' => now(),
+        try {
+            // Insert into ccext_head
+            $head = CcextHead::create([
+                'cost_change_no' => $request->cost_change_no,
+                'cost_change_desc' => $request->cost_change_desc,
+                'reason' => $request->reason,
+                'status' => $request->status,
+                'active_date' => $request->active_date,
+                'create_date' => now(),
             ]);
+
+            // Insert into ccext_detail
+            foreach ($request->cost_change_detail as $detail) {
+                CcextDetail::create([
+                    'ccext_no' => $detail['ccext_no'],
+                    'supplier' => $detail['supplier'],
+                    'sku' => $detail['sku'],
+                    'unit_cost' => $detail['unit_cost'],
+                    'old_unit_cost' => $detail['old_unit_cost'],
+                    'created_at' => now(),
+                ]);
+            }
+
+            // Log the successful activity
+            activity()
+                ->performedOn($head)
+                ->withProperties([
+                    'execution_time' => microtime(true) - $startTime,
+                    'memory_used' => memory_get_usage() - $initialMemory,
+                ])
+                ->log('Inserted cost change data successfully');
+
+            return response()->json(['message' => 'Data inserted successfully'], 201);
+        } catch (\Exception $e) {
+            // Log the error activity
+            activity()
+                ->withProperties([
+                    'execution_time' => microtime(true) - $startTime,
+                    'memory_used' => memory_get_usage() - $initialMemory,
+                    'error' => $e->getMessage(),
+                ])
+                ->log('Failed to insert cost change data');
+
+            return response()->json(['message' => 'Failed to insert data', 'error' => $e->getMessage()], 500);
         }
-
-        // Log the activity
-        activity()
-            ->performedOn($head)
-            ->withProperties([
-                'execution_time' => microtime(true) - $startTime,
-                'memory_used' => memory_get_usage() - $initialMemory,
-            ])
-            ->log('Inserted cost change data');
-
-        return response()->json(['message' => 'Data inserted successfully'], 201);
     }
+
 }

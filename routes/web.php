@@ -39,6 +39,7 @@ Route::controller(RegisterController::class)->group(function () {
 });
 
 Route::controller(LoginController::class)->group(function () {
+    Route::get('login/koperasi', 'showLoginForm')->name('login.form');
     Route::get('login/form', 'showLoginForm')->name('login.form');
     Route::post('login/prosesForm', 'login')->name('login.prosesForm');
     Route::post('logout', 'logout')->name('logout');
