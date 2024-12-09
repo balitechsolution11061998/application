@@ -34,14 +34,17 @@ class CostChangeController extends Controller
         ]);
 
         try {
+            $activeDate = \DateTime::createFromFormat('d-M-y', $request->active_date);
+
             // Insert into ccext_head
             $head = CcextHead::create([
                 'cost_change_no' => $request->cost_change_no,
                 'cost_change_desc' => $request->cost_change_desc,
                 'reason' => $request->reason,
                 'status' => $request->status,
-                'active_date' => $request->active_date,
+                'active_date' => $activeDate->format('Y-m-d'), // Convert to YYYY-MM-DD
                 'create_date' => now(),
+
             ]);
 
             // Insert into ccext_detail
