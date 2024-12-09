@@ -11,7 +11,7 @@ class CcextHead extends Model
     protected $table = 'ccext_head';
 
     protected $fillable = [
-        'cost_change_no',
+        'ccext_no',
         'cost_change_desc',
         'reason',
         'status',

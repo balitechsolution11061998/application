@@ -492,25 +492,15 @@ class UserController extends Controller
             'address' => 'nullable|string|max:255',
             'region_id' => 'required|integer',
             'roles' => 'required',
-            'profile_picture' => 'nullable|integer',
+            'profile_picture' => 'nullable|string',
         ];
-
         // Validate the input
         $validated = $request->validate($rules);
 
         // Handle the profile picture upload
         $profilePicturePath = null; // Initialize profile picture path
-        if ($request->hasFile('profile_picture')) {
-            $profilePicture = $request->file('profile_picture');
-            $profilePicturePath = $profilePicture->store('profile_pictures', 'public');
-
-            // If updating, delete the old picture
-            if ($request->id) {
-                $existingUser = User::find($request->id);
-                if ($existingUser && $existingUser->profile_picture && Storage::disk('public')->exists($existingUser->profile_picture)) {
-                    Storage::disk('public')->delete($existingUser->profile_picture);
-                }
-            }
+        if ($request->profile_picture) {
+            $profilePicturePath = $request->profile_picture;
         } elseif ($request->id) {
             // Set the profile picture path to the existing user's picture if updating
             $profilePicturePath = User::find($request->id)->profile_picture;
@@ -541,7 +531,6 @@ class UserController extends Controller
         } else {
             // Find the existing user
             $user = User::findOrFail($request->id);
-
             // Update the user data
             $user->update([
                 'username' => $username,
