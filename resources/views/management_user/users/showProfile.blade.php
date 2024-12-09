@@ -284,11 +284,10 @@
         xhr.addEventListener('load', function() {
             if (xhr.status === 200) {
                 const response = JSON.parse(xhr.responseText);
-                console.log('Upload complete');
                 // Set the profile picture preview to the returned URL
-                document.getElementById('image-preview').src = response.profile_picture_url;
+                document.getElementById('image-preview').src = response.file_url;
                 // Set the hidden input value to the uploaded image URL
-                document.getElementById('profile-picture-url').value = response.profile_picture_url;
+                document.getElementById('profile-picture-url').value = response.file_url;
             } else {
                 console.error('Upload failed');
             }
@@ -445,6 +444,7 @@
         formData.append("password_confirmation", $("#confirmPassword").val());
         formData.append("region_id", $("#region").val());
         formData.append("roles", $("#roles").val());
+        formData.append("profile_picture", document.getElementById('profile-picture-url').value); // Ensure this is included
 
         // Check if passwords match
         if ($("#password").val() !== $("#confirmPassword").val()) {

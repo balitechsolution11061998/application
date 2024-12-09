@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CcextDetail;
 use App\Models\CcextHead;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\Models\Activity;
 
 class CostChangeController extends Controller
