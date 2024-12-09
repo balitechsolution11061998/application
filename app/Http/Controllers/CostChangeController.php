@@ -9,7 +9,6 @@ use Spatie\Activitylog\Models\Activity;
 
 class CostChangeController extends Controller
 {
-    //
     public function store(Request $request)
     {
         // Start time measurement
@@ -36,31 +35,35 @@ class CostChangeController extends Controller
         try {
             $activeDate = \DateTime::createFromFormat('d-M-y', $request->active_date);
 
-            // Insert into ccext_head
-            $head = CcextHead::create([
-                'cost_change_no' => $request->cost_change_no,
-                'cost_change_desc' => $request->cost_change_desc,
-                'reason' => $request->reason,
-                'status' => $request->status,
-                'active_date' => $activeDate->format('Y-m-d'), // Convert to YYYY-MM-DD
-                'create_date' => now(),
-            ]);
+            // Check if the cost_change_no already exists for update
+            $head = CcextHead::updateOrCreate(
+                ['cost_change_no' => $request->cost_change_no],
+                [
+                    'cost_change_desc' => $request->cost_change_desc,
+                    'reason' => $request->reason,
+                    'status' => $request->status,
+                    'active_date' => $activeDate->format('Y-m-d'), // Convert to YYYY-MM-DD
+                    'create_date' => now(),
+                ]
+            );
 
             $successCount = 0;
             $failureCount = 0;
             $failedDetails = [];
 
-            // Insert into ccext_detail
+            // Insert or update into ccext_detail
             foreach ($request->cost_change_detail as $detail) {
                 try {
-                    CcextDetail::create([
-                        'ccext_no' => $detail['ccext_no'],
-                        'supplier' => $detail['supplier'],
-                        'sku' => $detail['sku'],
-                        'unit_cost' => $detail['unit_cost'],
-                        'old_unit_cost' => $detail['old_unit_cost'],
-                        'created_at' => now(),
-                    ]);
+                    CcextDetail::updateOrCreate(
+                        ['ccext_no' => $detail['ccext_no']], // Assuming ccext_no is the unique identifier
+                        [
+                            'supplier' => $detail['supplier'],
+                            'sku' => $detail['sku'],
+                            'unit_cost' => $detail['unit_cost'],
+                            'old_unit_cost' => $detail['old_unit_cost'],
+                            'created_at' => now(),
+                        ]
+                    );
                     $successCount++;
                 } catch (\Exception $e) {
                     $failureCount++;
@@ -81,7 +84,7 @@ class CostChangeController extends Controller
                     'failure_count' => $failureCount,
                     'failed_details' => $failedDetails,
                 ])
-                ->log('Inserted cost change data successfully');
+                ->log('Inserted/Updated cost change data successfully');
 
             return response()->json([
                 'message' => 'Data processed successfully',
@@ -97,11 +100,9 @@ class CostChangeController extends Controller
                     'memory_used' => memory_get_usage() - $initialMemory,
                     'error' => $e->getMessage(),
                 ])
-                ->log('Failed to insert cost change data');
+                ->log('Failed to insert/update cost change data');
 
-            return response()->json(['message' => 'Failed to insert data', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Failed to insert/update data', 'error' => $e->getMessage()], 500);
         }
     }
-
-
 }
