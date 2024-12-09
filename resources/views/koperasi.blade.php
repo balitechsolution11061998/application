@@ -237,7 +237,7 @@
                     <a href="#aboutSection" class="nav-link"><i class="fas fa-info-circle"></i> About</a>
                     <a href="#contactSection" class="nav-link"><i class="fas fa-envelope"></i> Contact Us</a>
                     <a href="#" class="nav-link"><i class="fas fa-home"></i> Home</a>
-                    <a href="#" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <a href="{{ route('login.formKoperasi') }}" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a>
                 </div>
             </div>
         </div>

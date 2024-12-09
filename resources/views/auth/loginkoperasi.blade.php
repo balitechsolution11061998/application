@@ -64,7 +64,7 @@
         <!-- Kolom Kiri: Gambar Ponsel -->
         <div
             class="hidden md:flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-l-xl overflow-hidden shadow-lg transition-transform transform hover:scale-105">
-            <img src="{{ asset('img/background/about-img.png') }}" alt="Phone Image" class="w-3/4 md:w-2/3">
+            <img src="{{ asset('img/background/koperasi.svg') }}" alt="Phone Image" class="w-3/4 md:w-2/3">
         </div>
 
         <!-- Kolom Kanan: Form Login -->
@@ -80,7 +80,7 @@
             </div>
 
             <div class="text-center mb-6">
-                <img src="{{ asset('img/logo/logo.png') }}" alt="Logo" class="w-20 mx-auto rounded-full">
+                <img src="{{ asset('img/logo/logokoperasi.png') }}" alt="Logo" class="w-20 mx-auto rounded-full">
             </div>
 
             <p class="text-center text-gray-500 mb-6 dark:text-gray-400">Login to your account</p>
