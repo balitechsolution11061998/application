@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('status');
             $table->date('active_date');
             $table->timestamp('create_date')->useCurrent();
-            $table->timestamp('updated_at')->nullable();
+            $table->timestamps();
         });
     }
 
