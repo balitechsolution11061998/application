@@ -18,8 +18,7 @@ return new class extends Migration
             $table->string('sku');
             $table->decimal('unit_cost', 10, 2);
             $table->integer('old_unit_cost');
-            $table->timestamp('created_at')->nullable();
-            $table->timestamp('updated_at')->nullable();
+            $table->timestamps();
         });
     }
 
