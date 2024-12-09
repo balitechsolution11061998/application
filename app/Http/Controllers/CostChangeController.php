@@ -44,19 +44,31 @@ class CostChangeController extends Controller
                 'status' => $request->status,
                 'active_date' => $activeDate->format('Y-m-d'), // Convert to YYYY-MM-DD
                 'create_date' => now(),
-
             ]);
+
+            $successCount = 0;
+            $failureCount = 0;
+            $failedDetails = [];
 
             // Insert into ccext_detail
             foreach ($request->cost_change_detail as $detail) {
-                CcextDetail::create([
-                    'ccext_no' => $detail['ccext_no'],
-                    'supplier' => $detail['supplier'],
-                    'sku' => $detail['sku'],
-                    'unit_cost' => $detail['unit_cost'],
-                    'old_unit_cost' => $detail['old_unit_cost'],
-                    'created_at' => now(),
-                ]);
+                try {
+                    CcextDetail::create([
+                        'ccext_no' => $detail['ccext_no'],
+                        'supplier' => $detail['supplier'],
+                        'sku' => $detail['sku'],
+                        'unit_cost' => $detail['unit_cost'],
+                        'old_unit_cost' => $detail['old_unit_cost'],
+                        'created_at' => now(),
+                    ]);
+                    $successCount++;
+                } catch (\Exception $e) {
+                    $failureCount++;
+                    $failedDetails[] = [
+                        'detail' => $detail,
+                        'error' => $e->getMessage(),
+                    ];
+                }
             }
 
             // Log the successful activity
@@ -65,10 +77,18 @@ class CostChangeController extends Controller
                 ->withProperties([
                     'execution_time' => microtime(true) - $startTime,
                     'memory_used' => memory_get_usage() - $initialMemory,
+                    'success_count' => $successCount,
+                    'failure_count' => $failureCount,
+                    'failed_details' => $failedDetails,
                 ])
                 ->log('Inserted cost change data successfully');
 
-            return response()->json(['message' => 'Data inserted successfully'], 201);
+            return response()->json([
+                'message' => 'Data processed successfully',
+                'success_count' => $successCount,
+                'failure_count' => $failureCount,
+                'failed_details' => $failedDetails,
+            ], 201);
         } catch (\Exception $e) {
             // Log the error activity
             activity()
@@ -82,5 +102,6 @@ class CostChangeController extends Controller
             return response()->json(['message' => 'Failed to insert data', 'error' => $e->getMessage()], 500);
         }
     }
+
 
 }
