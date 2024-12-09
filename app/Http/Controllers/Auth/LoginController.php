@@ -16,6 +16,11 @@ class LoginController extends Controller
     {
         return view('auth.login'); // Points to your custom login form
     }
+
+    public function showLoginFormKoperasi()
+    {
+        return view('auth.loginkoperasi'); // Points to your custom login form
+    }
     public function login(Request $request)
     {
         try {
