@@ -13,12 +13,17 @@ return new class extends Migration
     {
         Schema::create('loans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('member_id')->constrained()->onDelete('cascade');
-            $table->decimal('amount', 10, 2);
-            $table->date('loan_date');
-            $table->date('due_date');
-            $table->decimal('interest_rate', 5, 2);
-            $table->enum('status', ['active', 'paid', 'overdue'])->default('active');
+            $table->foreignId('member_id')->constrained()->onDelete('cascade'); // ID Anggota
+            $table->string('jenis_usaha'); // Jenis Usaha
+            $table->string('jaminan'); // Jaminan
+            $table->decimal('amount', 10, 2); // Jumlah Pinjaman
+            $table->date('loan_date'); // Tanggal Pinjaman
+            $table->date('due_date'); // Tanggal Jatuh Tempo
+            $table->integer('tenor'); // Tenor dalam bulan
+            $table->decimal('interest_rate', 5, 2); // Suku Bunga
+            $table->enum('status', ['active', 'paid', 'overdue'])->default('active'); // Status Pinjaman
+            $table->string('no_identitas'); // No Identitas
+            $table->string('no_pinjaman_ke')->nullable(); // No Pinjaman Ke
             $table->timestamps();
         });
     }
