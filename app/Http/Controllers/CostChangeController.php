@@ -21,7 +21,7 @@ class CostChangeController extends Controller
         // Validate the incoming request
         $request->validate([
             'ccext_no' => 'required|integer',
-            'cost_change_desc' => 'required|string',
+            'ccext_desc' => 'required|string',
             'reason' => 'required|integer',
             'status' => 'required|integer',
             'active_date' => 'required|date',
