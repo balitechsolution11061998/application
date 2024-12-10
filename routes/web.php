@@ -11,6 +11,7 @@ use App\Http\Controllers\ItemSupplierController;
 use App\Http\Controllers\KabupatenController;
 use App\Http\Controllers\KecamatanController;
 use App\Http\Controllers\KelurahanController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OpenAIController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
@@ -180,6 +181,13 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/data-pilkada', [SyncDataController::class, 'dataPilkada']);
 
     Route::get('/get-ram-usage', [SystemUsageController::class, 'getRamUsageData']);
+
+
+
+    Route::resource('members', MemberController::class)->except(['show']);
+    Route::get('members/data', [MemberController::class, 'getMembersData'])->name('members.data');
+
+
 
 });
 Route::post('/generate', [OpenAIController::class, 'generate']);

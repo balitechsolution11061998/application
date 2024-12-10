@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('ccext_head', function (Blueprint $table) {
             $table->id();
-            $table->integer('cost_change_no');
+            $table->integer('ccext_no');
             $table->string('cost_change_desc');
             $table->integer('reason');
             $table->integer('status');

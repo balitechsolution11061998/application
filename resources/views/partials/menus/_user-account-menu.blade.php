@@ -5,15 +5,17 @@
         <div class="menu-content d-flex align-items-center px-3">
             <!--begin::Avatar-->
             <div class="symbol symbol-50px me-5">
-                <div class="symbol-label fs-3 {{ app(\App\Actions\GetThemeType::class)->handle('bg-light-' . substr(Auth::user()->email, 0, 1) . ' text-' . substr(Auth::user()->email, 0, 1)) }}">
-                    {{ substr(Auth::user()->email, 0, 1) }}
-                </div>
+                <a href="{{ Auth::user()->profile_picture }}" data-lightbox="user-image" data-title="User Profile Picture">
+                    <div class="symbol-label fs-3 {{ app(\App\Actions\GetThemeType::class)->handle('bg-light-' . substr(Auth::user()->email, 0, 1) . ' text-' . substr(Auth::user()->email, 0, 1)) }} rounded-circle overflow-hidden d-flex justify-content-center align-items-center">
+                        <img src="{{ Auth::user()->profile_picture }}" alt="User Profile Picture" class="img-fluid" style="width: 100%; height: auto; object-fit: cover;">
+                    </div>
+                </a>
             </div>
+
             <!--end::Avatar-->
             <!--begin::Username-->
             <div class="d-flex flex-column">
                 <div class="fw-bold d-flex align-items-center fs-5">{{ Auth::user()->name }}
-                    <span class="badge badge-light-primary fw-bold fs-8 px-2 py-1 ms-2">Pro</span>
                 </div>
                 <a href="#" class="fw-semibold text-muted text-hover-primary fs-7">
                     {{ Auth::user()->email }}

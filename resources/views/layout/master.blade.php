@@ -13,6 +13,7 @@
     <meta property="og:type" content="article"/>
     <meta property="og:title" content=""/>
     <link rel="canonical" href=""/>
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
     {!! includeFavicon() !!}

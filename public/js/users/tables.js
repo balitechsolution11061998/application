@@ -30,7 +30,7 @@ dataTableHelper("#users_table", "/users/data", [
         render: function (data) {
             console.log(data, 'data'); // Debugging the incoming data
             const imgSrc = data && data.trim() // Ensure data exists and is not empty
-                ? `/storage/${data}`
+                ? `${data}`
                 : "/img/background/blank.jpg"; // Fallback image path
             return `
     <a href="${imgSrc}" data-lightbox="profile-picture-${data || 'default'}">
