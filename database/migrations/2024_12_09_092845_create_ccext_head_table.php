@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('ccext_head', function (Blueprint $table) {
             $table->id();
             $table->integer('ccext_no');
-            $table->string('cost_change_desc');
+            $table->string('ccext_desc');
             $table->integer('reason');
             $table->integer('status');
             $table->date('active_date');
