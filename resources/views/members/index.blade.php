@@ -12,7 +12,9 @@
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Members Management</h5>
                         <div>
-                            <a href="{{ route('members.create') }}" class="btn btn-primary btn-sm">Add Member</a>
+                            <a href="{{ route('members.create') }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-user-plus"></i> Add Member
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
@@ -20,9 +22,9 @@
                             <input type="text" id="search-box" class="form-control" placeholder="Search Members" aria-label="Search Members" />
                             <button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
                         </div>
-                        <table class="table table-striped table-bordered table-hover align-middle fs-6 gy-5" id="members_table">
+                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="members_table">
                             <thead>
-                                <tr>
+                                <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
                                     <th>Name</th>
                                     <th>Address</th>
                                     <th>Phone</th>
@@ -56,39 +58,44 @@
                     { data: 'actions', name: 'actions', orderable: false, searchable: false }
                 ]
             });
+
+            // Handle delete button click
+            $(document).on('click', '.delete-member', function() {
+                var memberId = $(this).data('id');
+                var deleteUrl = '{{ route("members.destroy", ":id") }}'.replace(':id', memberId);
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, cancel!',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Perform the delete action
+                        $.ajax({
+                            url: deleteUrl,
+                            type: 'POST',
+                            data: {
+                                _method: 'DELETE',
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                // Show success message
+                                toastr.success(response.message, 'Success', { timeOut: 5000 });
+                                // Reload the DataTable
+                                $('#members_table').DataTable().ajax.reload();
+                            },
+                            error: function(xhr) {
+                                // Show error message
+                                toastr.error(xhr.responseJSON.message, 'Error', { timeOut: 5000 });
+                            }
+                        });
+                    }
+                });
+            });
         });
     </script>
     @endpush
-
-    <style>
-        /* Custom styles for the card and table */
-        .card {
-            border-radius: 0.5rem;
-        }
-
-        .card-header {
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .input-group .form-control {
-            border-radius: 0.5rem 0 0 0.5rem;
-        }
-
-        .input-group .btn {
-            border-radius: 0 0.5rem 0.5rem 0;
-        }
-
-        table.dataTable thead th {
-            background-color: #f8f9fa;
-            color: #495057;
-        }
-
-        table.dataTable tbody tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        table.dataTable tbody tr {
-            transition: background-color 0.3s;
-        }
-    </style>
 </x-default-layout>
