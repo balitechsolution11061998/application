@@ -41,6 +41,7 @@ class CostChangeController extends Controller
                 ['ccext_no' => $request->ccext_no],
                 [
                     'ccext_no' => $request->ccext_no,
+                    'ccext_desc' => $request->ccext_desc,
                     'reason' => $request->reason,
                     'status' => $request->status,
                     'active_date' => $activeDate->format('Y-m-d'), // Convert to YYYY-MM-DD
