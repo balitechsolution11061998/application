@@ -12,7 +12,7 @@ class CcextHead extends Model
 
     protected $fillable = [
         'ccext_no',
-        'cost_change_desc',
+        'ccext_desc',
         'reason',
         'status',
         'active_date',
