@@ -26,11 +26,11 @@
                     <div class="card-body">
                         <div class="text-center mb-4">
                             <!-- Current Profile Picture -->
-                            <a href="{{ $user->profile_picture ? asset('storage/profile_pictures/' . $user->profile_picture) : asset('img/background/blank.jpg') }}"
+                            <a href="{{ $user->profile_picture ? asset($user->profile_picture) : asset('img/background/blank.jpg') }}"
                                 data-lightbox="profile-picture" data-title="{{ $user->name }}'s Profile Picture"
                                 title="Click to enlarge">
                                 <img id="profilePreview"
-                                    src="{{ $user->profile_picture ? asset('storage/profile_pictures/' . $user->profile_picture) : asset('img/background/blank.jpg') }}"
+                                    src="{{ $user->profile_picture ? asset($user->profile_picture) : asset('img/background/blank.jpg') }}"
                                     alt="{{ $user->name }}'s Profile Picture"
                                     class="rounded-circle img-fluid shadow-lg" width="150" height="150"
                                     style="animation: bounceIn 1.2s;">

@@ -60,6 +60,10 @@ Breadcrumbs::for('supplier', function (BreadcrumbTrail $trail) {
     $trail->push('Supplier', route('suppliers.index'));
 });
 
+Breadcrumbs::for('members', function (BreadcrumbTrail $trail) {
+    $trail->push('Members', route('members.index'));
+});
+
 
 // Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
 //     $trail->push('Dashboard', route('example.dashboard.default'));
