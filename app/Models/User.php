@@ -10,8 +10,9 @@ use Laravel\Sanctum\HasApiTokens;
 use Laratrust\Contracts\LaratrustUser;
 use Laratrust\Traits\HasRolesAndPermissions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements LaratrustUser
+class User extends Authenticatable implements LaratrustUser,JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
     use HasRolesAndPermissions;
@@ -75,5 +76,15 @@ class User extends Authenticatable implements LaratrustUser
     public function userStore()
     {
         return $this->hasMany(UserStore::class, 'user_id', 'username'); // Assuming 'username' is the foreign key
+    }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }

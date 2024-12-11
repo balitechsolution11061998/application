@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ItemSupplier;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -82,4 +83,28 @@ class ItemSupplierController extends Controller
             ->addIndexColumn()
             ->make(true);
     }
+    public function selectData(Request $request): JsonResponse
+    {
+        try {
+            // Get the search query from the request
+            $searchQuery = $request->input('search', '');
+
+            // Fetching data from the ItemSupplier model with filtering
+            $query = ItemSupplier::select('supplier', 'sup_name', 'sku', 'sku_desc', 'upc', 'unit_cost', 'create_date', 'last_update_date', 'vat_ind')
+                ->where(function($q) use ($searchQuery) {
+                    $q->where('sku', 'LIKE', '%' . $searchQuery . '%')
+                      ->orWhere('upc', 'LIKE', '%' . $searchQuery . '%');
+                })
+                ->get();
+
+            // Return the data as a JSON response
+            return response()->json($query);
+        } catch (\Exception $e) {
+            // Return a JSON response with an error message
+            return response()->json([
+                'error' => 'Unable to fetch data. Please try again later.'
+            ], 500);
+        }
+    }
+
 }
