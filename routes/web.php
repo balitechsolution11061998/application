@@ -15,6 +15,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OpenAIController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\PriceChangeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\ReceivingController;
@@ -125,6 +126,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/deleteStoreUser', [StoreController::class, 'deleteStoreUser'])->name('deleteStoreUser');
     });
 
+    Route::prefix('price-change')->as('price-change.')->group(function () {
+        Route::get('/index', [PriceChangeController::class, 'index'])->name('index');
+        Route::get('/data', [PriceChangeController::class, 'data'])->name('data');
+    });
+
     // Region Management Routes
     Route::prefix('regions')->as('regions.')->group(function () {
         Route::get('/data', [RegionController::class, 'data'])->name('data');
@@ -148,9 +154,10 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::prefix('item-suppliers')->as('item-suppliers.')->group(function () {
-        Route::get('/index', [ItemSupplierController::class, 'index'])->name('index');
+        Route::get('/', [ItemSupplierController::class, 'index'])->name('index');
         Route::get('/data', [ItemSupplierController::class, 'data'])->name('data');
         Route::post('/store', [ItemSupplierController::class, 'store'])->name('store');
+        Route::get('/select/data', [ItemSupplierController::class, 'selectData'])->name('selectData');
     });
 
     Route::prefix('activity-logs')->as('activity-logs.')->group(function () {

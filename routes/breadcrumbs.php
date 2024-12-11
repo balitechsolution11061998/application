@@ -64,6 +64,10 @@ Breadcrumbs::for('members', function (BreadcrumbTrail $trail) {
     $trail->push('Members', route('members.index'));
 });
 
+Breadcrumbs::for('price-change', function (BreadcrumbTrail $trail) {
+    $trail->push('Price Change', route('price-change.index'));
+});
+
 
 // Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
 //     $trail->push('Dashboard', route('example.dashboard.default'));

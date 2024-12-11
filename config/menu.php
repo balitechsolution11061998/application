@@ -39,6 +39,17 @@ return [
             'active'         => [],                             // Define conditions when this item is active
             'iconPath'       => 4,                              // Additional metadata (optional)
         ],
+        [
+            'label'          => 'Price Change',                  // Menu label for Price Change
+            'type'           => 'item',                          // Type (item represents a clickable menu option)
+            'permission'     => [],                              // Permissions required to view this item
+            'permissionType' => 'gate',                          // Permission type (gate or policy)
+            'icon'           => 'fas',                           // Font Awesome Solid icons (FA class)
+            'iconName'       => 'fa-tag',                        // Icon for the price change section
+            'route'          => 'price-change.index',  // Route for the price change page
+            'active'         => ['price-change.*'],// Define conditions when this item is active
+            'iconPath'       => 4,                               // Path for the icon (if applicable)
+        ],
 
         [
             'label'          => 'Purchase Order',               // Menu label for Purchase Order
