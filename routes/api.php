@@ -29,6 +29,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::post('/login', App\Http\Controllers\Api\LoginController::class)->name('login');
+Route::post('/register', App\Http\Controllers\Api\RegisterController::class)->name('register');
 
 Route::post('/pr/store', [PurchaseRequisitionController::class, 'store']);
 // Supplier Routes
