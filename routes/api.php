@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\PoController;
 use App\Http\Controllers\Api\RcvController;
 use App\Http\Controllers\Api\StoreController;
 use App\Http\Controllers\Api\ItemSupplierController;
+use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CostChangeController;
@@ -27,9 +28,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::post('login', [AuthController::class, 'login']);
-Route::post('logout', [AuthController::class, 'logout']);
-Route::get('me', [AuthController::class, 'me'])->middleware('auth:api');
+Route::post('/login', App\Http\Controllers\Api\LoginController::class)->name('login');
 
 Route::post('/pr/store', [PurchaseRequisitionController::class, 'store']);
 // Supplier Routes
