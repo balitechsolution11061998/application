@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Imports\UsersImport;
 use App\Jobs\UsersImportJob;
+use App\Mail\AccountDetailsMail;
 use App\Models\Role;
 use App\Models\Supplier;
 use App\Models\SystemUsage;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
@@ -94,7 +96,7 @@ class UserController extends Controller
                 ->performedOn($user)
                 ->causedBy(Auth::user()) // Log the user who performed the action
                 ->log('Subject: User ID ' . $userId . ' - Added suppliers: ' . $supplierIdsString . ' (Names: ' . $supplierNamesString . ') to user ID: ' . $userId .
-                      '. Execution time: ' . round($executionTime, 2) . ' seconds. Memory used: ' . $memoryUsed . ' bytes.');
+                    '. Execution time: ' . round($executionTime, 2) . ' seconds. Memory used: ' . $memoryUsed . ' bytes.');
 
             return response()->json(['success' => true, 'message' => 'Suppliers added successfully.']);
         } catch (Exception $e) {
@@ -186,7 +188,6 @@ class UserController extends Controller
 
             // Return the profile view with the user's data
             return view('management_user.users.profile', compact('user'));
-
         } catch (\Exception $e) {
             // Log the error activity with a specific log name and properties
             activity('User Profile') // Set the log_name
@@ -278,7 +279,7 @@ class UserController extends Controller
 
                 // Fetch user data with relationships
                 $data = User::with(['roles', 'region', 'userEmails'])
-                    ->select('id', 'profile_picture', 'username', 'name', 'email', 'password_show', 'region', 'created_at','supplier_id','supplier_names');
+                    ->select('id', 'profile_picture', 'username', 'name', 'email', 'password_show', 'region', 'created_at', 'supplier_id', 'supplier_names');
 
                 $result = Datatables::of($data)
                     ->addColumn('role_ids', function ($row) {
@@ -795,6 +796,50 @@ class UserController extends Controller
 
             // Redirect back with error message
             return redirect()->route('users.index')->with('error', $e->getMessage());
+        }
+    }
+
+
+    public function sendAccount(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'username' => 'required|integer',
+        ]);
+        // Retrieve the user by ID
+        $user=User::where('username', (int)$request->username)->first();
+        // Check if user exists
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found'], 404);
+        }
+
+        try {
+            // Logic to send email
+            Mail::to($user->email)->send(new AccountDetailsMail($user->username, $user->email, $user->password_show));
+
+            // Send Telegram message
+            // $telegram = new Api('YOUR_TELEGRAM_BOT_TOKEN'); // Replace with your Telegram bot token
+            // $chatId = 'YOUR_CHAT_ID'; // Replace with your chat ID
+            // $message = "Account Details:\nUsername: {$user->username}\nEmail: {$user->email}\nPassword: {$request->password}";
+
+            // $telegram->sendMessage([
+            //     'chat_id' => $chatId,
+            //     'text' => $message,
+            // ]);
+
+            // Log success activity
+            activity()
+                ->performedOn($user)
+                ->log('Account details sent via email and Telegram.');
+
+            return response()->json(['success' => true]);
+        } catch (Exception $e) {
+            // Log error activity
+            activity()
+                ->performedOn($user)
+                ->log('Failed to send account details: ' . $e->getMessage());
+
+            return response()->json(['success' => false, 'message' => 'Failed to send account details.'], 500);
         }
     }
 }
