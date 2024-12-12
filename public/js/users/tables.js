@@ -28,12 +28,13 @@ dataTableHelper("#users_table", "/users/data", [
         data: "profile_picture",
         name: "profile_picture",
         render: function (data) {
-            console.log(data, 'data'); // Debugging the incoming data
-            const imgSrc = data && data.trim() // Ensure data exists and is not empty
-                ? `${data}`
-                : "/img/background/blank.jpg"; // Fallback image path
+            console.log(data, "data"); // Debugging the incoming data
+            const imgSrc =
+                data && data.trim() // Ensure data exists and is not empty
+                    ? `${data}`
+                    : "/img/background/blank.jpg"; // Fallback image path
             return `
-    <a href="${imgSrc}" data-lightbox="profile-picture-${data || 'default'}">
+    <a href="${imgSrc}" data-lightbox="profile-picture-${data || "default"}">
         <img src="${imgSrc}" alt="Profile Picture" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
     </a>
             `;
@@ -113,7 +114,9 @@ dataTableHelper("#users_table", "/users/data", [
             };
 
             // Check if the user has the supplier role
-            const hasSupplierRole = data.some(role => role.name === "supplier");
+            const hasSupplierRole = data.some(
+                (role) => role.name === "supplier"
+            );
 
             // Fetch supplier names from the row (assuming supplier_names is an array in the row)
             let supplierNames = row.supplier_names || []; // Default to an empty array
@@ -123,35 +126,52 @@ dataTableHelper("#users_table", "/users/data", [
                 supplierNames = [supplierNames]; // Convert to array if it's not
             }
 
-            console.log(supplierNames, 'supplier_names');
+            console.log(supplierNames, "supplier_names");
 
             // Create a string for supplier names with icons
-            const supplierNamesString = supplierNames.length > 0
-                ? supplierNames.map(name => `
+            const supplierNamesString =
+                supplierNames.length > 0
+                    ? supplierNames
+                          .map(
+                              (name) => `
                     <span class="badge bg-info text-dark me-1" style="display: inline-flex; align-items: center;">
                         <i class="fas fa-user-tag me-1"></i> ${name}
                     </span>
-                `).join(" ")
-                : '<span class="badge bg-secondary">No Suppliers</span>';
+                `
+                          )
+                          .join(" ")
+                    : '<span class="badge bg-secondary">No Suppliers</span>';
 
             return `
                 <div class="d-inline-flex flex-wrap align-items-center">
-                    ${data.map(role => `
+                    ${data
+                        .map(
+                            (role) => `
                         <span class="badge rounded-pill bg-dark text-white me-2" style="font-size: 0.9em; display: inline-flex; align-items: center; padding: 0.4em 0.7em;">
-                            <i class="fas ${roleIcons[role.name] || "fa-user"} me-1"></i> ${role.name}
-                            <button class="btn btn-sm btn-danger ms-2" style="border-radius: 50%; padding: 0.2em 0.5em; line-height: 1;" role="button" aria-label="Delete ${role.name}" onclick="deleteRole('${role.id}', ${row.id})">
+                            <i class="fas ${
+                                roleIcons[role.name] || "fa-user"
+                            } me-1"></i> ${role.name}
+                            <button class="btn btn-sm btn-danger ms-2" style="border-radius: 50%; padding: 0.2em 0.5em; line-height: 1;" role="button" aria-label="Delete ${
+                                role.name
+                            }" onclick="deleteRole('${role.id}', ${row.id})">
                                 <i class="fas fa-times"></i>
                             </button>
                         </span>
-                    `).join(" ")}
+                    `
+                        )
+                        .join(" ")}
 
-                    ${hasSupplierRole ? `
+                    ${
+                        hasSupplierRole
+                            ? `
                         <div class="d-inline-flex align-items-center me-2">
                             <button class="btn btn-sm btn-success" onclick="addSupplier(${row.id})" title="Add Supplier">
                                 <i class="fas fa-plus"></i> Tambah Supplier
                             </button>
                         </div>
-                    ` : ''}
+                    `
+                            : ""
+                    }
 
                     <div class="d-inline-flex align-items-center mt-2">
                         <span class="fw-bold me-1">Supplier:</span>
@@ -195,7 +215,7 @@ dataTableHelper("#users_table", "/users/data", [
             return `
             <div class="btn-group d-flex flex-wrap" role="group">
                 <div class="d-flex w-100 justify-content-between mb-1">
-                    <button type="button" class="btn btn-sm btn-primary w-32" onclick="editUser(${row.username})" title="Edit User">
+                    <button type="button" class="btn btn-sm btn-primary w-32" onclick="editUser('${row.username}')" title="Edit User">
                         <i class="fas fa-edit"></i>
                     </button>
                     <button type="button" class="btn btn-sm btn-danger w-32" onclick="deleteUser(${row.id})" title="Delete User">
@@ -206,20 +226,19 @@ dataTableHelper("#users_table", "/users/data", [
                     </button>
                 </div>
                 <div class="d-flex w-100 justify-content-between">
-                    <button type="button" class="btn btn-sm btn-info w-32" data-toggle="tooltip" title="<div class='tooltip-content'>${emailList}</div>" data-html="true">
+                    <button type="button" class="btn btn-sm btn-info w-32" data-toggle="tooltip" title="<div class='tooltip-content'>${emailList}</div>" data-html="true" onclick="sendEmail('${row.username}')">
                         <i class="fas fa-envelope"></i>
                     </button>
-                    <button type="button" class="btn btn-sm btn-secondary w-32 btn-add-email" title="Add Email" onclick="addEmail(${row.username})">
+                    <button type="button" class="btn btn-sm btn-secondary w-32 btn-add-email" title="Add Email" onclick="addEmail('${row.username}')">
                         <i class="fas fa-plus"></i>
                     </button>
-                    <button type="button" class="btn btn-sm btn-success w-32" title="Store" onclick="addStore(${row.username})">
+                    <button type="button" class="btn btn-sm btn-success w-32" title="Store" onclick="addStore('${row.username}')">
                         <i class="fas fa-store"></i>
                     </button>
                 </div>
             </div>
             `;
         },
-
     },
 ]);
 
@@ -281,102 +300,153 @@ if ($(window).width() < 768) {
     $("head").append(tooltipStyles);
 }
 
+function sendEmail(username) {
+    Swal.fire({
+        title: 'Send Email',
+        text: `Are you sure you want to send an email to ${username}?`, // Confirmation message
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, send it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Send email via AJAX
+            $.ajax({
+                url: '/users/send-account', // Your route to send email
+                method: 'POST',
+                data: {
+                    username: username,
+                    _token: $('meta[name="csrf-token"]').attr('content') // CSRF token for Laravel
+                },
+                success: function(response) {
+                    Swal.fire(`Email sent to: ${username}@example.com`); // Adjust as needed
+                },
+                error: function(xhr) {
+                    Swal.fire('Error', 'Failed to send email. Please try again.', 'error');
+                }
+            });
+        }
+    });
+}
+
+
 function addSupplier(userId) {
-    document.getElementById('userId').value = userId; // Set the user ID in the hidden input field
+    document.getElementById("userId").value = userId; // Set the user ID in the hidden input field
 
     // Fetch suppliers and populate the select dropdown
-    fetch('/suppliers/data') // Adjust the URL to your API endpoint
-        .then(response => response.json())
-        .then(data => {
-            const supplierSelect = $('#supplierSelect');
+    fetch("/suppliers/data") // Adjust the URL to your API endpoint
+        .then((response) => response.json())
+        .then((data) => {
+            const supplierSelect = $("#supplierSelect");
             supplierSelect.empty(); // Clear previous options
             supplierSelect.append('<option value="">Select suppliers</option>'); // Add default option
-            console.log(data,'masuk sini');
+            console.log(data, "masuk sini");
             // Check if suppliers data is available
             if (data.data && data.data.length > 0) {
-                data.data.forEach(supplier => {
+                data.data.forEach((supplier) => {
                     // Format the option text as "supp_code (supp_name)"
                     const optionText = `${supplier.supp_code} (${supplier.supp_name})`;
-                    const option = new Option(optionText, supplier.supp_code, false, false);
+                    const option = new Option(
+                        optionText,
+                        supplier.supp_code,
+                        false,
+                        false
+                    );
                     supplierSelect.append(option);
                 });
 
                 // Initialize Select2
                 supplierSelect.select2({
                     placeholder: "Select suppliers",
-                    allowClear: true
+                    allowClear: true,
                 });
 
                 // Show the modal
-                const modal = new bootstrap.Modal(document.getElementById('addSupplierModal'));
+                const modal = new bootstrap.Modal(
+                    document.getElementById("addSupplierModal")
+                );
                 modal.show();
             } else {
                 // Show toastr notification if no suppliers are available
-                toastr.warning('Please sync suppliers first to add a supplier.'); // Adjust the message as needed
+                toastr.warning(
+                    "Please sync suppliers first to add a supplier."
+                ); // Adjust the message as needed
             }
         })
-        .catch(error => {
-            console.error('Error fetching suppliers:', error);
-            toastr.error('An error occurred while fetching suppliers.'); // Show error message
+        .catch((error) => {
+            console.error("Error fetching suppliers:", error);
+            toastr.error("An error occurred while fetching suppliers."); // Show error message
         });
 }
 
-
-
 // Handle form submission
-document.getElementById('addSupplierForm').addEventListener('submit', function (event) {
-    event.preventDefault(); // Prevent the default form submission
+document
+    .getElementById("addSupplierForm")
+    .addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent the default form submission
 
-    const selectedSuppliers = Array.from(document.getElementById('supplierSelect').selectedOptions).map(option => option.value);
-    const userId = document.getElementById('userId').value;
-    // Use SweetAlert to confirm the action
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "You are about to add the selected suppliers.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, add them!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Make an AJAX request to add the selected suppliers
-            fetch('/users/add-suppliers', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                },
-                body: JSON.stringify({
-                    userId: userId,
-                    suppliers: selectedSuppliers, // Send the array of selected supplier codes
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Close the modal
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('addSupplierModal'));
-                    modal.hide();
+        const selectedSuppliers = Array.from(
+            document.getElementById("supplierSelect").selectedOptions
+        ).map((option) => option.value);
+        const userId = document.getElementById("userId").value;
+        // Use SweetAlert to confirm the action
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You are about to add the selected suppliers.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, add them!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Make an AJAX request to add the selected suppliers
+                fetch("/users/add-suppliers", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document
+                            .querySelector('meta[name="csrf-token"]')
+                            .getAttribute("content"),
+                    },
+                    body: JSON.stringify({
+                        userId: userId,
+                        suppliers: selectedSuppliers, // Send the array of selected supplier codes
+                    }),
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            // Close the modal
+                            const modal = bootstrap.Modal.getInstance(
+                                document.getElementById("addSupplierModal")
+                            );
+                            modal.hide();
 
-                    // Show success message with Toastr
-                    toastr.success('Suppliers added successfully!', 'Success');
-                    dataTableHelper();
-                } else {
-                    // Show error message with Toastr
-                    toastr.error('Error adding suppliers: ' + data.message, 'Error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                toastr.error('An error occurred while adding the suppliers.', 'Error');
-            });
-        }
+                            // Show success message with Toastr
+                            toastr.success(
+                                "Suppliers added successfully!",
+                                "Success"
+                            );
+                            dataTableHelper();
+                        } else {
+                            // Show error message with Toastr
+                            toastr.error(
+                                "Error adding suppliers: " + data.message,
+                                "Error"
+                            );
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                        toastr.error(
+                            "An error occurred while adding the suppliers.",
+                            "Error"
+                        );
+                    });
+            }
+        });
     });
-});
-
-
-
 
 $(document).ready(function () {
     $.ajaxSetup({
@@ -509,10 +579,6 @@ $(document).ready(function () {
             },
         });
     });
-
-
-
-
 });
 
 // function addEmail(username) {
@@ -634,48 +700,45 @@ $("#addEmailForm").on("submit", function (e) {
 });
 
 async function tambahUser(username) {
+    showSpinner();
 
-     showSpinner();
+    try {
+        // Make a GET request to the specified URL with the user ID as a parameter
+        const response = await fetch(`/users/${username}/formUser`, {
+            method: "GET", // Use GET as you're retrieving data
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector(
+                    'meta[name="csrf-token"]'
+                ).content, // Include CSRF token if needed
+            },
+        });
 
-     try {
-         // Make a GET request to the specified URL with the user ID as a parameter
-         const response = await fetch(`/users/${username}/formUser`, {
-             method: "GET", // Use GET as you're retrieving data
-             headers: {
-                 "X-CSRF-TOKEN": document.querySelector(
-                     'meta[name="csrf-token"]'
-                 ).content, // Include CSRF token if needed
-             },
-         });
+        // Check if the response is OK (status code 200)
+        if (!response.ok) {
+            throw new Error("Network response was not ok"); // Handle network errors
+        }
 
-         // Check if the response is OK (status code 200)
-         if (!response.ok) {
-             throw new Error("Network response was not ok"); // Handle network errors
-         }
+        // Parse the response as text (since it's an HTML view)
+        const htmlContent = await response.text();
 
-         // Parse the response as text (since it's an HTML view)
-         const htmlContent = await response.text();
+        // Inject the HTML content into the page
+        document.body.innerHTML = htmlContent;
 
-         // Inject the HTML content into the page
-         document.body.innerHTML = htmlContent;
+        // Optionally, remove the spinner once the content is loaded
+        removeSpinner();
+    } catch (error) {
+        // Handle unexpected errors
+        alert("An unexpected error occurred. Please try again later.");
+        console.error("Error:", error); // Log error for debugging
 
-         // Optionally, remove the spinner once the content is loaded
-         removeSpinner();
-     } catch (error) {
-         // Handle unexpected errors
-         alert("An unexpected error occurred. Please try again later.");
-         console.error("Error:", error); // Log error for debugging
-
-         // Optionally, remove the spinner if an error occurs
-         removeSpinner();
-     } finally {
-         // Optionally redirect to a different URL after loading the content
-         // Change this to the appropriate URL you want to navigate to
-         window.location.href = `/users/${username}/formUser`; // Change this if needed
-     }
+        // Optionally, remove the spinner if an error occurs
+        removeSpinner();
+    } finally {
+        // Optionally redirect to a different URL after loading the content
+        // Change this to the appropriate URL you want to navigate to
+        window.location.href = `/users/${username}/formUser`; // Change this if needed
+    }
 }
-
-
 
 function fetchRegions() {
     // Fetch regions from your API or server
@@ -699,7 +762,10 @@ function fetchRegions() {
                 option.textContent = region.name;
 
                 // Preselect the region if it matches the user's current region
-                if (region.id === parseInt(regionSelect.dataset.selectedRegion, 10)) {
+                if (
+                    region.id ===
+                    parseInt(regionSelect.dataset.selectedRegion, 10)
+                ) {
                     option.selected = true;
                 }
 
@@ -888,7 +954,6 @@ function calculatePasswordStrength(password) {
 // }
 
 async function editUser(username) {
-
     showSpinner();
 
     try {

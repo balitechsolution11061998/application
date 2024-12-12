@@ -73,6 +73,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/{id}/addemail', [UserController::class, 'addEmailView'])->name('addEmailView');
         Route::get('/{id}/formUser', [UserController::class, 'formUser'])->name('formUser');
         Route::post('/add-suppliers', [UserController::class, 'addSuppliers'])->name('add-suppliers');
+        Route::post('/send-account', [UserController::class, 'sendAccount'])->name('send-account');
 
     });
 
