@@ -5,7 +5,7 @@
 		<!--begin::Copyright-->
 		<div class="text-gray-900 order-2 order-md-1">
 			<span class="text-muted fw-semibold me-1">{{ date('Y') }}&copy;</span>
-			<a href="{{ route('home') }}" target="_blank" class="text-gray-800 text-hover-primary">BAYU SYS</a>
+			<a href="{{ route('home.index') }}" target="_blank" class="text-gray-800 text-hover-primary">BAYU SYS</a>
 		</div>
 		<!--end::Copyright-->
 		<!--begin::Menu-->

@@ -261,117 +261,111 @@ class UserController extends Controller
 
     public function getUsersData(Request $request)
     {
-        if ($request->ajax()) {
-            try {
-                // Log user activity
-                activity()
-                    ->causedBy(auth()->user()) // Log the authenticated user
-                    ->withProperties([
-                        'ip' => $request->ip(),
-                        'url' => $request->fullUrl(),
-                        'action' => 'Accessed getUsersData function',
-                    ])
-                    ->log('User accessed the getUsersData function');
-
-                // Start timing and memory tracking
-                $startTime = microtime(true);
-                $startMemory = memory_get_usage();
-
-                // Fetch user data with relationships
-                $data = User::with(['roles', 'region', 'userEmails'])
-                    ->select('id', 'profile_picture', 'username', 'name', 'email', 'password_show', 'region', 'created_at', 'supplier_id', 'supplier_names');
-
-                $result = Datatables::of($data)
-                    ->addColumn('role_ids', function ($row) {
-                        return $row->roles->pluck('id')->implode(', ');
-                    })
-                    ->addColumn('role_names', function ($row) {
-                        return $row->roles->pluck('name')->implode(', ');
-                    })
-
-                    ->addColumn('userEmails', function ($row) {
-                        $emails = $row->userEmails->where('is_primary', 1)->pluck('email')->implode(', ');
-                        return $emails ?: 'No active emails';
-                    })
-                    ->addColumn('actions', function ($row) {
-                        $userRoles = $row->roles->pluck('name')->toArray();
-                        $isAdmin = in_array('superadministrator', $userRoles);
-
-                        $actions = '';
-                        $rowId = e($row->id); // Escape row ID
-
-                        if ($isAdmin) {
-                            $actions .= '
-                                <button type="button" class="btn btn-sm btn-primary" onclick="editUser(' . $rowId . ')">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteUser(' . $rowId . ')">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                                <button type="button" class="btn btn-sm btn-warning" onclick="changePassword(' . $rowId . ')">
-                                    <i class="fas fa-key"></i> Change Password
-                                </button>
-                            ';
-                        } else {
-                            $actions .= '
-                                <button type="button" class="btn btn-sm btn-primary" onclick="editUser(' . $rowId . ')">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                            ';
-                        }
-
-                        return $actions;
-                    })
-                    ->rawColumns(['actions'])
-                    ->make(true);
-
-                // End timing and memory tracking
-                $endTime = microtime(true);
-                $endMemory = memory_get_usage();
-
-                // Calculate load time in milliseconds and memory usage in MB
-                $loadTimeMs = round(($endTime - $startTime) * 1000);
-                $ramUsageMb = round(($endMemory - $startMemory) / 1024 / 1024, 2);
-
-                // Log system usage
-                SystemUsage::create([
-                    'memory_usage_mb' => $ramUsageMb,
-                    'load_time_ms' => $loadTimeMs,
-                    'accessed_at' => now(),
-                    'function'        => 'data',
-                ]);
-
-                return $result;
-            } catch (\Throwable $e) { // Catch broader exceptions including fatal errors
-                // Log the error details for debugging
-                \Log::error('Error fetching users data', [
-                    'message' => $e->getMessage(),
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                    'trace' => $e->getTraceAsString(),
-                ]);
-
-                // Log the error activity
-                activity()
-                    ->causedBy(auth()->user())
-                    ->withProperties([
-                        'ip' => $request->ip(),
-                        'url' => $request->fullUrl(),
-                        'action' => 'Failed to access getUsersData function',
-                        'error' => $e->getMessage(),
-                    ])
-                    ->log('Error occurred while accessing getUsersData function');
-
-                // Return JSON error response
-                return response()->json([
-                    'error' => 'An error occurred while fetching user data.',
-                    'message' => $e->getMessage(),
-                ], 500);
-            }
+        if (!$request->ajax()) {
+            return response()->json(['error' => 'Invalid request type'], 400);
         }
 
-        return response()->json(['error' => 'Invalid request type'], 400);
+        try {
+            // Log user activity
+            activity()
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'ip' => $request->ip(),
+                    'url' => $request->fullUrl(),
+                    'action' => 'Accessed getUsersData function',
+                ])
+                ->log('User accessed the getUsersData function');
+
+            // Start timing and memory tracking
+            $startTime = microtime(true);
+            $startMemory = memory_get_usage();
+
+            // Fetch user data with relationships
+            $data = User::with(['roles', 'region', 'userEmails'])
+                ->select('id', 'profile_picture', 'username', 'name', 'email', 'password_show', 'region', 'created_at', 'supplier_id', 'supplier_names');
+
+            $result = Datatables::of($data)
+                // Render profile picture URL
+                ->addColumn('profile_picture', function ($row) {
+                    return $row->profile_picture ?
+                        '<img src="' . $row->profile_picture . '" alt="Profile Picture" style="width:50px;height:50px;border-radius:50%;">' :
+                        '<img src="' . "/img/logo/m-mart.svg" . '" alt="Default Profile Picture" style="width:50px;height:50px;border-radius:50%;">';
+                })
+
+                // Add role IDs and names
+                ->addColumn('role_ids', fn($row) => $row->roles->pluck('id')->implode(', '))
+                ->addColumn('role_names', fn($row) => $row->roles->pluck('name')->implode(', '))
+
+                // Add userEmails column
+                ->addColumn('userEmails', function ($row) {
+                    $emails = $row->userEmails->where('is_primary', 1)->pluck('email')->implode(', ');
+                    return $emails ?: 'No active emails';
+                })
+
+                // Add actions column
+                ->addColumn('actions', function ($row) {
+                    $userRoles = $row->roles->pluck('name')->toArray();
+                    $isAdmin = in_array('superadministrator', $userRoles);
+
+                    $actions = '';
+                    $rowId = e($row->id); // Escape row ID
+
+                    $actions .= '<button type="button" class="btn btn-sm btn-primary" onclick="editUser(' . $rowId . ')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>';
+
+                    if ($isAdmin) {
+                        $actions .= '<button type="button" class="btn btn-sm btn-danger" onclick="deleteUser(' . $rowId . ')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-warning" onclick="changePassword(' . $rowId . ')">
+                                        <i class="fas fa-key"></i> Change Password
+                                    </button>';
+                    }
+
+                    return $actions;
+                })
+
+                ->rawColumns(['profile_picture', 'actions']) // Specify raw HTML columns
+                ->make(true);
+
+            // End timing and memory tracking
+            $endTime = microtime(true);
+            $endMemory = memory_get_usage();
+
+            $loadTimeMs = round(($endTime - $startTime) * 1000);
+            $ramUsageMb = round(($endMemory - $startMemory) / 1024 / 1024, 2);
+
+            SystemUsage::create([
+                'memory_usage_mb' => $ramUsageMb,
+                'load_time_ms' => $loadTimeMs,
+                'accessed_at' => now(),
+                'function' => 'data',
+            ]);
+
+            return $result;
+        } catch (\Throwable $e) {
+
+
+            activity()
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'ip' => $request->ip(),
+                    'url' => $request->fullUrl(),
+                    'action' => 'Failed to access getUsersData function',
+                    'error' => $e->getMessage(),
+                ])
+                ->log('Error occurred while accessing getUsersData function');
+
+            return response()->json([
+                'error' => 'An error occurred while fetching user data.',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
+
+
+
 
 
 
@@ -806,40 +800,66 @@ class UserController extends Controller
         $request->validate([
             'username' => 'required|integer',
         ]);
+
         // Retrieve the user by ID
-        $user=User::where('username', (int)$request->username)->first();
+        $user = User::where('username', (int)$request->username)->first();
+
+        // Retrieve all emails associated with the username
+        $userEmails = DB::table('user_emails')->where('username', (int)$request->username)->get();
+
         // Check if user exists
         if (!$user) {
             return response()->json(['success' => false, 'message' => 'User not found'], 404);
         }
 
+        // Capture the start time
+        $startTime = microtime(true);
+        $initialMemory = memory_get_usage(); // Memory in bytes
+
         try {
-            // Logic to send email
-            Mail::to($user->email)->send(new AccountDetailsMail($user->username, $user->email, $user->password_show));
-
-            // Send Telegram message
-            // $telegram = new Api('YOUR_TELEGRAM_BOT_TOKEN'); // Replace with your Telegram bot token
-            // $chatId = 'YOUR_CHAT_ID'; // Replace with your chat ID
-            // $message = "Account Details:\nUsername: {$user->username}\nEmail: {$user->email}\nPassword: {$request->password}";
-
-            // $telegram->sendMessage([
-            //     'chat_id' => $chatId,
-            //     'text' => $message,
-            // ]);
+            // Logic to send email to all retrieved emails
+            foreach ($userEmails as $email) {
+                Mail::to($email->email)->send(new AccountDetailsMail($user->username, $user->email, $user->password_show));
+            }
 
             // Log success activity
-            activity()
+            $executionTime = microtime(true) - $startTime; // Execution time in seconds
+            $finalMemory = memory_get_usage(); // Final memory usage in bytes
+
+            activity('Send Account') // Set the log_name
                 ->performedOn($user)
-                ->log('Account details sent via email and Telegram.');
+                ->withProperties([
+                    'event' => 'Account Details Sent',
+                    'subject' => 'Account details sent via email',
+                    'initial_memory' => round($initialMemory / 1024 / 1024, 2) . ' MB', // Convert to MB with text
+                    'final_memory' => round($finalMemory / 1024 / 1024, 2) . ' MB', // Convert to MB with text
+                    'execution_time' => round($executionTime, 2) . ' seconds', // Round to 2 decimal places with text
+                ])
+                ->log('Account details sent via email to all associated emails.');
 
             return response()->json(['success' => true]);
         } catch (Exception $e) {
             // Log error activity
-            activity()
+            $executionTime = microtime(true) - $startTime; // Execution time in seconds
+            $finalMemory = memory_get_usage(); // Final memory usage in bytes
+
+            activity('Send Account')
                 ->performedOn($user)
-                ->log('Failed to send account details: ' . $e->getMessage());
+                ->withProperties([
+                    'event' => 'Failed to Send Account Details',
+                    'subject' => 'Failed to send account details via email',
+                    'initial_memory' => round($initialMemory / 1024 / 1024, 2) . ' MB', // Convert to MB with text
+                    'final_memory' => round($finalMemory / 1024 / 1024, 2) . ' MB', // Convert to MB with text
+                    'execution_time' => round($executionTime, 2) . ' seconds', // Round to 2 decimal places with text
+                    'error_message' => $e->getMessage(),
+                ])
+                ->log('Failed to send account details.');
 
             return response()->json(['success' => false, 'message' => 'Failed to send account details.'], 500);
         }
     }
+
+
+
+
 }
