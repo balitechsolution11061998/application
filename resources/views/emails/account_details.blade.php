@@ -88,7 +88,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://yourlogo.com/logo.png" alt="Company Logo"> <!-- Replace with your logo URL -->
+            <img src={{ env('LINK') . '/img/logo/m-mart.svg' }} alt="Company Logo">
             <h1>Welcome to Supplier Management System</h1>
             <p class="company-name">(PT. Global Retailindo Pratama)</p> <!-- Set company name to white -->
         </div>

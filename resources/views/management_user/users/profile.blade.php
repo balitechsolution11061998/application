@@ -236,7 +236,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between mt-4">
-                            <a href="{{ route('home') }}" class="btn btn-outline-secondary btn-sm">
+                            <a href="{{ route('home.index') }}" class="btn btn-outline-secondary btn-sm">
                                 <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
                             </a>
                             <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"

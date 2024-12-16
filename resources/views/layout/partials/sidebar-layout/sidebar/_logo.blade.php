@@ -1,7 +1,7 @@
 <!--begin::Logo-->
 <div class="app-sidebar-logo px-6 rounded" id="kt_app_sidebar_logo">
     <!--begin::Logo image-->
-    <a href="{{ route('home') }}">
+    <a href="{{ route('home.index') }}">
         <div class="app-sidebar-logo-default d-flex align-items-center theme-light-show">
             <img alt="User Profile Picture" src="{{ Auth::user()->profile_picture }}" class="h-40px app-sidebar-logo-default rounded" />
             <div class="ms-3 app-sidebar-logo-default">

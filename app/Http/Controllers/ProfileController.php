@@ -21,7 +21,10 @@ class ProfileController extends Controller
 
             // Create a unique filename based on the current time
             $fileName = time() . '.' . $file->getClientOriginalExtension();
+            // $path = Storage::disk('s3')->putFileAs('images/profile_pictures', $file, $fileName);
 
+            // // Generate a URL for the uploaded file
+            // $fileUrl = Storage::disk('s3')->url($path); // Get the URL from S3
             // Store the file in the specified directory
             $filePath = $file->storeAs('profile_pictures', $fileName, 'public'); // Using 'public' disk for visibility
 
