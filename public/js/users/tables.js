@@ -28,21 +28,21 @@ dataTableHelper("#users_table", "/users/data", [
         data: "profile_picture",
         name: "profile_picture",
         render: function (data) {
-            console.log(data, "data"); // Debugging the incoming data
-            const imgSrc =
-                data && data.trim() // Ensure data exists and is not empty
-                    ? `${data}`
-                    : "/img/background/blank.jpg"; // Fallback image path
-            return `
-    <a href="${imgSrc}" data-lightbox="profile-picture-${data || "default"}">
-        <img src="${imgSrc}" alt="Profile Picture" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
-    </a>
-            `;
+            return data;
         },
         orderable: false,
         searchable: false,
     },
-
+    {
+        data: "profile_picture",
+        name: "profile_picture",
+        render: function (data) {
+            console.log(data,'data');
+            return data;
+        },
+        orderable: false,
+        searchable: false,
+    },
     {
         data: "username",
         name: "username",
@@ -50,6 +50,9 @@ dataTableHelper("#users_table", "/users/data", [
     {
         data: "name",
         name: "name",
+        render: function (data, type, row) {
+            return row.name;
+        }
     },
     {
         data: "email",
@@ -307,9 +310,35 @@ function sendEmail(username) {
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Yes, send it!',
-        cancelButtonText: 'Cancel'
+        cancelButtonText: 'Cancel',
+        customClass: {
+            confirmButton: 'btn btn-success me-2', // Bootstrap success button
+            cancelButton: 'btn btn-danger' // Bootstrap danger button
+        },
+        buttonsStyling: false // Disable default button styling
     }).then((result) => {
         if (result.isConfirmed) {
+            // Show loading state with ellipsis animation
+            let loadingText = 'Please wait while we send the email';
+            let ellipsis = '';
+            const loadingInterval = setInterval(() => {
+                ellipsis = ellipsis.length < 3 ? ellipsis + '.' : '';
+                Swal.getContent().querySelector('p').textContent = loadingText + ellipsis;
+            }, 500); // Update every 500ms
+
+            Swal.fire({
+                title: 'Sending...',
+                html: '<p>' + loadingText + '</p>', // Use HTML to allow dynamic content
+                allowOutsideClick: false,
+                onBeforeOpen: () => {
+                    Swal.showLoading();
+                },
+                customClass: {
+                    title: 'text-primary', // Custom title color
+                    content: 'text-dark', // Custom content color
+                }
+            });
+
             // Send email via AJAX
             $.ajax({
                 url: '/users/send-account', // Your route to send email
@@ -319,10 +348,36 @@ function sendEmail(username) {
                     _token: $('meta[name="csrf-token"]').attr('content') // CSRF token for Laravel
                 },
                 success: function(response) {
-                    Swal.fire(`Email sent to: ${username}@example.com`); // Adjust as needed
+                    // Clear the loading interval
+                    clearInterval(loadingInterval);
+                    // Close the loading state
+                    Swal.close();
+                    Swal.fire({
+                        title: 'Success!',
+                        text: `Email sent to: ${username}@example.com`, // Adjust as needed
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            confirmButton: 'btn btn-primary' // Bootstrap primary button
+                        },
+                        buttonsStyling: false // Disable default button styling
+                    });
                 },
                 error: function(xhr) {
-                    Swal.fire('Error', 'Failed to send email. Please try again.', 'error');
+                    // Clear the loading interval
+                    clearInterval(loadingInterval);
+                    // Close the loading state
+                    Swal.close();
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Failed to send email. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            confirmButton: 'btn btn-primary' // Bootstrap primary button
+                        },
+                        buttonsStyling: false // Disable default button styling
+                    });
                 }
             });
         }

@@ -202,7 +202,10 @@
                         success: function(response) {
                             toastr.success(response.message, "Success");
                             // Redirect if needed
-                            window.location.href = "/home";
+                            if (response.success) {
+                                window.location.href = response
+                                .redirect; // Redirect to the specified URL
+                            }
                         },
                         error: function(xhr) {
                             console.log(xhr, 'xhr error');
@@ -216,6 +219,7 @@
                 }
             });
         }
+
 
         // Trigger login on button click
         $('#loginButton').on('click', function(e) {

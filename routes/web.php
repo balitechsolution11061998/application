@@ -5,8 +5,10 @@ use App\Http\Controllers\ActivityLogContoller;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DashboardPilkadaController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HomeSupplierController;
 use App\Http\Controllers\ItemSupplierController;
 use App\Http\Controllers\KabupatenController;
 use App\Http\Controllers\KecamatanController;
@@ -26,13 +28,15 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\SyncDataController;
 use App\Http\Controllers\SystemUsageController;
 use App\Http\Controllers\TahunPelajaranController;
+use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\TpsController;
 use App\Http\Controllers\UserController;
 use App\Models\ItemSupplier;
 use Illuminate\Support\Facades\Route;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 // Web Routes
-Route::get('/', fn() => view('welcome'));
+Route::get('/', fn() => view('auth.login'));
 
 // Authentication Routes
 Route::controller(RegisterController::class)->group(function () {
@@ -55,7 +59,10 @@ Route::get('/koperasi', fn() => view('koperasi'));
 // Grouping Authenticated Routes
 Route::group(['middleware' => ['auth']], function () {
 
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::prefix('home')->name('home.')->group(function () {
+        Route::get('/', [HomeController::class, 'index'])->name('index'); // Home route
+        Route::get('/supplier', [HomeSupplierController::class, 'index'])->name('supplier'); // Supplier home route
+    });
 
     // User Management Routes
     Route::prefix('users')->as('users.')->group(function () {
@@ -74,7 +81,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/{id}/formUser', [UserController::class, 'formUser'])->name('formUser');
         Route::post('/add-suppliers', [UserController::class, 'addSuppliers'])->name('add-suppliers');
         Route::post('/send-account', [UserController::class, 'sendAccount'])->name('send-account');
-
     });
 
     // Dashboard Pilkada Routes
@@ -118,7 +124,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/selectData', [SupplierController::class, 'selectData'])->name('selectData');
         Route::get('/edit', [SupplierController::class, 'edit'])->name('edit');
         Route::delete('/destroy', [SupplierController::class, 'destroy'])->name('destroy');
-
     });
 
     // Store Management Routes
@@ -144,7 +149,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/store', [OrderController::class, 'store'])->name('store');
         Route::get('/', [OrderController::class, 'index'])->name('index');
         Route::get('/show/{id}', [OrderController::class, 'show'])->name('show');
+
+        Route::get('/supplier/getOrders', [OrderController::class, 'getOrdersSupplier'])->name('supplier.getOrders');
+
     });
+
+
 
     Route::prefix('receiving')->as('receiving.')->group(function () {
         Route::get('/data', [ReceivingController::class, 'data'])->name('data');
@@ -164,7 +174,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::prefix('activity-logs')->as('activity-logs.')->group(function () {
         Route::get('/index', [ActivityLogContoller::class, 'index'])->name('index');
         Route::get('/data', [ActivityLogContoller::class, 'data'])->name('data');
-
     });
 
     // Profile Picture Management Routes
@@ -194,9 +203,6 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::resource('members', MemberController::class)->except(['show']);
     Route::get('members/data', [MemberController::class, 'getMembersData'])->name('members.data');
-
-
-
 });
 Route::post('/generate', [OpenAIController::class, 'generate']);
 
@@ -208,4 +214,12 @@ Route::get('/docs', fn() => view('docs.index'));
 // Laravel File Manager Routes
 Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
     \UniSharp\LaravelFilemanager\Lfm::routes();
+});
+
+
+Route::post('/send-message', [ChatController::class, 'sendMessage']);
+Route::get('/fetch-messages/{userId}', [ChatController::class, 'fetchMessages']);
+Route::get('/test-bot', function () {
+    $botInfo = Telegram::getMe();
+    return $botInfo;
 });

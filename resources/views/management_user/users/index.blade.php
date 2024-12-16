@@ -82,6 +82,7 @@
                                 <input type="checkbox" id="select-all"> <!-- Select all checkbox -->
                             </th>
                             <th class="min-w-150px">Profile</th>
+                            <th class="min-w-150px">S3 Profile</th>
                             <th class="min-w-150px">Username</th>
                             <th class="min-w-150px">Name</th>
                             <th class="min-w-150px">Email</th>

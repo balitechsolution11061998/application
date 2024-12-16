@@ -14,13 +14,14 @@ class LoginController extends Controller
 {
     public function showLoginForm()
     {
-        return view('auth.login'); // Points to your custom login form
+        return view('auth.login');
     }
 
     public function showLoginFormKoperasi()
     {
-        return view('auth.loginkoperasi'); // Points to your custom login form
+        return view('auth.loginkoperasi');
     }
+
     public function login(Request $request)
     {
         try {
@@ -28,43 +29,20 @@ class LoginController extends Controller
 
             if ($this->attemptLogin($request)) {
                 $user = Auth::user();
-                $user->is_logged_in = true;
-                $user->save();
+                $this->setUserLoggedIn($user, true);
 
-                // Log the successful login
-                LoginLog::create([
-                    'user_id' => $user->id,
-                    'email' => $user->email,
-                    'ip_address' => $request->ip(),
-                    'status' => 'success',
-                    'logged_at' => now(),
-                ]);
+                $this->logEvent($user, 'success', $request);
 
-                return response()->json([
-                    'message' => 'Login successful',
-                    'success' => true,
-                    'user' => $user,
-                ], 200);
+                return $this->redirectUser($user);
             }
 
-            // Log failed login attempt
-            LoginLog::create([
-                'email' => $request->login, // Adjusted to match the login field
-                'ip_address' => $request->ip(),
-                'status' => 'failed',
-                'logged_at' => now(),
-            ]);
+            $this->logFailedLogin($request);
 
             return response()->json([
                 'error' => 'Invalid credentials',
             ], 401);
         } catch (\Exception $e) {
-            LoginLog::create([
-                'email' => $request->login,
-                'ip_address' => $request->ip(),
-                'status' => 'error',
-                'logged_at' => now(),
-            ]);
+            $this->logError($request, $e->getMessage());
 
             return response()->json([
                 'error' => 'An error occurred during the login process. Please try again.',
@@ -74,9 +52,8 @@ class LoginController extends Controller
 
     protected function validateLogin(Request $request)
     {
-        // Validate the login request
         $request->validate([
-            'login' => 'required|string', // Adjusted to accept the login field
+            'login' => 'required|string',
             'password' => 'required|string|min:6',
         ]);
     }
@@ -85,13 +62,11 @@ class LoginController extends Controller
     {
         $login = $request->login;
 
-        // Attempt login with email or username
         $user = User::where('email', $login)
             ->orWhere('username', $login)
             ->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
-            // Log the user in manually
             Auth::login($user, $request->has('remember'));
             return true;
         }
@@ -99,11 +74,51 @@ class LoginController extends Controller
         return false;
     }
 
-    protected function sendFailedLoginResponse(Request $request)
+    protected function redirectUser(User $user)
     {
-        throw ValidationException::withMessages([
-            'login' => [trans('auth.failed')],
+        if ($user->hasRole('supplier')) {
+            return response()->json([
+                'message' => 'Login successful',
+                'success' => true,
+                'user' => $user,
+                'redirect' => route('home.supplier'),
+            ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Login successful',
+            'success' => true,
+            'user' => $user,
+            'redirect' => route('home.index'),
+        ], 200);
+    }
+
+
+
+    protected function logFailedLogin(Request $request)
+    {
+        LoginLog::create([
+            'email' => $request->login,
+            'ip_address' => $request->ip(),
+            'status' => 'failed', // Ensure this is included
+            'logged_at' => now(),
         ]);
+    }
+
+    protected function logError(Request $request, $errorMessage)
+    {
+        LoginLog::create([
+            'email' => $request->login,
+            'ip_address' => $request->ip(),
+            'status' => 'error', // Ensure this is included
+            'logged_at' => now(),
+            'error_message' => $errorMessage, // Optional: add this field to your LoginLog model
+        ]);
+
+        // Log the error using Spatie Activitylog
+        activity('logerror')
+            ->causedBy($request->user()) // Optional: associate the activity with the user
+            ->log('Login error: ' . $request->login . ' - ' . $request->ip() . ' - Error: ' . $errorMessage);
     }
 
     public function logout(Request $request)
@@ -111,9 +126,7 @@ class LoginController extends Controller
         $user = Auth::user();
 
         if ($user) {
-            // Log the logout event
-            $user->is_logged_in = false;
-            $user->save();
+            $this->setUserLoggedIn($user, false);
         }
 
         Auth::logout();
@@ -121,12 +134,18 @@ class LoginController extends Controller
         return redirect('/login/form');
     }
 
-    // Log login or logout event to the database
+    protected function setUserLoggedIn(User $user, $status)
+    {
+        $user->is_logged_in = $status;
+        $user->save();
+    }
+
     protected function logEvent(User $user, $event, Request $request)
     {
         LoginLog::create([
             'user_id' => $user->id,
             'event' => $event,
+            'status'=>'success',
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);

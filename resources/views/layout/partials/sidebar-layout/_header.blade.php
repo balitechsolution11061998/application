@@ -9,7 +9,7 @@
 		<!--end::Sidebar mobile toggle-->
 		<!--begin::Mobile logo-->
 		<div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
-			<a href="{{ route('home') }}" class="d-lg-none">
+			<a href="{{ route('home.index') }}" class="d-lg-none">
 				<img alt="Logo" src="{{ asset('img/logo/logo.png') }}" class="h-30px" />
 			</a>
 		</div>
