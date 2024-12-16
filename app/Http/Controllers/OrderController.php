@@ -162,7 +162,9 @@ class OrderController extends Controller
         }
     }
 
-
+    public function getOrdersSupplier(){
+        return view('frontend.po.index');
+    }
 
 
 
