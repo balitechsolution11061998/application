@@ -264,7 +264,6 @@
                                 <!--end::User -->
                             </div>
 
-
                             <!--end::Toolbar wrapper-->
                         </div>
                         <!--end::Wrapper-->

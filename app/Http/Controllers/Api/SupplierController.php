@@ -106,7 +106,6 @@ class SupplierController extends Controller
         return response()->json($response);
     }
 
-
     public function data(Request $request)
     {
         // Initialize the response array
