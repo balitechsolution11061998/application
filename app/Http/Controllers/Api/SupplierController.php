@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\Models\Activity; // Import the Activity model
 class SupplierController extends Controller
@@ -15,12 +16,15 @@ class SupplierController extends Controller
     public function store(Request $request)
     {
         $data = $request->data;
-        return $data;
         $response = [];
         $startTime = microtime(true);
         $startMemory = memory_get_usage();
 
         try {
+            // Prepare arrays for batch insert and update
+            $insertData = [];
+            $updateData = [];
+
             foreach ($data as $key => $value) {
                 // Check if the supplier already exists
                 $cekDataSupplier = DB::table('supplier')->where('supp_code', $value['supp_code'])->first();
@@ -38,34 +42,30 @@ class SupplierController extends Controller
                     'tax_ind' => $value['tax_ind'],
                     'consig_ind' => $value['consig_ind'],
                     'status' => $value['status'],
+                    'post_code' => ($value['post_code'] != '-----') ? $value['post_code'] : null,
+                    'tax_no' => (!empty($value['collect_tax_no'])) ? $value['collect_tax_no'] : "N",
                 ];
 
-                // Handle optional fields
-                $dataInsert['post_code'] = ($value['post_code'] != '-----') ? $value['post_code'] : null;
-                $dataInsert['tax_no'] = (!empty($value['collect_tax_no'])) ? $value['collect_tax_no'] : "N";
-
                 if ($cekDataSupplier != null) {
-                    // Update existing supplier
-                    DB::table('supplier')
-                        ->where('id', $cekDataSupplier->id)
-                        ->update($dataInsert);
-
-                    $response = [
-                        'message' => 'Supplier berhasil diperbaharui',
-                        'status' => true,
-                        'success' => true,
-                    ];
+                    // Prepare data for update
+                    $updateData[] = array_merge($dataInsert, ['id' => $cekDataSupplier->id]);
                 } else {
-                    // Insert new supplier
+                    // Prepare data for insert
                     $dataInsert['supp_code'] = $value['supp_code']; // Only set supp_code for new records
-                    DB::table('supplier')->insert($dataInsert);
-
-                    $response = [
-                        'message' => 'Sukses menambahkan supplier',
-                        'status' => true,
-                        'success' => true,
-                    ];
+                    $insertData[] = $dataInsert;
                 }
+            }
+
+            // Insert new suppliers in batches
+            if (!empty($insertData)) {
+                DB::table('supplier')->insert($insertData);
+            }
+
+            // Update existing suppliers in batches
+            foreach ($updateData as $data) {
+                DB::table('supplier')
+                    ->where('id', $data['id'])
+                    ->update($data);
             }
 
             // Log successful operation
@@ -81,6 +81,12 @@ class SupplierController extends Controller
                     'log_name' => 'Supplier Data Store', // Custom log name
                 ])
                 ->log('Successfully processed supplier data'); // Custom log message
+
+            $response = [
+                'message' => 'Successfully processed supplier data',
+                'status' => true,
+                'success' => true,
+            ];
 
         } catch (\Exception $e) {
             // Return an error response
@@ -106,6 +112,7 @@ class SupplierController extends Controller
 
         return response()->json($response);
     }
+
 
     public function data(Request $request)
     {
