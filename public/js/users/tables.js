@@ -511,7 +511,6 @@ $(document).ready(function () {
     });
 
     $('[data-toggle="tooltip"]').tooltip();
-    fetchRegions();
     fetchRoles();
 
     // Add event listener for password toggle
@@ -795,40 +794,7 @@ async function tambahUser(username) {
     }
 }
 
-function fetchRegions() {
-    // Fetch regions from your API or server
-    fetch("/regions/data") // Update the URL to your API endpoint
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Failed to fetch regions");
-            }
-            return response.json();
-        })
-        .then((data) => {
-            const regionSelect = document.getElementById("region");
 
-            // Reset options
-            regionSelect.innerHTML = '<option value="">Select Region</option>';
-
-            // Populate select options dynamically
-            data.forEach((region) => {
-                const option = document.createElement("option");
-                option.value = region.id;
-                option.textContent = region.name;
-
-                // Preselect the region if it matches the user's current region
-                if (
-                    region.id ===
-                    parseInt(regionSelect.dataset.selectedRegion, 10)
-                ) {
-                    option.selected = true;
-                }
-
-                regionSelect.appendChild(option);
-            });
-        })
-        .catch((error) => console.error("Error fetching regions:", error));
-}
 function fetchRoles() {
     $.ajax({
         url: "/roles/getRoles", // Ensure this matches the route defined
