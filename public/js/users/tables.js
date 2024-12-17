@@ -387,7 +387,10 @@ function sendEmail(username) {
 
 function addSupplier(userId) {
     document.getElementById("userId").value = userId; // Set the user ID in the hidden input field
-
+    const modal = new bootstrap.Modal(
+        document.getElementById("addSupplierModal")
+    );
+    modal.show();
     // Fetch suppliers and populate the select dropdown
     fetch("/suppliers/data") // Adjust the URL to your API endpoint
         .then((response) => response.json())
@@ -417,10 +420,7 @@ function addSupplier(userId) {
                 });
 
                 // Show the modal
-                const modal = new bootstrap.Modal(
-                    document.getElementById("addSupplierModal")
-                );
-                modal.show();
+
             } else {
                 // Show toastr notification if no suppliers are available
                 toastr.warning(
