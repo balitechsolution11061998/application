@@ -58,7 +58,12 @@ class SupplierController extends Controller
 
             // Insert new suppliers in batches
             if (!empty($insertData)) {
-                DB::table('supplier')->insert($insertData);
+                $batchSize = 100; // Set your desired batch size
+                $chunks = array_chunk($insertData, $batchSize); // Split the data into chunks
+
+                foreach ($chunks as $chunk) {
+                    DB::table('supplier')->insert($chunk);
+                }
             }
 
             // Update existing suppliers in batches
@@ -112,6 +117,7 @@ class SupplierController extends Controller
 
         return response()->json($response);
     }
+
 
 
     public function data(Request $request)
