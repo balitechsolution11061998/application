@@ -303,7 +303,24 @@
     <script src="{{ asset('assets/plugins/global1/plugins.bundle.js') }}"></script>
     <script src="{{ asset('assets/js/scripts.bundle.js') }}"></script>
     @yield('scripts')
+    <script>
+          document.addEventListener("DOMContentLoaded", function() {
+            const themeToggle = document.getElementById("themeToggle");
+            const currentTheme = localStorage.getItem("theme") || "light";
+            document.body.classList.toggle("dark-theme", currentTheme === "dark");
+            themeToggle.checked = currentTheme === "dark";
 
+            themeToggle.addEventListener("change", function() {
+                if (this.checked) {
+                    document.body.classList.add("dark-theme");
+                    localStorage.setItem("theme", "dark");
+                } else {
+                    document.body.classList.remove("dark-theme");
+                    localStorage.setItem("theme", "light");
+                }
+            });
+        });
+    </script>
     <!--end::Custom Javascript-->
     <!--end::Javascript-->
 </body>
