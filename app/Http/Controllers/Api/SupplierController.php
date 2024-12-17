@@ -20,6 +20,11 @@ class SupplierController extends Controller
         $startTime = microtime(true);
         $startMemory = memory_get_usage();
 
+        // Initialize counters
+        $successfulInserts = 0;
+        $failedInserts = 0;
+        $failedRecords = []; // To store records that failed to insert
+
         try {
             // Prepare arrays for batch insert and update
             $insertData = [];
@@ -52,7 +57,6 @@ class SupplierController extends Controller
                     $updateData[] = array_merge($dataInsert, ['id' => $cekDataSupplier->id]);
                 } else {
                     // Prepare data for insert
-                    $dataInsert['supp_code'] = $value['supp_code']; // Only set supp_code for new records
                     $insertData[] = $dataInsert;
                 }
             }
@@ -63,26 +67,41 @@ class SupplierController extends Controller
                 $chunks = array_chunk($insertData, $batchSize); // Split the data into chunks
 
                 foreach ($chunks as $chunk) {
-                    DB::table('supplier')->insert($chunk);
+                    try {
+                        DB::table('supplier')->insert($chunk);
+                        $successfulInserts += count($chunk); // Increment successful inserts
+                    } catch (\Exception $e) {
+                        $failedInserts += count($chunk); // Increment failed inserts
+                        $failedRecords = array_merge($failedRecords, $chunk); // Store failed records
+                    }
                 }
             }
 
             // Update existing suppliers in batches
             foreach ($updateData as $data) {
-                DB::table('supplier')
-                    ->where('id', $data['id'])
-                    ->update($data);
+                try {
+                    DB::table('supplier')
+                        ->where('id', $data['id'])
+                        ->update($data);
+                    $successfulInserts++; // Increment successful updates
+                } catch (\Exception $e) {
+                    $failedInserts++; // Increment failed updates
+                    $failedRecords[] = $data; // Store failed record
+                }
             }
 
             // Log successful operation
             $executionTimeMs = round((microtime(true) - $startTime) * 1000, 2); // Time in ms
             $memoryUsageM = round((memory_get_usage() - $startMemory) / 1024 / 1024, 2); // Memory in MB
 
-            activity()
+            activity('apiInserSupplier')
                 ->causedBy(Auth::user()) // Log the user who triggered the action
                 ->withProperties([
                     'execution_time' => $executionTimeMs . " MS",
                     'memory_usage' => $memoryUsageM . " MB",
+                    'successful_inserts' => $successfulInserts,
+                    'failed_inserts' => $failedInserts,
+                    'failed_records' => $failedRecords,
                     'timestamp' => now(),
                     'log_name' => 'Supplier Data Store', // Custom log name
                 ])
@@ -92,6 +111,9 @@ class SupplierController extends Controller
                 'message' => 'Successfully processed supplier data',
                 'status' => true,
                 'success' => true,
+                'successful_inserts' => $successfulInserts,
+                'failed_inserts' => $failedInserts,
+                'failed_records' => $failedRecords, // Include failed records in the response
             ];
 
         } catch (\Exception $e) {
@@ -105,11 +127,13 @@ class SupplierController extends Controller
             $executionTimeMs = round((microtime(true) - $startTime) * 1000, 2); // Time in ms
             $memoryUsageM = round((memory_get_usage() - $startMemory) / 1024 / 1024, 2); // Memory in MB
 
-            activity()
+            activity('apiInserSupplier')
                 ->causedBy(Auth::user()) // Log the user who triggered the action
                 ->withProperties([
                     'execution_time' => $executionTimeMs . " MS",
                     'memory_usage' => $memoryUsageM . " MB",
+                    'failed_inserts' => $failedInserts,
+                    'failed_records' => $failedRecords,
                     'timestamp' => now(),
                     'log_name' => 'Supplier Data Store Error', // Custom log name for error
                 ])
@@ -118,6 +142,7 @@ class SupplierController extends Controller
 
         return response()->json($response);
     }
+
 
     public function data(Request $request)
     {
