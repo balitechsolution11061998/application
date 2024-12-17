@@ -31,6 +31,7 @@ class SupplierController extends Controller
 
                 // Prepare the data to be inserted/updated
                 $dataInsert = [
+                    'supp_code' => $value['supp_code'],
                     'supp_name' => $value['supp_name'],
                     'terms' => $value['terms'],
                     'contact_name' => $value['contact_name'],
@@ -41,7 +42,7 @@ class SupplierController extends Controller
                     'city' => $value['city'],
                     'tax_ind' => $value['tax_ind'],
                     'consig_ind' => $value['consig_ind'],
-                    'status' => $value['status'],
+                    'status' => $value['status'] ?? 'N', // Set to 'N' if status is null
                     'post_code' => ($value['post_code'] != '-----') ? $value['post_code'] : null,
                     'tax_no' => (!empty($value['collect_tax_no'])) ? $value['collect_tax_no'] : "N",
                 ];
@@ -117,8 +118,6 @@ class SupplierController extends Controller
 
         return response()->json($response);
     }
-
-
 
     public function data(Request $request)
     {
