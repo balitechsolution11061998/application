@@ -95,7 +95,7 @@
                 <div style="padding: 5px; display: flex; align-items: center;">
                     <i class="fas fa-truck" style="margin-right: 5px; color: #fff;"></i> <!-- Changed icon to truck -->
                     <span class="badge bg-primary" style="padding: 5px 10px; color: #fff;">
-                        ${data} (${row.supp_name})
+                       ${row.supp_name} (${data})
                     </span>
                 </div>
             `;
