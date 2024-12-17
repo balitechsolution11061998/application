@@ -33,9 +33,7 @@
     <link href="{{ asset('assets/plugins/global1/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css1/style.bundle.css') }}" rel="stylesheet" type="text/css" />
     <style>
-        .menu-title {
-            color: black !important;
-        }
+
           /* Dark theme styles */
     body.dark-theme {
         background-color: #121212; /* Dark background */
@@ -78,26 +76,7 @@
 <!--begin::Body-->
 
 <body id="kt_body" class="header-fixed header-tablet-and-mobile-fixed toolbar-enabled">
-    <!--begin::Theme mode setup on page load-->
-    <script>
-        var defaultThemeMode = "light";
-        var themeMode;
-        if (document.documentElement) {
-            if (document.documentElement.hasAttribute("data-bs-theme-mode")) {
-                themeMode = document.documentElement.getAttribute("data-bs-theme-mode");
-            } else {
-                if (localStorage.getItem("data-bs-theme") !== null) {
-                    themeMode = localStorage.getItem("data-bs-theme");
-                } else {
-                    themeMode = defaultThemeMode;
-                }
-            }
-            if (themeMode === "system") {
-                themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-            }
-            document.documentElement.setAttribute("data-bs-theme", themeMode);
-        }
-    </script>
+
     <!--end::Theme mode setup on page load-->
     <!--begin::Main-->
     <!--begin::Root-->

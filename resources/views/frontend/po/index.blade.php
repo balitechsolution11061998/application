@@ -20,7 +20,7 @@
                                             value="1" />
                                     </div>
                                 </th>
-                                <th>Order No</th>
+                                <th>Purchase Order</th>
                                 <th>Store</th>
                                 <th>Supplier</th>
                             </tr>
