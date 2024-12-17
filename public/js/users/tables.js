@@ -391,17 +391,22 @@ function addSupplier(userId) {
         document.getElementById("addSupplierModal")
     );
     modal.show();
+
     // Fetch suppliers and populate the select dropdown
-    fetch("/suppliers/data") // Adjust the URL to your API endpoint
-        .then((response) => response.json())
+    fetch("/suppliers/selectData") // Adjust the URL to your API endpoint
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch suppliers");
+            }
+            return response.json();
+        })
         .then((data) => {
             const supplierSelect = $("#supplierSelect");
             supplierSelect.empty(); // Clear previous options
             supplierSelect.append('<option value="">Select suppliers</option>'); // Add default option
-            console.log(data, "masuk sini");
             // Check if suppliers data is available
-            if (data.data && data.data.length > 0) {
-                data.data.forEach((supplier) => {
+            if (data.suppliers && data.suppliers.length > 0) {
+                data.suppliers.forEach((supplier) => {
                     // Format the option text as "supp_code (supp_name)"
                     const optionText = `${supplier.supp_code} (${supplier.supp_name})`;
                     const option = new Option(
@@ -418,14 +423,9 @@ function addSupplier(userId) {
                     placeholder: "Select suppliers",
                     allowClear: true,
                 });
-
-                // Show the modal
-
             } else {
                 // Show toastr notification if no suppliers are available
-                toastr.warning(
-                    "Please sync suppliers first to add a supplier."
-                ); // Adjust the message as needed
+                toastr.warning("Please sync suppliers first to add a supplier."); // Adjust the message as needed
             }
         })
         .catch((error) => {

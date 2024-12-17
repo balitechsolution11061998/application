@@ -1,4 +1,5 @@
 @extends('layouts.master')
+@section('title', 'Supplier Dashboard')
 @section('content')
 
 <link href="{{ asset('assets/plugins/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css"/>
@@ -42,8 +43,7 @@
         color: var(--card-text-color); /* Use the card text color variable */
     }
     .card-text {
-        font-size: 2.5rem;
-        font-weight: bold;
+        font-size: 1.2rem; /* Adjusted font size for better readability */
         color: var(--card-text-color); /* Use the card text color variable */
     }
     .icon {
@@ -56,6 +56,16 @@
     .supplier-profile {
         background-color: var(--card-background-color); /* Use the card background color variable */
         border: none; /* Remove border */
+        padding: 20px; /* Add padding for better spacing */
+        border-radius: 10px; /* Rounded corners */
+    }
+    .profile-header {
+        font-size: 2rem; /* Larger font size for the header */
+        font-weight: bold;
+        margin-bottom: 20px; /* Space below the header */
+    }
+    .profile-info {
+        margin-bottom: 10px; /* Space between info items */
     }
 </style>
 
@@ -110,11 +120,11 @@
     <!-- Supplier Profile Section -->
     <div class="card mt-4 supplier-profile">
         <div class="card-body">
-            <h5 class="card-title">Supplier Profile</h5>
-            <p><strong>Name:</strong> {{ $supplier->name }}</p>
-            <p><strong>Email:</strong> {{ $supplier->email }}</p>
-            <p><strong>Phone:</strong> {{ $supplier->phone }}</p>
-            <p><strong>Address:</strong> {{ $supplier->address }}</p>
+            <h5 class="profile-header">Supplier Profile</h5>
+            <p class="profile-info"><strong>Name:</strong> {{ $supplier->name }}</p>
+            <p class="profile-info"><strong>Email:</strong> {{ $supplier->email }}</p>
+            <p class="profile-info"><strong>Phone:</strong> {{ $supplier->phone ? $supplier->phone : 'N/A' }}</p>
+            <p class="profile-info"><strong>Address:</strong> {{ $supplier->address }}</p>
         </div>
     </div>
 </div>

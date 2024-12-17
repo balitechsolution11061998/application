@@ -21,7 +21,8 @@
                                     </div>
                                 </th>
                                 <th>Order No</th>
-                                <th>Store</th> <!-- New Store Column -->
+                                <th>Store</th>
+                                <th>Supplier</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-600 fw-semibold" id="purchase-order-body">
@@ -49,33 +50,59 @@
                         data: 'id',
                         render: function(data, type, row) {
                             return `
-                        <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
-                            <input class="form-check-input" type="checkbox" value="${data}"/>
-                        </div>`;
+                            <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
+                                <input class="form-check-input" type="checkbox" value="${data}"/>
+                            </div>`;
                         },
                         orderable: false,
                         searchable: false
                     },
                     {
-                        data: 'order_no'
+                        data: 'order_no',
+                        render: function(data, type, row) {
+                            // Create a badge for the order number
+                            return `
+                            <span class="badge bg-info" style="padding: 5px 10px; color: #fff;">
+                                <i class="fas fa-file-invoice" style="margin-right: 5px;"></i>
+                                ${data}
+                            </span>
+                        `;
+                        },
+                        orderable: false,
+                        searchable: true
                     },
                     {
                         data: 'store_name',
                         render: function(data, type, row) {
-                            // Create a badge with padding and Font Awesome icon
+                            // Create a badge with padding and Font Awesome icon for store name
                             return `
-                                <div style="padding: 5px; display: flex; align-items: center;">
-                                    <i class="fas fa-store" style="margin-right: 5px;"></i>
-                                    <span class="badge badge-primary" style="padding: 5px 10px;">
-                                        ${data} (${row.store})
-                                    </span>
-                                </div>
-                            `;
+                            <div style="padding: 5px; display: flex; align-items: center;">
+                                <i class="fas fa-store" style="margin-right: 5px; color: #fff;"></i>
+                                <span class="badge bg-primary" style="padding: 5px 10px; color: #fff;">
+                                    ${data} (${row.store})
+                                </span>
+                            </div>
+                        `;
+                        },
+                        orderable: false,
+                        searchable: true
+                    },
+                    {
+                        data: 'supp_code',
+                        render: function(data, type, row) {
+                            // Create a badge with padding and a different Font Awesome icon for supplier
+                            return `
+                <div style="padding: 5px; display: flex; align-items: center;">
+                    <i class="fas fa-truck" style="margin-right: 5px; color: #fff;"></i> <!-- Changed icon to truck -->
+                    <span class="badge bg-primary" style="padding: 5px 10px; color: #fff;">
+                        ${data} (${row.supp_name})
+                    </span>
+                </div>
+            `;
                         },
                         orderable: false,
                         searchable: true
                     }
-
                 ],
                 order: [
                     [1, 'asc']
