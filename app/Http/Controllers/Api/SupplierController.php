@@ -15,7 +15,6 @@ class SupplierController extends Controller
     public function store(Request $request)
     {
         $data = $request->data;
-        return $data;
         $response = [];
         $startTime = microtime(true);
         $startMemory = memory_get_usage();
