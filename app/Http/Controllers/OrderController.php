@@ -276,6 +276,12 @@ class OrderController extends Controller
                     ->distinct()
                     ->orderBy('approval_date', 'desc');
 
+                // Check if the user has the 'supplier' role
+                if (Auth::user()->hasRole('supplier')) {
+                    // Filter by supplier_id if the user is a supplier
+                    $query->where('ordhead.supplier', Auth::user()->supplier_id);
+                }
+
                 // Apply filters
                 if (!empty($request->order_no)) {
                     $query->where('ordhead.order_no', $request->order_no);
@@ -308,15 +314,12 @@ class OrderController extends Controller
                     ->editColumn('total_retail', function ($row) {
                         return '$' . number_format($row->total_retail, 2);
                     })
-
                     ->rawColumns(['action']) // Allow HTML rendering
                     ->make(true);
             } catch (\Exception $e) {
                 return response()->json(['error' => 'An error occurred while fetching data. ' . $e->getMessage()], 500);
             } finally {
                 // Log performance metrics
-                // Calculate performance metrics
-                // Calculate performance metrics
                 $executionTimeMs = round((microtime(true) - $startTime) * 1000, 2); // Time in ms
                 $memoryUsageM = round((memory_get_usage() - $startMemory) / 1024 / 1024, 2); // Memory in MB
 
@@ -339,6 +342,7 @@ class OrderController extends Controller
             }
         }
     }
+
 
 
     /**

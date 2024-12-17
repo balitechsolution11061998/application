@@ -16,6 +16,8 @@ class SupplierController extends Controller
     {
         $data = $request->data;
         $response = [];
+        $startTime = microtime(true);
+        $startMemory = memory_get_usage();
 
         try {
             foreach ($data as $key => $value) {
@@ -64,17 +66,46 @@ class SupplierController extends Controller
                     ];
                 }
             }
-        } catch (\Exception $e) {
 
+            // Log successful operation
+            $executionTimeMs = round((microtime(true) - $startTime) * 1000, 2); // Time in ms
+            $memoryUsageM = round((memory_get_usage() - $startMemory) / 1024 / 1024, 2); // Memory in MB
+
+            activity()
+                ->causedBy(Auth::user()) // Log the user who triggered the action
+                ->withProperties([
+                    'execution_time' => $executionTimeMs . " MS",
+                    'memory_usage' => $memoryUsageM . " MB",
+                    'timestamp' => now(),
+                    'log_name' => 'Supplier Data Store', // Custom log name
+                ])
+                ->log('Successfully processed supplier data'); // Custom log message
+
+        } catch (\Exception $e) {
             // Return an error response
             $response = [
-                'message' => 'Error processing supplier data',
+                'message' => 'Error processing supplier data: ' . $e->getMessage(),
                 'status' => false,
             ];
+
+            // Log the error
+            $executionTimeMs = round((microtime(true) - $startTime) * 1000, 2); // Time in ms
+            $memoryUsageM = round((memory_get_usage() - $startMemory) / 1024 / 1024, 2); // Memory in MB
+
+            activity()
+                ->causedBy(Auth::user()) // Log the user who triggered the action
+                ->withProperties([
+                    'execution_time' => $executionTimeMs . " MS",
+                    'memory_usage' => $memoryUsageM . " MB",
+                    'timestamp' => now(),
+                    'log_name' => 'Supplier Data Store Error', // Custom log name for error
+                ])
+                ->log('Error processing supplier data: ' . $e->getMessage()); // Custom log message for error
         }
 
         return response()->json($response);
     }
+
 
     public function data(Request $request)
     {

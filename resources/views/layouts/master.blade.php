@@ -36,6 +36,40 @@
         .menu-title {
             color: black !important;
         }
+          /* Dark theme styles */
+    body.dark-theme {
+        background-color: #121212; /* Dark background */
+        color: #ffffff; /* Light text */
+    }
+
+    .menu-gray-800 {
+        background-color: #1e1e1e; /* Dark menu background */
+    }
+
+    .text-muted {
+        color: rgba(255, 255, 255, 0.7) !important; /* Light muted text */
+    }
+
+    .text-danger {
+        color: #ff4d4d !important; /* Danger color for sign out */
+    }
+    .dropdown-menu {
+    background-color: #343a40; /* Dark background */
+}
+
+.dropdown-menu .menu-link {
+    color: #ffffff; /* White text for links */
+}
+
+.dropdown-menu .menu-link:hover {
+    background-color: #495057; /* Darker background on hover */
+    color: #ffffff; /* Keep text white on hover */
+}
+
+.separator {
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Light separator line */
+}
+
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
@@ -185,26 +219,22 @@
                                 <!--begin::User-->
                                 <div class="d-flex align-items-center me-lg-n2 ms-1 ms-lg-3">
                                     <!--begin::Menu wrapper-->
-                                    <div
-                                        class="btn btn-icon btn-active-light-primary btn-custom w-30px h-30px w-md-40px h-md-40px">
-                                        <img class="h-30px w-30px rounded" src="{{ asset('img/logo/m-mart.svg') }}"
-                                            alt="Profile Picture" />
+                                    <div class="btn btn-icon btn-active-light-primary btn-custom w-30px h-30px w-md-40px h-md-40px dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <img class="h-30px w-30px rounded-circle" src="{{ asset('img/logo/m-mart.svg') }}" alt="Profile Picture" />
                                     </div>
                                     <!--begin::User account menu-->
-                                    <div
-                                        class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-275px">
+                                    <div class="dropdown-menu dropdown-menu-end menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-275px rounded-3 shadow">
                                         <!--begin::Menu item-->
                                         <div class="menu-item px-3">
                                             <div class="menu-content d-flex align-items-center px-3">
                                                 <div class="symbol symbol-50px me-5">
-                                                    <img alt="Profile Picture"
-                                                        src="{{ asset('img/logo/m-mart.svg') }}" />
+                                                    <img alt="Profile Picture" src="{{ asset('img/logo/m-mart.svg') }}" class="rounded-circle" />
                                                 </div>
                                                 <div class="d-flex flex-column">
-                                                    <div class="fw-bold d-flex align-items-center fs-5">
-                                                        {{ Auth::user()->username }}</div>
-                                                    <a href="#"
-                                                        class="fw-semibold text-muted text-hover-primary fs-7">{{ Auth::user()->email }}</a>
+                                                    <div class="fw-bold d-flex align-items-center fs-5 text-white">
+                                                        {{ Auth::user()->username }}
+                                                    </div>
+                                                    <a href="#" class="fw-semibold text-muted text-hover-primary fs-7">{{ Auth::user()->email }}</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -212,19 +242,28 @@
                                         <div class="separator my-2"></div>
                                         <!--begin::Menu item-->
                                         <div class="menu-item px-5">
-                                            <a href="{{ route('users.profile') }}" class="menu-link px-5">My
-                                                Profile</a>
+                                            <a href="{{ route('users.profile') }}" class="menu-link px-5 text-white">My Profile</a>
                                         </div>
                                         <!--end::Menu item-->
                                         <div class="menu-item px-5">
-                                            <a href="{{ route('logout') }}" class="menu-link px-5">Sign Out</a>
+                                            <a href="{{ route('logout') }}" class="menu-link px-5 text-danger">Sign Out</a>
                                         </div>
                                         <!--end::Menu item-->
+                                        <div class="separator my-2"></div>
+                                        <!--begin::Theme Toggle-->
+                                        <div class="menu-item px-5">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="themeToggle" />
+                                                <label class="form-check-label text-white" for="themeToggle">Toggle Light/Dark</label>
+                                            </div>
+                                        </div>
+                                        <!--end::Theme Toggle-->
                                     </div>
                                     <!--end::User account menu-->
                                 </div>
                                 <!--end::User -->
                             </div>
+
 
                             <!--end::Toolbar wrapper-->
                         </div>
@@ -248,7 +287,7 @@
                         <div class="text-gray-900 order-2 order-md-1">
                             <span class="text-muted fw-semibold me-1">2024&copy;</span>
                             <a href="https://keenthemes.com" target="_blank"
-                                class="text-gray-800 text-hover-primary">Keenthemes</a>
+                                class="text-gray-800 text-hover-primary">IT M M-Mart</a>
                         </div>
                         <!--end::Copyright-->
                         <!--begin::Menu-->
@@ -283,6 +322,7 @@
     <!--begin::Global Javascript Bundle(mandatory for all pages)-->
     <script src="{{ asset('assets/plugins/global1/plugins.bundle.js') }}"></script>
     <script src="{{ asset('assets/js/scripts.bundle.js') }}"></script>
+    @yield('scripts')
 
     <!--end::Custom Javascript-->
     <!--end::Javascript-->
