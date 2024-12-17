@@ -7610,12 +7610,12 @@
             "type": "library",
             "extra": {
                 "laravel": {
-                    "providers": [
-                        "Laratrust\\LaratrustServiceProvider"
-                    ],
                     "aliases": {
                         "Laratrust": "Laratrust\\LaratrustFacade"
-                    }
+                    },
+                    "providers": [
+                        "Laratrust\\LaratrustServiceProvider"
+                    ]
                 }
             },
             "installation-source": "dist",
@@ -9108,12 +9108,12 @@
             "type": "library",
             "extra": {
                 "laravel": {
-                    "providers": [
-                        "Spatie\\LaravelBlink\\BlinkServiceProvider"
-                    ],
                     "aliases": {
                         "Blink": "Spatie\\LaravelBlink\\BlinkFacade"
-                    }
+                    },
+                    "providers": [
+                        "Spatie\\LaravelBlink\\BlinkServiceProvider"
+                    ]
                 }
             },
             "installation-source": "dist",
@@ -10780,8 +10780,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "installation-source": "dist",
@@ -12217,9 +12217,6 @@
             "time": "2023-02-26T18:30:57+00:00",
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-master": "11.0-dev"
-                },
                 "laravel": {
                     "aliases": {
                         "Hashids": "Vinkla\\Hashids\\Facades\\Hashids"
@@ -12227,6 +12224,9 @@
                     "providers": [
                         "Vinkla\\Hashids\\HashidsServiceProvider"
                     ]
+                },
+                "branch-alias": {
+                    "dev-master": "11.0-dev"
                 }
             },
             "installation-source": "dist",
