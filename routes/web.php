@@ -128,6 +128,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     // Store Management Routes
     Route::prefix('stores')->as('stores.')->group(function () {
+        Route::get('/', [StoreController::class, 'index'])->name('index');
         Route::post('/storeUser', [StoreController::class, 'storeUser'])->name('storeUser');
         Route::post('/deleteStoreUser', [StoreController::class, 'deleteStoreUser'])->name('deleteStoreUser');
     });
@@ -149,8 +150,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/store', [OrderController::class, 'store'])->name('store');
         Route::get('/', [OrderController::class, 'index'])->name('index');
         Route::get('/show/{id}', [OrderController::class, 'show'])->name('show');
+        Route::post('/print-po', [OrderController::class, 'printPo'])->name('printPo');
 
         Route::get('/supplier/getOrders', [OrderController::class, 'getOrdersSupplier'])->name('supplier.getOrders');
+        Route::post('/supplier/confirm', [OrderController::class, 'confirmOrder'])->name('supplier.confirm');
+        Route::get('/supplier/show/{id}', [OrderController::class, 'showOrderSupplier'])->name('supplier.show');
+
 
     });
 
@@ -219,6 +224,8 @@ Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']
 
 Route::post('/send-message', [ChatController::class, 'sendMessage']);
 Route::get('/fetch-messages/{userId}', [ChatController::class, 'fetchMessages']);
+Route::get('/fetch-contacts', [ChatController::class, 'fetchContacts']);
+
 Route::get('/test-bot', function () {
     $botInfo = Telegram::getMe();
     return $botInfo;

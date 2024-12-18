@@ -1,277 +1,270 @@
-<x-default-layout>
-    @section('title')
-        Detail Purchase Order - #{{ $data['orderDetails']->order_no }}
-    @endsection
+@extends('layouts.master')
+@section('title', 'Purchase Order')
+@section('content')
 
-    @section('breadcrumbs')
-        {{ Breadcrumbs::render('orders') }}
-    @endsection
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
 
-    @push('styles')
-        <style>
-            body {
-                background-color: #f8f9fa;
-            }
+        .detail-card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            background-color: #ffffff;
+            margin-bottom: 24px;
+        }
 
-            .detail-card {
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                border-radius: 12px;
-                padding: 24px;
-                background-color: #ffffff;
-                margin-bottom: 24px;
-            }
+        .detail-header {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #495057;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-            .detail-header {
-                font-size: 1.8rem;
-                font-weight: bold;
-                color: #495057;
-                border-bottom: 2px solid #e9ecef;
-                padding-bottom: 10px;
-                margin-bottom: 16px;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
+        .detail-header i {
+            color: #007bff;
+        }
 
-            .detail-header i {
-                color: #007bff;
-            }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f3f5;
+        }
 
-            .detail-row {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 10px 0;
-                border-bottom: 1px solid #f1f3f5;
-            }
+        .detail-label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-            .detail-label {
-                font-size: 1rem;
-                font-weight: 500;
-                color: #6c757d;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
+        .detail-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #212529;
+            text-align: right;
+        }
 
-            .detail-value {
-                font-size: 1.1rem;
-                font-weight: 600;
-                color: #212529;
-                text-align: right;
-            }
+        .badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-            .badge {
-                padding: 6px 12px;
-                border-radius: 12px;
-                font-size: 0.9rem;
-                font-weight: 600;
-                text-transform: uppercase;
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-            }
+        .badge i {
+            font-size: 0.8rem;
+        }
 
-            .badge i {
-                font-size: 0.8rem;
-            }
+        .badge.bg-success {
+            background-color: #28a745;
+            color: white;
+        }
 
-            .badge.bg-success {
-                background-color: #28a745;
-                color: white;
-            }
+        .badge.bg-warning {
+            background-color: #ffc107;
+            color: black;
+        }
 
-            .badge.bg-warning {
-                background-color: #ffc107;
-                color: black;
-            }
+        .badge.bg-danger {
+            background-color: #dc3545;
+            color: white;
+        }
 
-            .badge.bg-danger {
-                background-color: #dc3545;
-                color: white;
-            }
+        .tracking-section {
+            margin-top: 24px;
+        }
 
-            .tracking-section {
-                margin-top: 24px;
-            }
+        .tracking-step {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
 
-            .tracking-step {
-                display: flex;
-                align-items: center;
-                gap: 16px;
-                margin-bottom: 12px;
-            }
+        .tracking-icon {
+            font-size: 1.5rem;
+            color: #007bff;
+        }
 
-            .tracking-icon {
-                font-size: 1.5rem;
-                color: #007bff;
-            }
+        .tracking-description {
+            font-size: 1rem;
+            color: #495057;
+        }
 
-            .tracking-description {
-                font-size: 1rem;
-                color: #495057;
-            }
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            background-color: #6c757d;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
 
-            .btn-back {
-                display: inline-flex;
-                align-items: center;
-                font-size: 0.9rem;
-                padding: 8px 16px;
-                background-color: #6c757d;
-                color: white;
-                border-radius: 8px;
-                text-decoration: none;
-                transition: background-color 0.3s ease;
-            }
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
 
-            .btn-back:hover {
-                background-color: #5a6268;
-            }
+        .btn-back i {
+            margin-right: 6px;
+        }
 
-            .btn-back i {
-                margin-right: 6px;
-            }
+        #printPOButton {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 0.25rem;
+        }
 
-            #printPOButton {
-                padding: 0.375rem 0.75rem;
-                font-size: 0.875rem;
-                border-radius: 0.25rem;
-            }
+        #printPOButton i {
+            margin-right: 0.5rem;
+        }
 
-            #printPOButton i {
-                margin-right: 0.5rem;
-            }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                border-radius: 10px;
-                overflow: hidden;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            }
+        thead {
+            background-color: #343a40;
+            color: white;
+        }
 
-            thead {
-                background-color: #343a40;
-                color: white;
-            }
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .text-end {
+            text-align: right;
+        }
+
+        .text-wrap {
+            word-wrap: break-word;
+        }
+
+        .black-text {
+            color: #212529;
+        }
+
+        @media (max-width: 768px) {
 
             th,
             td {
-                padding: 12px 15px;
-                text-align: center;
-                border-bottom: 1px solid #dee2e6;
+                padding: 8px;
+                font-size: 14px;
             }
+        }
 
-            th {
-                position: sticky;
-                top: 0;
-                z-index: 10;
-            }
+        .icon-white {
+            color: white;
+        }
 
-            tbody tr:hover {
-                background-color: #f1f1f1;
-            }
+        .note-section {
+            background-color: #e9ecef;
+            border-left: 5px solid #007bff;
+            padding: 16px;
+            margin-bottom: 24px;
+            border-radius: 8px;
+        }
 
-            .text-end {
-                text-align: right;
-            }
+        .note-section h5 {
+            margin-bottom: 12px;
+            color: #495057;
+        }
 
-            .text-wrap {
-                word-wrap: break-word;
-            }
+        .note-section p {
+            margin: 0;
+            color: #212529;
+        }
 
-            .black-text {
-                color: #212529;
-            }
+        .comment-section {
+            margin-top: 24px;
+            padding: 16px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
 
-            @media (max-width: 768px) {
+        .comment-section h5 {
+            margin-bottom: 12px;
+            color: #495057;
+        }
 
-                th,
-                td {
-                    padding: 8px;
-                    font-size: 14px;
-                }
-            }
+        .comment-section p {
+            margin: 0;
+            color: #212529;
+        }
 
-            .icon-white {
-                color: white;
-            }
+        .comment-section .approved-by {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
 
-            .note-section {
-                background-color: #e9ecef;
-                border-left: 5px solid #007bff;
-                padding: 16px;
-                margin-bottom: 24px;
-                border-radius: 8px;
-            }
+        .comment-section {
+            background-color: #007bff;
+            /* Primary color */
+            padding: 16px;
+            border-radius: 8px;
+        }
 
-            .note-section h5 {
-                margin-bottom: 12px;
-                color: #495057;
-            }
+        .comment-section h5 {
+            margin-bottom: 12px;
+            color: white;
+            /* White text */
+        }
 
-            .note-section p {
-                margin: 0;
-                color: #212529;
-            }
+        .comment-section p {
+            margin: 0;
+            color: white;
+            /* White text */
+        }
 
-            .comment-section {
-                margin-top: 24px;
-                padding: 16px;
-                background-color: #f8f9fa;
-                border: 1px solid #dee2e6;
-                border-radius: 8px;
-            }
-
-            .comment-section h5 {
-                margin-bottom: 12px;
-                color: #495057;
-            }
-
-            .comment-section p {
-                margin: 0;
-                color: #212529;
-            }
-
-            .comment-section .approved-by {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-top: 16px;
-            }
-
-            .comment-section {
-                background-color: #007bff;
-                /* Primary color */
-                padding: 16px;
-                border-radius: 8px;
-            }
-
-            .comment-section h5 {
-                margin-bottom: 12px;
-                color: white;
-                /* White text */
-            }
-
-            .comment-section p {
-                margin: 0;
-                color: white;
-                /* White text */
-            }
-
-            .approved-by {
-                margin-top: 16px;
-                font-size: 1rem;
-                color: #495057;
-                /* Dark color for contrast */
-            }
-        </style>
-    @endpush
+        .approved-by {
+            margin-top: 16px;
+            font-size: 1rem;
+            color: #495057;
+            /* Dark color for contrast */
+        }
+    </style>
 
     <div class="container py-4">
         <!-- Back Button -->
         <div class="mb-3">
-            <a href="{{ route('purchase-orders.index') }}" class="btn-back">
+            <a href="{{ route('purchase-orders.supplier.getOrders') }}" class="btn-back">
                 <i class="fas fa-arrow-left icon-white"></i> Back to Orders
             </a>
         </div>
@@ -280,8 +273,9 @@
         <div class="container mt-4">
             <div class="card bg-white shadow-sm rounded-4">
                 <div class="card-body">
-                    @if ($data['orderDetails']->status === 'Printed')
-                        <button class="btn btn-primary btn-sm rounded-4" id="printPOButton">
+                    @if ($data['orderDetails']->status === 'Confirmed')
+                        <button class="btn btn-primary btn-sm rounded-4" id="printPOButton"
+                            onclick="confirmPrint('{{ $data['orderDetails']->order_no }}')">
                             <i class="fas fa-print"></i> Print PO
                         </button>
                     @endif
@@ -326,11 +320,11 @@
                                         @if ($data['orderDetails']->estimated_delivery_date)
                                             @formattedDate($data['orderDetails']->estimated_delivery_date)
                                         @else
-                                            <span class="text-muted">Data Tidak Tersedia</span>
+                                            <span>Data Tidak Tersedia</span>
                                         @endif
                                     </span>
-                                    <div id="spinnerDelivery"
-                                        class="spinner-border spinner-border-sm text-primary d-none" role="status">
+                                    <div id="spinnerDelivery" class="spinner-border spinner-border-sm text-primary d-none"
+                                        role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                 </div>
@@ -339,19 +333,20 @@
 
                         <div class="col-md-4">
                             <div class="detail-row">
-                                <div class="detail-label">
-                                    <i class="fas fa-calendar-alt"></i> Tanggal Terima:
+                                <div class="detail-label" style="font-weight: 600; color: #495057;">
+                                    <i class="fas fa-calendar-alt" style="color: #007bff;"></i> Tanggal Terima:
                                 </div>
-                                <div class="detail-value d-flex align-items-center">
+                                <div class="detail-value d-flex align-items-center"
+                                    style="font-size: 1.1rem; color: #212529;">
                                     <span id="deliveryDate" class="me-2">
                                         @if ($data['orderDetails']->receive_date)
                                             @formattedDate($data['orderDetails']->receive_date)
                                         @else
-                                            <span class="text-muted">Data Tidak Tersedia</span>
+                                            <span>Data Tidak Tersedia</span>
                                         @endif
                                     </span>
-                                    <div id="spinnerDelivery"
-                                        class="spinner-border spinner-border-sm text-primary d-none" role="status">
+                                    <div id="spinnerDelivery" class="spinner-border spinner-border-sm text-primary d-none"
+                                        role="status">
                                         <span class="sr-only">Memuat...</span>
                                     </div>
                                 </div>
@@ -374,8 +369,8 @@
                                 <div class="detail-label">Approval</div>
                                 <div class="detail-value">
                                     <span id="approval">{{ $data['orderDetails']->approval_id ?? 'N/A' }}</span>
-                                    <div id="spinnerApproval"
-                                        class="spinner-border spinner-border-sm text-primary d-none" role="status">
+                                    <div id="spinnerApproval" class="spinner-border spinner-border-sm text-primary d-none"
+                                        role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                 </div>
@@ -384,8 +379,8 @@
                                 <div class="detail-label">Supplier</div>
                                 <div class="detail-value">
                                     <span id="supplierName">{{ $data['orderDetails']->supplier ?? 'N/A' }}</span>
-                                    <div id="spinnerSupplier"
-                                        class="spinner-border spinner-border-sm text-primary d-none" role="status">
+                                    <div id="spinnerSupplier" class="spinner-border spinner-border-sm text-primary d-none"
+                                        role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                 </div>
@@ -398,8 +393,8 @@
                                         <!-- Icon for Receive No -->
                                         {{ $data['orderDetails']->receive_no ?? 'N/A' }}
                                     </span>
-                                    <div id="spinnerReceive"
-                                        class="spinner-border spinner-border-sm text-primary d-none" role="status">
+                                    <div id="spinnerReceive" class="spinner-border spinner-border-sm text-primary d-none"
+                                        role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
                                 </div>
@@ -407,24 +402,26 @@
                             <div class="detail-row">
                                 <div class="detail-label">Status</div>
                                 <div class="detail-value">
-                                    <span
-                                        class="badge-status badge
+                                    <span class="badge-status badge
                                         @if ($data['orderDetails']->status === 'Progress') badge-warning
                                         @elseif ($data['orderDetails']->status === 'Completed') badge-success
                                         @elseif ($data['orderDetails']->status === 'Expired') badge-danger
                                         @elseif ($data['orderDetails']->status === 'Printed') badge-info
-                                        @else badge-secondary @endif text-white">
-                                        <i
-                                            class="fas
+                                        @elseif ($data['orderDetails']->status === 'Confirmed') badge-confirmed
+                                        @else badge-secondary @endif">
+                                        <i class="fas
                                             @if ($data['orderDetails']->status === 'Progress') fa-spinner fa-spin
                                             @elseif ($data['orderDetails']->status === 'Completed') fa-check-circle
                                             @elseif ($data['orderDetails']->status === 'Expired') fa-times-circle
                                             @elseif ($data['orderDetails']->status === 'Printed') fa-print
+                                            @elseif ($data['orderDetails']->status === 'Confirmed') fa-check
                                             @else fa-info-circle @endif text-white"></i>
                                         {{ $data['orderDetails']->status ?? 'N/A' }}
                                     </span>
                                 </div>
                             </div>
+
+
                         </div>
 
                         <div class="col-md-3 detail-column">
@@ -443,36 +440,7 @@
                                 <div class="detail-label">Supplier Name</div>
                                 <div class="detail-value">{{ $data['supplier']['supplier_name'] ?? 'N/A' }}</div>
                             </div>
-                            <div class="detail-row mb-3">
-                                <div class="detail-label">Status Pajak</div>
-                                <div class="detail-value d-flex align-items-center">
-                                    @php
-                                        $taxStatus = $data['supplier']['tax_ind'] ?? 'N/A';
-                                        $badgeClass = '';
-                                        $iconClass = '';
-                                        $statusText = '';
 
-                                        if ($taxStatus === 'Y') {
-                                            $badgeClass = 'badge-success';
-                                            $iconClass = 'fas fa-check-circle';
-                                            $statusText = 'PPN'; // Tax Applicable
-                                        } elseif ($taxStatus === 'N') {
-                                            $badgeClass = 'badge-danger';
-                                            $iconClass = 'fas fa-times-circle';
-                                            $statusText = 'Non PPN'; // Tax Not Applicable
-                                        } else {
-                                            $badgeClass = 'badge-secondary';
-                                            $iconClass = 'fas fa-question-circle';
-                                            $statusText = 'Data Tidak Tersedia'; // Data Not Available
-                                        }
-                                    @endphp
-                                    <span class="badge {{ $badgeClass }} d-flex align-items-center"
-                                        style="padding: 5px 10px; margin-right: 10px;">
-                                        <i class="{{ $iconClass }}" style="margin-right: 5px;"></i>
-                                        {{ $statusText }}
-                                    </span>
-                                </div>
-                            </div>
                         </div>
 
                         <div class="col-md-3 detail-column">
@@ -523,13 +491,11 @@
                                             <th>Tag</th>
                                             <th>Unit Cost</th>
                                             <th>Unit Retail</th>
-                                            <th>Status BKP</th>
                                             <th>PPN Cost</th>
                                             <th>Quantity Ordered</th>
                                             <th>Purchase UOM</th>
                                             <th>Regular Discount</th>
                                             <th>Total</th>
-                                            <th>Total PPN</th>
                                             <th>Total Discount</th>
                                             <th>Sub Total</th>
                                         </tr>
@@ -581,24 +547,7 @@
                                                 <td class="text-center">{{ $item->tag_code }}</td>
                                                 <td class="text-end">{{ number_format($item->unit_cost, 2) }}</td>
                                                 <td class="text-end">{{ number_format($item->unit_retail, 2) }}</td>
-                                                <td class="text-center">
-                                                    @if (is_null($item->itemSupplier))
-                                                        <span class="badge bg-secondary">
-                                                            <i class="fas fa-exclamation-circle"
-                                                                style="color: red;"></i> Tidak Ada Data
-                                                        </span>
-                                                    @elseif($item->itemSupplier->vat_ind === 'Y')
-                                                        <span class="badge bg-success">
-                                                            <i class="fas fa-check-circle" style="color: green;"></i>
-                                                            BKP
-                                                        </span>
-                                                    @else
-                                                        <span class="badge bg-danger">
-                                                            <i class="fas fa-times-circle" style="color: red;"></i>
-                                                            NON BKP
-                                                        </span>
-                                                    @endif
-                                                </td>
+
                                                 <td class="text-end">{{ number_format($vat_costTotal, 2) }}</td>
                                                 <!-- Total PPN for the item -->
                                                 <td class="text-center">{{ $item->qty_ordered }}</td>
@@ -609,7 +558,6 @@
 
                                                 <td class="text-end">{{ number_format($itemTotalAfterDiscount, 2) }}
                                                 </td> <!-- Total for the item after discount -->
-                                                <td class="text-end">{{ number_format($vat_costTotal, 2) }}</td>
                                                 <!-- Total PPN for the item -->
                                                 <td class="text-end">{{ number_format($discountAmount, 2) }}</td>
                                                 <!-- Total Discount for the item -->
@@ -624,24 +572,24 @@
                                             $grandTotal = $totalCost + $totalPPN; // Grand total without discount
                                         @endphp
                                         <tr class="table-dark">
-                                            <td colspan="15" class="text-end text-white"><strong>TOTAL
+                                            <td colspan="13" class="text-end text-white"><strong>TOTAL
                                                     DISCOUNT:</strong></td>
                                             <td class="text-end text-white">{{ number_format($totalDiscount, 2) }}
                                             </td> <!-- Total Discount for all items -->
                                         </tr>
                                         <tr class="table-dark">
-                                            <td colspan="15" class="text-end text-white"><strong>TOTAL (before
+                                            <td colspan="13" class="text-end text-white"><strong>TOTAL (before
                                                     PPN):</strong></td>
                                             <td class="text-end text-white">{{ number_format($totalCost, 2) }}</td>
                                             <!-- Total Cost before discount -->
                                         </tr>
                                         <tr class="table-dark">
-                                            <td colspan="15" class="text-end text-white"><strong>PPN:</strong></td>
+                                            <td colspan="13" class="text-end text-white"><strong>PPN:</strong></td>
                                             <td class="text-end text-white">{{ number_format($totalPPN, 2) }}</td>
                                             <!-- Total PPN -->
                                         </tr>
                                         <tr class="table-dark">
-                                            <td colspan="15" class="text-end text-white"><strong>TOTAL (after PPN -
+                                            <td colspan="13" class="text-end text-white"><strong>TOTAL (after PPN -
                                                     Discount):</strong></td>
                                             <td class="text-end text-white">{{ number_format($grandTotal, 2) }}</td>
                                             <!-- Grand Total after discount -->
@@ -673,8 +621,8 @@
                     <div class="row mt-4">
                         <div class="col-md-12">
                             <div class="comment-section p-3 mb-4 bg-light border rounded">
-                                <h5 class="mb-3">Comment Description</h5>
-                                <p>{{ $data['orderDetails']->comment_desc ?? 'N/A' }}</p>
+                                <h5 class="mb-3" style="color: black;">Comment Description</h5>
+                                <p style="color: black;">{{ $data['orderDetails']->comment_desc ?? 'N/A' }}</p>
                             </div>
                         </div>
                         <div class="col-md-12 approved-by text-end">
@@ -688,16 +636,60 @@
         </div>
     </div>
 
-    @push('scripts')
-        <script>
-            // Show loading spinner for a short period to simulate loading
-            window.onload = function() {
-                // Show the spinner for 2 seconds before showing the data
-                setTimeout(function() {
-                    document.getElementById('loadingSpinner').style.display = 'none';
-                    document.getElementById('orderDetails').style.display = 'block';
-                }, 2000); // Adjust the time as needed
-            };
-        </script>
-    @endpush
-</x-default-layout>
+    <script>
+        // Show loading spinner for a short period to simulate loading
+        window.onload = function() {
+            // Show the spinner for 2 seconds before showing the data
+            setTimeout(function() {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('orderDetails').style.display = 'block';
+            }, 2000); // Adjust the time as needed
+        };
+
+        function confirmPrint(orderNo) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You are about to print Order No: " + orderNo,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, print it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // AJAX call to print the PO
+                    $.ajax({
+                        url: '/purchase-orders/print-po', // Your route to handle the print
+                        method: 'POST',
+                        data: {
+                            order_no: orderNo,
+                            _token: '{{ csrf_token() }}' // Include CSRF token for security
+                        },
+                        success: function(response) {
+                            // Check if the response indicates success
+                            if (response.success) {
+                                // Log the print history (if needed)
+
+                                // Show toastr notification
+                                toastr.success('Order No: ' + orderNo +
+                                    ' has been printed successfully.');
+
+                                // Redirect to the orders page after a short delay
+                                setTimeout(function() {
+                                    window.location.href =
+                                    '/purchase-orders/supplier/getOrders'; // Redirect link
+                                }, 2000); // 2 seconds delay before redirecting
+                            } else {
+                                toastr.error('Error: ' + response.message);
+                            }
+                        },
+                        error: function(xhr) {
+                            toastr.error('Failed to print Order No: ' + orderNo +
+                            '. Please try again.');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+@endsection

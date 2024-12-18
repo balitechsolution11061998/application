@@ -68,6 +68,7 @@
     border-top: 1px solid rgba(255, 255, 255, 0.1); /* Light separator line */
 }
 
+
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
@@ -128,15 +129,12 @@
                                         <!--begin:Menu item-->
                                         <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}"
                                             data-kt-menu-placement="bottom-start"
-                                            class="menu-item here show menu-here-bg menu-lg-down-accordion me-0 me-lg-2">
+                                            class="menu-item menu-lg-down-accordion me-0 me-lg-2">
                                             <!--begin:Menu link-->
                                             <a href="{{ route('home.supplier') }}" class="menu-link py-3">
-                                            <span class="menu-link py-3">
-                                                <span class="menu-title">Dashboards</span>
-                                                <span class="menu-arrow d-lg-none"></span>
-                                            </span>
+                                                    <span class="menu-title">Dashboards</span>
+                                                    <span class="menu-arrow d-lg-none"></span>
                                             </a>
-
                                             <!--end:Menu sub-->
                                         </div>
                                         <!--end:Menu item-->
@@ -146,13 +144,11 @@
                                             class="menu-item menu-lg-down-accordion me-0 me-lg-2">
                                             <!--begin:Menu link-->
                                             <a href="{{ route('purchase-orders.supplier.getOrders') }}" class="menu-link py-3">
-                                                <!-- Set href to the desired URL -->
                                                 <span class="menu-title">Purchase Order</span>
                                                 <span class="menu-arrow d-lg-none"></span>
                                             </a>
                                             <!--end:Menu link-->
                                         </div>
-
                                         <!--end:Menu item-->
                                         <!--begin:Menu item-->
                                         <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}"
@@ -163,7 +159,6 @@
                                                 <span class="menu-title">Receiving</span>
                                                 <span class="menu-arrow d-lg-none"></span>
                                             </span>
-
                                         </div>
                                         <!--end:Menu item-->
                                         <!--begin:Menu item-->
@@ -175,9 +170,8 @@
                                                 <span class="menu-title">RTV</span>
                                                 <span class="menu-arrow d-lg-none"></span>
                                             </span>
-
                                         </div>
-
+                                        <!--end:Menu item-->
                                         <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}"
                                             data-kt-menu-placement="bottom-start"
                                             class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
@@ -186,7 +180,6 @@
                                                 <span class="menu-title">Tanda Terima</span>
                                                 <span class="menu-arrow d-lg-none"></span>
                                             </span>
-
                                         </div>
                                         <!--end:Menu item-->
                                     </div>

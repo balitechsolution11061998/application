@@ -1,133 +1,198 @@
 @extends('layouts.master')
-@section('title', 'Supplier Dashboard')
+@section('title', 'Dashboard')
 @section('content')
 
-<link href="{{ asset('assets/plugins/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css"/>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-<style>
-    :root {
-        --background-color: #121212; /* Dark background for dark mode */
-        --card-background-color: #1e1e1e; /* Darker card background */
-        --text-color: #ffffff; /* White text for dark mode */
-        --card-text-color: #ffffff; /* White text for card content */
-    }
-
-    /* Light mode colors */
-    @media (prefers-color-scheme: light) {
-        :root {
-            --background-color: #f8f9fa; /* Light background for light mode */
-            --card-background-color: #ffffff; /* White card background */
-            --text-color: #000000; /* Black text for light mode */
-            --card-text-color: #000000; /* Black text for card content */
-        }
-    }
-
-    body {
-        background-color: var(--background-color); /* Use the background color variable */
-        color: var(--text-color); /* Use the text color variable */
-    }
-    .card {
-        background-color: var(--card-background-color); /* Use the card background color variable */
-        border: none; /* Remove card border */
-        transition: transform 0.2s, box-shadow 0.2s; /* Smooth transition for hover effects */
-    }
-    .card:hover {
-        transform: scale(1.05); /* Scale effect on hover */
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Shadow effect on hover */
-    }
-    .card-title {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: var(--card-text-color); /* Use the card text color variable */
-    }
-    .card-text {
-        font-size: 1.2rem; /* Adjusted font size for better readability */
-        color: var(--card-text-color); /* Use the card text color variable */
-    }
-    .icon {
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        opacity: 0.3; /* Subtle icon visibility */
-        color: var(--card-text-color); /* Use the card text color variable */
-    }
-    .supplier-profile {
-        background-color: var(--card-background-color); /* Use the card background color variable */
-        border: none; /* Remove border */
-        padding: 20px; /* Add padding for better spacing */
-        border-radius: 10px; /* Rounded corners */
-    }
-    .profile-header {
-        font-size: 2rem; /* Larger font size for the header */
-        font-weight: bold;
-        margin-bottom: 20px; /* Space below the header */
-    }
-    .profile-info {
-        margin-bottom: 10px; /* Space between info items */
-    }
-</style>
-
-<div class="container mt-5">
-    <h1 class="text-center mb-4" style="color: var(--text-color);">Supplier Dashboard</h1>
+<div class="container-fluid bg-dark text-white">
     <div class="row">
-        <!-- Purchase Orders Card -->
-        <div class="col-md-3">
-            <div class="card mb-4">
-                <div class="card-body position-relative">
-                    <h5 class="card-title">Purchase Orders</h5>
-                    <h2 class="card-text">{{ $purchaseOrdersCount }}</h2>
-                    <i class="fas fa-shopping-cart fa-3x icon"></i>
+        <div class="col-md-12">
+            <header class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-4">
+                <h1 class="h2">Dashboard</h1>
+                <div>
+                    <span class="me-3">April 18, 2021</span>
+                    <input type="text" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
+                </div>
+            </header>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Good Morning, Eleanor</h5>
+                    <p>Welcome to your daily event calendar. Here you can see all the upcoming events, meetings, and create new events.</p>
+                    <button class="btn btn-light">+ Create Event</button>
                 </div>
             </div>
         </div>
-
-        <!-- Receiving Card -->
-        <div class="col-md-3">
-            <div class="card mb-4">
-                <div class="card-body position-relative">
-                    <h5 class="card-title">Receiving</h5>
-                    <h2 class="card-text">{{ $receivingCount }}</h2>
-                    <i class="fas fa-box fa-3x icon"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Returns Card -->
-        <div class="col-md-3">
-            <div class="card mb-4">
-                <div class="card-body position-relative">
-                    <h5 class="card-title">Returns</h5>
-                    <h2 class="card-text">{{ $returnsCount }}</h2>
-                    <i class="fas fa-undo fa-3x icon"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tanda Terima Card -->
-        <div class="col-md-3">
-            <div class="card mb-4">
-                <div class="card-body position-relative">
-                    <h5 class="card-title">Tanda Terima</h5>
-                    <h2 class="card-text">{{ $tandaTerimaCount }}</h2>
-                    <i class="fas fa-receipt fa-3x icon"></i>
+        <div class="col-md-4">
+            <div class="card bg-info text-white mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Reminder</h5>
+                    <ul class="list-unstyled">
+                        <li>Training sessions 10:00 AM</li>
+                        <li>Team meetings 1:00 PM</li>
+                    </ul>
+                    <button class="btn btn-light">+ Add New</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Supplier Profile Section -->
-    <div class="card mt-4 supplier-profile">
-        <div class="card-body">
-            <h5 class="profile-header">Supplier Profile</h5>
-            <p class="profile-info"><strong>Name:</strong> {{ $supplier->name }}</p>
-            <p class="profile-info"><strong>Email:</strong> {{ $supplier->email }}</p>
-            <p class="profile-info"><strong>Phone:</strong> {{ $supplier->phone ? $supplier->phone : 'N/A' }}</p>
-            <p class="profile-info"><strong>Address:</strong> {{ $supplier->address }}</p>
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Contacts</h5>
+                    <ul class="list-unstyled">
+                        <li>Martin Black - Coach</li>
+                        <li>Jane Cooper - Manager</li>
+                        <li>Jacob Jones - Player</li>
+                        <li>Albert Flores - Player</li>
+                    </ul>
+                    <button class="btn btn-light">View All</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Half Year Work Results</h5>
+                    <div id="workResultsChart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Schedule</h5>
+                    <div class="calendar">
+                        <div class="d-flex justify-content-between">
+                            <span>April, 2021</span>
+                            <button class="btn btn-light btn-sm">View All</button>
+                        </div>
+                        <table class="table table-bordered text-center">
+                            <thead>
+                                <tr>
+                                    <th>Sun</th>
+                                    <th>Mon</th>
+                                    <th>Tue</th>
+                                    <th>Wed</th>
+                                    <th>Thu</th>
+                                    <th>Fri</th>
+                                    <th>Sat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                    <td>3</td>
+                                    <td>4</td>
+                                    <td>5</td>
+                                    <td>6</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>8</td>
+                                    <td>9</td>
+                                    <td>10</td>
+                                    <td>11</td>
+                                    <td>12</td>
+                                    <td>13</td>
+                                </tr>
+                                <tr>
+                                    <td>14</td>
+                                    <td>15</td>
+                                    <td>16</td>
+                                    <td>17</td>
+                                    <td>18</td>
+                                    <td>19</td>
+                                    <td>20</td>
+                                </tr>
+                                <tr>
+                                    <td>21</td>
+                                    <td>22</td>
+                                    <td>23</td>
+                                    <td>24</td>
+                                    <td>25</td>
+                                    <td>26</td>
+                                    <td>27</td>
+                                </tr>
+                                <tr>
+                                    <td>28</td>
+                                    <td>29</td>
+                                    <td>30</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Schedule</h5>
+                    <ul class="list-unstyled">
+                        <li>Team meetings - B&H Football Club, 1:15 PM - 4:00 PM</li>
+                        <li>Medical checks - BD & Treatment Centre, 4:15 PM - 6:00 PM</li>
+                    </ul>
+                    <button class="btn btn-light">View All</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+@endsection
+
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    var options = {
+        chart: {
+            type: 'line',
+            height: 300,
+            toolbar: {
+                show: false
+            }
+        },
+        series: [{
+            name: 'Training sessions',
+            data: [3, 5, 2, 8, 6, 9]
+        }, {
+            name: 'Team meetings',
+            data: [2, 3, 4, 5, 7, 8]
+        }, {
+            name: 'Medical checks',
+            data: [1, 2, 3, 4, 5, 6]
+        }],
+        xaxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+        },
+        colors: ['#00E396', '#008FFB', '#FF4560'],
+        stroke: {
+            curve: 'smooth'
+        },
+        markers: {
+            size: 5
+        },
+        tooltip: {
+            shared: true,
+            intersect: false
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#workResultsChart"), options);
+    chart.render();
+</script>
 @endsection

@@ -101,7 +101,6 @@ class UserController extends Controller
             return response()->json(['success' => true, 'message' => 'Suppliers added successfully.']);
         } catch (Exception $e) {
             // Log the error message
-            \Log::error('Error adding suppliers: ' . $e->getMessage());
 
             // Log the activity for error
             activity()

@@ -3,15 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\SystemUsageHelper;
+use App\Models\OrderConfirmationHistory;
 use App\Models\OrdHead;
 use App\Models\OrdSku;
+use App\Models\PrintHistory;
 use App\Services\Order\OrderService;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Spatie\Activitylog\Facades\Activity;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
 class OrderController extends Controller
 {
@@ -36,6 +40,195 @@ class OrderController extends Controller
     {
         //
     }
+
+    public function printPo(Request $request)
+    {
+        try {
+            // Get the order number and cast it to an integer
+            $orderNo = (int) $request->input('order_no');
+
+            // Log the print history
+            $printHistory = PrintHistory::create([
+                'order_no' => $orderNo,
+                'printed_by' => Auth::user()->username, // Assuming you have a username field in your User model
+            ]);
+
+            // Update the ordhead table to set the status to 'Printed'
+            $ordheadUpdated = Ordhead::where('order_no', $orderNo)->update(['status' => 'Printed']);
+
+            // Check if the update was successful
+            if ($ordheadUpdated) {
+                // Log the activity for successful print
+                activity('Print PO')
+                    ->performedOn($printHistory)
+                    ->causedBy(Auth::user())
+                    ->log('Printed PO: ' . $orderNo);
+
+                return response()->json(['success' => true, 'message' => 'PO printed successfully.']);
+            } else {
+                // If the update did not affect any rows, log an error
+                throw new \Exception('Failed to update order status.');
+            }
+        } catch (\Exception $e) {
+            // Log the activity for failed print
+            activity('Print PO Error')
+                ->causedBy(Auth::user())
+                ->log('Failed to print PO: ' . $request->input('order_no') . ' - Error: ' . $e->getMessage());
+
+            return response()->json(['success' => false, 'message' => 'Failed to print PO: ' . $e->getMessage()], 500);
+        }
+    }
+
+
+    public function showOrderSupplier($order_no){
+        $order_no = base64_decode($order_no);
+
+        // Capture start time and memory usage
+        $startTime = microtime(true);
+        $startMemory = memory_get_usage(); // Memory in bytes
+
+        try {
+            // Check if the user is authenticated
+            if (!Auth::check()) {
+                return redirect()->route('login'); // Redirect to login if not authenticated
+            }
+
+            // Fetch the order to log it as the subject
+            $order = OrdHead::where('order_no', $order_no)->first();
+            if (!$order) {
+                return redirect()->back()->with([
+                    'message' => 'Order not found.',
+                    'code' => 404,
+                ]);
+            }
+
+            // Get the user's IP address
+            $userIp = request()->ip();
+
+            // Log activity: User is viewing an order
+            activity()
+                ->causedBy(Auth::user())
+                ->performedOn($order) // Set the subject to the order
+                ->withProperties([
+                    'order_no' => $order_no,
+                    'execution_time_ms' => round((microtime(true) - $startTime) * 1000, 2), // Time in ms
+                    'memory_usage_m' => round($startMemory / 1024 / 1024, 2), // Memory in M
+                    'timestamp' => now(),
+                    'log_name' => 'Custom Log Name: Viewed Order', // Custom log name
+                    'user_ip' => $userIp, // Add user IP address
+                ])
+                ->log('User accessed order details'); // Custom log message
+
+            // Fetch order details with related store and supplier information
+            $orderDetails = $this->getOrderDetails($order_no);
+
+            // Check if the order exists
+            if (!$orderDetails) {
+                return view('orders.notfound'); // Render a "not found" view
+            }
+
+            // Fetch all order items (ordsku details)
+            $orderItems = $this->getOrderItems($order_no);
+
+            // Prepare data for the view
+            $data = $this->prepareOrderData($orderDetails, $orderItems);
+
+            // Log system usage
+            SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderData');
+
+            // Return the view with data
+            return view('frontend.po.show', compact('data'));
+        } catch (\Exception $e) {
+            // Log system usage in case of an error
+            SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderDataError');
+
+            // Log the exception details for debugging
+            activity()
+                ->causedBy(Auth::user())
+                ->withProperties([
+                    'order_no' => $order_no,
+                    'error' => $e->getMessage(),
+                    'execution_time_ms' => round((microtime(true) - $startTime) * 1000, 2), // Time in ms
+                    'memory_usage_m' => round($startMemory / 1024 / 1024, 2), // Memory in M
+                    'timestamp' => now(),
+                    'log_name' => 'Custom Log Name: Error Viewing Order', // Custom log name
+                    'user_ip' => $userIp, // Add user IP address
+                ])
+                ->log('Error accessing order details'); // Custom log message
+
+            // Return back with an error message and status code
+            return redirect()->back()->with([
+                'message' => 'An error occurred while retrieving the order details.',
+                'error' => $e->getMessage(),
+                'code' => 500,
+            ]);
+        }
+    }
+
+    public function confirmOrder(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'confirmation_date' => 'required|date',
+            'order_no' => 'required|string',
+        ]);
+
+        // Decode the order number
+        $orderNo = base64_decode($request->order_no);
+
+        // Start measuring time and memory
+        $startTime = microtime(true);
+        $startMemory = memory_get_usage();
+
+        try {
+            // Insert into the order confirmation history table
+            OrderConfirmationHistory::create([
+                'order_no' => $orderNo,
+                'confirmation_date' => $request->confirmation_date,
+                'username' => Auth::user()->username, // Assuming you have a user_id column in the history table
+            ]);
+
+            // Update the order status to confirmed
+            $order = OrdHead::where('order_no', (int)$orderNo)->first(); // Assuming order_no is the ID
+            if ($order) {
+                $order->status = 'Confirmed'; // Update the status
+                $order->save(); // Save the changes
+            }
+
+            // Calculate time taken and memory used
+            $endTime = microtime(true);
+            $endMemory = memory_get_usage();
+            $executionTime = $endTime - $startTime;
+            $memoryUsed = $endMemory - $startMemory;
+
+            // Log the activity
+            activity('Confirmed Order')
+                ->performedOn(new OrderConfirmationHistory())
+                ->withProperties([
+                    'order_no' => $orderNo,
+                    'confirmation_date' => $request->confirmation_date,
+                    'execution_time' => $executionTime,
+                    'memory_used' => $memoryUsed,
+                    'username' => Auth::user()->username, // Log the user ID
+                ])
+                ->log('Order confirmed');
+
+            return response()->json(['message' => 'Order confirmed successfully!']);
+        } catch (\Exception $e) {
+            // Log the error
+            activity('Error Confirmed Order')
+                ->performedOn(new OrderConfirmationHistory())
+                ->withProperties([
+                    'error' => $e->getMessage(),
+                    'username' => Auth::user()->username, // Log the user ID
+                ])
+                ->log('Error confirming order');
+
+            return response()->json(['error' => 'Error confirming order: ' . $e->getMessage()], 500);
+        }
+    }
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -162,7 +355,8 @@ class OrderController extends Controller
         }
     }
 
-    public function getOrdersSupplier(){
+    public function getOrdersSupplier()
+    {
         return view('frontend.po.index');
     }
 
@@ -279,16 +473,20 @@ class OrderController extends Controller
                 // Check if the user has the 'supplier' role
                 if (Auth::user()->hasRole('supplier')) {
                     // Filter by supplier_id if the user is a supplier
-                    $query->where('ordhead.supplier', Auth::user()->supplier_id);
+                    $supplierIds = explode(',', Auth::user()->supplier_id);
+                    $query->whereIn('ordhead.supplier', $supplierIds);
                 }
 
                 // Apply filters
-                if (!empty($request->order_no)) {
-                    $query->where('ordhead.order_no', $request->order_no);
+                if (!empty($request->orderNo)) {
+                    $query->where('ordhead.order_no', $request->orderNo);
                 }
 
-                if (!empty($request->filterDate)) {
-                    [$startDate, $endDate] = explode(' - ', $request->filterDate);
+                if (!empty($request->startDate) && !empty($request->endDate)) {
+                    // Convert date format from MM/DD/YYYY to DD-MM-YYYY
+                    $startDate = DateTime::createFromFormat('m/d/Y', $request->startDate)->format('Y-m-d');
+                    $endDate = DateTime::createFromFormat('m/d/Y', $request->endDate)->format('Y-m-d');
+
                     $query->whereBetween('ordhead.approval_date', [$startDate, $endDate]);
                 }
 
@@ -342,6 +540,7 @@ class OrderController extends Controller
             }
         }
     }
+
 
 
     /**

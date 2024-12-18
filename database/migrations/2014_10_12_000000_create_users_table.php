@@ -44,8 +44,8 @@ return new class extends Migration
             $table->integer('login_attempts')->nullable(); // Login attempts
             $table->integer('last_activity')->nullable(); // Last activity timestamp
             $table->string('profile_picture')->nullable(); // Remember token
-            $table->string('supplier_id')->nullable();; // Example column
-            $table->string('supplier_names')->nullable();; // Example column
+            $table->text('supplier_id')->nullable(); // Example column
+            $table->text('supplier_names')->nullable(); // Example column
             $table->date('suppliers_added_at')->nullable();; // Example column
             $table->timestamps(); // Created at and updated at timestamps
 

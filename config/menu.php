@@ -7,7 +7,7 @@ return [
     'KT_MENUS' => [
         // Dashboard menu item (previously Profile)
         [
-            'label'          => 'Dashboard',               // Menu label updated to Dashboard
+            'label'          => 'Dashboard System',               // Menu label updated to Dashboard
             'type'           => 'item',                    // Type (item represents a clickable menu option)
             'permission'     => [],                        // Permissions required to view this item
             'permissionType' => 'gate',                    // Permission type (gate or policy)
@@ -95,6 +95,18 @@ return [
             'active'         => ['suppliers.*'],            // Define conditions when this item is active (e.g., all item supplier routes)
             'iconPath'       => 4,                                // Path for the icon (if applicable)
         ],
+        [
+            'label'          => 'Store',                          // Menu label for Store
+            'type'           => 'item',                           // Type (item represents a clickable menu option)
+            'permission'     => [],                               // Permissions required to view this item
+            'permissionType' => 'gate',                           // Permission type (gate or policy)
+            'icon'           => 'fas',                            // Font Awesome Solid icons (FA class)
+            'iconName'       => 'fa-store',                       // Updated icon for the store section
+            'route'          => 'stores.index',                   // Route for the item store index page
+            'active'         => ['stores.*'],                     // Define conditions when this item is active (e.g., all item store routes)
+            'iconPath'       => 4,                                // Path for the icon (if applicable)
+        ],
+
         [
             'label'          => 'Members',                        // Menu label for Members
             'type'           => 'item',                           // Type (item represents a clickable menu option)

@@ -34,6 +34,9 @@ class CreateUsersForRegionJob implements ShouldQueue
             'superadministrator',
             'administrator',
             'supplier',
+            'it',
+            'md',
+            'dc',
         ];
 
         // Fetch role IDs
@@ -87,6 +90,49 @@ class CreateUsersForRegionJob implements ShouldQueue
                 'phone_number' => '081234567891',
                 'role' => 'supplier',
             ],
+            // Predefined users for IT, MD, and DC
+            [
+                'username' => 'it_user',
+                'name' => 'IT User',
+                'email' => 'it_user@example.com',
+                'status' => 'y',
+                'all_supplier' => 'n',
+                'password' => Hash::make('password123'),
+                'password_show' => 'password123',
+                'link_sync' => null,
+                'region' => $regionId,
+                'address' => 'Jl. IT No.1, Jakarta',
+                'phone_number' => '081234567892',
+                'role' => 'it',
+            ],
+            [
+                'username' => 'md_user',
+                'name' => 'Managing Director',
+                'email' => 'md_user@example.com',
+                'status' => 'y',
+                'all_supplier' => 'n',
+                'password' => Hash::make('password123'),
+                'password_show' => 'password123',
+                'link_sync' => null,
+                'region' => $regionId,
+                'address' => 'Jl. MD No.1, Jakarta',
+                'phone_number' => '081234567893',
+                'role' => 'md',
+            ],
+            [
+                'username' => 'dc_user',
+                'name' => 'Distribution Center',
+                'email' => 'dc_user@example.com',
+                'status' => 'y',
+                'all_supplier' => 'n',
+                'password' => Hash::make('password123'),
+                'password_show' => 'password123',
+                'link_sync' => null,
+                'region' => $regionId,
+                'address' => 'Jl. DC No.1, Jakarta',
+                'phone_number' => '081234567894',
+                'role' => 'dc',
+            ],
         ];
 
         // Generate additional users with Faker
@@ -96,7 +142,7 @@ class CreateUsersForRegionJob implements ShouldQueue
             $email = strtolower(str_replace(' ', '.', $name)) . '@example.com'; // Create email from name
 
             // Randomly assign role as either 'user' or 'supplier'
-            $role = $faker->randomElement(['supplier']);
+            $role = $faker->randomElement(['supplier', 'it', 'md', 'dc']); // Include new roles
 
             $predefinedUsers[] = [
                 'username' => $username, // Use the generated username
