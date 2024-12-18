@@ -616,6 +616,31 @@
                         <p>* Barang yang tidak diambil atas nota retur yang sudah dibuat menjadi tanggung jawab
                             suppliers.</p>
                     </div>
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h2 class="h4 mb-3">Print History</h2>
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-body">
+                                    <table class="table table-striped table-hover table-sm">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>Print Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <i class="fas fa-clock me-2"></i>
+                                                    {{ \Carbon\Carbon::parse($data['orderDetails']->printed_at)->format('d M Y H:i') }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 
                     <!-- Comment and Approval Section -->
                     <div class="row mt-4">

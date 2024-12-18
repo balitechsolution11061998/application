@@ -121,6 +121,8 @@ class OrderController extends Controller
 
             // Fetch order details with related store and supplier information
             $orderDetails = $this->getOrderDetails($order_no);
+            // dd($orderDetails);
+
 
             // Check if the order exists
             if (!$orderDetails) {
@@ -370,6 +372,8 @@ class OrderController extends Controller
             ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store')
             ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code')
             ->leftJoin('rcvhead', 'ordhead.order_no', '=', 'rcvhead.order_no')
+            ->join('print_histories','print_histories.order_no', '=', 'ordhead.order_no')
+            ->join('order_confirmation_histories','order_confirmation_histories.order_no', '=', 'ordhead.order_no')
             ->select(
                 'ordhead.*',
                 'store.store as store_code',
@@ -386,7 +390,9 @@ class OrderController extends Controller
                 'supplier.address_1 as supp_address',
                 'supplier.tax_ind as tax_ind',
                 'rcvhead.receive_date as receive_date',
-                'rcvhead.receive_no as receive_no'
+                'rcvhead.receive_no as receive_no',
+                'print_histories.printed_at',
+                'order_confirmation_histories.confirmation_date',
             )
             ->where('ordhead.order_no', $order_no)
             ->first();
