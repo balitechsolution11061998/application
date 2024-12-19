@@ -259,6 +259,13 @@
             color: #495057;
             /* Dark color for contrast */
         }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f2f2f2; /* Light gray for odd rows */
+    }
+    .table-striped tbody tr:hover {
+        background-color: #e9ecef; /* Light hover effect */
+    }
     </style>
 
     <div class="container py-4">
@@ -624,14 +631,35 @@
                                     <table class="table table-striped table-hover table-sm">
                                         <thead class="table-dark">
                                             <tr>
-                                                <th>Print Date</th>
+                                                <th>Tanggal Print</th>
+                                                <th>Tanggal Konfirmasi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td>
-                                                    <i class="fas fa-clock me-2"></i>
-                                                    {{ \Carbon\Carbon::parse($data['orderDetails']->printed_at)->format('d M Y H:i') }}
+                                                <td class="d-flex align-items-center p-3">
+                                                    <i class="fas fa-clock me-2 text-primary" style="font-size: 1.5em;"></i>
+                                                    <div>
+                                                        <div class="fw-bold" style="font-size: 1.1em;">
+                                                            {{ \Carbon\Carbon::parse($data['orderDetails']->printed_at)->format('d M Y H:i') }}
+                                                        </div>
+                                                        <div class="text-muted" style="font-size: 0.9em;">
+                                                            <i class="fas fa-user me-1" style="color: #6c757d;"></i>
+                                                            by <span style="font-weight: bold; color: #343a40;">{{ $data['orderDetails']->printed_user_name }}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="d-flex align-items-center p-3">
+                                                    <i class="fas fa-clock me-2 text-primary" style="font-size: 1.5em;"></i>
+                                                    <div>
+                                                        <div class="fw-bold" style="font-size: 1.1em;">
+                                                            {{ \Carbon\Carbon::parse($data['orderDetails']->confirmation_date)->format('d M Y H:i') }}
+                                                        </div>
+                                                        <div class="text-muted" style="font-size: 0.9em;">
+                                                            <i class="fas fa-user me-1" style="color: #6c757d;"></i>
+                                                            by <span style="font-weight: bold; color: #343a40;">{{ $data['orderDetails']->confirmation_user_name }}</span>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -640,8 +668,6 @@
                             </div>
                         </div>
                     </div>
-
-
                     <!-- Comment and Approval Section -->
                     <div class="row mt-4">
                         <div class="col-md-12">

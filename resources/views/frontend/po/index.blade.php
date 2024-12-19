@@ -93,7 +93,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="datePickerModalLabel">Select Confirmation Date</h5>
+                    <h5 class="modal-title" id="datePickerModalLabel" style="color:white;">Select Confirmation Date</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -383,25 +383,31 @@
             $('#po_tbl').on('click', '.confirm-button', function() {
                 var orderNo = $(this).data('id'); // Assuming this is an integer
 
-                // Show SweetAlert confirmation dialog
+                // Show SweetAlert with auto-close alert
                 Swal.fire({
-                    title: 'Confirm Order',
-                    text: "Silahkan konfirmasi tanggal pengiriman terlebih dahulu. Are you sure you want to confirm this order?",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#28a745',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, confirm it!',
-                    cancelButtonText: 'No, cancel!'
+                    title: "Silahkan Konfirmasi Tanggal Terlebih Dahulu", // Updated title
+                    timer: 1000,
+                    timerProgressBar: true,
+                    allowOutsideClick: false, // Prevent closing by clicking outside
+                    didOpen: () => {
+                        Swal.showLoading();
+                        const timer = Swal.getPopup().querySelector("b");
+                        timerInterval = setInterval(() => {
+                            timer.textContent = `${Swal.getTimerLeft()}`;
+                        }, 100);
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        // If confirmed, show the date picker modal
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        console.log("I was closed by the timer");
                         $('#datePickerModal').modal('show');
 
                         // Handle the date confirmation
                         $('#confirmDateButton').off('click').on('click', function() {
                             const date = $('#confirmation-date')
-                                .val(); // Get the value from the input
+                        .val(); // Get the value from the input
                             if (!date) {
                                 toastr.error('Please enter a confirmation date');
                             } else {
@@ -433,20 +439,26 @@
                                             success: function(response) {
                                                 toastr.success(
                                                     'Order confirmed successfully!'
-                                                );
+                                                    );
                                                 table.ajax
-                                                    .reload(); // Reload the DataTable to reflect changes
-                                                // Reload the DataTable to reflect changes
+                                            .reload(); // Reload the DataTable to reflect changes
                                                 $('#datePickerModal')
                                                     .modal(
-                                                        'hide'
-                                                    ); // Hide the modal
+                                                    'hide'); // Hide the modal
                                             },
                                             error: function(xhr) {
-                                                toastr.error(
-                                                    'Error confirming order: ' +
-                                                    xhr.responseJSON
-                                                    .message);
+                                                // Check if the error is due to a network issue
+                                                if (xhr.status === 0) {
+                                                    toastr.error(
+                                                        'Connection unstable. Please check your internet connection.'
+                                                        );
+                                                } else {
+                                                    toastr.error(
+                                                        'Error confirming order: ' +
+                                                        xhr
+                                                        .responseJSON
+                                                        .message);
+                                                }
                                             }
                                         });
                                     }

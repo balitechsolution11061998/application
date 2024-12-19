@@ -129,8 +129,12 @@ Route::group(['middleware' => ['auth']], function () {
     // Store Management Routes
     Route::prefix('stores')->as('stores.')->group(function () {
         Route::get('/', [StoreController::class, 'index'])->name('index');
+        Route::post('/store', [StoreController::class, 'store'])->name('store');
         Route::post('/storeUser', [StoreController::class, 'storeUser'])->name('storeUser');
         Route::post('/deleteStoreUser', [StoreController::class, 'deleteStoreUser'])->name('deleteStoreUser');
+        Route::get('/data', [StoreController::class, 'data'])->name('data');
+        Route::get('/edit/{id}', [StoreController::class, 'edit'])->name('edit');
+        Route::delete('/destroy/{id}', [StoreController::class, 'delete'])->name('destroy');
     });
 
     Route::prefix('price-change')->as('price-change.')->group(function () {

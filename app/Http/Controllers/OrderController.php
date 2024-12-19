@@ -141,6 +141,7 @@ class OrderController extends Controller
             // Return the view with data
             return view('frontend.po.show', compact('data'));
         } catch (\Exception $e) {
+            dd($e->getMessage());
             // Log system usage in case of an error
             SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderDataError');
 
@@ -372,8 +373,10 @@ class OrderController extends Controller
             ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store')
             ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code')
             ->leftJoin('rcvhead', 'ordhead.order_no', '=', 'rcvhead.order_no')
-            ->join('print_histories','print_histories.order_no', '=', 'ordhead.order_no')
-            ->join('order_confirmation_histories','order_confirmation_histories.order_no', '=', 'ordhead.order_no')
+            ->join('print_histories', 'print_histories.order_no', '=', 'ordhead.order_no')
+            ->join('order_confirmation_histories', 'order_confirmation_histories.order_no', '=', 'ordhead.order_no')
+            ->join('users as confirmation_user', 'confirmation_user.username', '=', 'order_confirmation_histories.username') // Alias for confirmation user
+            ->join('users as printed_user', 'printed_user.username', '=', 'print_histories.printed_by') // Alias for printed user
             ->select(
                 'ordhead.*',
                 'store.store as store_code',
@@ -393,10 +396,14 @@ class OrderController extends Controller
                 'rcvhead.receive_no as receive_no',
                 'print_histories.printed_at',
                 'order_confirmation_histories.confirmation_date',
+                'order_confirmation_histories.username as confirmation_by',
+                'confirmation_user.name as confirmation_user_name', // Use alias for confirmation user
+                'printed_user.name as printed_user_name' // Use alias for printed user
             )
             ->where('ordhead.order_no', $order_no)
             ->first();
     }
+
 
     private function getOrderItems($order_no)
     {
