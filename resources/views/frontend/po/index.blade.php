@@ -34,9 +34,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h3 class="card-title">Purchase Orders</h3>
-                        <button id="printButton" class="btn btn-primary">
-                            <i class="fas fa-print"></i> Print
-                        </button>
+
                     </div>
                     <div class="mb-4">
                         <div class="row">

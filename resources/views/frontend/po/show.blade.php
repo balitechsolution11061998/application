@@ -261,11 +261,14 @@
         }
 
         .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #f2f2f2; /* Light gray for odd rows */
-    }
-    .table-striped tbody tr:hover {
-        background-color: #e9ecef; /* Light hover effect */
-    }
+            background-color: #f2f2f2;
+            /* Light gray for odd rows */
+        }
+
+        .table-striped tbody tr:hover {
+            background-color: #e9ecef;
+            /* Light hover effect */
+        }
     </style>
 
     <div class="container py-4">
@@ -281,11 +284,20 @@
             <div class="card bg-white shadow-sm rounded-4">
                 <div class="card-body">
                     @if ($data['orderDetails']->status === 'Confirmed')
-                        <button class="btn btn-primary btn-sm rounded-4" id="printPOButton"
+                        <button class="btn btn-success btn-sm rounded-3"
+                            id="printPOButton_{{ $data['orderDetails']->order_no }}"
                             onclick="confirmPrint('{{ $data['orderDetails']->order_no }}')">
-                            <i class="fas fa-print"></i> Print PO
+                            <i class="fas fa-printer"></i> Print PO
+                        </button>
+                    @elseif ($data['orderDetails']->status === 'Printed')
+                        <button class="btn btn-warning btn-sm rounded-3"
+                            id="deliveryPOButton_{{ $data['orderDetails']->order_no }}"
+                            onclick="deliveryPo('{{ $data['orderDetails']->order_no }}')">
+                            <i class="fas fa-box"></i> Delivery PO
                         </button>
                     @endif
+
+
                     @php
                         $hasError = false;
                         foreach ($data['orderItems'] as $item) {
@@ -409,14 +421,16 @@
                             <div class="detail-row">
                                 <div class="detail-label">Status</div>
                                 <div class="detail-value">
-                                    <span class="badge-status badge
+                                    <span
+                                        class="badge-status badge
                                         @if ($data['orderDetails']->status === 'Progress') badge-warning
                                         @elseif ($data['orderDetails']->status === 'Completed') badge-success
                                         @elseif ($data['orderDetails']->status === 'Expired') badge-danger
                                         @elseif ($data['orderDetails']->status === 'Printed') badge-info
                                         @elseif ($data['orderDetails']->status === 'Confirmed') badge-confirmed
                                         @else badge-secondary @endif">
-                                        <i class="fas
+                                        <i
+                                            class="fas
                                             @if ($data['orderDetails']->status === 'Progress') fa-spinner fa-spin
                                             @elseif ($data['orderDetails']->status === 'Completed') fa-check-circle
                                             @elseif ($data['orderDetails']->status === 'Expired') fa-times-circle
@@ -623,51 +637,57 @@
                         <p>* Barang yang tidak diambil atas nota retur yang sudah dibuat menjadi tanggung jawab
                             suppliers.</p>
                     </div>
-                    <div class="row mb-4">
-                        <div class="col-md-12">
-                            <h2 class="h4 mb-3">Print History</h2>
-                            <div class="card mb-4 shadow-sm">
-                                <div class="card-body">
-                                    <table class="table table-striped table-hover table-sm">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th>Tanggal Print</th>
-                                                <th>Tanggal Konfirmasi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="d-flex align-items-center p-3">
-                                                    <i class="fas fa-clock me-2 text-primary" style="font-size: 1.5em;"></i>
-                                                    <div>
-                                                        <div class="fw-bold" style="font-size: 1.1em;">
-                                                            {{ \Carbon\Carbon::parse($data['orderDetails']->printed_at)->format('d M Y H:i') }}
+                    @if ($data['orderDetails']->printed_at)
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <h2 class="h4 mb-3">Print History</h2>
+                                <div class="card mb-4 shadow-sm">
+                                    <div class="card-body">
+                                        <table class="table table-striped table-hover table-sm">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th>Tanggal Print</th>
+                                                    <th>Tanggal Konfirmasi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="d-flex align-items-center p-3">
+                                                        <i class="fas fa-clock me-2 text-primary"
+                                                            style="font-size: 1.5em;"></i>
+                                                        <div>
+                                                            <div class="fw-bold" style="font-size: 1.1em;">
+                                                                {{ \Carbon\Carbon::parse($data['orderDetails']->printed_at)->format('d M Y H:i') }}
+                                                            </div>
+                                                            <div class="text-muted" style="font-size: 0.9em;">
+                                                                <i class="fas fa-user me-1" style="color: #6c757d;"></i>
+                                                                by <span
+                                                                    style="font-weight: bold; color: #343a40;">{{ $data['orderDetails']->printed_user_name }}</span>
+                                                            </div>
                                                         </div>
-                                                        <div class="text-muted" style="font-size: 0.9em;">
-                                                            <i class="fas fa-user me-1" style="color: #6c757d;"></i>
-                                                            by <span style="font-weight: bold; color: #343a40;">{{ $data['orderDetails']->printed_user_name }}</span>
+                                                    </td>
+                                                    <td class="d-flex align-items-center p-3">
+                                                        <i class="fas fa-clock me-2 text-primary"
+                                                            style="font-size: 1.5em;"></i>
+                                                        <div>
+                                                            <div class="fw-bold" style="font-size: 1.1em;">
+                                                                {{ \Carbon\Carbon::parse($data['orderDetails']->confirmation_date)->format('d M Y H:i') }}
+                                                            </div>
+                                                            <div class="text-muted" style="font-size: 0.9em;">
+                                                                <i class="fas fa-user me-1" style="color: #6c757d;"></i>
+                                                                by <span
+                                                                    style="font-weight: bold; color: #343a40;">{{ $data['orderDetails']->confirmation_user_name }}</span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td class="d-flex align-items-center p-3">
-                                                    <i class="fas fa-clock me-2 text-primary" style="font-size: 1.5em;"></i>
-                                                    <div>
-                                                        <div class="fw-bold" style="font-size: 1.1em;">
-                                                            {{ \Carbon\Carbon::parse($data['orderDetails']->confirmation_date)->format('d M Y H:i') }}
-                                                        </div>
-                                                        <div class="text-muted" style="font-size: 0.9em;">
-                                                            <i class="fas fa-user me-1" style="color: #6c757d;"></i>
-                                                            by <span style="font-weight: bold; color: #343a40;">{{ $data['orderDetails']->confirmation_user_name }}</span>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                     <!-- Comment and Approval Section -->
                     <div class="row mt-4">
                         <div class="col-md-12">
@@ -682,6 +702,22 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deliveryModal" tabindex="-1" aria-labelledby="deliveryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"> <!-- Added modal-lg class here -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deliveryModalLabel">Delivery PO</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="deliveryForm">
+                        <div id="itemDetails" class="mb-3"></div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -728,7 +764,7 @@
                                 // Redirect to the orders page after a short delay
                                 setTimeout(function() {
                                     window.location.href =
-                                    '/purchase-orders/supplier/getOrders'; // Redirect link
+                                        '/purchase-orders/supplier/getOrders'; // Redirect link
                                 }, 2000); // 2 seconds delay before redirecting
                             } else {
                                 toastr.error('Error: ' + response.message);
@@ -736,9 +772,75 @@
                         },
                         error: function(xhr) {
                             toastr.error('Failed to print Order No: ' + orderNo +
-                            '. Please try again.');
+                                '. Please try again.');
                         }
                     });
+                }
+            });
+        }
+
+        function deliveryPo(orderNo) {
+            // Clear previous data
+            $('#itemQuantity').val('');
+            $('#itemDetails').empty();
+
+            // Encode the order number
+            const encodedOrderNo = btoa(orderNo); // Base64 encode
+
+            // Fetch data using AJAX
+            $.ajax({
+                url: `/purchase-orders/get-delivery-items/${encodedOrderNo}`, // Adjust the URL as necessary
+                type: 'GET',
+                success: function(data) {
+                    // Assuming data is an array of items
+                    if (data.length > 0) {
+                        // Get the supplier code from the first item (assuming all items have the same supplier)
+                        const supplierCode = data[0].supplier_code;
+
+                        // Create HTML for supplier code
+                        let detailsHtml = `
+                    <div style="color: black; font-weight: bold; margin-bottom: 10px;">
+                        Supplier Code: ${supplierCode}
+                    </div>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Description</th>
+                                <th>Quantity Ordered</th>
+                                <th>Quantity to Deliver</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                        data.forEach(item => {
+                            detailsHtml += `
+                        <tr>
+                            <td>${item.sku}</td>
+                            <td>${item.sku_desc}</td>
+                            <td>${item.qty_ordered}</td>
+                            <td>
+                                <input type="number" class="form-control" style="color: black;"
+                                       placeholder="Enter quantity"
+                                       min="0"
+                                       max="${item.qty_ordered}"
+                                       id="qtyToDeliver_${item.sku}" />
+                            </td>
+                        </tr>
+                    `;
+                        });
+                        detailsHtml += '</tbody></table>';
+                        $('#itemDetails').html(detailsHtml);
+                    } else {
+                        $('#itemDetails').html('<p>No items available for delivery.</p>');
+                    }
+                    // Show the modal
+                    $('#deliveryModal').modal('show');
+                },
+                error: function(xhr) {
+                    console.error('Error fetching delivery items:', xhr);
+                    alert('Failed to fetch delivery items. Please try again.');
                 }
             });
         }

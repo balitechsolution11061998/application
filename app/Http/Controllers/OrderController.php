@@ -79,6 +79,38 @@ class OrderController extends Controller
         }
     }
 
+    public function getDeliveryItems($order_no)
+    {
+        $order_no = base64_decode($order_no);
+
+        // Check if the user is authenticated
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // Fetch the order with related SKU data
+        $order = OrdHead::with('ordsku')->where('order_no', $order_no)->first();
+
+        // Check if the order exists
+        if (!$order) {
+            return response()->json(['message' => 'Order not found.'], 404);
+        }
+
+        // Prepare the response data
+        $responseData = [];
+        foreach ($order->ordsku as $sku) {
+            $responseData[] = [
+                'sku' => $sku->sku, // SKU code
+                'sku_desc' => $sku->sku_desc, // SKU description
+                'supplier_code' => $order->supplier, // Assuming supplier is directly on OrdHead
+                'qty_ordered' => $sku->qty_ordered,
+            ];
+        }
+
+        return response()->json($responseData);
+    }
+
+
 
     public function showOrderSupplier($order_no){
         $order_no = base64_decode($order_no);
@@ -373,10 +405,10 @@ class OrderController extends Controller
             ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store')
             ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code')
             ->leftJoin('rcvhead', 'ordhead.order_no', '=', 'rcvhead.order_no')
-            ->join('print_histories', 'print_histories.order_no', '=', 'ordhead.order_no')
-            ->join('order_confirmation_histories', 'order_confirmation_histories.order_no', '=', 'ordhead.order_no')
-            ->join('users as confirmation_user', 'confirmation_user.username', '=', 'order_confirmation_histories.username') // Alias for confirmation user
-            ->join('users as printed_user', 'printed_user.username', '=', 'print_histories.printed_by') // Alias for printed user
+            ->leftJoin('print_histories', 'print_histories.order_no', '=', 'ordhead.order_no')
+            ->leftJoin('order_confirmation_histories', 'order_confirmation_histories.order_no', '=', 'ordhead.order_no')
+            ->leftJoin('users as confirmation_user', 'confirmation_user.username', '=', 'order_confirmation_histories.username') // Alias for confirmation user
+            ->leftJoin('users as printed_user', 'printed_user.username', '=', 'print_histories.printed_by') // Alias for printed user
             ->select(
                 'ordhead.*',
                 'store.store as store_code',

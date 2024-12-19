@@ -154,6 +154,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/store', [OrderController::class, 'store'])->name('store');
         Route::get('/', [OrderController::class, 'index'])->name('index');
         Route::get('/show/{id}', [OrderController::class, 'show'])->name('show');
+        Route::get('/get-delivery-items/{id}', [OrderController::class, 'getDeliveryItems'])->name('getDeliveryItems');
         Route::post('/print-po', [OrderController::class, 'printPo'])->name('printPo');
 
         Route::get('/supplier/getOrders', [OrderController::class, 'getOrdersSupplier'])->name('supplier.getOrders');
