@@ -305,7 +305,7 @@
                         </div>
                     @endif
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="detail-row">
                                 <div class="detail-label">
                                     <i class="fas fa-hashtag"></i> Order Number:
@@ -319,7 +319,27 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <div class="detail-row">
+                                <div class="detail-label">
+                                    <i class="fas fa-calendar-alt"></i> Confirmation Date:
+                                </div>
+                                <div class="detail-value">
+                                    <span id="deliveryDate">
+                                        @if ($data['orderDetails']->confirmation_date)
+                                            @formattedDate($data['orderDetails']->confirmation_date)
+                                        @else
+                                            <span>Data Tidak Tersedia</span>
+                                        @endif
+                                    </span>
+                                    <div id="spinnerDelivery" class="spinner-border spinner-border-sm text-primary d-none"
+                                        role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
                             <div class="detail-row">
                                 <div class="detail-label">
                                     <i class="fas fa-calendar-alt"></i> Estimated Delivery Date:
@@ -340,7 +360,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="detail-row">
                                 <div class="detail-label" style="font-weight: 600; color: #495057;">
                                     <i class="fas fa-calendar-alt" style="color: #007bff;"></i> Tanggal Terima:

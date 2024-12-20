@@ -274,14 +274,14 @@
                                 badgeClass = 'bg-success';
                                 iconColor = 'green';
                                 noReceivingText =
-                                ` - No Receiving: ${row.no_receiving}`; // Only show No Receiving for Completed
+                                    ` - No Receiving: ${row.no_receiving}`; // Only show No Receiving for Completed
                             } else if (data === 'Printed') {
                                 iconClass = 'fas fa-print';
                                 badgeClass = 'bg-success';
                                 iconColor = 'green';
                             } else if (data === 'Expired') {
                                 iconClass =
-                                'fas fa-exclamation-circle'; // Use a different icon for expired
+                                    'fas fa-exclamation-circle'; // Use a different icon for expired
                                 badgeClass = 'bg-danger'; // Use a danger badge for expired
                                 iconColor = 'red'; // Set the icon color to red
                             } else if (data === 'Progress') { // New condition for Progress
@@ -388,7 +388,8 @@
 
                 // Show SweetAlert with auto-close alert
                 Swal.fire({
-                    title: "Silahkan Konfirmasi Tanggal Terlebih Dahulu", // Updated title
+                    title: "Silahkan Tunggu Sebentar...", // Updated title
+                    text: "Kami sedang memproses konfirmasi PO ini. Mohon bersabar!", // Engaging message
                     timer: 1000,
                     timerProgressBar: true,
                     allowOutsideClick: false, // Prevent closing by clicking outside
@@ -397,7 +398,7 @@
                         const timer = Swal.getPopup().querySelector("b");
                         timerInterval = setInterval(() => {
                             timer.textContent = `${Swal.getTimerLeft()}`;
-                        }, 100);
+                        }, 1000);
                     },
                     willClose: () => {
                         clearInterval(timerInterval);
@@ -405,75 +406,63 @@
                 }).then((result) => {
                     if (result.dismiss === Swal.DismissReason.timer) {
                         console.log("I was closed by the timer");
-                        $('#datePickerModal').modal('show');
 
-                        // Handle the date confirmation
-                        $('#confirmDateButton').off('click').on('click', function() {
+                        // Automatically set the current date as the confirmation date
+                        const currentDate = new Date().toISOString().split('T')[
+                        0]; // Get current date in YYYY-MM-DD format
+                        $('#confirmation-date').val(currentDate); // Set the value of the date input
+
+                        // Auto-confirm after a delay (e.g., 1 second)
+                        setTimeout(function() {
+                            // Get the confirmation date from the input
                             const date = $('#confirmation-date')
-                                .val(); // Get the value from the input
+                        .val(); // Get the value from the input
                             if (!date) {
-                                toastr.error('Please enter a confirmation date');
+                                toastr.error(
+                                    'Silakan masukkan tanggal konfirmasi sebelum melanjutkan.'
+                                    );
                             } else {
                                 // Convert orderNo to string and encode it
                                 const orderNoString = orderNo.toString();
                                 const encodedOrderNo = btoa(orderNoString); // Base64 encode
 
-                                // Show another SweetAlert for final confirmation
-                                Swal.fire({
-                                    title: 'Final Confirmation',
-                                    text: "Are you sure you want to confirm this order with the selected date?",
-                                    icon: 'info',
-                                    showCancelButton: true,
-                                    confirmButtonColor: '#28a745',
-                                    cancelButtonColor: '#d33',
-                                    confirmButtonText: 'Yes, confirm it!',
-                                    cancelButtonText: 'No, cancel!'
-                                }).then((finalResult) => {
-                                    if (finalResult.isConfirmed) {
-                                        // Send the confirmation request to the server
-                                        $.ajax({
-                                            url: `/purchase-orders/supplier/confirm`, // Adjust the URL as necessary
-                                            type: 'POST',
-                                            data: {
-                                                _token: '{{ csrf_token() }}', // Include CSRF token for security
-                                                confirmation_date: date, // Send the confirmation date
-                                                order_no: encodedOrderNo // Send the encoded order number
-                                            },
-                                            success: function(response) {
-                                                toastr.success(
-                                                    'Order confirmed successfully!'
+                                // Automatically confirm the order
+                                $.ajax({
+                                    url: `/purchase-orders/supplier/confirm`, // Adjust the URL as necessary
+                                    type: 'POST',
+                                    data: {
+                                        _token: '{{ csrf_token() }}', // Include CSRF token for security
+                                        confirmation_date: date, // Send the confirmation date
+                                        order_no: encodedOrderNo // Send the encoded order number
+                                    },
+                                    success: function(response) {
+                                        toastr.success(
+                                            'PO ini telah berhasil dikonfirmasi secara otomatis!'
+                                            ); // Success message
+                                        toastr.info(
+                                            'Anda sekarang dapat mencetak PO ini.'
+                                            ); // Additional message to print the PO
+                                        table.ajax
+                                    .reload(); // Reload the DataTable to reflect changes
+                                    },
+                                    error: function(xhr) {
+                                        // Check if the error is due to a network issue
+                                        if (xhr.status === 0) {
+                                            toastr.error(
+                                                'Koneksi tidak stabil. Silakan periksa koneksi internet Anda.'
                                                 );
-                                                table.ajax
-                                                    .reload(); // Reload the DataTable to reflect changes
-                                                $('#datePickerModal')
-                                                    .modal(
-                                                        'hide'
-                                                        ); // Hide the modal
-                                            },
-                                            error: function(xhr) {
-                                                // Check if the error is due to a network issue
-                                                if (xhr.status === 0) {
-                                                    toastr.error(
-                                                        'Connection unstable. Please check your internet connection.'
-                                                    );
-                                                } else {
-                                                    toastr.error(
-                                                        'Error confirming order: ' +
-                                                        xhr
-                                                        .responseJSON
-                                                        .message);
-                                                }
-                                            }
-                                        });
+                                        } else {
+                                            toastr.error(
+                                                'Terjadi kesalahan saat mengonfirmasi PO: ' +
+                                                xhr.responseJSON.message);
+                                        }
                                     }
                                 });
                             }
-                        });
+                        }, 1000); // Adjust the delay as needed (1000 ms = 1 second)
                     }
                 });
             });
-
-
 
 
         });
