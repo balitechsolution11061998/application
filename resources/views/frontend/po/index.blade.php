@@ -394,7 +394,7 @@
                     timerProgressBar: true,
                     allowOutsideClick: false, // Prevent closing by clicking outside
                     didOpen: () => {
-                        Swal.showLoading();
+                        Swal.showLoading(); // Show loading spinner
                         const timer = Swal.getPopup().querySelector("b");
                         timerInterval = setInterval(() => {
                             timer.textContent = `${Swal.getTimerLeft()}`;
@@ -412,54 +412,67 @@
                         0]; // Get current date in YYYY-MM-DD format
                         $('#confirmation-date').val(currentDate); // Set the value of the date input
 
-                        // Auto-confirm after a delay (e.g., 1 second)
-                        setTimeout(function() {
-                            // Get the confirmation date from the input
-                            const date = $('#confirmation-date')
-                        .val(); // Get the value from the input
-                            if (!date) {
-                                toastr.error(
-                                    'Silakan masukkan tanggal konfirmasi sebelum melanjutkan.'
-                                    );
-                            } else {
-                                // Convert orderNo to string and encode it
-                                const orderNoString = orderNo.toString();
-                                const encodedOrderNo = btoa(orderNoString); // Base64 encode
+                        // Get the confirmation date from the input
+                        const date = $('#confirmation-date').val(); // Get the value from the input
+                        if (!date) {
+                            toastr.error(
+                            'Silakan masukkan tanggal konfirmasi sebelum melanjutkan.');
+                            return; // Exit if no date is provided
+                        }
 
-                                // Automatically confirm the order
-                                $.ajax({
-                                    url: `/purchase-orders/supplier/confirm`, // Adjust the URL as necessary
-                                    type: 'POST',
-                                    data: {
-                                        _token: '{{ csrf_token() }}', // Include CSRF token for security
-                                        confirmation_date: date, // Send the confirmation date
-                                        order_no: encodedOrderNo // Send the encoded order number
+                        // Convert orderNo to string and encode it
+                        const orderNoString = orderNo.toString();
+                        const encodedOrderNo = btoa(orderNoString); // Base64 encode
+
+                        // Automatically confirm the order
+                        $.ajax({
+                            url: `/purchase-orders/supplier/confirm`, // Adjust the URL as necessary
+                            type: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}', // Include CSRF token for security
+                                confirmation_date: date, // Send the confirmation date
+                                order_no: encodedOrderNo // Send the encoded order number
+                            },
+                            beforeSend: function() {
+                                // Show loading spinner before sending the request
+                                Swal.fire({
+                                    title: 'Processing...',
+                                    html: 'Please wait while we confirm your order.',
+                                    didOpen: () => {
+                                        Swal.showLoading();
                                     },
-                                    success: function(response) {
-                                        toastr.success(
-                                            'PO ini telah berhasil dikonfirmasi secara otomatis!'
-                                            ); // Success message
-                                        toastr.info(
-                                            'Anda sekarang dapat mencetak PO ini.'
-                                            ); // Additional message to print the PO
-                                        table.ajax
-                                    .reload(); // Reload the DataTable to reflect changes
-                                    },
-                                    error: function(xhr) {
-                                        // Check if the error is due to a network issue
-                                        if (xhr.status === 0) {
-                                            toastr.error(
-                                                'Koneksi tidak stabil. Silakan periksa koneksi internet Anda.'
-                                                );
-                                        } else {
-                                            toastr.error(
-                                                'Terjadi kesalahan saat mengonfirmasi PO: ' +
-                                                xhr.responseJSON.message);
-                                        }
-                                    }
+                                    allowOutsideClick: false,
                                 });
+                            },
+                            success: function(response) {
+                                // Close the loading spinner
+                                Swal.close();
+
+                                // Show success message after the AJAX call is complete
+                                toastr.success(
+                                    'PO ini telah berhasil dikonfirmasi secara otomatis!'
+                                    ); // Success message
+                                toastr.info(
+                                'Anda sekarang dapat mencetak PO ini.'); // Additional message to print the PO
+                                table.ajax
+                            .reload(); // Reload the DataTable to reflect changes
+                            },
+                            error: function(xhr) {
+                                // Close the loading spinner
+                                Swal.close();
+
+                                // Check if the error is due to a network issue
+                                if (xhr.status === 0) {
+                                    toastr.error(
+                                        'Koneksi tidak stabil. Silakan periksa koneksi internet Anda.'
+                                        );
+                                } else {
+                                    toastr.error(
+                                        'Terjadi kesalahan saat mengonfirmasi PO: ' +
+                                        xhr.responseJSON.message);
+                                }
                             }
-                        }, 1000); // Adjust the delay as needed (1000 ms = 1 second)
+                        });
                     }
                 });
             });

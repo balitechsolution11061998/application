@@ -259,6 +259,37 @@
             color: #495057;
             /* Dark color for contrast */
         }
+
+        .modal-content {
+            border-radius: 10px;
+            /* Rounded corners for the modal */
+        }
+
+        .form-label {
+            font-weight: bold;
+            /* Bold labels */
+            color: #333;
+            /* Darker color for better readability */
+        }
+
+        .form-control {
+            border-radius: 5px;
+            /* Rounded corners for input fields */
+            border: 1px solid #ced4da;
+            /* Light border */
+        }
+
+        .form-control:focus {
+            border-color: #80bdff;
+            /* Change border color on focus */
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            /* Shadow effect on focus */
+        }
+
+        .btn {
+            border-radius: 5px;
+            /* Rounded corners for buttons */
+        }
     </style>
 
     <div class="container py-4">
@@ -274,17 +305,16 @@
             <div class="card bg-white shadow-sm rounded-4">
                 <div class="card-body">
                     @if ($data['orderDetails']->status === 'Confirmed')
-                        <button class="btn btn-success btn-sm rounded-3"
-                            id="printPOButton_{{ $data['orderDetails']->order_no }}"
+                        <a class="btn btn-success btn-sm rounded-3" id="printPOButton_{{ $data['orderDetails']->order_no }}"
                             onclick="confirmPrint('{{ $data['orderDetails']->order_no }}')">
                             <i class="fas fa-printer"></i> Print PO
-                        </button>
+                        </a>
                     @elseif ($data['orderDetails']->status === 'Printed')
-                        <button class="btn btn-warning btn-sm rounded-3"
+                        <a class="btn btn-warning btn-sm rounded-3"
                             id="deliveryPOButton_{{ $data['orderDetails']->order_no }}"
                             onclick="deliveryPo('{{ $data['orderDetails']->order_no }}')">
                             <i class="fas fa-box"></i> Delivery PO
-                        </button>
+                        </a>
                     @endif
 
 
@@ -657,7 +687,7 @@
                             <div class="card mb-4 shadow-sm">
                                 <div class="card-body">
                                     <div class="row">
-                                        @if($data['orderDetails']->printed_at)
+                                        @if ($data['orderDetails']->printed_at)
                                             <label for="">History Print</label>
                                             <div class="col-md-6 mb-3">
                                                 <div class="d-flex align-items-center p-3 border rounded bg-light">
@@ -668,14 +698,15 @@
                                                         </div>
                                                         <div class="text-muted" style="font-size: 0.9em;">
                                                             <i class="fas fa-user me-1" style="color: #6c757d;"></i>
-                                                            by <span style="font-weight: bold; color: #343a40;">{{ $data['orderDetails']->printed_user_name }}</span>
+                                                            by <span
+                                                                style="font-weight: bold; color: #343a40;">{{ $data['orderDetails']->printed_user_name }}</span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         @endif
 
-                                        @if($data['orderDetails']->confirmation_date)
+                                        @if ($data['orderDetails']->confirmation_date)
                                             <label for="">History Konfirmasi</label>
                                             <div class="col-md-6 mb-3">
                                                 <div class="d-flex align-items-center p-3 border rounded bg-light">
@@ -686,7 +717,8 @@
                                                         </div>
                                                         <div class="text-muted" style="font-size: 0.9em;">
                                                             <i class="fas fa-user me-1" style="color: #6c757d;"></i>
-                                                            by <span style="font-weight: bold; color: #343a40;">{{ $data['orderDetails']->confirmation_user_name }}</span>
+                                                            by <span
+                                                                style="font-weight: bold; color: #343a40;">{{ $data['orderDetails']->confirmation_user_name }}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -726,27 +758,50 @@
                 <div class="modal-body">
                     <form id="deliveryForm">
                         <input type="hidden" id="orderNoId" name="order_no">
-                        <div id="itemDetails" class="mb-3"></div>
+
+                        <!-- Confirmation Date and Time Input at the top -->
                         <div class="mb-3">
-                            <label for="reason" class="form-label">Reason for Rejection</label>
-                            <textarea id="reason" class="form-control" rows="4"></textarea> <!-- Standard textarea for CKEditor -->
+                            <label for="confirmationDateTime" class="form-label">Confirmation Date and Time:</label>
+                            <input type="datetime-local" id="confirmationDateTime" class="form-control" required>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <button type="button" class="btn btn-danger" id="rejectButton"
-                                data-bs-dismiss="modal">Reject</button>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+
+                        <div id="itemDetails" class="mb-3"></div>
+
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="rejectCheckbox">
+                            <label class="form-check-label" for="rejectCheckbox">Reject Delivery</label>
                         </div>
+
+                        <div id="rejectReasonContainer" style="display: none;">
+                            <label for="rejectReason" class="mt-2">Reason for Rejection:</label>
+                            <textarea id="rejectReason" class="form-control" rows="3" placeholder="Enter reason for rejection"></textarea>
+
+                            <!-- Checkbox for confirming reason submission -->
+                            <div class="form-check mt-2">
+                                <input type="checkbox" class="form-check-input" id="confirmReasonCheckbox">
+                                <label class="form-check-label" for="confirmReasonCheckbox">I confirm the reason for
+                                    rejection</label>
+                            </div>
+                        </div>
+
+                        <button id="rejectButton" class="btn btn-danger mt-2" style="display: none;">
+                            <i class="fas fa-times"></i> Reject
+                        </button>
+
+                        <button id="submitButton" class="btn btn-primary mt-2">
+                            <i class="fas fa-check"></i> Submit
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="{{ asset('assets/plugins/custom/ckeditor/ckeditor-classic.bundle.js') }}{{ asset('') }}"></script>
-    <script src="{{ asset('') }}assets/plugins/custom/ckeditor/ckeditor-inline.bundle.js"></script>
-    <script src="{{ asset('') }}assets/plugins/custom/ckeditor/ckeditor-balloon.bundle.js"></script>
-    <script src="{{ asset('') }}assets/plugins/custom/ckeditor/ckeditor-balloon-block.bundle.js"></script>
-    <script src="{{ asset('') }}assets/plugins/custom/ckeditor/ckeditor-document.bundle.js"></script>
+
+
+
+    <script src="https://cdn.ckeditor.com/ckeditor5/34.1.0/classic/ckeditor.js"></script>
+
     <script>
         // Show loading spinner for a short period to simulate loading
 
@@ -762,6 +817,42 @@
                 confirmButtonText: 'Yes, print it!'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // Show loading spinner
+                    Swal.fire({
+                        title: 'Printing...',
+                        text: 'Please wait while we process your request.',
+                        allowOutsideClick: false,
+                        onBeforeOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Set a timeout for the loading spinner
+                    const loadingTimeout = setTimeout(() => {
+                        Swal.fire({
+                            title: 'Still loading...',
+                            text: 'The process is taking longer than expected. Would you like to continue waiting or reload the page?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Continue Waiting',
+                            cancelButtonText: 'Reload Page'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // User chose to continue waiting
+                                Swal.fire({
+                                    title: 'Continuing...',
+                                    text: 'Thank you for your patience!',
+                                    icon: 'info',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            } else {
+                                // User chose to reload the page
+                                location.reload(); // Hard reload the page
+                            }
+                        });
+                    }, 10000); // 10 seconds timeout
+
                     // AJAX call to print the PO
                     $.ajax({
                         url: '/purchase-orders/print-po', // Your route to handle the print
@@ -771,31 +862,50 @@
                             _token: '{{ csrf_token() }}' // Include CSRF token for security
                         },
                         success: function(response) {
+                            // Clear the loading timeout
+                            clearTimeout(loadingTimeout);
+
                             // Check if the response indicates success
                             if (response.success) {
-                                // Log the print history (if needed)
-
                                 // Show toastr notification
                                 toastr.success('Order No: ' + orderNo +
                                     ' has been printed successfully.');
 
-                                // Redirect to the orders page after a short delay
+                                // Encode the order number for the URL
+                                const encodedOrderNo = btoa(orderNo
+                                    .toString()); // Base64 encode the order number
+
+                                // Redirect to the orders page with the encoded order number
                                 setTimeout(function() {
-                                    window.location.href =
-                                        '/purchase-orders/supplier/getOrders'; // Redirect link
+                                    window.location.href = '/purchase-orders/supplier/show/' +
+                                        encodedOrderNo; // Redirect link
                                 }, 2000); // 2 seconds delay before redirecting
                             } else {
                                 toastr.error('Error: ' + response.message);
                             }
                         },
                         error: function(xhr) {
-                            toastr.error('Failed to print Order No: ' + orderNo +
-                                '. Please try again.');
+                            // Clear the loading timeout
+                            clearTimeout(loadingTimeout);
+
+                            // Check if the error is due to a network issue
+                            if (xhr.status === 0) {
+                                toastr.error(
+                                    'Connection error. Please check your internet connection.');
+                            } else {
+                                toastr.error('Failed to print Order No: ' + orderNo +
+                                    '. Please try again.');
+                            }
+                        },
+                        complete: function() {
+                            // Close the loading spinner after the AJAX call is complete
+                            Swal.close();
                         }
                     });
                 }
             });
         }
+
 
         function deliveryPo(orderNo) {
             // Clear previous data
@@ -845,18 +955,19 @@
                                     min="0"
                                     max="${item.qty_ordered}"
                                     id="qtyToDeliver_${item.sku}"
-                                    value="${item.qty_ordered}" <!-- Set default value to Quantity Ordered -->
-                                    oninput="checkQuantity('${item.sku}')" /> <!-- Changed to oninput event -->
-                                <textarea id="reason_${item.sku}" class="form-control text-danger" style="display: none; resize: none;" rows="2">Stock kosong</textarea> <!-- Editable textarea for reason -->
+                                    value="${item.qty_ordered}"
+                                    oninput="checkQuantity('${item.sku}')" />
+                                <textarea id="reason_${item.sku}" class="form-control text-danger" style="display: none; resize: none;" rows="2"></textarea> <!-- Editable textarea for reason -->
                             </td>
-
                         </tr>
                     `;
                         });
+
                         detailsHtml += '</tbody></table>';
                         $('#itemDetails').html(detailsHtml);
 
-                        // Initialize DataTable without pagination
+                        // Initialize DataTable if needed
+                        // $('#deliveryItemsTable').DataTable(); // Uncomment if using DataTables
 
                     } else {
                         $('#itemDetails').html('<p>No items available for delivery.</p>');
@@ -871,52 +982,181 @@
             });
         }
 
+
         $(document).ready(function() {
-            CKEDITOR.replace('reason');
+            // Initialize CKEditor for the reason textarea in classic mode
+            let editorInstance;
+            ClassicEditor
+                .create(document.querySelector('#rejectReason'), {
+                    // Configure the toolbar to include font color
+                    toolbar: [
+                        'fontColor', // Include the font color option
+                        'bold',
+                        'italic',
+                        'underline',
+                        'undo',
+                        'redo'
+                    ],
+                    // Set the default text color to black
+                    initialData: '<p style="color: black;">Your text here...</p>',
+                    // Configure the font color options
+                    fontColor: {
+                        options: [
+                            'black', // Add black to the color options
+                            'red',
+                            'green',
+                            'blue',
+                            // Add more colors as needed
+                        ],
+                        support: {
+                            options: true,
+                        },
+                    },
+                    // Set the default color for the text
+                    styles: {
+                        'color': 'black' // Set default text color to black
+                    }
+                })
+                .then(editor => {
+                    editorInstance = editor;
+
+                    // Load saved content from localStorage if it exists
+                    const savedReason = localStorage.getItem('rejectReason');
+                    if (savedReason) {
+                        editor.setData(savedReason);
+                    }
+
+                    // Listen for changes in the CKEditor
+                    editor.model.document.on('change:data', () => {
+                        const reason = editorInstance.getData();
+                        if (reason.trim() !== '') {
+                            // Save the content to localStorage
+                            localStorage.setItem('rejectReason', reason);
+                            toastr.success('Reason auto-saved successfully.'); // Show success message
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+
+            // Set the current date and time in the confirmation input when the modal is shown
+            $('#deliveryModal').on('show.bs.modal', function() {
+                const now = new Date();
+                const formattedDate = now.toISOString().slice(0, 16); // Format to YYYY-MM-DDTHH:MM
+                $('#confirmationDateTime').val(formattedDate); // Set the value of the datetime-local input
+            });
+
+            // Handle checkbox change event
+            $('#rejectCheckbox').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#rejectReasonContainer').show(); // Show the reason textarea
+                    $('#rejectButton').show(); // Show the reject button
+                    $('#submitButton').hide(); // Hide the submit button
+                } else {
+                    $('#rejectReasonContainer').hide(); // Hide the reason textarea
+                    $('#rejectButton').hide(); // Hide the reject button
+                    $('#submitButton').show(); // Show the submit button
+                }
+            });
+
+            // Handle reject button click
+            $('#rejectButton').click(function() {
+                // Get the value from the CKEditor instance
+                const reason = editorInstance.getData();
+                if (reason.trim() === '') {
+                    toastr.error('Please provide a reason for rejection.');
+                    return;
+                }
+
+                // Proceed with rejection logic (e.g., AJAX call)
+                $.ajax({
+                    url: '/purchase-orders/reject-delivery', // Your endpoint for rejection
+                    type: 'POST',
+                    data: {
+                        orderNo: $('#orderNoId').val(), // Include order number if needed
+                        reason: reason
+                    },
+                    success: function(response) {
+                        toastr.success('Delivery rejected successfully.');
+                        $('#deliveryModal').modal('hide');
+                        // Clear localStorage after successful submission
+                        localStorage.removeItem('rejectReason');
+                        window.location.href =
+                            '/purchase-orders/supplier/getOrders'; // Redirect to the orders page
+                    },
+                    error: function(xhr) {
+                        toastr.error('Failed to reject delivery. Please try again.');
+                    }
+                });
+            });
         });
+
+
         // Function to check quantity on keyup
         function checkQuantity(sku) {
-            console.log(sku, 'sku');
             const inputField = document.getElementById(`qtyToDeliver_${sku}`);
             const qtyToDeliver = inputField.value.trim() === "" ? null : parseInt(inputField
-                .value); // Treat empty input as null
+            .value); // Treat empty input as null
             const maxQty = parseInt(inputField.max); // Get the max quantity
             const reasonTextarea = document.getElementById(`reason_${sku}`); // Get the reason textarea
 
             // Check if quantity exceeds the ordered quantity
             if (qtyToDeliver > maxQty) {
                 toastr.warning(`Quantity to deliver for SKU ${sku} exceeds the ordered quantity.`);
+                inputField.value = maxQty; // Set the input value to the maximum quantity
             }
 
             // Show reason if quantity is 0
             if (qtyToDeliver === 0) {
                 reasonTextarea.style.display = 'block'; // Show the textarea
+                reasonTextarea.value = 'Stock Kosong'; // Clear the reason textarea if quantity is not 0
             } else {
                 reasonTextarea.style.display = 'none'; // Hide the textarea
+                reasonTextarea.value = ''; // Clear the reason textarea if quantity is not 0
             }
         }
+
 
         // Set up AJAX to include CSRF token
 
 
         $('#deliveryForm').on('submit', function(e) {
             e.preventDefault(); // Prevent the default form submission
-
-            let isValid = true; // Flag to check if all inputs are valid
-            let totalQtyOrdered = 0; // To track total quantity ordered
-            const deliveryData = []; // Array to hold delivery data
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+            let isValid = true; // Flag to check if all inputs are valid
+            let totalQtyOrdered = 0; // To track total quantity ordered
+            const deliveryData = []; // Array to hold delivery data
+
+            // Get the confirmation date
+            const confirmationDate = $('#confirmationDateTime').val();
+            if (!confirmationDate) {
+                toastr.error('Please select a confirmation date.');
+                isValid = false;
+            }
+
+            // Check if rejection is selected and reason is confirmed
+            if ($('#rejectCheckbox').is(':checked')) {
+                const reason = $('#rejectReason').val();
+                if (reason.trim() === '') {
+                    toastr.error('Please provide a reason for rejection.');
+                    isValid = false;
+                }
+                if (!$('#confirmReasonCheckbox').is(':checked')) {
+                    toastr.error('You must confirm the reason for rejection.');
+                    isValid = false;
+                }
+            }
+
             // Loop through each input to validate
             $('input[type="number"]').each(function() {
                 const qtyToDeliver = $(this).val().trim() === "" ? null : parseInt($(this)
                     .val()); // Treat empty input as null
                 const maxQty = parseInt($(this).attr('max')); // Get the max quantity
-
-                console.log(qtyToDeliver, 'qtyToDeliver');
 
                 // Check if quantity is null
                 if (qtyToDeliver === null) {
@@ -972,11 +1212,11 @@
                             type: 'POST',
                             data: {
                                 deliveryData: deliveryData,
-                                orderNo: $('#orderNoId').val() // Include order number if needed
+                                orderNo: $('#orderNoId').val(), // Include order number if needed
+                                confirmationDate: confirmationDate // Include confirmation date
                             },
                             success: function(response) {
                                 toastr.success('Delivery quantities saved successfully.');
-                                // Optionally, you can close the modal or refresh the data
                                 $('#deliveryModal').modal('hide');
                                 window.location.href =
                                     '/purchase-orders/supplier/getOrders'; // Redirect to the orders page

@@ -23,6 +23,7 @@
         "league/flysystem-aws-s3-v3": "^3.29",
         "maatwebsite/excel": "^3.1",
         "predis/predis": "^2.2",
+        "pusher/pusher-php-server": "^7.2",
         "santigarcor/laratrust": "^8.3",
         "spatie/laravel-activitylog": "^4.8",
         "spatie/laravel-server-monitor": "^1.10",

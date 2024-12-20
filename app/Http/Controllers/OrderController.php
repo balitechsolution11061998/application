@@ -17,6 +17,9 @@ use Spatie\Activitylog\Facades\Activity;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Http; // For making HTTP requests
+use Pusher\Pusher; // For Pusher integration
 
 class OrderController extends Controller
 {
@@ -45,6 +48,9 @@ class OrderController extends Controller
     public function printPo(Request $request)
     {
         try {
+            // Start time measurement
+            $startTime = microtime(true);
+
             // Get the order number and cast it to an integer
             $orderNo = (int) $request->input('order_no');
 
@@ -54,16 +60,51 @@ class OrderController extends Controller
                 'printed_by' => Auth::user()->username, // Assuming you have a username field in your User model
             ]);
 
+            // Retrieve the Ordhead instance
+            $ordhead = Ordhead::where('order_no', $orderNo)->first();
+
+            // Check if the order exists
+            if (!$ordhead) {
+                throw new \Exception('Order not found.');
+            }
+
             // Update the ordhead table to set the status to 'Printed'
-            $ordheadUpdated = Ordhead::where('order_no', $orderNo)->update(['status' => 'Printed']);
+            $ordheadUpdated = $ordhead->update(['status' => 'Printed']);
+
+            // Get supplier and store information
+            $supplier = $ordhead->suppliers; // Assuming the relationship is defined correctly
+            $store = $ordhead->stores; // Assuming the relationship is defined correctly
+
+            $supplierName = $supplier ? $supplier->supp_name : 'Unknown Supplier';
+            $supplierAddress = $supplier ? $supplier->address_1 . ', ' . $supplier->city : 'N/A'; // Adjust according to your address fields
+
+            $storeName = $store ? $store->store_name : 'Unknown Store';
+            $storeAddress = $store ? $store->store_add1 . ', ' . $store->store_city : 'N/A'; // Adjust according to your address fields
 
             // Check if the update was successful
             if ($ordheadUpdated) {
-                // Log the activity for successful print
+                // Calculate the time taken for the print operation
+                $endTime = microtime(true);
+                $executionTime = $endTime - $startTime; // Time in seconds
+
+                // Get memory usage
+                $memoryUsed = memory_get_usage(); // Memory used in bytes
+
+                // Log the activity for successful print with additional properties
                 activity('Print PO')
                     ->performedOn($printHistory)
                     ->causedBy(Auth::user())
+                    ->withProperties([
+                        'order_no' => $orderNo,
+                        'execution_time' => $executionTime,
+                        'memory_used' => $memoryUsed,
+                    ])
                     ->log('Printed PO: ' . $orderNo);
+
+                // Send Telegram notification
+                $status = 'Printed'; // Status to send
+
+                $this->sendTelegramNotification($orderNo, [], $status, $supplierName, $supplierAddress, $storeName, $storeAddress,false,true);
 
                 return response()->json(['success' => true, 'message' => 'PO printed successfully.']);
             } else {
@@ -71,14 +112,20 @@ class OrderController extends Controller
                 throw new \Exception('Failed to update order status.');
             }
         } catch (\Exception $e) {
-            // Log the activity for failed print
+            // Log the activity for failed print with error details
             activity('Print PO Error')
                 ->causedBy(Auth::user())
-                ->log('Failed to print PO: ' . $request->input('order_no') . ' - Error: ' . $e->getMessage());
+                ->withProperties([
+                    'order_no' => $request->input('order_no'),
+                    'error_message' => $e->getMessage(),
+                ])
+                ->log('Failed to print PO: ' . $request->input('order_no'));
 
             return response()->json(['success' => false, 'message' => 'Failed to print PO: ' . $e->getMessage()], 500);
         }
     }
+
+
 
     public function getDeliveryItems($order_no)
     {
@@ -113,7 +160,8 @@ class OrderController extends Controller
 
 
 
-    public function showOrderSupplier($order_no){
+    public function showOrderSupplier($order_no)
+    {
         $order_no = base64_decode($order_no);
 
         // Capture start time and memory usage
@@ -225,31 +273,44 @@ class OrderController extends Controller
             ]);
 
             // Update the order status to confirmed
-            $order = OrdHead::where('order_no', (int)$orderNo)->first(); // Assuming order_no is the ID
+            $order = OrdHead::where('order_no', $orderNo)->first(); // Assuming order_no is the ID
             if ($order) {
                 $order->status = 'Confirmed'; // Update the status
                 $order->save(); // Save the changes
+
+                // Get supplier and store information
+                $supplier = $order->suppliers; // Assuming the relationship is defined correctly
+                $store = $order->stores; // Assuming the relationship is defined correctly
+
+                $supplierName = $supplier ? $supplier->supp_name : 'Unknown Supplier';
+                $supplierAddress = $supplier ? $supplier->address_1 . ', ' . $supplier->city : 'N/A'; // Adjust according to your address fields
+
+                $storeName = $store ? $store->store_name : 'Unknown Store';
+                $storeAddress = $store ? $store->store_add1 . ', ' . $store->store_city : 'N/A'; // Adjust according to your address fields
+
+                // Log the activity with supplier and store details
+                activity('Confirmed Order')
+                    ->performedOn(new OrderConfirmationHistory())
+                    ->withProperties([
+                        'order_no' => $orderNo,
+                        'confirmation_date' => $request->confirmation_date,
+                        'execution_time' => microtime(true) - $startTime,
+                        'memory_used' => memory_get_usage() - $startMemory,
+                        'username' => Auth::user()->username, // Log the user ID
+                        'supplier_name' => $supplierName,
+                        'supplier_address' => $supplierAddress,
+                        'store_name' => $storeName,
+                        'store_address' => $storeAddress,
+                    ])
+                    ->log('Order confirmed with supplier and store details');
+
+                // Send Telegram notification
+                $this->sendTelegramNotification($orderNo, [], 'Confirmed', $supplierName, $supplierAddress, $storeName, $storeAddress, true,false);
+
+                return response()->json(['message' => 'Order confirmed successfully!']);
             }
 
-            // Calculate time taken and memory used
-            $endTime = microtime(true);
-            $endMemory = memory_get_usage();
-            $executionTime = $endTime - $startTime;
-            $memoryUsed = $endMemory - $startMemory;
-
-            // Log the activity
-            activity('Confirmed Order')
-                ->performedOn(new OrderConfirmationHistory())
-                ->withProperties([
-                    'order_no' => $orderNo,
-                    'confirmation_date' => $request->confirmation_date,
-                    'execution_time' => $executionTime,
-                    'memory_used' => $memoryUsed,
-                    'username' => Auth::user()->username, // Log the user ID
-                ])
-                ->log('Order confirmed');
-
-            return response()->json(['message' => 'Order confirmed successfully!']);
+            return response()->json(['error' => 'Order not found.'], 404);
         } catch (\Exception $e) {
             // Log the error
             activity('Error Confirmed Order')
@@ -263,6 +324,7 @@ class OrderController extends Controller
             return response()->json(['error' => 'Error confirming order: ' . $e->getMessage()], 500);
         }
     }
+
 
 
 
@@ -302,7 +364,6 @@ class OrderController extends Controller
         }
     }
 
-
     public function delivery(Request $request)
     {
         // Validate the incoming request data
@@ -311,54 +372,215 @@ class OrderController extends Controller
             'deliveryData.*.sku' => 'required|string',
             'deliveryData.*.qtyToDeliver' => 'required|integer|min:0',
             'deliveryData.*.reason' => 'nullable|string',
-            'orderNo' => 'required|string', // Assuming you also want to validate orderNo
+            'orderNo' => 'required|string', // Validate orderNo
+            'confirmationDate' => 'required|date', // Validate confirmation date
         ]);
 
         // Extract the delivery data from the request
         $deliveryData = $request->input('deliveryData');
         $orderNo = $request->input('orderNo');
 
+        // Convert confirmation date to a Carbon instance
+        $confirmationDate = Carbon::parse($request->input('confirmationDate'));
+
+        // Start time for performance measurement
+        $startTime = microtime(true);
+        $startMemory = memory_get_usage();
+
         try {
-            // Loop through each delivery item and insert into the database
+            // Insert delivery items into the database
             foreach ($deliveryData as $item) {
                 SupplierQuantity::create([
                     'order_no' => $orderNo,
                     'sku' => $item['sku'], // Assuming SKU is used as supplier code
-                    'available_quantity' => $item['qtyToDeliver'],
+                    'available_quantity' => (int)$item['qtyToDeliver'], // Ensure it's an integer
+                    'reason' => $item['reason'] ?? null, // Save the reason if provided
                 ]);
             }
 
             // Update the Ordhead status to "Delivery"
             $ordhead = Ordhead::where('order_no', $orderNo)->first();
             if ($ordhead) {
-                $ordhead->status = 'Delivery'; // Update the status
-                $ordhead->delivery_date = now();
-                $ordhead->save(); // Save the changes
+                $ordhead->update([
+                    'status' => 'Delivery', // Update the status
+                    'estimated_delivery_date' => $confirmationDate, // Use the Carbon instance
+                    'delivery_date' => $confirmationDate, // Use the Carbon instance
+                ]);
 
                 // Log the activity for updating Ordhead
-                activity()
+                activity('Update_Purchase_Order_To_Delivery')
                     ->performedOn($ordhead)
                     ->causedBy(auth()->user()) // Assuming you have user authentication
+                    ->withProperties($this->getActivityProperties($startTime, $startMemory, $orderNo))
                     ->log('Order status updated to Delivery for order: ' . $orderNo);
+
+                // Check if the delivery date is today
+                if ($confirmationDate->isToday()) {
+                    // Get supplier and store information
+                    $supplier = $ordhead->suppliers; // Assuming the relationship is defined correctly
+                    $store = $ordhead->stores; // Assuming the relationship is defined correctly
+
+                    $supplierName = $supplier ? $supplier->supp_name : 'Unknown Supplier';
+                    $supplierAddress = $supplier ? $supplier->address_1 . ', ' . $supplier->city : 'N/A'; // Adjust according to your address fields
+
+                    $storeName = $store ? $store->store_name : 'Unknown Store';
+                    $storeAddress = $store ? $store->store_add1 . ', ' . $store->store_city : 'N/A'; // Adjust according to your address fields
+
+                    // Send notification to Telegram
+                    $this->sendTelegramNotification($orderNo, $deliveryData, 'Delivery', $supplierName, $supplierAddress, $storeName, $storeAddress);
+
+                    // Push message to Pusher
+                    // $this->pushToChat($orderNo, $deliveryData);
+                }
             }
 
             // Log the activity for saving delivery quantities
-            activity()
+            activity("Insert to Supplier Quantity")
                 ->performedOn(new SupplierQuantity())
                 ->causedBy(auth()->user()) // Assuming you have user authentication
+                ->withProperties($this->getActivityProperties($startTime, $startMemory, $orderNo))
                 ->log('Delivery quantities saved for order: ' . $orderNo);
 
             return response()->json(['message' => 'Delivery quantities saved successfully.'], 200);
         } catch (\Exception $e) {
             // Log the error message
-
+            dd($e->getMessage());
             // Log the activity for the error
             activity()
                 ->causedBy(auth()->user()) // Assuming you have user authentication
-                ->log('Failed to save delivery quantities for order: ' . $orderNo . '. Error: ' . $e->getMessage());
+                ->withProperties(array_merge($this->getActivityProperties($startTime, $startMemory, $orderNo), [
+                    'error_message' => $e->getMessage(),
+                ]))
+                ->log('Failed to save delivery quantities for order: ' . $orderNo);
 
             return response()->json(['message' => 'Failed to save delivery quantities. Please try again.'], 500);
         }
+    }
+
+
+    private function sendTelegramNotification($orderNo, $deliveryData, $status, $supplierName, $supplierAddress, $storeName, $storeAddress, $isConfirmation = false, $isPrint = false)
+    {
+        // Create a more engaging message
+        $message = "📦 **" . ($isConfirmation ? "Order Confirmation" : ($isPrint ? "Order Printed" : "Delivery Update")) . "** 📦\n\n";
+        $message .= "🚚 *Order No:* **$orderNo**\n\n";
+        $message .= "🏢 *Supplier:* **$supplierName**\n";
+        $message .= "🏠 *Supplier Address:* **$supplierAddress**\n\n";
+        $message .= "🏬 *Store:* **$storeName**\n";
+        $message .= "🏠 *Store Address:* **$storeAddress**\n\n";
+        $message .= "🎉 *Status:* **$status**\n\n"; // Use the status parameter
+
+        // Add details if it's a delivery update
+        if (!$isConfirmation && !$isPrint) {
+            $message .= "📋 *Delivery Details:*\n";
+            foreach ($deliveryData as $item) {
+                $message .= "🔹 *SKU:* `{$item['sku']}`\n";
+                $message .= "🔹 *Quantity:* `{$item['qtyToDeliver']}`\n";
+                $message .= "🔹 *Reason:* `" . (!empty($item['reason']) ? $item['reason'] : 'N/A') . "`\n\n"; // Indicate no reason if empty
+            }
+        }
+
+        // Encode the order number for the URL
+        $encodedOrderNo = base64_encode($orderNo); // Base64 encode the order number
+        // Add a link to the details
+        $detailsUrl = url(($isConfirmation ? "/purchase-orders/show/{$encodedOrderNo}" : ($isPrint ? "/print/order/{$encodedOrderNo}" : "/delivery/details/{$encodedOrderNo}"))); // Adjust the URL as necessary
+        $message .= "🔗 *View Details:* [Click Here]($detailsUrl)\n\n";
+
+        $message .= "🙏 Thank you for your attention! If you have any questions, feel free to reach out. 😊";
+
+        // Send the message to Telegram
+        $this->sendMessageToTelegram($message, $orderNo);
+    }
+
+    private function sendMessageToTelegram($message, $orderNo)
+    {
+        $telegramToken = env('TELEGRAM_BOT_TOKEN');
+        $chatId = env('TELEGRAM_CHAT_ID'); // This should be the channel username or ID
+        $url = "https://api.telegram.org/bot$telegramToken/sendMessage";
+
+        try {
+            // Send the message to Telegram
+            $response = Http::post($url, [
+                'chat_id' => $chatId,
+                'text' => $message,
+                'parse_mode' => 'Markdown', // Use Markdown for formatting
+            ]);
+
+            // Check if the response is successful
+            if ($response->successful()) {
+                activity('Telegram Notification Sent')
+                    ->withProperties([
+                        'order_no' => $orderNo,
+                        'message' => $message,
+                    ])
+                    ->log('Telegram notification sent successfully for order: ' . $orderNo);
+            } else {
+                $errorMessage = $response->json()['description'] ?? 'Unknown error';
+                activity('Telegram Notification Failed')
+                    ->withProperties([
+                        'order_no' => $orderNo,
+                        'error' => $response->body(),
+                    ])
+                    ->log('Failed to send Telegram notification for order: ' . $orderNo . '. Error: ' . $errorMessage);
+            }
+        } catch (\Exception $e) {
+            // Log the exception
+            activity('Telegram Notification Exception')
+                ->withProperties([
+                    'order_no' => $orderNo,
+                    'error_message' => $e->getMessage(),
+                ])
+                ->log('Exception occurred while sending Telegram notification for order: ' . $orderNo);
+        }
+    }
+
+
+
+
+
+
+
+    /**
+     * Push a message to Pusher chat.
+     *
+     * @param string $orderNo
+     * @param array $deliveryData
+     * @return void
+     */
+    private function pushToChat($orderNo, $deliveryData)
+    {
+        $pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            [
+                'cluster' => env('PUSHER_APP_CLUSTER'),
+                'useTLS' => true,
+            ]
+        );
+
+        $message = [
+            'orderNo' => $orderNo,
+            'deliveryData' => $deliveryData,
+        ];
+
+        $pusher->trigger('delivery-channel', 'new-delivery', $message);
+    }
+
+    /**
+     * Get activity properties for logging.
+     *
+     * @param float $startTime
+     * @param int $startMemory
+     * @param string $orderNo
+     * @return array
+     */
+    private function getActivityProperties($startTime, $startMemory, $orderNo)
+    {
+        return [
+            'time_taken' => microtime(true) - $startTime,
+            'memory_used' => memory_get_usage() - $startMemory,
+            'order_no' => $orderNo,
+        ];
     }
 
     /**
@@ -629,7 +851,7 @@ class OrderController extends Controller
                 // Log performance metrics
                 $lastOrder = OrdHead::latest()->first(); // Get the last order for logging
                 if ($lastOrder) {
-                    activity()
+                    activity('Show List Purchase Order')
                         ->causedBy(Auth::user()) // Log the user who triggered the action
                         ->performedOn($lastOrder) // Log the last order as the subject
                         ->withProperties([
