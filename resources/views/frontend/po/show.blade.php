@@ -653,11 +653,12 @@
                     </div>
                     <div class="row mb-4">
                         <div class="col-md-12">
-                            <h2 class="h4 mb-3">Print History</h2>
+                            <h2 class="h4 mb-3">History</h2>
                             <div class="card mb-4 shadow-sm">
                                 <div class="card-body">
                                     <div class="row">
                                         @if($data['orderDetails']->printed_at)
+                                            <label for="">History Print</label>
                                             <div class="col-md-6 mb-3">
                                                 <div class="d-flex align-items-center p-3 border rounded bg-light">
                                                     <i class="fas fa-clock me-3 text-primary" style="font-size: 2em;"></i>
@@ -675,6 +676,7 @@
                                         @endif
 
                                         @if($data['orderDetails']->confirmation_date)
+                                            <label for="">History Konfirmasi</label>
                                             <div class="col-md-6 mb-3">
                                                 <div class="d-flex align-items-center p-3 border rounded bg-light">
                                                     <i class="fas fa-clock me-3 text-primary" style="font-size: 2em;"></i>
