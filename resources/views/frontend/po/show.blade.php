@@ -259,16 +259,6 @@
             color: #495057;
             /* Dark color for contrast */
         }
-
-        .table-striped tbody tr:nth-of-type(odd) {
-            background-color: #f2f2f2;
-            /* Light gray for odd rows */
-        }
-
-        .table-striped tbody tr:hover {
-            background-color: #e9ecef;
-            /* Light hover effect */
-        }
     </style>
 
     <div class="container py-4">
@@ -428,6 +418,7 @@
                                         @elseif ($data['orderDetails']->status === 'Expired') badge-danger
                                         @elseif ($data['orderDetails']->status === 'Printed') badge-info
                                         @elseif ($data['orderDetails']->status === 'Confirmed') badge-confirmed
+                                        @elseif ($data['orderDetails']->status === 'Delivery') badge-primary <!-- New condition for Delivery -->
                                         @else badge-secondary @endif">
                                         <i
                                             class="fas
@@ -436,11 +427,14 @@
                                             @elseif ($data['orderDetails']->status === 'Expired') fa-times-circle
                                             @elseif ($data['orderDetails']->status === 'Printed') fa-print
                                             @elseif ($data['orderDetails']->status === 'Confirmed') fa-check
+                                            @elseif ($data['orderDetails']->status === 'Delivery') fa-truck <!-- New icon for Delivery -->
                                             @else fa-info-circle @endif text-white"></i>
                                         {{ $data['orderDetails']->status ?? 'N/A' }}
                                     </span>
                                 </div>
                             </div>
+
+
 
 
                         </div>
@@ -715,23 +709,31 @@
                 </div>
                 <div class="modal-body">
                     <form id="deliveryForm">
+                        <input type="hidden" id="orderNoId" name="order_no">
                         <div id="itemDetails" class="mb-3"></div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <div class="mb-3">
+                            <label for="reason" class="form-label">Reason for Rejection</label>
+                            <textarea id="reason" class="form-control" rows="4"></textarea> <!-- Standard textarea for CKEditor -->
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-danger" id="rejectButton"
+                                data-bs-dismiss="modal">Reject</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="{{ asset('assets/plugins/custom/ckeditor/ckeditor-classic.bundle.js') }}{{ asset('') }}"></script>
+    <script src="{{ asset('') }}assets/plugins/custom/ckeditor/ckeditor-inline.bundle.js"></script>
+    <script src="{{ asset('') }}assets/plugins/custom/ckeditor/ckeditor-balloon.bundle.js"></script>
+    <script src="{{ asset('') }}assets/plugins/custom/ckeditor/ckeditor-balloon-block.bundle.js"></script>
+    <script src="{{ asset('') }}assets/plugins/custom/ckeditor/ckeditor-document.bundle.js"></script>
     <script>
         // Show loading spinner for a short period to simulate loading
-        window.onload = function() {
-            // Show the spinner for 2 seconds before showing the data
-            setTimeout(function() {
-                document.getElementById('loadingSpinner').style.display = 'none';
-                document.getElementById('orderDetails').style.display = 'block';
-            }, 2000); // Adjust the time as needed
-        };
+
 
         function confirmPrint(orderNo) {
             Swal.fire({
@@ -786,6 +788,7 @@
 
             // Encode the order number
             const encodedOrderNo = btoa(orderNo); // Base64 encode
+            $("#orderNoId").val(orderNo);
 
             // Fetch data using AJAX
             $.ajax({
@@ -802,7 +805,7 @@
                     <div style="color: black; font-weight: bold; margin-bottom: 10px;">
                         Supplier Code: ${supplierCode}
                     </div>
-                    <table class="table table-striped table-hover">
+                    <table id="deliveryItemsTable" class="table table-responsive">
                         <thead>
                             <tr>
                                 <th>SKU</th>
@@ -817,21 +820,28 @@
                         data.forEach(item => {
                             detailsHtml += `
                         <tr>
-                            <td>${item.sku}</td>
-                            <td>${item.sku_desc}</td>
-                            <td>${item.qty_ordered}</td>
+                            <td style="color:black;">${item.sku}</td>
+                            <td style="color:black;">${item.sku_desc}</td>
+                            <td style="color:black;">${item.qty_ordered}</td>
                             <td>
                                 <input type="number" class="form-control" style="color: black;"
-                                       placeholder="Enter quantity"
-                                       min="0"
-                                       max="${item.qty_ordered}"
-                                       id="qtyToDeliver_${item.sku}" />
+                                    placeholder="Enter quantity"
+                                    min="0"
+                                    max="${item.qty_ordered}"
+                                    id="qtyToDeliver_${item.sku}"
+                                    value="${item.qty_ordered}" <!-- Set default value to Quantity Ordered -->
+                                    oninput="checkQuantity('${item.sku}')" /> <!-- Changed to oninput event -->
+                                <textarea id="reason_${item.sku}" class="form-control text-danger" style="display: none; resize: none;" rows="2">Stock kosong</textarea> <!-- Editable textarea for reason -->
                             </td>
+
                         </tr>
                     `;
                         });
                         detailsHtml += '</tbody></table>';
                         $('#itemDetails').html(detailsHtml);
+
+                        // Initialize DataTable without pagination
+
                     } else {
                         $('#itemDetails').html('<p>No items available for delivery.</p>');
                     }
@@ -844,5 +854,125 @@
                 }
             });
         }
+
+        $(document).ready(function() {
+            CKEDITOR.replace('reason');
+        });
+        // Function to check quantity on keyup
+        function checkQuantity(sku) {
+            console.log(sku, 'sku');
+            const inputField = document.getElementById(`qtyToDeliver_${sku}`);
+            const qtyToDeliver = inputField.value.trim() === "" ? null : parseInt(inputField
+                .value); // Treat empty input as null
+            const maxQty = parseInt(inputField.max); // Get the max quantity
+            const reasonTextarea = document.getElementById(`reason_${sku}`); // Get the reason textarea
+
+            // Check if quantity exceeds the ordered quantity
+            if (qtyToDeliver > maxQty) {
+                toastr.warning(`Quantity to deliver for SKU ${sku} exceeds the ordered quantity.`);
+            }
+
+            // Show reason if quantity is 0
+            if (qtyToDeliver === 0) {
+                reasonTextarea.style.display = 'block'; // Show the textarea
+            } else {
+                reasonTextarea.style.display = 'none'; // Hide the textarea
+            }
+        }
+
+        // Set up AJAX to include CSRF token
+
+
+        $('#deliveryForm').on('submit', function(e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            let isValid = true; // Flag to check if all inputs are valid
+            let totalQtyOrdered = 0; // To track total quantity ordered
+            const deliveryData = []; // Array to hold delivery data
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            // Loop through each input to validate
+            $('input[type="number"]').each(function() {
+                const qtyToDeliver = $(this).val().trim() === "" ? null : parseInt($(this)
+                    .val()); // Treat empty input as null
+                const maxQty = parseInt($(this).attr('max')); // Get the max quantity
+
+                console.log(qtyToDeliver, 'qtyToDeliver');
+
+                // Check if quantity is null
+                if (qtyToDeliver === null) {
+                    toastr.error(
+                        `Quantity to deliver for SKU ${$(this).attr('id').split('_')[1]} cannot be null.`
+                    );
+                    isValid = false; // Set valid flag to false
+                }
+
+                // Check if quantity exceeds the ordered quantity
+                if (qtyToDeliver > maxQty) {
+                    toastr.warning(
+                        `Quantity to deliver for SKU ${$(this).attr('id').split('_')[1]} exceeds the ordered quantity.`
+                    );
+                    isValid = false; // Set valid flag to false
+                }
+
+                // Check if quantity is negative
+                if (qtyToDeliver < 0) {
+                    toastr.error(
+                        `Quantity to deliver for SKU ${$(this).attr('id').split('_')[1]} cannot be negative.`
+                    );
+                    isValid = false; // Set valid flag to false
+                }
+
+                // Collect data for submission
+                const sku = $(this).attr('id').split('_')[1];
+                const reason = document.getElementById(`reason_${sku}`).value;
+                deliveryData.push({
+                    sku: sku,
+                    qtyToDeliver: qtyToDeliver,
+                    reason: reason
+                });
+
+                totalQtyOrdered += qtyToDeliver; // Accumulate total quantity
+            });
+
+            if (isValid) {
+                // Show confirmation dialog using SweetAlert
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to save the delivery quantities?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, save it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Proceed with AJAX call to save data
+                        $.ajax({
+                            url: '/purchase-orders/delivery', // Replace with your actual endpoint
+                            type: 'POST',
+                            data: {
+                                deliveryData: deliveryData,
+                                orderNo: $('#orderNoId').val() // Include order number if needed
+                            },
+                            success: function(response) {
+                                toastr.success('Delivery quantities saved successfully.');
+                                // Optionally, you can close the modal or refresh the data
+                                $('#deliveryModal').modal('hide');
+                                window.location.href =
+                                    '/purchase-orders/supplier/getOrders'; // Redirect to the orders page
+                            },
+                            error: function(xhr) {
+                                toastr.error(
+                                    'Failed to save delivery quantities. Please try again.');
+                            }
+                        });
+                    }
+                });
+            }
+        });
     </script>
 @endsection

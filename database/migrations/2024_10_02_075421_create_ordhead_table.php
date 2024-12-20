@@ -32,6 +32,7 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->text('reason')->nullable();
             $table->date('estimated_delivery_date')->nullable();
+            $table->date('delivery_date')->nullable();
             $table->timestamps();
         });
     }

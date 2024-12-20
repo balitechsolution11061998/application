@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('supplier_quantities', function (Blueprint $table) {
             $table->id();
             $table->string('order_no'); // Reference to the order number
-            $table->string('supplier_code'); // Reference to the supplier
+            $table->integer('sku'); // Reference to the supplier
             $table->integer('available_quantity'); // Quantity that can be fulfilled
             $table->timestamps();
         });

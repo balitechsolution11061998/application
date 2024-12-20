@@ -7,6 +7,7 @@ use App\Models\OrderConfirmationHistory;
 use App\Models\OrdHead;
 use App\Models\OrdSku;
 use App\Models\PrintHistory;
+use App\Models\SupplierQuantity;
 use App\Services\Order\OrderService;
 use DateTime;
 use Illuminate\Http\Request;
@@ -298,6 +299,65 @@ class OrderController extends Controller
 
             // Return error response
             return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+
+    public function delivery(Request $request)
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'deliveryData' => 'required|array',
+            'deliveryData.*.sku' => 'required|string',
+            'deliveryData.*.qtyToDeliver' => 'required|integer|min:0',
+            'deliveryData.*.reason' => 'nullable|string',
+            'orderNo' => 'required|string', // Assuming you also want to validate orderNo
+        ]);
+
+        // Extract the delivery data from the request
+        $deliveryData = $request->input('deliveryData');
+        $orderNo = $request->input('orderNo');
+
+        try {
+            // Loop through each delivery item and insert into the database
+            foreach ($deliveryData as $item) {
+                SupplierQuantity::create([
+                    'order_no' => $orderNo,
+                    'sku' => $item['sku'], // Assuming SKU is used as supplier code
+                    'available_quantity' => $item['qtyToDeliver'],
+                ]);
+            }
+
+            // Update the Ordhead status to "Delivery"
+            $ordhead = Ordhead::where('order_no', $orderNo)->first();
+            if ($ordhead) {
+                $ordhead->status = 'Delivery'; // Update the status
+                $ordhead->delivery_date = now();
+                $ordhead->save(); // Save the changes
+
+                // Log the activity for updating Ordhead
+                activity()
+                    ->performedOn($ordhead)
+                    ->causedBy(auth()->user()) // Assuming you have user authentication
+                    ->log('Order status updated to Delivery for order: ' . $orderNo);
+            }
+
+            // Log the activity for saving delivery quantities
+            activity()
+                ->performedOn(new SupplierQuantity())
+                ->causedBy(auth()->user()) // Assuming you have user authentication
+                ->log('Delivery quantities saved for order: ' . $orderNo);
+
+            return response()->json(['message' => 'Delivery quantities saved successfully.'], 200);
+        } catch (\Exception $e) {
+            // Log the error message
+
+            // Log the activity for the error
+            activity()
+                ->causedBy(auth()->user()) // Assuming you have user authentication
+                ->log('Failed to save delivery quantities for order: ' . $orderNo . '. Error: ' . $e->getMessage());
+
+            return response()->json(['message' => 'Failed to save delivery quantities. Please try again.'], 500);
         }
     }
 

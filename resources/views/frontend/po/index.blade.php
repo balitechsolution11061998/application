@@ -274,14 +274,14 @@
                                 badgeClass = 'bg-success';
                                 iconColor = 'green';
                                 noReceivingText =
-                                    ` - No Receiving: ${row.no_receiving}`; // Only show No Receiving for Completed
+                                ` - No Receiving: ${row.no_receiving}`; // Only show No Receiving for Completed
                             } else if (data === 'Printed') {
                                 iconClass = 'fas fa-print';
                                 badgeClass = 'bg-success';
                                 iconColor = 'green';
                             } else if (data === 'Expired') {
                                 iconClass =
-                                    'fas fa-exclamation-circle'; // Use a different icon for expired
+                                'fas fa-exclamation-circle'; // Use a different icon for expired
                                 badgeClass = 'bg-danger'; // Use a danger badge for expired
                                 iconColor = 'red'; // Set the icon color to red
                             } else if (data === 'Progress') { // New condition for Progress
@@ -291,6 +291,10 @@
                             } else if (data === 'Confirmed') { // New condition for Confirmed
                                 iconClass = 'fas fa-check'; // Check icon for confirmed
                                 badgeClass = 'bg-info'; // Info badge for confirmed
+                                iconColor = 'blue'; // Set the icon color to blue
+                            } else if (data === 'Delivery') { // New condition for Delivery
+                                iconClass = 'fas fa-truck'; // Truck icon for delivery
+                                badgeClass = 'bg-primary'; // Primary badge for delivery
                                 iconColor = 'blue'; // Set the icon color to blue
                             } else {
                                 iconClass = 'fas fa-clock';
@@ -309,6 +313,7 @@
                         orderable: false,
                         searchable: true
                     },
+
 
                     {
                         data: null, // Use null to create a custom action column
@@ -405,7 +410,7 @@
                         // Handle the date confirmation
                         $('#confirmDateButton').off('click').on('click', function() {
                             const date = $('#confirmation-date')
-                        .val(); // Get the value from the input
+                                .val(); // Get the value from the input
                             if (!date) {
                                 toastr.error('Please enter a confirmation date');
                             } else {
@@ -437,19 +442,20 @@
                                             success: function(response) {
                                                 toastr.success(
                                                     'Order confirmed successfully!'
-                                                    );
+                                                );
                                                 table.ajax
-                                            .reload(); // Reload the DataTable to reflect changes
+                                                    .reload(); // Reload the DataTable to reflect changes
                                                 $('#datePickerModal')
                                                     .modal(
-                                                    'hide'); // Hide the modal
+                                                        'hide'
+                                                        ); // Hide the modal
                                             },
                                             error: function(xhr) {
                                                 // Check if the error is due to a network issue
                                                 if (xhr.status === 0) {
                                                     toastr.error(
                                                         'Connection unstable. Please check your internet connection.'
-                                                        );
+                                                    );
                                                 } else {
                                                     toastr.error(
                                                         'Error confirming order: ' +
