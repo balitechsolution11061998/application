@@ -651,57 +651,51 @@
                         <p>* Barang yang tidak diambil atas nota retur yang sudah dibuat menjadi tanggung jawab
                             suppliers.</p>
                     </div>
-                    @if ($data['orderDetails']->printed_at)
-                        <div class="row mb-4">
-                            <div class="col-md-12">
-                                <h2 class="h4 mb-3">Print History</h2>
-                                <div class="card mb-4 shadow-sm">
-                                    <div class="card-body">
-                                        <table class="table table-striped table-hover table-sm">
-                                            <thead class="table-dark">
-                                                <tr>
-                                                    <th>Tanggal Print</th>
-                                                    <th>Tanggal Konfirmasi</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td class="d-flex align-items-center p-3">
-                                                        <i class="fas fa-clock me-2 text-primary"
-                                                            style="font-size: 1.5em;"></i>
-                                                        <div>
-                                                            <div class="fw-bold" style="font-size: 1.1em;">
-                                                                {{ \Carbon\Carbon::parse($data['orderDetails']->printed_at)->format('d M Y H:i') }}
-                                                            </div>
-                                                            <div class="text-muted" style="font-size: 0.9em;">
-                                                                <i class="fas fa-user me-1" style="color: #6c757d;"></i>
-                                                                by <span
-                                                                    style="font-weight: bold; color: #343a40;">{{ $data['orderDetails']->printed_user_name }}</span>
-                                                            </div>
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h2 class="h4 mb-3">Print History</h2>
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-body">
+                                    <div class="row">
+                                        @if($data['orderDetails']->printed_at)
+                                            <div class="col-md-6 mb-3">
+                                                <div class="d-flex align-items-center p-3 border rounded bg-light">
+                                                    <i class="fas fa-clock me-3 text-primary" style="font-size: 2em;"></i>
+                                                    <div>
+                                                        <div class="fw-bold" style="font-size: 1.2em;">
+                                                            {{ \Carbon\Carbon::parse($data['orderDetails']->printed_at)->format('d M Y H:i') }}
                                                         </div>
-                                                    </td>
-                                                    <td class="d-flex align-items-center p-3">
-                                                        <i class="fas fa-clock me-2 text-primary"
-                                                            style="font-size: 1.5em;"></i>
-                                                        <div>
-                                                            <div class="fw-bold" style="font-size: 1.1em;">
-                                                                {{ \Carbon\Carbon::parse($data['orderDetails']->confirmation_date)->format('d M Y H:i') }}
-                                                            </div>
-                                                            <div class="text-muted" style="font-size: 0.9em;">
-                                                                <i class="fas fa-user me-1" style="color: #6c757d;"></i>
-                                                                by <span
-                                                                    style="font-weight: bold; color: #343a40;">{{ $data['orderDetails']->confirmation_user_name }}</span>
-                                                            </div>
+                                                        <div class="text-muted" style="font-size: 0.9em;">
+                                                            <i class="fas fa-user me-1" style="color: #6c757d;"></i>
+                                                            by <span style="font-weight: bold; color: #343a40;">{{ $data['orderDetails']->printed_user_name }}</span>
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        @if($data['orderDetails']->confirmation_date)
+                                            <div class="col-md-6 mb-3">
+                                                <div class="d-flex align-items-center p-3 border rounded bg-light">
+                                                    <i class="fas fa-clock me-3 text-primary" style="font-size: 2em;"></i>
+                                                    <div>
+                                                        <div class="fw-bold" style="font-size: 1.2em;">
+                                                            {{ \Carbon\Carbon::parse($data['orderDetails']->confirmation_date)->format('d M Y H:i') }}
+                                                        </div>
+                                                        <div class="text-muted" style="font-size: 0.9em;">
+                                                            <i class="fas fa-user me-1" style="color: #6c757d;"></i>
+                                                            by <span style="font-weight: bold; color: #343a40;">{{ $data['orderDetails']->confirmation_user_name }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    @endif
+                    </div>
+
                     <!-- Comment and Approval Section -->
                     <div class="row mt-4">
                         <div class="col-md-12">
