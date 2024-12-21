@@ -12,6 +12,7 @@ class CostChangeController extends Controller
 {
     public function store(Request $request)
     {
+        return $request->all();
         // Start time measurement
         $startTime = microtime(true);
 
