@@ -24,7 +24,7 @@ class CostChangeController extends Controller
             'ccext_desc' => 'required|string',
             'reason' => 'required|integer',
             'status' => 'required|integer',
-            'active_date' => 'required', // Validate the date format
+            'active_date' => 'required|date_format:Y-m-d', // Validate the date format
             'cost_change_detail' => 'required|array',
             'cost_change_detail.*.ccext_no' => 'required|integer',
             'cost_change_detail.*.supplier' => 'required|integer',
@@ -36,6 +36,8 @@ class CostChangeController extends Controller
         // Initialize arrays to track results
         $successfulInserts = [];
         $failedInserts = [];
+        $successfulCount = 0; // Count of successful inserts
+        $failedCount = 0; // Count of failed inserts
 
         try {
             // Update or create the head record
@@ -70,12 +72,14 @@ class CostChangeController extends Controller
                         );
                         // Track successful inserts
                         $successfulInserts[] = $insertedDetail->id; // Store the ID of the inserted record
+                        $successfulCount++; // Increment successful count
                     } catch (\Exception $e) {
                         // Track failed inserts
                         $failedInserts[] = [
                             'detail' => $detail,
                             'error' => $e->getMessage(),
                         ];
+                        $failedCount++; // Increment failed count
                     }
                 }
 
@@ -89,6 +93,8 @@ class CostChangeController extends Controller
             // Prepare the response
             return response()->json([
                 'message' => 'Data processed successfully',
+                'successful_count' => $successfulCount,
+                'failed_count' => $failedCount,
                 'successful_inserts' => $successfulInserts,
                 'failed_inserts' => $failedInserts,
             ], 200);
@@ -109,6 +115,5 @@ class CostChangeController extends Controller
             return response()->json(['message' => 'Failed to process data', 'error' => $e->getMessage()], 500);
         }
     }
-
 
 }
