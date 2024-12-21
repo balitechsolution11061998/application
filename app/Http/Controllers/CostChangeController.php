@@ -24,7 +24,7 @@ class CostChangeController extends Controller
             'ccext_desc' => 'required|string',
             'reason' => 'required|integer',
             'status' => 'required|integer',
-            'active_date' => 'required|date_format:d-M-y', // Validate the date format
+            'active_date' => 'required', // Validate the date format
             'cost_change_detail' => 'required|array',
             'cost_change_detail.*.ccext_no' => 'required|integer',
             'cost_change_detail.*.supplier' => 'required|integer',
