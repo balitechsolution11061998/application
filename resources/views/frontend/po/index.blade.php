@@ -64,6 +64,26 @@
                 opacity: 1;
             }
         }
+
+        /* Add this CSS to your styles */
+        @keyframes jump {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .loading-popup {
+            animation: jump 0.5s ease-in-out;
+            /* Apply the jump animation */
+        }
     </style>
     <div class="row">
         <div class="col-md-12">
@@ -413,7 +433,7 @@
                     },
                     // Custom CSS for animation and styling
                     customClass: {
-                        popup: 'loading-popup',
+                        popup: 'loading-popup', // This class will apply the jump animation
                         title: 'loading-title',
                         htmlContainer: 'loading-text'
                     }
@@ -421,8 +441,12 @@
 
                 // Redirect to the detail page with encoded orderNo after a short delay
                 setTimeout(function() {
-                    Swal.close(); // Close the SweetAlert modal before redirecting
-                    window.location.href = `/purchase-orders/supplier/show/${encodedOrderNo}`;
+                    // Close the SweetAlert modal
+                    Swal.close().then(() => {
+                        // Redirect after closing the modal
+                        window.location.href =
+                            `/purchase-orders/supplier/show/${encodedOrderNo}`;
+                    });
                 }, 1000); // 1 second delay before redirecting
             });
 
