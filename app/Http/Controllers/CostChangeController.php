@@ -24,7 +24,7 @@ class CostChangeController extends Controller
             'ccext_desc' => 'required|string',
             'reason' => 'required|integer',
             'status' => 'required|integer',
-            'active_date' => 'required|date_format:Y-m-d', // Validate the date format
+            'active_date' => 'required', // Validate the date format
             'cost_change_detail' => 'required|array',
             'cost_change_detail.*.ccext_no' => 'required|integer',
             'cost_change_detail.*.supplier' => 'required|integer',
@@ -35,10 +35,7 @@ class CostChangeController extends Controller
 
         try {
             // Create DateTime object from the validated active_date
-            $activeDate = \DateTime::createFromFormat('Y-m-d', $request->active_date);
-            if (!$activeDate) {
-                throw new \Exception('Invalid date format for active_date. Expected format: Y-m-d');
-            }
+
 
             // Update or create the head record
             $head = CcextHead::updateOrCreate(
@@ -48,7 +45,7 @@ class CostChangeController extends Controller
                     'ccext_desc' => $request->ccext_desc,
                     'reason' => $request->reason,
                     'status' => $request->status,
-                    'active_date' => $activeDate->format('Y-m-d'), // Ensure it's in YYYY-MM-DD format
+                    'active_date' => $request->active_date, // Ensure it's in YYYY-MM-DD format
                     'create_date' => now(),
                 ]
             );
