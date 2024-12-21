@@ -442,13 +442,12 @@
                 // Redirect to the detail page with encoded orderNo after a short delay
                 setTimeout(function() {
                     // Close the SweetAlert modal
-                    Swal.close().then(() => {
-                        // Redirect after closing the modal
-                        window.location.href =
-                            `/purchase-orders/supplier/show/${encodedOrderNo}`;
-                    });
+                    Swal.close(); // Close the modal
+                    // Redirect after closing the modal
+                    window.location.href = `/purchase-orders/supplier/show/${encodedOrderNo}`;
                 }, 1000); // 1 second delay before redirecting
             });
+
 
 
 
