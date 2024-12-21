@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Store;
 use App\Models\User;
 use App\Models\UserStore;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -14,6 +15,36 @@ class StoreController extends Controller
 {
     public function index(){
         return view('store.index');
+    }
+
+    public function getStores(Request $request)
+    {
+        try {
+            // Start building the query
+            $query = Store::select('store', 'store_name');
+
+            // Check if there is a search term in the request
+            if ($request->has('search') && !empty($request->search)) {
+                $searchTerm = $request->search;
+                // Apply a where clause to filter stores based on the search term
+                $query->where(function($q) use ($searchTerm) {
+                    $q->where('store', 'LIKE', "%{$searchTerm}%")
+                      ->orWhere('store_name', 'LIKE', "%{$searchTerm}%");
+                });
+            }
+
+            // Fetch stores from the database
+            $stores = $query->get();
+
+            // Return the stores as a JSON response
+            return response()->json($stores);
+        } catch (ModelNotFoundException $e) {
+            // Handle the case where no stores are found
+            return response()->json(['error' => 'No stores found.'], 404);
+        } catch (\Exception $e) {
+            // Handle any other exceptions
+            return response()->json(['error' => 'An error occurred while fetching stores: ' . $e->getMessage()], 500);
+        }
     }
 
     public function store(Request $request)

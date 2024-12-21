@@ -135,6 +135,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/data', [StoreController::class, 'data'])->name('data');
         Route::get('/edit/{id}', [StoreController::class, 'edit'])->name('edit');
         Route::delete('/destroy/{id}', [StoreController::class, 'delete'])->name('destroy');
+        Route::get('/getStores', [StoreController::class, 'getStores'])->name('getStores');
+
     });
 
     Route::prefix('price-change')->as('price-change.')->group(function () {
@@ -145,6 +147,8 @@ Route::group(['middleware' => ['auth']], function () {
     // Region Management Routes
     Route::prefix('regions')->as('regions.')->group(function () {
         Route::get('/data', [RegionController::class, 'data'])->name('data');
+        Route::get('/getRegions', [RegionController::class, 'getRegions'])->name('getRegions');
+
     });
 
     // Purchase Orders Routes

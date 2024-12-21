@@ -525,8 +525,7 @@
                                             <th>Unit Retail</th>
                                             <th>Status BKP</th>
                                             <th>PPN Cost</th>
-                                            <th colspan="2">Unit Order</th>
-                                            <th>Unit Received</th>
+                                            <th colspan="3">Unit Order</th>
                                             <th>Regular</th>
                                             <th>Total</th>
                                             <th>Total</th>
@@ -543,9 +542,9 @@
                                             <th></th>
                                             <th></th>
                                             <th></th>
-                                            <th>Quantity</th>
+                                            <th>Qty Order</th>
+                                            <th>Qty Rcv</th>
                                             <th>Unit</th>
-                                            <th>Quantity</th>
                                             <th>Unit</th>
                                             <th></th>
                                             <th>PPN</th>
@@ -622,8 +621,8 @@
                                                 <td class="text-end">{{ number_format($vat_costTotal, 2) }}</td>
                                                 <!-- Total PPN for the item -->
                                                 <td class="text-center">{{ $item->qty_ordered }}</td>
-                                                <td class="text-center">{{ $item->purchase_uom }}</td>
                                                 <td class="text-center">{{ $data['orderDetails']->qty_received ?? 0 }}</td> <!-- Display qty_received -->
+                                                <td class="text-center">{{ $item->purchase_uom }}</td>
                                                 <td class="text-center">
                                                     {{ $item->permanent_disc_pct > 0 ? $item->permanent_disc_pct . '%' : '0%' }}
                                                 </td> <!-- Displaying percentage -->

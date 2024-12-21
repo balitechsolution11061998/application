@@ -101,31 +101,33 @@ class SupplierController extends Controller
 
 
 
-    public function selectData(): JsonResponse
+    public function selectData(Request $request): JsonResponse
     {
         try {
-            $suppliers = [];
-            // Fetch suppliers in chunks
-            Supplier::select('supp_code', 'supp_name')->chunk(100, function ($chunk) use (&$suppliers) {
-                foreach ($chunk as $supplier) {
-                    $suppliers[] = [
-                        'supp_code' => $supplier->supp_code,
-                        'supp_name' => $supplier->supp_name,
-                    ];
-                }
-            });
+            $query = Supplier::select('supp_code', 'supp_name');
+
+            // Check if there is a search term in the request
+            if ($request->has('search') && !empty($request->search)) {
+                $searchTerm = $request->search;
+                // Apply a where clause to filter suppliers based on the search term
+                $query->where(function($q) use ($searchTerm) {
+                    $q->where('supp_code', 'LIKE', "%{$searchTerm}%")
+                      ->orWhere('supp_name', 'LIKE', "%{$searchTerm}%");
+                });
+            }
+
+            // Fetch suppliers based on the query
+            $suppliers = $query->get();
 
             // Log the successful retrieval of suppliers
             activity()
                 ->performedOn(new Supplier())
-                ->log('Fetched all suppliers successfully.');
+                ->log('Fetched suppliers successfully.');
 
             // Return the suppliers as a JSON response
             return response()->json(['suppliers' => $suppliers]);
         } catch (Exception $e) {
             // Log the error message
-
-            // Log the activity for error
             activity()
                 ->performedOn(new Supplier())
                 ->log('Error fetching suppliers: ' . $e->getMessage());
@@ -134,6 +136,7 @@ class SupplierController extends Controller
             return response()->json(['error' => 'Failed to fetch suppliers.'], 500);
         }
     }
+
 
     public function data(Request $request)
     {

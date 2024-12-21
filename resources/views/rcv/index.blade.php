@@ -392,17 +392,10 @@
                             searchable: false,
                             render: function(data, type, row) {
                                 let buttons = `
-                        <button class="btn btn-sm btn-info btn-rounded detail-btn" data-id="${row.order_no}">
-                            <i class="fas fa-info-circle"></i> Details
+                        <button class="btn btn-sm btn-info rounded-pill detail-btn" data-id="${row.order_no}" style="margin-right: 5px;">
+                            <i class="fas fa-info-circle" style="color: white; margin-right: 5px;"></i> Details
                         </button>
                     `;
-                                if (row.status === 'Progress') {
-                                    buttons += `
-                            <button class="btn btn-sm btn-success btn-rounded confirm-btn" data-id="${row.order_no}">
-                                <i class="fas fa-check"></i> Confirmed
-                            </button>
-                        `;
-                                }
                                 return buttons;
                             }
                         },
@@ -410,33 +403,33 @@
                             data: 'receive_no',
                             name: 'receive_no',
                             render: function(data, type, row) {
-                                return `<i class="fas fa-receipt"></i> ${data}`; // Display the receive_no with an icon
+                                return `<span class="badge bg-primary rounded-pill" style="padding: 8px 12px; font-size: 14px;"><i class="fas fa-receipt" style="color: white; margin-right: 5px;"></i> ${data}</span>`; // Badge for receive_no
                             }
                         },
                         {
                             data: 'receive_date',
                             name: 'receive_date',
                             render: function(data) {
-                                return `<i class="fas fa-calendar"></i> ${moment(data).format('DD MMMM YYYY')}`; // Format date with icon
+                                return `<span class="badge bg-info rounded-pill" style="padding: 8px 12px; font-size: 14px;"><i class="fas fa-calendar" style="color: white; margin-right: 5px;"></i> ${moment(data).format('DD MMMM YYYY')}</span>`; // Badge for receive_date
                             }
                         },
                         {
                             data: 'order_no',
                             name: 'order_no',
                             render: function(data) {
-                                return `<i class="fas fa-receipt"></i> ${data}`; // Adding an icon for order_no
+                                return `<span class="badge bg-secondary rounded-pill" style="padding: 8px 12px; font-size: 14px;"><i class="fas fa-receipt" style="color: white; margin-right: 5px;"></i> ${data}</span>`; // Badge for order_no
                             }
                         },
                         {
                             data: 'store', // Assuming store contains both name and code
                             render: function(data, type, row) {
-                                return `<i class="fas fa-store"></i> ${row.store_name} (${row.store})`; // Adding store icon
+                                return `<span class="badge bg-success rounded-pill" style="padding: 8px 12px; font-size: 14px;"><i class="fas fa-store" style="color: white; margin-right: 5px;"></i> ${row.store_name} (${row.store})</span>`; // Badge for store
                             }
                         },
                         {
                             data: 'supplier', // Assuming supplier contains both name and code
                             render: function(data, type, row) {
-                                return `<i class="fas fa-truck"></i> ${row.sup_name} (${row.supplier})`; // Adding supplier icon
+                                return `<span class="badge bg-warning rounded-pill" style="padding: 8px 12px; font-size: 14px;"><i class="fas fa-truck" style="color: black; margin-right: 5px;"></i> ${row.sup_name} (${row.supplier})</span>`; // Badge for supplier
                             }
                         },
                         {
@@ -444,15 +437,15 @@
                             name: 'status',
                             render: function(data) {
                                 let icon = data === 'Y' ? 'fas fa-check-circle' :
-                                'fas fa-exclamation-circle'; // Choose icon based on status
+                                    'fas fa-exclamation-circle'; // Choose icon based on status
                                 let colorClass = data === 'Y' ? 'success' :
-                                'warning'; // Set color class based on status
+                                    'warning'; // Set color class based on status
                                 let statusText = data === 'Y' ? 'Tanda Terima' :
-                                'Belum Tanda Terima'; // Set text based on status
+                                    'Belum Tanda Terima'; // Set text based on status
 
                                 return `
-                        <span class="badge bg-${colorClass} d-flex align-items-center" style="padding: 5px 10px;">
-                            <i class="${icon}" style="margin-right: 5px;"></i> ${statusText}
+                        <span class="badge bg-${colorClass} rounded-pill d-flex align-items-center" style="padding: 8px 12px; font-size: 14px;">
+                            <i class="${icon}" style="margin-right: 5px; color: ${colorClass === 'warning' ? 'black' : 'white'};"></i> ${statusText}
                         </span>
                     `;
                             }
@@ -461,7 +454,7 @@
                             data: 'sub_total',
                             name: 'sub_total',
                             render: function(data) {
-                                return `Rp ${parseFloat(data).toLocaleString('id-ID')}`; // Format as Rupiah
+                                return `<span class="badge bg-light rounded-pill" style="padding: 8px 12px; font-size: 14px;"><i class="fas fa-money-bill-wave" style="color: black; margin-right: 5px;"></i> Rp ${parseFloat(data).toLocaleString('id-ID')}</span>`; // Badge for sub_total
                             }
                         },
                         {
@@ -496,6 +489,34 @@
                         }
                     ]
                 });
+
+                // Event listener for detail button click
+                $('#rcvtable tbody').on('click', '.detail-btn', function() {
+                    var orderNo = $(this).data('id');
+
+                    // Show SweetAlert2 loading spinner with Font Awesome spinner
+                    Swal.fire({
+                        title: 'Loading...',
+                        html: '<i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i><br>Please wait while we load the details.',
+                        allowOutsideClick: false,
+                        showConfirmButton: false, // Hide the confirm button
+                        onBeforeOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Simulate loading with a spinner
+                    setTimeout(function() {
+                        // Redirect to the details page with the encoded order number
+                        var encodedOrderNo = btoa(orderNo); // Encode the order number
+                        window.location.href = '/purchase-orders/show/' +
+                        encodedOrderNo; // Redirect to the details page
+
+                        // Show success notification using Toastr
+                        toastr.success('Details loaded successfully!'); // Show success message
+                    }, 1000); // Simulate a delay of 1 second for loading
+                });
+
             }
         </script>
     @endpush

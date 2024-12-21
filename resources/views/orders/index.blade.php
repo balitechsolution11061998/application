@@ -123,13 +123,49 @@
 
                 <!-- Input field for filtering by order_no -->
                 <div class="input-group input-group-sm">
-                    <input type="text" id="filterOrderNo" class="form-control form-control-sm border-secondary"
-                        placeholder="Search by Order No.">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" id="filterDataBtn">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
+                    <input type="text" id="orderNo"
+                        class="form-control form-control-sm rounded-pill border-primary" placeholder="Enter Order No" />
+                </div>
+
+                <!-- Store Filter with Select2 -->
+                <div class="input-group input-group-sm">
+                    <select id="filterStore" class="form-control border-secondary" multiple="multiple">
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
+
+                <!-- Supplier Filter with Select2 -->
+                <div class="input-group input-group-sm">
+                    <select id="filterSupplier" class="form-control border-secondary" multiple="multiple">
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
+
+                <!-- Region Filter with Select2 -->
+                <div class="input-group input-group-sm">
+                    <select id="filterRegion" class="form-control border-secondary" multiple="multiple">
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
+
+                <!-- Status Filter with Select2 -->
+                <div class="input-group input-group-sm">
+                    <select id="filterStatus" class="form-control border-secondary" multiple="multiple">
+                        <option value="Progress">Progress</option>
+                        <option value="Rejected">Reject</option>
+                        <option value="Printed">Print</option>
+                        <option value="Expired">Expired</option>
+                        <option value="Confirmed">Konfirmasi</option>
+                        <option value="Completed">Receiving</option>
+                        <option value="Incompleted">Receiving Incompleted</option>
+                        <!-- Add more status options as needed -->
+                    </select>
+                </div>
+
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" id="filterDataBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </div>
 
                 <!-- Date Picker for Syncing -->
@@ -149,7 +185,6 @@
                 </button>
             </div>
         </div>
-
 
 
 
@@ -355,16 +390,108 @@
             $(document).ready(function() {
                 fetchData();
 
+                $('#filterStatus').select2({
+                    placeholder: "Select Statuses",
+                    allowClear: true
+                });
+
                 $('#filterDateRange').daterangepicker({
-                    locale: {
-                        format: 'YYYY-MM-DD'
+                    startDate: moment().subtract(29, "days"),
+                    endDate: moment(),
+                    ranges: {
+                        "Today": [moment(), moment()],
+                        "Yesterday": [moment().subtract(1, "days"), moment().subtract(1, "days")],
+                        "Last 7 Days": [moment().subtract(6, "days"), moment()],
+                        "Last 30 Days": [moment().subtract(29, "days"), moment()],
+                        "This Month": [moment().startOf("month"), moment().endOf("month")],
+                        "Last Month": [moment().subtract(1, "month").startOf("month"), moment().subtract(1,
+                            "month").endOf("month")]
+                    }
+                });
+
+                $('#filterStore').select2({
+                    placeholder: "Select Stores",
+                    allowClear: true,
+                    ajax: {
+                        url: '{{ route('stores.getStores') }}', // The route to fetch stores
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term // Send the search term to the server
+                            };
+                        },
+                        processResults: function(data) {
+                            // Map the data to the format expected by Select2
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.store, // The value of the option
+                                        text: item.store_name // The text to be displayed
+                                    };
+                                })
+                            };
+                        },
+                        cache: true
                     },
-                    opens: 'left',
-                    maxDate: moment().add(1,
-                        'month'), // Membatasi hanya sampai satu bulan dari tanggal hari ini
-                }, function(start, end) {
-                    // Ketika pengguna memilih tanggal, update `maxDate` untuk membatasi hingga satu bulan dari `start`
-                    $('#filterDateRange').data('daterangepicker').setEndDate(moment(start).add(1, 'month'));
+                    minimumInputLength: 1 // Require at least 1 character to start searching
+                });
+
+                // Initialize Select2 for Supplier
+                $('#filterSupplier').select2({
+                    placeholder: "Select Suppliers",
+                    allowClear: true,
+                    ajax: {
+                        url: '{{ route('suppliers.selectData') }}', // Adjust the route accordingly
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term // Send the search term to the server
+                            };
+                        },
+                        processResults: function(data) {
+                            // Check if suppliers are returned and map them to Select2 format
+                            return {
+                                results: $.map(data.suppliers, function(item) {
+                                    return {
+                                        id: item.supp_code, // The value of the option
+                                        text: item.supp_name // The text to be displayed
+                                    };
+                                })
+                            };
+                        },
+                        cache: true
+                    },
+                    minimumInputLength: 1 // Require at least 1 character to start searching
+                });
+
+                $('#filterRegion').select2({
+                    placeholder: "Select Regions",
+                    allowClear: true,
+                    ajax: {
+                        url: '{{ route('regions.getRegions') }}', // Adjust the route accordingly
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term // Send the search term to the server
+                            };
+                        },
+                        processResults: function(data) {
+                            // Check if regions are returned and map them to Select2 format
+                            return {
+                                results: $.map(data.regions, function(item) {
+                                    return {
+                                        id: item.id, // The value of the option
+                                        text: item.name // The text to be displayed
+                                    };
+                                })
+                            };
+                        },
+                        cache: true
+                    },
+                    minimumInputLength: 1 // Require at least 1 character to start searching
                 });
 
             });
@@ -389,8 +516,18 @@
                         url: '{{ route('purchase-orders.data') }}',
                         type: 'GET',
                         data: function(d) {
-                            d.order_no = $('#filterOrderNo').val(); // Pass order number filter
-                            d.filterDate = $("#filterDateRange").val();
+                            d.orderNo = $('#orderNo').val(); // Add order number filter
+                            d.store = $('#filterStore').val(); // Add store filter
+                            d.supplier = $('#filterSupplier').val(); // Add supplier filter
+                            d.region = $('#filterRegion').val(); // Add region filter
+                            d.status = $('#filterStatus').val(); // Add region filter
+
+                            // Split the date range into start and end dates
+                            var dateRange = $("#filterDateRange").val().split(' - ');
+                            if (dateRange.length === 2) {
+                                d.startDate = dateRange[0]; // Start date
+                                d.endDate = dateRange[1]; // End date
+                            }
                         }
                     },
                     columns: [{

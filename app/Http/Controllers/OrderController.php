@@ -811,6 +811,19 @@ class OrderController extends Controller
                 if (!empty($request->orderNo)) {
                     $query->where('ordhead.order_no', $request->orderNo);
                 }
+                if (!empty($request->store)) {
+                    $query->whereIn('ordhead.ship_to', $request->store); // Filter by store
+                }
+                if (!empty($request->supplier)) {
+                    $query->whereIn('ordhead.supplier', $request->supplier); // Filter by supplier
+                }
+                if (!empty($request->supplier)) {
+                    $query->whereIn('ordhead.status', $request->status); // Filter by supplier
+                }
+
+                if (!empty($request->status)) {
+                    $query->whereIn('ordhead.status', $request->status); // Filter by supplier
+                }
 
                 if (!empty($request->startDate) && !empty($request->endDate)) {
                     // Convert date format from MM/DD/YYYY to DD-MM-YYYY

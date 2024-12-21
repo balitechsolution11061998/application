@@ -94,8 +94,8 @@
 
                     </div>
                     <div class="mb-4">
-                        <div class="row">
-                            <div class="col-md-4">
+                        <div class="row align-items-end">
+                            <div class="col-md-2">
                                 <label for="orderNo" class="form-label">Filter by Order No:</label>
                                 <div class="input-group">
                                     <input type="text" id="orderNo"
@@ -103,17 +103,60 @@
                                         placeholder="Enter Order No" />
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <label for="filterDate" class="form-label">Filter by Approval Date:</label>
+                            <div class="col-md-2">
+                                <label for="filterDateRange" class="form-label">Filter by Approval Date:</label>
                                 <div class="input-group">
-                                    <input type="text" id="filterDate"
+                                    <input type="text" id="filterDateRange"
                                         class="form-control form-control-sm rounded-pill border-primary"
                                         placeholder="Select date range" />
-                                    <button id="filterButton" class="btn btn-primary btn-sm rounded-pill">Filter</button>
                                 </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="filterStore" class="form-label">Filter by Store:</label>
+                                <div class="input-group">
+                                    <select id="filterStore" class="form-control border-secondary" multiple="multiple">
+                                        <!-- Options will be populated dynamically -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="filterSupplier" class="form-label">Filter by Supplier:</label>
+                                <div class="input-group">
+                                    <select id="filterSupplier" class="form-control border-secondary" multiple="multiple">
+                                        <!-- Options will be populated dynamically -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="filterRegion" class="form-label">Filter by Region:</label>
+                                <div class="input-group">
+                                    <select id="filterRegion" class="form-control border-secondary" multiple="multiple">
+                                        <!-- Options will be populated dynamically -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="filterStatus" class="form-label">Filter by Status:</label>
+                                <div class="input-group">
+                                    <select id="filterStatus" class="form-control border-secondary" multiple="multiple">
+                                        <option value="Confirmed">Confirmed</option>
+                                        <option value="Progress">Progress</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                        <option value="Rejected">Rejected</option>
+                                        <option value="Printed">Printed</option>
+                                        <option value="Expired">Expired</option>
+                                        <option value="Completed">Completed</option>
+                                        <option value="Incompleted">Incompleted</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 ms-auto"> <!-- Use ms-auto to push the button to the right -->
+                                <button id="filterButton" class="btn btn-primary btn-sm rounded-pill">Filter</button>
                             </div>
                         </div>
                     </div>
+
+
 
 
                     <div class="table-responsive">
@@ -184,7 +227,109 @@
                 }
             });
 
+            $('#filterStatus').select2({
+                placeholder: "Select Statuses",
+                allowClear: true
+            });
 
+            $('#filterDateRange').daterangepicker({
+                startDate: moment().subtract(29, "days"),
+                endDate: moment(),
+                ranges: {
+                    "Today": [moment(), moment()],
+                    "Yesterday": [moment().subtract(1, "days"), moment().subtract(1, "days")],
+                    "Last 7 Days": [moment().subtract(6, "days"), moment()],
+                    "Last 30 Days": [moment().subtract(29, "days"), moment()],
+                    "This Month": [moment().startOf("month"), moment().endOf("month")],
+                    "Last Month": [moment().subtract(1, "month").startOf("month"), moment().subtract(1,
+                        "month").endOf("month")]
+                }
+            });
+
+            $('#filterStore').select2({
+                placeholder: "Select Stores",
+                allowClear: true,
+                ajax: {
+                    url: '{{ route('stores.getStores') }}', // The route to fetch stores
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term // Send the search term to the server
+                        };
+                    },
+                    processResults: function(data) {
+                        // Map the data to the format expected by Select2
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.store, // The value of the option
+                                    text: item.store_name // The text to be displayed
+                                };
+                            })
+                        };
+                    },
+                    cache: true
+                },
+                minimumInputLength: 1 // Require at least 1 character to start searching
+            });
+
+            // Initialize Select2 for Supplier
+            $('#filterSupplier').select2({
+                placeholder: "Select Suppliers",
+                allowClear: true,
+                ajax: {
+                    url: '{{ route('suppliers.selectData') }}', // Adjust the route accordingly
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term // Send the search term to the server
+                        };
+                    },
+                    processResults: function(data) {
+                        // Check if suppliers are returned and map them to Select2 format
+                        return {
+                            results: $.map(data.suppliers, function(item) {
+                                return {
+                                    id: item.supp_code, // The value of the option
+                                    text: item.supp_name // The text to be displayed
+                                };
+                            })
+                        };
+                    },
+                    cache: true
+                },
+                minimumInputLength: 1 // Require at least 1 character to start searching
+            });
+
+            $('#filterRegion').select2({
+                placeholder: "Select Regions",
+                allowClear: true,
+                ajax: {
+                    url: '{{ route('regions.getRegions') }}', // Adjust the route accordingly
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term // Send the search term to the server
+                        };
+                    },
+                    processResults: function(data) {
+                        // Check if regions are returned and map them to Select2 format
+                        return {
+                            results: $.map(data.regions, function(item) {
+                                return {
+                                    id: item.id, // The value of the option
+                                    text: item.name // The text to be displayed
+                                };
+                            })
+                        };
+                    },
+                    cache: true
+                },
+                minimumInputLength: 1 // Require at least 1 character to start searching
+            });
 
             $('#datePickerModal').on('shown.bs.modal', function() {
                 $('#confirmation-date').daterangepicker({
@@ -219,6 +364,11 @@
                             d.endDate = dates[1];
                         }
                         d.orderNo = $('#orderNo').val(); // Add order number filter
+                        d.store = $('#filterStore').val(); // Add store filter
+                        d.supplier = $('#filterSupplier').val(); // Add supplier filter
+                        d.region = $('#filterRegion').val(); // Add region filter
+                        d.status = $('#filterStatus').val(); // Add region filter
+
                     }
                 },
                 columns: [{
