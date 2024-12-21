@@ -44,7 +44,7 @@ class CostChangeController extends Controller
                     'ccext_desc' => $request->ccext_desc,
                     'reason' => $request->reason,
                     'status' => $request->status,
-                    'active_date' => \DateTime::createFromFormat('Y-m-d', $request->active_date),
+                    'active_date' => $request->active_date->format('Y-m-d'),
                     'create_date' => now(),
                 ]
             );
