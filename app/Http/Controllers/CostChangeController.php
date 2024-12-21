@@ -12,7 +12,6 @@ class CostChangeController extends Controller
 {
     public function store(Request $request)
     {
-        return $request->all();
         // Start time measurement
         $startTime = microtime(true);
 
@@ -54,7 +53,24 @@ class CostChangeController extends Controller
                 ]
             );
 
-            // ... rest of your code remains unchanged
+            // Insert cost change details
+            foreach ($request->cost_change_detail as $detail) {
+                CcextDetail::updateOrCreate(
+                    ['id' => $detail['id']], // Assuming 'id' is the unique identifier for the detail
+                    [
+                        'ccext_no' => $detail['ccext_no'],
+                        'supplier' => $detail['supplier'],
+                        'sku' => $detail['sku'],
+                        'unit_cost' => $detail['unit_cost'],
+                        'old_unit_cost' => $detail['old_unit_cost'],
+                    ]
+                );
+            }
+
+            // Commit the transaction if everything is successful
+            DB::commit();
+
+            return response()->json(['message' => 'Data processed successfully'], 200);
 
         } catch (\Exception $e) {
             // Rollback the transaction in case of error
@@ -72,6 +88,7 @@ class CostChangeController extends Controller
             return response()->json(['message' => 'Failed to process data', 'error' => $e->getMessage()], 500);
         }
     }
+
 
 
 
