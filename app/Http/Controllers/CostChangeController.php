@@ -35,10 +35,7 @@ class CostChangeController extends Controller
 
         try {
             // Create DateTime object from the validated active_date
-            $activeDate = \DateTime::createFromFormat('d-M-y', $request->active_date);
-            if (!$activeDate) {
-                throw new \Exception('Invalid date format for active_date. Expected format: d-M-y');
-            }
+
 
             // Update or create the head record
             $head = CcextHead::updateOrCreate(
@@ -48,7 +45,7 @@ class CostChangeController extends Controller
                     'ccext_desc' => $request->ccext_desc,
                     'reason' => $request->reason,
                     'status' => $request->status,
-                    'active_date' => $activeDate->format('Y-m-d'), // Convert to YYYY-MM-DD
+                    'active_date' => $request->active_date->format('Y-m-d'), // Convert to YYYY-MM-DD
                     'create_date' => now(),
                 ]
             );
