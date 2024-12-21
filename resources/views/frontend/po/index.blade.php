@@ -27,6 +27,43 @@
             background-color: #0056b3;
             /* Darker shade on hover */
         }
+
+        /* Custom styles for the SweetAlert loading modal */
+        .loading-popup {
+            animation: fadeIn 0.5s ease-in-out;
+            /* Fade-in animation */
+            border-radius: 10px;
+            /* Rounded corners */
+            background-color: #f8f9fa;
+            /* Light background color */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            /* Subtle shadow */
+        }
+
+        .loading-title {
+            font-size: 1.5em;
+            /* Larger title font size */
+            color: #007bff;
+            /* Primary color for the title */
+        }
+
+        .loading-text {
+            font-size: 1em;
+            /* Standard font size for text */
+            color: #6c757d;
+            /* Secondary color for the text */
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
     </style>
     <div class="row">
         <div class="col-md-12">
@@ -371,16 +408,26 @@
                     icon: "info",
                     showConfirmButton: false, // Hide the OK button
                     allowOutsideClick: false, // Prevent closing the modal
-                    onBeforeOpen: () => {
+                    willOpen: () => {
                         Swal.showLoading(); // Show loading spinner
+                    },
+                    // Custom CSS for animation and styling
+                    customClass: {
+                        popup: 'loading-popup',
+                        title: 'loading-title',
+                        htmlContainer: 'loading-text'
                     }
                 });
 
                 // Redirect to the detail page with encoded orderNo after a short delay
                 setTimeout(function() {
+                    Swal.close(); // Close the SweetAlert modal before redirecting
                     window.location.href = `/purchase-orders/supplier/show/${encodedOrderNo}`;
                 }, 1000); // 1 second delay before redirecting
             });
+
+
+
 
 
             $('#po_tbl').on('click', '.confirm-button', function() {
@@ -409,14 +456,14 @@
 
                         // Automatically set the current date as the confirmation date
                         const currentDate = new Date().toISOString().split('T')[
-                        0]; // Get current date in YYYY-MM-DD format
+                            0]; // Get current date in YYYY-MM-DD format
                         $('#confirmation-date').val(currentDate); // Set the value of the date input
 
                         // Get the confirmation date from the input
                         const date = $('#confirmation-date').val(); // Get the value from the input
                         if (!date) {
                             toastr.error(
-                            'Silakan masukkan tanggal konfirmasi sebelum melanjutkan.');
+                                'Silakan masukkan tanggal konfirmasi sebelum melanjutkan.');
                             return; // Exit if no date is provided
                         }
 
@@ -451,11 +498,12 @@
                                 // Show success message after the AJAX call is complete
                                 toastr.success(
                                     'PO ini telah berhasil dikonfirmasi secara otomatis!'
-                                    ); // Success message
+                                ); // Success message
                                 toastr.info(
-                                'Anda sekarang dapat mencetak PO ini.'); // Additional message to print the PO
+                                    'Anda sekarang dapat mencetak PO ini.'
+                                ); // Additional message to print the PO
                                 table.ajax
-                            .reload(); // Reload the DataTable to reflect changes
+                                    .reload(); // Reload the DataTable to reflect changes
                             },
                             error: function(xhr) {
                                 // Close the loading spinner
@@ -465,7 +513,7 @@
                                 if (xhr.status === 0) {
                                     toastr.error(
                                         'Koneksi tidak stabil. Silakan periksa koneksi internet Anda.'
-                                        );
+                                    );
                                 } else {
                                     toastr.error(
                                         'Terjadi kesalahan saat mengonfirmasi PO: ' +

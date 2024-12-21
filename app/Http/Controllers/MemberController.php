@@ -16,11 +16,43 @@ class MemberController extends Controller
         return view('members.index');
     }
 
-    public function getMembersData()
+    public function getMembersData(Request $request)
     {
         try {
-            $members = Member::get();
+            // Start with the base query
+            $members = Member::query();
 
+            // Apply global search if there is a search value
+            if ($request->search['value']) {
+                $searchValue = $request->search['value'];
+                $members->where(function($query) use ($searchValue) {
+                    $query->where('name', 'like', "%{$searchValue}%")
+                          ->orWhere('address', 'like', "%{$searchValue}%")
+                          ->orWhere('phone', 'like', "%{$searchValue}%")
+                          ->orWhere('email', 'like', "%{$searchValue}%")
+                          ->orWhere('status', 'like', "%{$searchValue}%");
+                });
+            }
+
+            // Apply ordering
+            if ($request->order) {
+                foreach ($request->order as $order) {
+                    $columnIndex = $order['column'];
+                    $columnName = $request->columns[$columnIndex]['data'];
+                    $direction = $order['dir'];
+                    $members->orderBy($columnName, $direction);
+                }
+            }
+
+            // Paginate the results
+            $members = $members->offset($request->start)
+                               ->limit($request->length)
+                               ->get();
+
+            // Get total records count
+            $totalRecords = Member::count();
+
+            // Prepare the response
             return DataTables::of($members)
                 ->addColumn('actions', function ($member) {
                     $encryptedId = Crypt::encrypt($member->id);
@@ -55,12 +87,13 @@ class MemberController extends Controller
                     return $icon;
                 })
                 ->rawColumns(['actions', 'status'])
+                ->setTotalRecords($totalRecords) // Set total records for pagination
                 ->make(true);
         } catch (\Exception $e) {
-            Log::error('Error fetching members data: ' . $e->getMessage());
-            return response()->json(['error' => 'Unable to fetch members data.'], 500);
+            return response()->json(['error' => 'Unable to fetch members data. ' . $e->getMessage()], 500);
         }
     }
+
 
     public function create()
     {

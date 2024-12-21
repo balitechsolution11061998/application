@@ -42,9 +42,10 @@
     </div>
 
     @push('scripts')
+    @push('scripts')
     <script>
         $(document).ready(function() {
-            $('#members_table').DataTable({
+            var table = $('#members_table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route('members.data') }}',
@@ -57,6 +58,12 @@
                     { data: 'status', name: 'status' },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false }
                 ]
+            });
+
+            // Handle search button click
+            $('#button-addon2').on('click', function() {
+                var searchValue = $('#search-box').val();
+                table.search(searchValue).draw(); // Use DataTable's search method
             });
 
             // Handle delete button click
@@ -97,5 +104,7 @@
             });
         });
     </script>
+    @endpush
+
     @endpush
 </x-default-layout>
