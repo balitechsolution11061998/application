@@ -24,7 +24,7 @@ class CostChangeController extends Controller
             'ccext_desc' => 'required|string',
             'reason' => 'required|integer',
             'status' => 'required|integer',
-            'active_date' => 'required', // Validate the date format
+            'active_date' => 'required|date_format:Y-m-d', // Validate the date format
             'cost_change_detail' => 'required|array',
             'cost_change_detail.*.ccext_no' => 'required|integer',
             'cost_change_detail.*.supplier' => 'required|integer',
@@ -35,7 +35,10 @@ class CostChangeController extends Controller
 
         try {
             // Create DateTime object from the validated active_date
-
+            $activeDate = \DateTime::createFromFormat('Y-m-d', $request->active_date);
+            if (!$activeDate) {
+                throw new \Exception('Invalid date format for active_date. Expected format: Y-m-d');
+            }
 
             // Update or create the head record
             $head = CcextHead::updateOrCreate(
@@ -45,23 +48,31 @@ class CostChangeController extends Controller
                     'ccext_desc' => $request->ccext_desc,
                     'reason' => $request->reason,
                     'status' => $request->status,
-                    'active_date' => $request->active_date, // Convert to YYYY-MM-DD
+                    'active_date' => $activeDate->format('Y-m-d'), // Ensure it's in YYYY-MM-DD format
                     'create_date' => now(),
                 ]
             );
 
-            // Insert cost change details
-            foreach ($request->cost_change_detail as $detail) {
-                CcextDetail::updateOrCreate(
-                    ['id' => $detail['id']], // Assuming 'id' is the unique identifier for the detail
-                    [
-                        'ccext_no' => $detail['ccext_no'],
-                        'supplier' => $detail['supplier'],
-                        'sku' => $detail['sku'],
-                        'unit_cost' => $detail['unit_cost'],
-                        'old_unit_cost' => $detail['old_unit_cost'],
-                    ]
-                );
+            // Chunk the cost_change_detail array into batches of 100
+            $chunks = array_chunk($request->cost_change_detail, 100);
+
+            foreach ($chunks as $chunk) {
+                // Insert each chunk
+                foreach ($chunk as $detail) {
+                    CcextDetail::updateOrCreate(
+                        ['id' => $detail['id']], // Assuming 'id' is the unique identifier for the detail
+                        [
+                            'ccext_no' => $detail['ccext_no'],
+                            'supplier' => $detail['supplier'],
+                            'sku' => $detail['sku'],
+                            'unit_cost' => $detail['unit_cost'],
+                            'old_unit_cost' => $detail['old_unit_cost'],
+                        ]
+                    );
+                }
+
+                // Delay for 1 second to control the insertion rate
+                sleep(1); // Sleep for 1 second
             }
 
             // Commit the transaction if everything is successful
@@ -85,8 +96,6 @@ class CostChangeController extends Controller
             return response()->json(['message' => 'Failed to process data', 'error' => $e->getMessage()], 500);
         }
     }
-
-
 
 
 }
