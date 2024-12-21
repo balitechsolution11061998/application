@@ -33,10 +33,11 @@ class CostChangeController extends Controller
             'cost_change_detail.*.old_unit_cost' => 'required|integer',
         ]);
 
+        // Initialize arrays to track results
+        $successfulInserts = [];
+        $failedInserts = [];
+
         try {
-            // Create DateTime object from the validated active_date
-
-
             // Update or create the head record
             $head = CcextHead::updateOrCreate(
                 ['ccext_no' => $request->ccext_no],
@@ -56,16 +57,26 @@ class CostChangeController extends Controller
             foreach ($chunks as $chunk) {
                 // Insert each chunk
                 foreach ($chunk as $detail) {
-                    CcextDetail::updateOrCreate(
-                        ['id' => $detail['id']], // Assuming 'id' is the unique identifier for the detail
-                        [
-                            'ccext_no' => $detail['ccext_no'],
-                            'supplier' => $detail['supplier'],
-                            'sku' => $detail['sku'],
-                            'unit_cost' => $detail['unit_cost'],
-                            'old_unit_cost' => $detail['old_unit_cost'],
-                        ]
-                    );
+                    try {
+                        $insertedDetail = CcextDetail::updateOrCreate(
+                            ['id' => $detail['id']], // Assuming 'id' is the unique identifier for the detail
+                            [
+                                'ccext_no' => $detail['ccext_no'],
+                                'supplier' => $detail['supplier'],
+                                'sku' => $detail['sku'],
+                                'unit_cost' => $detail['unit_cost'],
+                                'old_unit_cost' => $detail['old_unit_cost'],
+                            ]
+                        );
+                        // Track successful inserts
+                        $successfulInserts[] = $insertedDetail->id; // Store the ID of the inserted record
+                    } catch (\Exception $e) {
+                        // Track failed inserts
+                        $failedInserts[] = [
+                            'detail' => $detail,
+                            'error' => $e->getMessage(),
+                        ];
+                    }
                 }
 
                 // Delay for 1 second to control the insertion rate
@@ -75,7 +86,12 @@ class CostChangeController extends Controller
             // Commit the transaction if everything is successful
             DB::commit();
 
-            return response()->json(['message' => 'Data processed successfully'], 200);
+            // Prepare the response
+            return response()->json([
+                'message' => 'Data processed successfully',
+                'successful_inserts' => $successfulInserts,
+                'failed_inserts' => $failedInserts,
+            ], 200);
 
         } catch (\Exception $e) {
             // Rollback the transaction in case of error
