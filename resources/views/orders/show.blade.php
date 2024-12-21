@@ -518,20 +518,39 @@
                                         <tr class="text-center">
                                             <th>#</th>
                                             <th>SKU</th>
-                                            <th>Description</th>
                                             <th>UPC</th>
+                                            <th>Description</th>
                                             <th>Tag</th>
                                             <th>Unit Cost</th>
                                             <th>Unit Retail</th>
                                             <th>Status BKP</th>
                                             <th>PPN Cost</th>
-                                            <th>Quantity Ordered</th>
-                                            <th>Purchase UOM</th>
-                                            <th>Regular Discount</th>
+                                            <th colspan="2">Unit Order</th>
+                                            <th>Unit Received</th>
+                                            <th>Regular</th>
                                             <th>Total</th>
-                                            <th>Total PPN</th>
-                                            <th>Total Discount</th>
-                                            <th>Sub Total</th>
+                                            <th>Total</th>
+                                            <th>Total</th>
+                                            <th>Sub</th>
+                                        </tr>
+                                        <tr class="text-center">
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th>Code</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th>Quantity</th>
+                                            <th>Unit</th>
+                                            <th>Quantity</th>
+                                            <th>Unit</th>
+                                            <th></th>
+                                            <th>PPN</th>
+                                            <th>Discount</th>
+                                            <th>Total</th>
                                         </tr>
                                     </thead>
                                     <tbody style="background-color: white; color: black;">
@@ -573,11 +592,12 @@
                                                     <i class="fas fa-tag" style="color: #007bff;"></i>
                                                     {{ $item->sku }}
                                                 </td>
-                                                <td class="text-wrap">{{ $item->sku_desc }}</td>
                                                 <td class="text-center">
                                                     <i class="fas fa-barcode" style="color: #28a745;"></i>
                                                     {{ $item->upc }}
                                                 </td>
+                                                <td class="text-wrap">{{ $item->sku_desc }}</td>
+
                                                 <td class="text-center">{{ $item->tag_code }}</td>
                                                 <td class="text-end">{{ number_format($item->unit_cost, 2) }}</td>
                                                 <td class="text-end">{{ number_format($item->unit_retail, 2) }}</td>
@@ -603,6 +623,7 @@
                                                 <!-- Total PPN for the item -->
                                                 <td class="text-center">{{ $item->qty_ordered }}</td>
                                                 <td class="text-center">{{ $item->purchase_uom }}</td>
+                                                <td class="text-center">{{ $data['orderDetails']->qty_received ?? 0 }}</td> <!-- Display qty_received -->
                                                 <td class="text-center">
                                                     {{ $item->permanent_disc_pct > 0 ? $item->permanent_disc_pct . '%' : '0%' }}
                                                 </td> <!-- Displaying percentage -->
@@ -624,24 +645,24 @@
                                             $grandTotal = $totalCost + $totalPPN; // Grand total without discount
                                         @endphp
                                         <tr class="table-dark">
-                                            <td colspan="15" class="text-end text-white"><strong>TOTAL
+                                            <td colspan="16" class="text-end text-white"><strong>TOTAL
                                                     DISCOUNT:</strong></td>
                                             <td class="text-end text-white">{{ number_format($totalDiscount, 2) }}
                                             </td> <!-- Total Discount for all items -->
                                         </tr>
                                         <tr class="table-dark">
-                                            <td colspan="15" class="text-end text-white"><strong>TOTAL (before
+                                            <td colspan="16" class="text-end text-white"><strong>TOTAL (before
                                                     PPN):</strong></td>
                                             <td class="text-end text-white">{{ number_format($totalCost, 2) }}</td>
                                             <!-- Total Cost before discount -->
                                         </tr>
                                         <tr class="table-dark">
-                                            <td colspan="15" class="text-end text-white"><strong>PPN:</strong></td>
+                                            <td colspan="16" class="text-end text-white"><strong>PPN:</strong></td>
                                             <td class="text-end text-white">{{ number_format($totalPPN, 2) }}</td>
                                             <!-- Total PPN -->
                                         </tr>
                                         <tr class="table-dark">
-                                            <td colspan="15" class="text-end text-white"><strong>TOTAL (after PPN -
+                                            <td colspan="16" class="text-end text-white"><strong>TOTAL (after PPN -
                                                     Discount):</strong></td>
                                             <td class="text-end text-white">{{ number_format($grandTotal, 2) }}</td>
                                             <!-- Grand Total after discount -->

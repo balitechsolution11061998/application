@@ -687,6 +687,7 @@ class OrderController extends Controller
             ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store')
             ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code')
             ->leftJoin('rcvhead', 'ordhead.order_no', '=', 'rcvhead.order_no')
+            ->leftJoin('rcvdetail', 'rcvdetail.receive_no', '=', 'rcvhead.receive_no')
             ->leftJoin('print_histories', 'print_histories.order_no', '=', 'ordhead.order_no')
             ->leftJoin('order_confirmation_histories', 'order_confirmation_histories.order_no', '=', 'ordhead.order_no')
             ->leftJoin('users as confirmation_user', 'confirmation_user.username', '=', 'order_confirmation_histories.username') // Alias for confirmation user
@@ -708,6 +709,7 @@ class OrderController extends Controller
                 'supplier.tax_ind as tax_ind',
                 'rcvhead.receive_date as receive_date',
                 'rcvhead.receive_no as receive_no',
+                'rcvdetail.*', // Include all fields from rcvdetail
                 'print_histories.printed_at',
                 'order_confirmation_histories.confirmation_date',
                 'order_confirmation_histories.username as confirmation_by',
@@ -717,6 +719,7 @@ class OrderController extends Controller
             ->where('ordhead.order_no', $order_no)
             ->first();
     }
+
 
 
     private function getOrderItems($order_no)
