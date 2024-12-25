@@ -14,7 +14,7 @@
         background-color: #ffffff; /* Set card background to white */
     }
     .calendar-header {
-        background-color: #007bff; /* Primary color for header */
+        background-color: #28a745; /* Green color for header */
         color: white; /* White text */
         padding: 15px; /* Padding for header */
         text-align: center; /* Centered text */
@@ -23,6 +23,17 @@
         padding: 10px; /* Padding for footer */
         text-align: right; /* Right-aligned footer */
     }
+    .fc-event {
+        border-radius: 10px; /* Make events rounded */
+        display: flex; /* Flexbox for alignment */
+        align-items: center; /* Center items vertically */
+        padding: 5px; /* Padding for events */
+        color: white; /* White text for events */
+        background-color: #28a745; /* Green background for events */
+    }
+    .fc-event i {
+        margin-right: 5px; /* Space between icon and text */
+    }
     .po-rcv-card {
         border: 1px solid #e0e0e0; /* Light border for PO/RCV card */
         border-radius: 10px; /* Rounded corners */
@@ -30,6 +41,14 @@
         background-color: #ffffff; /* Set card background to white */
         padding: 20px; /* Padding for card content */
         margin-bottom: 20px; /* Space below the card */
+    }
+    /* Modal styles */
+    .modal-body {
+        color: black; /* Set text color to black */
+        font-family: 'Arial', sans-serif; /* Set font style */
+    }
+    .modal-title {
+        font-weight: bold; /* Bold title */
     }
 </style>
 
@@ -69,7 +88,7 @@
             <div class="calendar-container">
                 <div class="calendar-card">
                     <div class="calendar-header">
-                        <h3 class="mb-0">Delivery Schedule</h3>
+                        <h3 class="mb-0"><i class="fas fa-calendar-alt"></i> Delivery Schedule</h3> <!-- Calendar icon -->
                     </div>
                     <div id="calendar"></div>
                     <div class="calendar-footer">
@@ -80,6 +99,29 @@
 
             <div class="footer">
                 <p>&copy; 2024 PT. Global Retailindo Pratama. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Event Details -->
+<div class="modal fade" id="eventDetailModal" tabindex="-1" aria-labelledby="eventDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eventDetailModalLabel">Event Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="loading-spinner" id="loadingSpinner" style="display: none;">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i> <!-- Loading spinner -->
+                </div>
+                <p id="eventDescription"></p>
+                <p><strong>Store:</strong> <span id="eventStore"></span></p>
+                <p><strong>Tanggal Kirim:</strong> <span id="eventDeliveryDate"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -98,25 +140,59 @@
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
             events: [
-                // Sample events
+                // Sample events with Font Awesome icons and additional properties
                 {
                     title: 'Delivery 1',
                     start: '2024-12-25',
                     description: 'Delivery of goods to client A',
+                    store: 'Store A',
+                    deliveryDate: '2024-12-25',
+                    extendedProps: {
+                        icon: '<i class="fas fa-truck"></i>',
+                    }
                 },
                 {
                     title: 'Delivery 2',
                     start: '2024-12-28',
                     description: 'Delivery of goods to client B',
+                    store: 'Store B',
+                    deliveryDate: '2024-12-28',
+                    extendedProps: {
+                        icon: '<i class="fas fa-truck"></i>',
+                    }
                 },
                 {
                     title: 'Delivery 3',
                     start: '2024-12-30',
                     description: 'Delivery of goods to client C',
+                    store: 'Store C',
+                    deliveryDate: '2024-12-30',
+                    extendedProps: {
+                        icon: '<i class="fas fa-truck"></i>',
+                    }
                 }
             ],
+            eventContent: function(arg) {
+                return { html: arg.event.extendedProps.icon + ' ' + arg.event.title };
+            },
             eventClick: function(info) {
-                alert(info.event.title + ': ' + info.event.extendedProps.description);
+                // Show loading spinner
+                document.getElementById('loadingSpinner').style.display = 'flex';
+
+                // Simulate a delay for loading (you can replace this with an actual AJAX call if needed)
+                setTimeout(() => {
+                    // Populate modal with event details
+                    document.getElementById('eventDescription').innerText = info.event.extendedProps.description;
+                    document.getElementById('eventStore').innerText = info.event.store;
+                    document.getElementById('eventDeliveryDate').innerText = info.event.deliveryDate;
+
+                    // Hide the loading spinner
+                    document.getElementById('loadingSpinner').style.display = 'none';
+
+                    // Show the modal
+                    var myModal = new bootstrap.Modal(document.getElementById('eventDetailModal'));
+                    myModal.show();
+                }, 1000); // Simulated delay of 1 second
             }
         });
 
