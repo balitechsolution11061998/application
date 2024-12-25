@@ -76,7 +76,7 @@ class CostChangeController extends Controller
                     } catch (\Exception $e) {
                         // Track failed inserts
                         $failedInserts[] = [
-                            'detail' => $detail,
+                            'sku' => $detail['sku'], // Store the SKU of the failed insert
                             'error' => $e->getMessage(),
                         ];
                         $failedCount++; // Increment failed count
@@ -93,10 +93,10 @@ class CostChangeController extends Controller
             // Prepare the response
             return response()->json([
                 'message' => 'Data processed successfully',
-                'successful_count' => $successfulCount,
-                'failed_count' => $failedCount,
+                'total_successful_count' => $successfulCount,
+                'total_failed_count' => $failedCount,
                 'successful_inserts' => $successfulInserts,
-                'failed_inserts' => $failedInserts,
+                'failed_inserts' => $failedInserts, // Return the SKUs of failed inserts
             ], 200);
 
         } catch (\Exception $e) {
@@ -115,5 +115,6 @@ class CostChangeController extends Controller
             return response()->json(['message' => 'Failed to process data', 'error' => $e->getMessage()], 500);
         }
     }
+
 
 }
