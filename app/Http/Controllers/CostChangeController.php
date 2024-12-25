@@ -18,19 +18,31 @@ class CostChangeController extends Controller
         // Get initial memory usage
         $initialMemory = memory_get_usage();
 
-        // Validate the incoming request
+        // Validate the incoming request with custom messages
         $request->validate([
             'ccext_no' => 'required|integer',
             'ccext_desc' => 'required|string',
             'reason' => 'required|integer',
             'status' => 'required|integer',
-            'active_date' => 'required', // Validate the date format
+            'active_date' => 'required|date', // Validate the date format
             'cost_change_detail' => 'required|array',
             'cost_change_detail.*.ccext_no' => 'required|integer',
             'cost_change_detail.*.supplier' => 'required|integer',
             'cost_change_detail.*.sku' => 'required|string',
             'cost_change_detail.*.unit_cost' => 'required|numeric',
             'cost_change_detail.*.old_unit_cost' => 'required|integer',
+        ], [
+            'ccext_no.required' => 'The cost change number is required.',
+            'ccext_desc.required' => 'The description is required.',
+            'reason.required' => 'The reason is required.',
+            'status.required' => 'The status is required.',
+            'active_date.required' => 'The active date is required.',
+            'cost_change_detail.required' => 'Cost change details are required.',
+            'cost_change_detail.*.ccext_no.required' => 'The cost change number for each detail is required.',
+            'cost_change_detail.*.supplier.required' => 'The supplier for each detail is required.',
+            'cost_change_detail.*.sku.required' => 'The SKU for each detail is required.',
+            'cost_change_detail.*.unit_cost.required' => 'The unit cost for each detail is required.',
+            'cost_change_detail.*.old_unit_cost.required' => 'The old unit cost for each detail is required.',
         ]);
 
         // Initialize arrays to track results
@@ -115,6 +127,7 @@ class CostChangeController extends Controller
             return response()->json(['message' => 'Failed to process data', 'error' => $e->getMessage()], 500);
         }
     }
+
 
 
 }
