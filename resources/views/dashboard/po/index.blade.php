@@ -406,7 +406,7 @@
                             `Date Range: <strong>${startDate.format('DD MMMM YYYY')} - ${endDate.format('DD MMMM YYYY')}</strong>`
                         );
 
-                        fetchDataProgress(startDate.format('YYYY-MM-DD'), endDate.format(
+                        fetchDataPerStatus(startDate.format('YYYY-MM-DD'), endDate.format(
                             'YYYY-MM-DD')); // Pass formatted dates
                     } else {
                         alert('Please select a start date.');
