@@ -344,13 +344,17 @@
                 fetchData();
 
                 $('#filterDateRange').daterangepicker({
-                    locale: {
-                        format: 'YYYY-MM-DD'
-                    },
-                    opens: 'left',
-                    maxDate: moment().add(1, 'month'), // Limit to one month from today
-                }, function(start, end) {
-                    $('#filterDateRange').data('daterangepicker').setEndDate(moment(start).add(1, 'month'));
+                    startDate: moment().subtract(29, "days"),
+                    endDate: moment(),
+                    ranges: {
+                        "Today": [moment(), moment()],
+                        "Yesterday": [moment().subtract(1, "days"), moment().subtract(1, "days")],
+                        "Last 7 Days": [moment().subtract(6, "days"), moment()],
+                        "Last 30 Days": [moment().subtract(29, "days"), moment()],
+                        "This Month": [moment().startOf("month"), moment().endOf("month")],
+                        "Last Month": [moment().subtract(1, "month").startOf("month"), moment().subtract(1,
+                            "month").endOf("month")]
+                    }
                 });
 
                 // Event Listener for the Filter Button

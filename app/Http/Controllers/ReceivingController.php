@@ -7,6 +7,7 @@ use App\Models\RcvDetail;
 use App\Models\RcvHead;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use DateTime;
 
 class ReceivingController extends Controller
 {
@@ -29,9 +30,12 @@ class ReceivingController extends Controller
                 $query->where('order_no', 'like', '%' . $request->order_no . '%');
             }
 
-            if ($request->has('filterDate') && $request->filterDate != '') {
-                $dates = explode(' - ', $request->filterDate);
-                $query->whereBetween('approval_date', [trim($dates[0]), trim($dates[1])]);
+            if (!empty($request->startDate) && !empty($request->endDate)) {
+                // Convert date format from MM/DD/YYYY to DD-MM-YYYY
+                $startDate = DateTime::createFromFormat('m/d/Y', $request->startDate)->format('Y-m-d');
+                $endDate = DateTime::createFromFormat('m/d/Y', $request->endDate)->format('Y-m-d');
+
+                $query->whereBetween('ordhead.approval_date', [$startDate, $endDate]);
             }
 
             // Prepare results for DataTables

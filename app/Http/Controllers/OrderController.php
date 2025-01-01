@@ -787,6 +787,7 @@ class OrderController extends Controller
 
                 // Base query with joins and selections
                 $query = DB::table('ordhead')
+                    ->leftJoin('rcvhead','rcvhead.order_no','=','ordhead.order_no')
                     ->leftJoin('ordsku', 'ordsku.order_no', '=', 'ordhead.order_no')
                     ->leftJoin('store', 'ordhead.ship_to', '=', 'store.store')
                     ->leftJoin('supplier', 'ordhead.supplier', '=', 'supplier.supp_code')
@@ -797,7 +798,9 @@ class OrderController extends Controller
                         'supplier.supp_code as supp_code',
                         'supplier.supp_name as supp_name',
                         'ordhead.not_after_date as expired_date',
-                        'ordhead.approval_date as approval_date'
+                        'ordhead.approval_date as approval_date',
+                        'rcvhead.receive_no',
+                        'rcvhead.receive_date'
                     )
                     ->distinct()
                     ->orderBy('approval_date', 'desc');

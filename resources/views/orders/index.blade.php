@@ -120,9 +120,11 @@
                     <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
                         <th class="min-w-100px">...</th>
                         <th class="min-w-100px">ORDER NO</th>
+                        <th class="min-w-100px">RECEIVE NO</th>
                         <th class="text-end min-w-150px">STORE</th>
                         <th class="text-end min-w-100px">SUPPLIER</th>
                         <th class="text-end min-w-100px">APPROVAL DATE</th>
+                        <th class="min-w-100px">RECEIVE DATE</th>
                         <th class="text-end min-w-100px">EXPIRED DATE</th>
                         <th class="text-end min-w-50px">Status</th>
                     </tr>
@@ -509,6 +511,37 @@
                             }
                         },
                         {
+                            data: 'receive_no',
+                            name: 'receive_no',
+                            render: function(data, type, row) {
+                                // Initialize displayText variable
+                                let displayText = '';
+
+                                // Check if receive_no data exists
+                                if (!data) {
+                                    // If data is not available, show a warning message
+                                    displayText = `
+                                        <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 6px 12px; border-radius: 20px; background-color: #ffebee; color: #d32f2f;">
+                                            <i class="fas fa-exclamation-circle" style="font-size: 16px; color: #d32f2f;"></i>
+                                            Receive number not available
+                                        </span>
+                                    `;
+                                } else {
+                                    // If data exists, display it with a clipboard icon
+                                    displayText = `
+                                        <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 6px 12px; border-radius: 20px; background-color: #e0f7fa; color: #00796b;">
+                                            <i class="fas fa-clipboard-list" style="font-size: 16px; color: #00796b;"></i>
+                                            ${data}
+                                        </span>
+                                    `;
+                                }
+
+                                // Return the constructed display text
+                                return displayText;
+                            }
+                        },
+
+                        {
                             data: 'store_name', // Assuming you have store_name in your data
                             name: 'store_name',
                             render: function(data, type, row) {
@@ -577,6 +610,32 @@
                                 `;
                             }
                         },
+                        {
+                            data: 'receive_date',
+                            name: 'receive_date',
+                            render: function(data, type, row) {
+                                // Check if data is null or undefined
+                                if (!data) {
+                                    return `
+                                        <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 5px 10px; border-radius: 15px; background-color: #f5f5f5; color: #4a4a4a;">
+                                            <i class="fas fa-exclamation-circle" style="font-size: 16px; color: #d32f2f;"></i>
+                                            Not found data
+                                        </span>
+                                    `;
+                                }
+
+                                // Format the date if it exists
+                                let formattedDate = moment(data).format(
+                                'DD MMMM YYYY'); // e.g., "23 December 2023"
+                                return `
+                                    <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 5px 10px; border-radius: 15px; background-color: #f5f5f5; color: #4a4a4a;">
+                                        <i class="fas fa-calendar-alt" style="font-size: 16px; color: #ff7f50;"></i>
+                                        ${formattedDate}
+                                    </span>
+                                `;
+                            }
+                        },
+
                         {
                             data: 'expired_date',
                             name: 'expired_date',
