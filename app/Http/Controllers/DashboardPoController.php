@@ -129,4 +129,89 @@ class DashboardPoController extends Controller
             return response()->json(['error' => 'Failed to fetch progress count'], 500);
         }
     }
+    public function getPOCountPerDate(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        try {
+            // Initialize the query
+            $query = OrdHead::select(DB::raw('DATE(approval_date) as date'), DB::raw('count(*) as count'));
+
+            // Apply date filtering only if both dates are provided
+            if ($startDate && $endDate) {
+                $query->whereBetween('approval_date', [$startDate, $endDate]);
+            }
+
+            // Group by date and order by date
+            $data = $query->groupBy(DB::raw('DATE(approval_date)'))
+                ->orderBy(DB::raw('DATE(approval_date)'))
+                ->get();
+
+            // Prepare the response data
+            $dates = $data->pluck('date')->toArray();
+            $counts = $data->pluck('count')->toArray();
+
+            // If no data is returned, ensure today's date is included
+            if (empty($dates)) {
+                $today = date('Y-m-d');
+                $dates = [$today];
+                $counts = [0]; // Assuming no orders for today
+            }
+
+            return response()->json([
+                'approval_date' => $dates,
+                'counts' => $counts
+            ]);
+        } catch (\Exception $e) {
+            // Log the error using Spatie Activity Log
+            activity()
+                ->performedOn(new OrdHead())
+                ->log('Error fetching PO count per date: ' . $e->getMessage(), [
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'error' => $e->getMessage()
+                ]);
+
+            // Return an error response
+            return response()->json(['error' => 'Failed to fetch PO count per date'], 500);
+        }
+    }
+    public function getPOCountPerStore(Request $request)
+    {
+        // Fetch purchase orders grouped by ship_to and approval_date
+        try {
+            $data = OrdHead::select(
+                    'ship_to',
+                    DB::raw('DATE(approval_date) as approval_date'),
+                    DB::raw('count(*) as count')
+                )
+                ->groupBy('ship_to', DB::raw('DATE(approval_date)')) // Group by ship_to and approval_date
+                ->orderBy('ship_to') // Optional: Order by ship_to
+                ->orderBy(DB::raw('DATE(approval_date)')) // Optional: Order by approval_date
+                ->get();
+
+            // Prepare the response
+            $categories = $data->pluck('ship_to'); // Assuming ship_to is the identifier for stores
+            $dates = $data->pluck('approval_date'); // Get the approval dates
+            $counts = $data->pluck('count'); // Get the counts
+
+            return response()->json([
+                'categories' => $categories,
+                'dates' => $dates,
+                'counts' => $counts,
+            ]);
+        } catch (\Exception $e) {
+            // Log the error using Spatie Activity Log
+            activity()
+                ->performedOn(new OrdHead())
+                ->log('Error fetching PO count per store: ' . $e->getMessage(), [
+                    'error' => $e->getMessage()
+                ]);
+
+            // Return an error response
+            return response()->json(['error' => 'Failed to fetch PO count per store'], 500);
+        }
+    }
+
 }

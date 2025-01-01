@@ -13,135 +13,119 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
         <style>
             body {
-                background-color: #f4f7fa;
                 font-family: 'Arial', sans-serif;
-                /* Change font family */
-            }
-
-            .card {
-                border-radius: 15px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-                transition: transform 0.3s;
+                background-color: #f4f7fa;
+                /* Light background color */
+                margin: 0;
                 padding: 20px;
-                text-align: center;
-                background-color: #ffffff;
-            }
-
-            .card:hover {
-                transform: scale(1.05);
-            }
-
-            .progress {
-                height: 20px;
-                border-radius: 10px;
-            }
-
-            .dashboard-header {
-                background: linear-gradient(90deg, rgba(111, 66, 193, 1) 0%, rgba(255, 255, 255, 1) 100%);
-                padding: 30px;
-                border-radius: 15px;
-                color: white;
-                font-family: 'Helvetica Neue', sans-serif;
-                /* Change font family */
-            }
-
-            .summary-card {
-                margin-bottom: 20px;
-                padding: 30px;
-                border-radius: 15px;
-                background-color: #f8f9fa;
-                /* Light background for summary cards */
-                transition: background-color 0.3s;
-            }
-
-            .summary-card:hover {
-                background-color: #e2e6ea;
-                /* Darker background on hover */
-            }
-
-            .icon {
-                font-size: 2rem;
-                margin-bottom: 10px;
-            }
-
-            .bg-primary {
-                background-color: #007bff !important;
-            }
-
-            .bg-warning {
-                background-color: #ffc107 !important;
-            }
-
-            .bg-danger {
-                background-color: #dc3545 !important;
-            }
-
-            .bg-info {
-                background-color: #17a2b8 !important;
-            }
-
-            .bg-success {
-                background-color: #28a745 !important;
-            }
-
-            .bg-purple {
-                background-color: #6f42c1 !important;
             }
 
             .chart-container {
-                background-color: #fff;
+                background: white;
                 border-radius: 15px;
-                padding: 20px;
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+                padding: 20px;
                 margin-bottom: 20px;
+                transition: transform 0.3s;
             }
 
-            .progress-bar {
-                transition: width 1s ease;
-                border-radius: 10px;
-                /* Rounded corners for progress bar */
+            .chart-container:hover {
+                transform: scale(1.02);
+                /* Slightly scale up on hover */
             }
 
-            /* Grid layout for charts */
-            .chart-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                gap: 20px;
-                /* Space between grid items */
+            h5 {
+                margin-bottom: 15px;
+                color: #343a40;
             }
 
-            /* Card styling for charts */
-            .chart-card {
-                border-radius: 15px;
-                padding: 20px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-                background-color: #ffffff;
+            #dataPerDate {
+                height: 400px;
+                /* Set a height for the chart */
+                margin-bottom: 20px;
+                /* Space below the chart */
             }
 
-            /* Custom tooltip styling */
-            .apexcharts-tooltip {
-                background: #343a40;
-                /* Dark background for tooltip */
-                color: #ffffff;
-                /* White text for tooltip */
+            .button-container {
+                display: flex;
+                align-items: center;
+                /* Center items vertically */
+                margin-top: 15px;
+            }
+
+            .btn {
+                background-color: #007bff;
+                color: white;
+                border: none;
                 border-radius: 5px;
-                padding: 10px;
-                font-size: 12px;
+                padding: 10px 15px;
+                cursor: pointer;
+                margin-right: 10px;
+                transition: background-color 0.3s;
+                font-size: 14px;
+                /* Increase font size for better readability */
             }
 
-            .spinner-container {
+            .btn:hover {
+                background-color: #0056b3;
+                /* Darker blue on hover */
+            }
+
+            .switch {
+                display: inline-block;
+                width: 60px;
+                height: 34px;
+                position: relative;
+                margin-left: 10px;
+            }
+
+            .switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+            .slider {
                 position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                display: none;
-                /* Hidden by default */
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                transition: .4s;
+                border-radius: 34px;
             }
 
-            .date-range {
-                margin-top: 20px;
-                font-size: 1.2rem;
-                color: #6c757d;
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 26px;
+                width: 26px;
+                left: 4px;
+                bottom: 4px;
+                background-color: white;
+                transition: .4s;
+                border-radius: 50%;
+            }
+
+            input:checked+.slider {
+                background-color: #007bff;
+                /* Change switch color when checked */
+            }
+
+            input:checked+.slider:before {
+                transform: translateX(26px);
+                /* Move the slider */
+            }
+
+            .toggle-label {
+                margin-left: 10px;
+                /* Space between switch and label */
+                font-size: 14px;
+                /* Increase font size for better readability */
+                color: #343a40;
+                /* Dark color for the label */
             }
         </style>
     @endpush
@@ -351,28 +335,27 @@
 
 
 
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Active Applications Chart -->
+                <div class="chart-container chart-card">
+                    <h5 class="font-weight-bold">Active Applications</h5>
+                    <div id="dataPerDate"></div> <!-- Set a height for the chart -->
 
-
-        <!-- Grid for Charts -->
-        <div class="chart-grid">
-            <!-- Active Applications Chart -->
-            <div class="chart-container chart-card">
-                <h5 class="font-weight-bold">Active Applications</h5>
-                <div id="activeApplicationsChart"></div>
+                </div>
             </div>
 
-            <!-- Pie Chart for Purchase Orders per Date -->
-            <div class="chart-container chart-card">
-                <h5 class="font-weight-bold">Purchase Orders per Date</h5>
-                <div id="purchaseOrdersPieChart"></div>
+            <div class="col-md-6">
+                <!-- Pie Chart for Purchase Orders per Date -->
+                <div class="chart-container chart-card">
+                    <h5 class="font-weight-bold">Purchase Orders per Date</h5>
+                    <div id="purchaseOrdersPieChart"></div>
+                </div>
             </div>
         </div>
 
-        <!-- Bar Chart for Net Profit and Revenue -->
-        <div class="chart-container chart-card">
-            <h5 class="font-weight-bold">Net Profit and Revenue</h5>
-            <div id="kt_apexcharts_1"></div>
-        </div>
+
+
     </div>
 
     @push('scripts')
@@ -423,182 +406,16 @@
 
                 // Update date range based on user input
 
-                // Initialize the active applications chart
-                const options = {
-                    chart: {
-                        type: 'bar',
-                        height: 350,
-                    },
-                    series: [{
-                        name: 'Applications',
-                        data: [80, 55, 47, 35, 24]
-                    }],
-                    xaxis: {
-                        categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    },
-                    colors: ['#6f42c1'],
-                };
-
-                const activeApplicationsChart = new ApexCharts(document.querySelector("#activeApplicationsChart"),
-                    options);
-                activeApplicationsChart.render().catch(error => {
-                    console.error("Error rendering active applications chart:", error);
-                });
 
                 // Initialize the pie chart for purchase orders per date
-                const pieOptions = {
-                    chart: {
-                        type: 'pie',
-                        height: 350,
-                    },
-                    series: [44, 55, 13, 43, 22], // Dummy data for the pie chart
-                    labels: ['Order 1', 'Order 2', 'Order 3', 'Order 4', 'Order 5'], // Labels for the pie chart
-                    colors: ['#007bff', '#ffc107', '#28a745', '#dc3545',
-                        '#17a2b8'
-                    ], // Custom colors for the pie slices
-                };
-
-                const purchaseOrdersPieChart = new ApexCharts(document.querySelector("#purchaseOrdersPieChart"),
-                    pieOptions);
-                purchaseOrdersPieChart.render().catch(error => {
-                    console.error("Error rendering purchase orders pie chart:", error);
-                });
 
                 // Initialize the bar chart for Net Profit and Revenue
-                var element = document.getElementById('kt_apexcharts_1');
-                var height = parseInt(window.getComputedStyle(element).height);
-                var labelColor = getComputedStyle(document.documentElement).getPropertyValue('--kt-gray-500');
-                var borderColor = getComputedStyle(document.documentElement).getPropertyValue('--kt-gray-200');
-                var baseColor = getComputedStyle(document.documentElement).getPropertyValue('--kt-primary');
-                var secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--kt-gray-300');
+                fetchPOData();
 
-                if (!element) {
-                    return;
-                }
-
-                var barOptions = {
-                    series: [{
-                        name: 'Net Profit',
-                        data: [44, 55, 57, 56, 61, 58]
-                    }, {
-                        name: 'Revenue',
-                        data: [76, 85, 101, 98, 87, 105]
-                    }],
-                    chart: {
-                        fontFamily: 'inherit',
-                        type: 'bar',
-                        height: height,
-                        toolbar: {
-                            show: false
-                        },
-                        animations: {
-                            enabled: true, // Enable animations
-                            easing: 'easeinout',
-                            speed: 800,
-                            animateGradually: {
-                                enabled: true,
-                                delay: 150
-                            },
-                            dynamicAnimation: {
-                                enabled: true,
-                                speed: 350
-                            }
-                        }
-                    },
-                    plotOptions: {
-                        bar: {
-                            horizontal: false,
-                            columnWidth: ['30%'],
-                            endingShape: 'rounded', // Rounded corners for bars
-                            borderRadius: 10 // Adjust this value for more or less rounding
-                        },
-                    },
-                    legend: {
-                        show: false
-                    },
-                    dataLabels: {
-                        enabled: false
-                    },
-                    stroke: {
-                        show: true,
-                        width: 2,
-                        colors: ['transparent']
-                    },
-                    xaxis: {
-                        categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-                        axisBorder: {
-                            show: false,
-                        },
-                        axisTicks: {
-                            show: false
-                        },
-                        labels: {
-                            style: {
-                                colors: labelColor,
-                                fontSize: '12px'
-                            }
-                        }
-                    },
-                    yaxis: {
-                        labels: {
-                            style: {
-                                colors: labelColor,
-                                fontSize: '12px'
-                            }
-                        }
-                    },
-                    fill: {
-                        opacity: 1
-                    },
-                    states: {
-                        normal: {
-                            filter: {
-                                type: 'none',
-                                value: 0
-                            }
-                        },
-                        hover: {
-                            filter: {
-                                type: 'none',
-                                value: 0
-                            }
-                        },
-                        active: {
-                            allowMultipleDataPointsSelection: false,
-                            filter: {
-                                type: 'none',
-                                value: 0
-                            }
-                        }
-                    },
-                    tooltip: {
-                        style: {
-                            fontSize: '12px'
-                        },
-                        y: {
-                            formatter: function(val) {
-                                return '$' + val + ' thousands'
-                            }
-                        }
-                    },
-                    colors: [baseColor, secondaryColor],
-                    grid: {
-                        borderColor: borderColor,
-                        strokeDashArray: 4,
-                        yaxis: {
-                            lines: {
-                                show: true
-                            }
-                        }
-                    }
-                };
-
-                var barChart = new ApexCharts(element, barOptions);
-                barChart.render().catch(error => {
-                    console.error("Error rendering bar chart:", error);
-                });
 
                 fetchDataPerStatus();
+                fetchPODataPerStore();
+
             });
 
             function fetchDataPerStatus(startDate, endDate) {
@@ -692,6 +509,223 @@
                 });
             }
 
+            function fetchPOData(startDate, endDate) {
+                $.ajax({
+                    url: '/dashboard-po/purchase-orders/count-per-date', // Replace with your API endpoint
+                    method: 'GET',
+                    data: {
+                        start_date: startDate,
+                        end_date: endDate
+                    },
+                    beforeSend: function() {
+                        // Show a loading spinner before the request is sent
+                        $('#loadingSpinner').show();
+                    },
+                    success: function(response) {
+                        console.log(response, 'approval_date'); // Log the response for debugging
+                        // Extract categories (dates) and counts from the response
+                        const categories = response.approval_date; // Array of dates
+                        const counts = response.counts; // Array of counts for each date
+
+                        // Call the function to render the chart with the fetched data
+                        renderPOChart(categories, counts);
+                    },
+                    error: function() {
+                        console.error('Error fetching PO data'); // Log error if the request fails
+                    },
+                    complete: function() {
+                        // Hide the loading spinner after the request is complete
+                        $('#loadingSpinner').hide();
+                    }
+                });
+            }
+
+            // Function to render the chart
+            function renderPOChart(categories, counts) {
+                var element = document.getElementById('dataPerDate'); // Get the chart element
+
+                if (!element) {
+                    console.error("Chart element not found"); // Log if the element is not found
+                    return; // Exit if the element is not found
+                }
+
+                var height = parseInt(window.getComputedStyle(element).height) || 400; // Default height if not found
+                var labelColor = getComputedStyle(document.documentElement).getPropertyValue('--kt-gray-500') || '#6c757d';
+                var borderColor = getComputedStyle(document.documentElement).getPropertyValue('--kt-gray-200') || '#e9ecef';
+                var baseColor = getComputedStyle(document.documentElement).getPropertyValue('--kt-primary') || '#007bff';
+
+                // Chart options
+                var barOptions = {
+                    series: [{
+                        name: 'Purchase Orders',
+                        data: counts // Data for counts
+                    }],
+                    chart: {
+                        fontFamily: 'inherit',
+                        type: 'bar',
+                        height: height,
+                        toolbar: {
+                            show: false
+                        },
+                        animations: {
+                            enabled: true,
+                            easing: 'easeinout',
+                            speed: 800,
+                            animateGradually: {
+                                enabled: true,
+                                delay: 150
+                            },
+                            dynamicAnimation: {
+                                enabled: true,
+                                speed: 350
+                            }
+                        }
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: false,
+                            columnWidth: ['30%'],
+                            endingShape: 'rounded',
+                            borderRadius: 10
+                        },
+                    },
+                    legend: {
+                        show: true
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    stroke: {
+                        show: true,
+                        width: 2,
+                        colors: ['transparent']
+                    },
+                    xaxis: {
+                        categories: categories, // Use the fetched categories (dates)
+                        axisBorder: {
+                            show: false,
+                        },
+                        axisTicks: {
+                            show: false
+                        },
+                        labels: {
+                            style: {
+                                colors: labelColor,
+                                fontSize: '12px'
+                            }
+                        }
+                    },
+                    yaxis: {
+                        labels: {
+                            style: {
+                                colors: labelColor,
+                                fontSize: '12px'
+                            }
+                        }
+                    },
+                    fill: {
+                        opacity: 1
+                    },
+                    tooltip: {
+                        style: {
+                            fontSize: '12px'
+                        },
+                        y: {
+                            formatter: function(val) {
+                                return val; // Format the tooltip value as needed
+                            }
+                        }
+                    },
+                    colors: [baseColor],
+                    grid: {
+                        borderColor: borderColor,
+                        strokeDashArray: 4,
+                        yaxis: {
+                            lines: {
+                                show: true
+                            }
+                        }
+                    }
+                };
+
+                // Create and render the bar chart
+                var barChart = new ApexCharts(element, barOptions);
+                barChart.render().catch(error => {
+                    console.error("Error rendering bar chart:", error); // Log any rendering errors
+                });
+            }
+
+            function fetchPODataPerStore() {
+                $.ajax({
+                    url: '/dashboard-po/purchase-orders/per-store', // Replace with your actual API endpoint
+                    method: 'GET',
+                    beforeSend: function() {
+                        console.log("Fetching data..."); // Optional: Show loading message
+                    },
+                    success: function(response) {
+                        // Assuming response is structured as { categories: [...], counts: [...] }
+                        const categories = response.categories; // Array of store names
+                        const counts = response.counts; // Array of counts for each store
+
+                        // Call the function to render the pie chart with the fetched data
+                        renderPieChart(categories, counts);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error fetching data:", error); // Log error if the request fails
+                    }
+                });
+            }
+
+            function renderPieChart(categories, counts) {
+                var element = document.getElementById('purchaseOrdersPieChart'); // Get the pie chart element
+
+                if (!element) {
+                    console.error("Pie chart element not found"); // Log if the element is not found
+                    return; // Exit if the element is not found
+                }
+
+                // Validate categories and counts
+                if (!Array.isArray(categories) || !Array.isArray(counts)) {
+                    console.error("Categories or counts are not arrays:", {
+                        categories,
+                        counts
+                    });
+                    return; // Exit if they are not arrays
+                }
+
+                if (categories.length === 0 || counts.length === 0) {
+                    console.error("Categories or counts are empty:", {
+                        categories,
+                        counts
+                    });
+                    return; // Exit if they are empty
+                }
+
+                var pieOptions = {
+                    series: counts,
+                    chart: {
+                        type: 'pie',
+                        height: 400
+                    },
+                    labels: categories,
+                    tooltip: {
+                        style: {
+                            fontSize: '12px'
+                        },
+                        y: {
+                            formatter: function(val) {
+                                return val; // Format the tooltip value as needed
+                            }
+                        }
+                    }
+                };
+
+                // Create and render the pie chart
+                var pieChart = new ApexCharts(element, pieOptions);
+                pieChart.render().catch(error => {
+                    console.error("Error rendering pie chart:", error); // Log any rendering errors
+                });
+            }
 
 
 

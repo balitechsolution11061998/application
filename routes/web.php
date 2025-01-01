@@ -96,6 +96,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::prefix('dashboard-po')->as('dashboard-po.')->group(function () {
         Route::get('/', [DashboardPoController::class, 'index'])->name('index');
         Route::get('/purchase-orders/status', [DashboardPoController::class, 'fetchDataPerStatus'])->name('progress');
+        Route::get('/purchase-orders/count-per-date', [DashboardPoController::class, 'getPOCountPerDate'])->name('getPOCountPerDate');
+        Route::get('/purchase-orders/per-store', [DashboardPoController::class, 'getPOCountPerStore'])->name('getPOCountPerStore');
     });
 
     // Role Management Routes
