@@ -85,6 +85,24 @@
 
             .progress-bar {
                 transition: width 1s ease;
+                border-radius: 10px;
+                /* Rounded corners for progress bar */
+            }
+
+            /* Grid layout for charts */
+            .chart-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 20px;
+                /* Space between grid items */
+            }
+
+            /* Card styling for charts */
+            .chart-card {
+                border-radius: 15px;
+                padding: 20px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+                background-color: #ffffff;
             }
         </style>
     @endpush
@@ -103,12 +121,15 @@
                     <h5 class="font-weight-bold">Total Orders</h5>
                     <h2 class="text-primary display-4">1,250</h2>
                     <p class="text-muted">+15% <span class="text-success">(+5% Inc)</span></p>
-                    <div class="progress mb-3" style="height: 25px; padding: 0 5px; border-radius: 15px; overflow: hidden;">
-                        <div class="progress-bar bg-primary progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress mb-3"
+                        style="height: 25px; padding: 0 5px; border-radius: 15px; overflow: hidden;">
+                        <div class="progress-bar bg-primary progress-bar-animated" role="progressbar" style="width: 0%;"
+                            aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
                             <span class="text-white" style="font-weight: bold;">75%</span>
                         </div>
                     </div>
-                    <img src="{{ asset('img/background/order-now.png') }}" alt="Total Orders Icon" class="icon" style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
+                    <img src="{{ asset('img/background/order-now.png') }}" alt="Total Orders Icon" class="icon"
+                        style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
                 </div>
             </div>
 
@@ -117,12 +138,15 @@
                     <h5 class="font-weight-bold">Pending Orders</h5>
                     <h2 class="text-warning display-4">300</h2>
                     <p class="text-muted">+10% <span class="text-success">(+2% Inc)</span></p>
-                    <div class="progress mb-3" style="height: 25px; padding: 0 5px; border-radius: 15px; overflow: hidden;">
-                        <div class="progress-bar bg-warning progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress mb-3"
+                        style="height: 25px; padding: 0 5px; border-radius: 15px; overflow: hidden;">
+                        <div class="progress-bar bg-warning progress-bar-animated" role="progressbar" style="width: 0%;"
+                            aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
                             <span class="text-white" style="font-weight: bold;">60%</span>
                         </div>
                     </div>
-                    <img src="{{ asset('img/background/follow-up.png') }}" alt="Pending Orders Icon" class="icon" style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
+                    <img src="{{ asset('img/background/follow-up.png') }}" alt="Pending Orders Icon" class="icon"
+                        style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
                 </div>
             </div>
 
@@ -131,32 +155,43 @@
                     <h5 class="font-weight-bold">Completed Orders</h5>
                     <h2 class="text-success display-4">950</h2>
                     <p class="text-muted">+20% <span class="text-danger">(-5% Dec)</span></p>
-                    <div class="progress mb-3" style="height: 25px; padding: 0 5px; border-radius: 15px; overflow: hidden;">
-                        <div class="progress-bar bg-success progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress mb-3"
+                        style="height: 25px; padding: 0 5px; border-radius: 15px; overflow: hidden;">
+                        <div class="progress-bar bg-success progress-bar-animated" role="progressbar" style="width: 0%;"
+                            aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
                             <span class="text-white" style="font-weight: bold;">80%</span>
                         </div>
                     </div>
-                    <img src="{{ asset('img/background/completed-task.png') }}" alt="Completed Orders Icon" class="icon" style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
+                    <img src="{{ asset('img/background/completed-task.png') }}" alt="Completed Orders Icon"
+                        class="icon" style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
                 </div>
             </div>
         </div>
 
-        <!-- Statistics of Active Applications -->
-        <div class="chart-container">
-            <h5 class="font-weight-bold">Active Applications</h5>
-            <div id="activeApplicationsChart"></div>
+        <!-- Grid for Charts -->
+        <div class="chart-grid">
+            <!-- Active Applications Chart -->
+            <div class="chart-container chart-card">
+                <h5 class="font-weight-bold">Active Applications</h5>
+                <div id="activeApplicationsChart"></div>
+            </div>
+
+            <!-- Pie Chart for Purchase Orders per Date -->
+            <div class="chart-container chart-card">
+                <h5 class="font-weight-bold">Purchase Orders per Date</h5>
+                <div id="purchaseOrdersPieChart"></div>
+            </div>
         </div>
 
-        <!-- Pie Chart for Purchase Orders per Date -->
-        <div class="chart-container">
-            <h5 class="font-weight-bold">Purchase Orders per Date</h5>
-            <div id="purchaseOrdersPieChart"></div>
+        <!-- Bar Chart for Net Profit and Revenue -->
+        <div class="chart-container chart-card">
+            <h5 class="font-weight-bold">Net Profit and Revenue</h5>
+            <div id="kt_apexcharts_1"></div>
         </div>
     </div>
 
     @push('scripts')
         <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
         <script>
             $(document).ready(function() {
@@ -176,7 +211,8 @@
                     colors: ['#6f42c1'],
                 };
 
-                const activeApplicationsChart = new ApexCharts(document.querySelector("#activeApplicationsChart"), options);
+                const activeApplicationsChart = new ApexCharts(document.querySelector("#activeApplicationsChart"),
+                    options);
                 activeApplicationsChart.render().catch(error => {
                     console.error("Error rendering active applications chart:", error);
                 });
@@ -189,13 +225,150 @@
                     },
                     series: [44, 55, 13, 43, 22], // Dummy data for the pie chart
                     labels: ['Order 1', 'Order 2', 'Order 3', 'Order 4', 'Order 5'], // Labels for the pie chart
-                    colors: ['#007bff', '#ffc107', '#28a745', '#dc3545', '#17a2b8'], // Custom colors for the pie slices
+                    colors: ['#007bff', '#ffc107', '#28a745', '#dc3545',
+                    '#17a2b8'], // Custom colors for the pie slices
                 };
 
-                const purchaseOrdersPieChart = new ApexCharts(document.querySelector("#purchaseOrdersPieChart"), pieOptions);
+                const purchaseOrdersPieChart = new ApexCharts(document.querySelector("#purchaseOrdersPieChart"),
+                    pieOptions);
                 purchaseOrdersPieChart.render().catch(error => {
                     console.error("Error rendering purchase orders pie chart:", error);
                 });
+
+                // Initialize the bar chart for Net Profit and Revenue
+                // Initialize the bar chart for Net Profit and Revenue
+                var element = document.getElementById('kt_apexcharts_1');
+                var height = parseInt(window.getComputedStyle(element).height);
+                var labelColor = getComputedStyle(document.documentElement).getPropertyValue('--kt-gray-500');
+                var borderColor = getComputedStyle(document.documentElement).getPropertyValue('--kt-gray-200');
+                var baseColor = getComputedStyle(document.documentElement).getPropertyValue('--kt-primary');
+                var secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--kt-gray-300');
+
+                if (!element) {
+                    return;
+                }
+
+                var barOptions = {
+                    series: [{
+                        name: 'Net Profit',
+                        data: [44, 55, 57, 56, 61, 58]
+                    }, {
+                        name: 'Revenue',
+                        data: [76, 85, 101, 98, 87, 105]
+                    }],
+                    chart: {
+                        fontFamily: 'inherit',
+                        type: 'bar',
+                        height: height,
+                        toolbar: {
+                            show: false
+                        },
+                        animations: {
+                            enabled: true, // Enable animations
+                            easing: 'easeinout',
+                            speed: 800,
+                            animateGradually: {
+                                enabled: true,
+                                delay: 150
+                            },
+                            dynamicAnimation: {
+                                enabled: true,
+                                speed: 350
+                            }
+                        }
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: false,
+                            columnWidth: ['30%'],
+                            endingShape: 'rounded' // Rounded corners for bars
+                        },
+                    },
+                    legend: {
+                        show: false
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    stroke: {
+                        show: true,
+                        width: 2,
+                        colors: ['transparent']
+                    },
+                    xaxis: {
+                        categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                        axisBorder: {
+                            show: false,
+                        },
+                        axisTicks: {
+                            show: false
+                        },
+                        labels: {
+                            style: {
+                                colors: labelColor,
+                                fontSize: '12px'
+                            }
+                        }
+                    },
+                    yaxis: {
+                        labels: {
+                            style: {
+                                colors: labelColor,
+                                fontSize: '12px'
+                            }
+                        }
+                    },
+                    fill: {
+                        opacity: 1
+                    },
+                    states: {
+                        normal: {
+                            filter: {
+                                type: 'none',
+                                value: 0
+                            }
+                        },
+                        hover: {
+                            filter: {
+                                type: 'none',
+                                value: 0
+                            }
+                        },
+                        active: {
+                            allowMultipleDataPointsSelection: false,
+                            filter: {
+                                type: 'none',
+                                value: 0
+                            }
+                        }
+                    },
+                    tooltip: {
+                        style: {
+                            fontSize: '12px'
+                        },
+                        y: {
+                            formatter: function(val) {
+                                return '$' + val + ' thousands'
+                            }
+                        }
+                    },
+                    colors: [baseColor, secondaryColor],
+                    grid: {
+                        borderColor: borderColor,
+                        strokeDashArray: 4,
+                        yaxis: {
+                            lines: {
+                                show: true
+                            }
+                        }
+                    }
+                };
+
+                var barChart = new ApexCharts(element, barOptions);
+                barChart.render().catch(error => {
+                    console.error("Error rendering bar chart:", error);
+                });
+
             });
 
             document.addEventListener("DOMContentLoaded", function() {
