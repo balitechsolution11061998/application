@@ -18,6 +18,17 @@ return [
             'iconPath'       => 4,
         ],
         [
+            'label'          => 'Dashboard PO',               // Label for the menu (e.g., Dashboard PO)
+            'type'           => 'item',                       // Represents a single clickable menu item
+            'permission'     => [],        // Permissions required to access the menu
+            'permissionType' => 'gate',                       // Use Laravel's gate for permission checks
+            'icon'           => 'fas',                        // Font Awesome Solid icon class
+            'iconName'       => 'fa-chart-bar',               // Icon representing a dashboard/analytics view
+            'route'          => 'dashboard-po.index',               // Route for the PO Dashboard
+            'active'         => ['dashboard.po', 'home.index'], // Active states for the menu
+            'iconPath'       => 4,                            // Optional: Custom icon path (if applicable)
+        ],
+        [
             'label'          => 'Dashboard Pilkada',           // Menu label
             'type'           => 'item',                        // Type of menu (item represents a clickable menu option)
             'permission'     => [],                            // Permissions required to view this item

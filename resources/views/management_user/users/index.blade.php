@@ -44,28 +44,28 @@
             <div class="row">
                 <!-- Search and Actions Panel -->
                 <div class="col-12">
-                    <div class="card-header border-0 pt-6 bg-light mb-4">
-                        <div class="card-title d-flex flex-wrap justify-content-between w-100">
-                            <div class="d-flex align-items-center position-relative my-1 w-100">
-                                <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5 text-muted"></i>
-                                <input type="text" id="search-box"
-                                    class="form-control form-control-solid form-control-lg w-100 ps-13 search-input"
-                                    placeholder="Search Users" />
-                            </div>
-                            <div class="w-100 d-flex justify-content-end mt-2">
-                                <button type="button" class="btn btn-success btn-sm me-2" data-bs-toggle="modal"
-                                    data-bs-target="#importUsersModal">
-                                    Import Users
-                                </button>
-                                <button type="button" class="btn btn-primary btn-sm" onclick="tambahUser()">
-                                    <i class="fas fa-plus"></i> Add User
-                                </button>
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header border-0 pt-4 bg-light mb-4">
+                            <div class="card-title d-flex flex-wrap justify-content-between w-100">
+                                <div class="d-flex align-items-center position-relative my-1 w-100">
+                                    <i class="fas fa-search fs-4 position-absolute ms-3 text-muted"></i>
+                                    <input type="text" id="search-box"
+                                        class="form-control form-control-solid form-control-lg w-100 ps-5"
+                                        placeholder="Search Users" />
+                                </div>
+                                <div class="w-100 d-flex justify-content-end mt-3">
+                                    <button type="button" class="btn btn-success btn-sm me-2" data-bs-toggle="modal"
+                                        data-bs-target="#importUsersModal">
+                                        <i class="fas fa-file-import"></i> Import Users
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="tambahUser()">
+                                        <i class="fas fa-plus"></i> Add User
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
 

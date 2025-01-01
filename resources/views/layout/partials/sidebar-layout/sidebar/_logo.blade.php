@@ -3,7 +3,7 @@
     <!--begin::Logo image-->
     <a href="{{ route('home.index') }}">
         <div class="app-sidebar-logo-default d-flex align-items-center theme-light-show">
-            <img alt="User Profile Picture" src="{{ Auth::user()->profile_picture }}" class="h-40px app-sidebar-logo-default rounded" />
+            <img alt="User Profile Picture" src="{{ Auth::user()->profile_picture ?? asset('/img/logo/m-mart.svg') }}" class="h-40px app-sidebar-logo-default rounded" />
             <div class="ms-3 app-sidebar-logo-default">
                 <h1 class="page-heading text-gray-900 fw-semibold fs-1" style="font-family: Rubik; margin-bottom: -6px">
                     {{ config('settings.KT_APP_NAME') }}
@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="app-sidebar-logo-default d-flex align-items-center theme-dark-show">
-            <img alt="User Profile Picture" src="{{ Auth::user()->profile_picture }}" class="h-40px app-sidebar-logo-default rounded" />
+            <img alt="User Profile Picture" src="{{ Auth::user()->profile_picture ?? asset('/img/logo/m-mart.svg') }}" class="h-40px app-sidebar-logo-default rounded" />
             <div class="ms-3 app-sidebar-logo-default">
                 <h1 class="page-heading text-gray-900 fw-semibold fs-1" style="font-family: Rubik; margin-bottom: -6px">
                     {{ config('settings.KT_APP_NAME') }}
@@ -24,7 +24,7 @@
                 </small>
             </div>
         </div>
-        <img alt="User Profile Picture" src="{{ Auth::user()->profile_picture }}" class="h-30px app-sidebar-logo-minimize rounded" />
+        <img alt="User Profile Picture" src="{{ Auth::user()->profile_picture ?? asset('/img/logo/m-mart.svg') }}" class="h-30px app-sidebar-logo-minimize rounded" />
     </a>
 
     <!--end::Logo image-->

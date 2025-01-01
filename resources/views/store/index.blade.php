@@ -143,8 +143,8 @@
                                     return `
                             <div>
                                 <i class="fas fa-map-marker-alt me-2"></i>
-                                <span>${row.address_1}</span><br>
-                                <span>${row.address_2 ? row.address_2 : ''}</span>
+                                <span>${row.store_add1}</span><br>
+                                <span>${row.store_add2 ? row.store_add2 : ''}</span>
                             </div>
                         `; // Format Store Address with icon
                                 }

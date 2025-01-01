@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DashboardPilkadaController;
+use App\Http\Controllers\DashboardPoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HomeSupplierController;
 use App\Http\Controllers\ItemSupplierController;
@@ -90,6 +91,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::prefix('dashboard-pilkada')->as('dashboard-pilkada.')->group(function () {
         Route::get('/', [DashboardPilkadaController::class, 'index'])->name('index');
         Route::get('/fetchData', [DashboardPilkadaController::class, 'fetchData'])->name('fetchData');
+    });
+
+    Route::prefix('dashboard-po')->as('dashboard-po.')->group(function () {
+        Route::get('/', [DashboardPoController::class, 'index'])->name('index');
     });
 
     // Role Management Routes

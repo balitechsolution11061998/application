@@ -9,6 +9,9 @@ function dataUser(){
         },
         processing: true,
         serverSide: true,
+        deferRender: true, // Enable deferred rendering
+        responsive: true, // Enable responsive design
+
         columns: [
             {
                 data: "id",
@@ -30,7 +33,7 @@ function dataUser(){
                 data: "profile_picture",
                 name: "profile_picture",
                 render: function (data) {
-                    return `<img src="${data}" alt="Profile Picture" class="img-thumbnail" style="width: 50px; height: 50px;">`;
+                    return data;
                 },
                 orderable: false,
                 searchable: false,
@@ -39,7 +42,7 @@ function dataUser(){
                 data: "profile_picture",
                 name: "profile_picture",
                 render: function (data) {
-                    return `<img src="${data}" alt="Profile Picture" class="img-thumbnail" style="width: 50px; height: 50px;">`;
+                    return data;
                 },
                 orderable: false,
                 searchable: false,

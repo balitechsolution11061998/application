@@ -12,34 +12,48 @@ class ProfileController extends Controller
     {
         // Validate the incoming request
         $request->validate([
-            'file' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // Check if the request has a file
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
+        try {
+            // Check if the request has a file
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
 
-            // Create a unique filename based on the current time
-            $fileName = time() . '.' . $file->getClientOriginalExtension();
-            // $path = Storage::disk('s3')->putFileAs('images/profile_pictures', $file, $fileName);
+                // Create a unique filename based on the current time
+                $fileName = time() . '.' . $file->getClientOriginalExtension();
 
-            // // Generate a URL for the uploaded file
-            // $fileUrl = Storage::disk('s3')->url($path); // Get the URL from S3
-            // Store the file in the specified directory
-            $filePath = $file->storeAs('profile_pictures', $fileName, 'public'); // Using 'public' disk for visibility
+                // Store the file in the specified directory
+                $filePath = $file->storeAs('profile_pictures', $fileName, 'public'); // Using 'public' disk for visibility
 
-            // Generate a URL for the uploaded file
-            $fileUrl = asset('storage/' . $filePath); // Generates a public URL to access the file
+                // Generate a URL for the uploaded file
+                $fileUrl = asset('storage/' . $filePath); // Generates a public URL to access the file
 
-            // Return a JSON response with success status and file URL
-            return response()->json([
-                'success' => true,
-                'file_url' => $fileUrl // Return the URL instead of the path
-            ], 200);
+                // Log the successful upload activity
+                activity()
+                    ->performedOn($request->user()) // Log the action on the user model
+                    ->log('Uploaded profile picture: ' . $fileUrl);
+
+                // Return a JSON response with success status and file URL
+                return response()->json([
+                    'success' => true,
+                    'file_url' => $fileUrl // Return the URL instead of the path
+                ], 200);
+            }
+
+            // Return an error response if no file is uploaded
+            return response()->json(['success' => false, 'message' => 'No file uploaded.'], 400);
+        } catch (\Exception $e) {
+            // Log the error message
+            dd($e->getMessage());
+            // Log the failed activity
+            activity()
+                ->performedOn($request->user()) // Log the action on the user model
+                ->log('Failed to upload profile picture: ' . $e->getMessage());
+
+            // Return a JSON response with error status
+            return response()->json(['success' => false, 'message' => 'Failed to upload profile picture.'], 500);
         }
-
-        // Return an error response if no file is uploaded
-        return response()->json(['success' => false, 'message' => 'No file uploaded.'], 400);
     }
 
     public function removePicture(Request $request)

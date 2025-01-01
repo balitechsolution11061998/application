@@ -13,8 +13,34 @@ use Illuminate\Support\Arr;
 
 class StoreController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         return view('store.index');
+    }
+
+    public function edit(Request $request, $id)
+    {
+        try {
+            // Find the model instance
+            $model = Store::findOrFail($id);
+
+            // Perform your edit logic here (e.g., updating fields)
+            $model->update($request->all());
+
+            // Log the successful edit activity
+            activity()
+                ->performedOn($model)
+                ->log('Edited the model with ID: ' . $id);
+
+            return response()->json(['success' => true, 'message' => 'Model updated successfully.']);
+        } catch (\Exception $e) {
+            // Log the failed activity
+            activity()
+                ->performedOn($model ?? new Store()) // Log on the model if found, else a new instance
+                ->log('Failed to edit the model with ID: ' . $id . ' - Error: ' . $e->getMessage());
+
+            return response()->json(['success' => false, 'message' => 'Failed to update model.'], 500);
+        }
     }
 
     public function getStores(Request $request)
@@ -27,9 +53,9 @@ class StoreController extends Controller
             if ($request->has('search') && !empty($request->search)) {
                 $searchTerm = $request->search;
                 // Apply a where clause to filter stores based on the search term
-                $query->where(function($q) use ($searchTerm) {
+                $query->where(function ($q) use ($searchTerm) {
                     $q->where('store', 'LIKE', "%{$searchTerm}%")
-                      ->orWhere('store_name', 'LIKE', "%{$searchTerm}%");
+                        ->orWhere('store_name', 'LIKE', "%{$searchTerm}%");
                 });
             }
 
@@ -109,7 +135,6 @@ class StoreController extends Controller
                 'success_count' => $successCount,
                 'failure_count' => $failureCount,
             ], 200);
-
         } catch (\Exception $e) {
             // Handle the exception, log it, and return an error response
             activity()
@@ -136,8 +161,8 @@ class StoreController extends Controller
     {
         // Query the suppliers table
         $stores = DB::table('store')
-        ->join('region', 'region.id', '=', 'store.region')
-        ->select('store.*', 'region.name as region_name', 'region.region_code');
+            ->join('region', 'region.id', '=', 'store.region')
+            ->select('store.*', 'region.name as region_name', 'region.region_code');
 
         // Use DataTables to handle server-side processing
         return DataTables::of($stores)
@@ -165,7 +190,7 @@ class StoreController extends Controller
     }
 
     //
-    public function storeUser  (Request $request)
+    public function storeUser(Request $request)
     {
         try {
             // Validate the request
@@ -179,8 +204,8 @@ class StoreController extends Controller
 
             // Check if the user-store relationship already exists
             $userStore = UserStore::where('user_id', $user->username) // Use user ID for the relationship
-                                  ->where('store_id', $request->input('store_id'))
-                                  ->first();
+                ->where('store_id', $request->input('store_id'))
+                ->first();
             if ($userStore) {
                 // If it exists, update the record if needed
                 $userStore->updated_at = now(); // Update timestamp
@@ -214,7 +239,7 @@ class StoreController extends Controller
         }
     }
 
-    public function deleteStoreUser (Request $request)
+    public function deleteStoreUser(Request $request)
     {
         // Validate the incoming request
         $request->validate([
