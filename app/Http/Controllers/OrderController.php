@@ -380,6 +380,8 @@ class OrderController extends Controller
         $deliveryData = $request->input('deliveryData');
         $orderNo = $request->input('orderNo');
 
+
+
         // Convert confirmation date to a Carbon instance
         $confirmationDate = Carbon::parse($request->input('confirmationDate'));
 

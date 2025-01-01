@@ -26,11 +26,6 @@ function dataTableHelper(tableId, ajaxUrl, columnsConfig, orderColumn = 4, searc
                     return moment(data).format('MMM D, YYYY'); // Format date
                 }
             },
-            {
-                targets: columnsConfig.length - 1, // Disable sorting for the 'Actions' column
-                orderable: false,
-            },
-
         ]
     });
 

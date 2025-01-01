@@ -10,6 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
+use Illuminate\Support\Carbon;
 
 class CreateUsersForRegionJob implements ShouldQueue
 {
@@ -53,8 +54,8 @@ class CreateUsersForRegionJob implements ShouldQueue
                 'email' => 'notification@supplier.m-mart.co.id',
                 'status' => 'y',
                 'all_supplier' => 'y',
-                'password' => Hash::make('t34m1tmm'),
-                'password_show' => 't34m1tmm',
+                'password' => Hash::make('99@123'), // Set password for admin
+                'password_show' => '99@123',
                 'link_sync' => 'https://supplier.m-mart.co.id',
                 'region' => $regionId,
                 'address' => 'Jl. Merdeka No.1, Jakarta',
@@ -68,8 +69,8 @@ class CreateUsersForRegionJob implements ShouldQueue
                 'email' => 'sulaksana60@gmail.com',
                 'status' => 'y',
                 'all_supplier' => 'y',
-                'password' => Hash::make('Superman2000@'),
-                'password_show' => 'Superman2000@',
+                'password' => Hash::make('219811991@123'), // Set password for superadmin
+                'password_show' => '219811991@123',
                 'link_sync' => null,
                 'region' => $regionId,
                 'address' => 'Jl. Bali Merdeka',
@@ -97,8 +98,8 @@ class CreateUsersForRegionJob implements ShouldQueue
                 'email' => 'it_user@example.com',
                 'status' => 'y',
                 'all_supplier' => 'n',
-                'password' => Hash::make('password123'),
-                'password_show' => 'password123',
+                'password' => Hash::make('it_user@123'),
+                'password_show' => 'it_user@123',
                 'link_sync' => null,
                 'region' => $regionId,
                 'address' => 'Jl. IT No.1, Jakarta',
@@ -111,8 +112,8 @@ class CreateUsersForRegionJob implements ShouldQueue
                 'email' => 'md_user@example.com',
                 'status' => 'y',
                 'all_supplier' => 'n',
-                'password' => Hash::make('password123'),
-                'password_show' => 'password123',
+                'password' => Hash::make('md_user@123'),
+                'password_show' => 'md_user@123',
                 'link_sync' => null,
                 'region' => $regionId,
                 'address' => 'Jl. MD No.1, Jakarta',
@@ -125,13 +126,98 @@ class CreateUsersForRegionJob implements ShouldQueue
                 'email' => 'dc_user@example.com',
                 'status' => 'y',
                 'all_supplier' => 'n',
-                'password' => Hash::make('password123'),
-                'password_show' => 'password123',
+                'password' => Hash::make('dc_user@123'),
+                'password_show' => 'dc_user@123',
                 'link_sync' => null,
                 'region' => $regionId,
                 'address' => 'Jl. DC No.1, Jakarta',
                 'phone_number' => '081234567894',
                 'role' => 'dc',
+            ],
+            // New users to be added
+            [
+                'username' => 111254,
+                'name' => 'BAHTERA WIRANIAGA INTERNUSA PT',
+                'email' => 'finance2bali@pt-bahtera.co.id',
+                'status' => 'y',
+                'all_supplier' => 'y',
+                'password' => Hash::make('111254@123'), // Set password for supplier
+                'password_show' => '111254@123',
+                'link_sync' => null,
+                'region' => $regionId,
+                'address' => 'Jl. Bahtera No.1, Jakarta',
+                'phone_number' => '081234567895',
+                'role' => 'supplier',
+            ],
+            [
+                'username' => 111188,
+                'name' => 'SO GOOD FOOD, PT',
+                'email' => 'gita.puspitasari@japfa.com',
+                'status' => 'y',
+                'all_supplier' => 'y',
+                'password' => Hash::make('111188@123'), // Set password for supplier
+                'password_show' => '111188@123',
+                'link_sync' => null,
+                'region' => $regionId,
+                'address' => 'Jl. So Good No.1, Jakarta',
+                'phone_number' => '081234567896',
+                'role' => 'supplier',
+            ],
+            [
+                'username' => 151034,
+                'name' => 'GAMBINO ARTISAN PRIMA PT. - KO',
+                'email' => 'gambinocoffee@gmail.com',
+                'status' => 'y',
+                'all_supplier' => 'y',
+                'password' => Hash::make('151034@123'), // Set password for supplier
+                'password_show' => '151034@123',
+                'link_sync' => null,
+                'region' => $regionId,
+                'address' => 'Jl. Gambino No.1, Jakarta',
+                'phone_number' => '081234567897',
+                'role' => 'supplier',
+            ],
+            [
+                'username' => 111149,
+                'name' => 'JARI PERKASA, CV',
+                'email' => 'dirajariperkasa@gmail.com',
+                'status' => 'y',
+                'all_supplier' => 'y',
+                'password' => Hash::make('111149@123'), // Set password for supplier
+                'password_show' => '111149@123',
+                'link_sync' => null,
+                'region' => $regionId,
+                'address' => 'Jl. Jari No.1, Jakarta',
+                'phone_number' => '081234567898',
+                'role' => 'supplier',
+            ],
+            [
+                'username' => 111157,
+                'name' => 'MASUYA PPN',
+                'email' => 'balirsm@masuya.co.id',
+                'status' => 'y',
+                'all_supplier' => 'y',
+                'password' => Hash::make('111157@123'), // Set password for supplier
+                'password_show' => '111157@123',
+                'link_sync' => null,
+                'region' => $regionId,
+                'address' => 'Jl. Masuya No.1, Jakarta',
+                'phone_number' => '081234567899',
+                'role' => 'supplier',
+            ],
+            [
+                'username' => 162082,
+                'name' => 'PANGAN MITRA BALI, CV',
+                'email' => 'cvpangmitrabali@gmail.com',
+                'status' => 'y',
+                'all_supplier' => 'y',
+                'password' => Hash::make('162082@123'), // Set password for supplier
+                'password_show' => '162082@123',
+                'link_sync' => null,
+                'region' => $regionId,
+                'address' => 'Jl. Pangan No.1, Jakarta',
+                'phone_number' => '081234567900',
+                'role' => 'supplier',
             ],
         ];
 
@@ -150,8 +236,8 @@ class CreateUsersForRegionJob implements ShouldQueue
                 'email' => $email, // Use the generated email
                 'status' => 'y',
                 'all_supplier' => 'n',
-                'password' => Hash::make('password'),
-                'password_show' => 'password',
+                'password' => Hash::make($username . '@123'), // Set password based on username
+                'password_show' => $username . '@123',
                 'link_sync' => null,
                 'region' => $regionId,
                 'address' => $faker->address, // Generate a random address
@@ -174,7 +260,7 @@ class CreateUsersForRegionJob implements ShouldQueue
             foreach ($users as $user) {
                 $role = $user['role'] ?? 'user';
                 unset($user['role']);
-
+                $user['created_at'] = Carbon::now();
                 // Insert user and get the ID
                 $userId = DB::table('users')->insertGetId($user);
 

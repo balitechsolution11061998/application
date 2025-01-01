@@ -1,249 +1,214 @@
-dataTableHelper("#users_table", "/users/data", [
-    {
-        data: "id",
-        name: function () {
-            if ($(window).width() < 768) {
-                // adjust the width value to your liking
-                return "Select"; // or any other name you prefer
-            } else {
-                return "id";
-            }
+$(document).ready(function() {
+    dataUser();
+});
+function dataUser(){
+    const table = $('#users_table').DataTable({
+        ajax: {
+            url: '/users/data', // Your server-side endpoint
+            type: 'GET', // Use GET or POST as needed
         },
-        render: function (data, type, row) {
-            if ($(window).width() < 768) {
-                // On mobile mode, hide the checkbox and show only the name
-                return `<span>${row.name}</span>`;
-            } else {
-                // On desktop mode, show the checkbox and label text
-                return `
-                <input type="checkbox" class="user-checkbox" id="user-${data}" value="${data}">
-                <label for="user-${data}" data-intro="Click here to view user details" data-step="1"></label>
-                `;
-            }
-        },
-        orderable: false,
-        searchable: false,
-    },
-    {
-        data: "profile_picture",
-        name: "profile_picture",
-        render: function (data) {
-            return data;
-        },
-        orderable: false,
-        searchable: false,
-    },
-    {
-        data: "profile_picture",
-        name: "profile_picture",
-        render: function (data) {
-            console.log(data,'data');
-            return data;
-        },
-        orderable: false,
-        searchable: false,
-    },
-    {
-        data: "username",
-        name: "username",
-    },
-    {
-        data: "name",
-        name: "name",
-        render: function (data, type, row) {
-            return row.name;
-        }
-    },
-    {
-        data: "email",
-        name: "email",
-        render: function (data, type, row) {
-            console.log(data, type, row.user_emails); // Debugging statement
+        processing: true,
+        serverSide: true,
+        columns: [
+            {
+                data: "id",
+                name: "id",
+                render: function (data, type, row) {
+                    if ($(window).width() < 768) {
+                        return `<span>${row.name}</span>`;
+                    } else {
+                        return `
+                        <input type="checkbox" class="user-checkbox" id="user-${data}" value="${data}">
+                        <label for="user-${data}" data-intro="Click here to view user details" data-step="1"></label>
+                        `;
+                    }
+                },
+                orderable: false,
+                searchable: false,
+            },
+            {
+                data: "profile_picture",
+                name: "profile_picture",
+                render: function (data) {
+                    return `<img src="${data}" alt="Profile Picture" class="img-thumbnail" style="width: 50px; height: 50px;">`;
+                },
+                orderable: false,
+                searchable: false,
+            },
+            {
+                data: "profile_picture",
+                name: "profile_picture",
+                render: function (data) {
+                    return `<img src="${data}" alt="Profile Picture" class="img-thumbnail" style="width: 50px; height: 50px;">`;
+                },
+                orderable: false,
+                searchable: false,
+            },
+            {
+                data: "username",
+                name: "username",
+            },
+            {
+                data: "name",
+                name: "name",
+            },
+            {
+                data: "email",
+                name: "email",
+                render: function (data, type, row) {
+                    const emailList = row.user_emails && row.user_emails.length > 0
+                        ? row.user_emails.map(emailObj => `
+                            <span class="badge bg-secondary text-white me-1 mb-1 d-inline-flex align-items-center justify-content-between"
+                                style="font-size: 0.85em; padding: 6px 12px; border-radius: 20px; font-weight: bold;">
+                                <i class="fas fa-envelope me-2" style="color: white;"></i>${emailObj.email}
+                                <i class="fas fa-times ms-2" style="cursor: pointer; color: white;" onclick="deleteEmail('${row.username}', '${emailObj.email}')"></i>
+                            </span>
+                        `).join("")
+                        : `<span class="text-muted" style="font-size: 0.85em;">No active emails</span>`;
 
-            // Check if user_emails exists and has items
-            const emailList =
-                row.user_emails && row.user_emails.length > 0
-                    ? row.user_emails
-                          .map(
-                              (emailObj) => `
-                    <span class="badge bg-secondary text-white me-1 mb-1 d-inline-flex align-items-center justify-content-between"
-                        style="font-size: 0.85em; padding: 6px 12px; border-radius: 20px; font-weight: bold;">
-                        <i class="fas fa-envelope me-2" style="color: white;"></i>${emailObj.email}
-                        <i class="fas fa-times ms-2" style="cursor: pointer; color: white;" onclick="deleteEmail(${row.username}, '${emailObj.email}')"></i>
-                    </span>
-                `
-                          )
-                          .join("") // Join badges for additional emails
-                    : `<span class="text-muted" style="font-size: 0.85em;">No active emails</span>`; // Default message
-
-            // Render the primary email with an icon and include additional emails as badges
-            return `
-                <div class="email-container" style="padding: 8px; border: 1px solid #e0e0e0; border-radius: 8px;">
-                    <div class="primary-email" style="margin-bottom: 8px;">
-                        <span class="badge bg-info text-white email-badge d-inline-flex align-items-center"
-                            style="font-size: 0.95em; padding: 6px 12px; border-radius: 20px; font-weight: bold;">
-                            <i class="fas fa-envelope me-2" style="color: white;"></i>${data}
-                        </span>
-                    </div>
-                    <div class="additional-emails" style="display: flex; flex-wrap: wrap; gap: 6px;">
-                        ${emailList}
-                    </div>
-                </div>
-            `;
-        },
-    },
-    {
-        data: "password_show",
-        name: "password_show",
-        render: function (data, type, row) {
-            return `
-<span class="password-mask" style="font-family: monospace;">****</span>
-<i class="fas fa-eye toggle-password text-primary ms-2" style="cursor:pointer;" data-password="${data}" data-id="${row.id}"></i>
-`;
-        },
-    },
-    {
-        data: "roles",
-        name: "roles",
-        render: function (data, type, row) {
-            console.log(row.roles, "row");
-            const roleIcons = {
-                administrator: "fa-user-shield",
-                superadministrator: "fa-user-crown",
-                manager: "fa-users-cog",
-                editor: "fa-edit",
-                viewer: "fa-eye",
-                supplier: "fa-user-tag", // Add icon for supplier
-            };
-
-            // Check if the user has the supplier role
-            const hasSupplierRole = data.some(
-                (role) => role.name === "supplier"
-            );
-
-            // Fetch supplier names from the row (assuming supplier_names is an array in the row)
-            let supplierNames = row.supplier_names || []; // Default to an empty array
-
-            // Ensure supplierNames is an array
-            if (!Array.isArray(supplierNames)) {
-                supplierNames = [supplierNames]; // Convert to array if it's not
-            }
-
-            console.log(supplierNames, "supplier_names");
-
-            // Create a string for supplier names with icons
-            const supplierNamesString =
-                supplierNames.length > 0
-                    ? supplierNames
-                          .map(
-                              (name) => `
-                    <span class="badge bg-info text-dark me-1" style="display: inline-flex; align-items: center;">
-                        <i class="fas fa-user-tag me-1"></i> ${name}
-                    </span>
-                `
-                          )
-                          .join(" ")
-                    : '<span class="badge bg-secondary">No Suppliers</span>';
-
-            return `
-                <div class="d-inline-flex flex-wrap align-items-center">
-                    ${data
-                        .map(
-                            (role) => `
-                        <span class="badge rounded-pill bg-dark text-white me-2" style="font-size: 0.9em; display: inline-flex; align-items: center; padding: 0.4em 0.7em;">
-                            <i class="fas ${
-                                roleIcons[role.name] || "fa-user"
-                            } me-1"></i> ${role.name}
-                            <button class="btn btn-sm btn-danger ms-2" style="border-radius: 50%; padding: 0.2em 0.5em; line-height: 1;" role="button" aria-label="Delete ${
-                                role.name
-                            }" onclick="deleteRole('${role.id}', ${row.id})">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </span>
-                    `
-                        )
-                        .join(" ")}
-
-                    ${
-                        hasSupplierRole
-                            ? `
-                        <div class="d-inline-flex align-items-center me-2">
-                            <button class="btn btn-sm btn-success" onclick="addSupplier(${row.id})" title="Add Supplier">
-                                <i class="fas fa-plus"></i> Tambah Supplier
-                            </button>
+                    return `
+                        <div class="email-container" style="padding: 8px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                            <div class="primary-email" style="margin-bottom: 8px;">
+                                <span class="badge bg-info text-white email-badge d-inline-flex align-items-center"
+                                    style="font-size: 0.95em; padding: 6px 12px; border-radius: 20px; font-weight: bold;">
+                                    <i class="fas fa-envelope me-2" style="color: white;"></i>${data}
+                                </span>
+                            </div>
+                            <div class="additional-emails" style="display: flex; flex-wrap: wrap; gap: 6px;">
+                                ${emailList}
+                            </div>
                         </div>
-                    `
-                            : ""
+                    `;
+                },
+            },
+            {
+                data: "password_show",
+                name: "password_show",
+                render: function (data, type, row) {
+                    return `
+                        <span class="password-mask" style="font-family: monospace;">****</span>
+                        <i class="fas fa-eye toggle-password text-primary ms-2" style="cursor:pointer;" data-password="${data}" data-id="${row.id}"></i>
+                    `;
+                },
+            },
+            {
+                data: "roles",
+                name: "roles",
+                render: function (data, type, row) {
+                    const roleIcons = {
+                        administrator: "fa-user-shield",
+                        superadministrator: "fa-user-crown",
+                        manager: "fa-users-cog",
+                        editor: "fa-edit",
+                        viewer: "fa-eye",
+                        supplier: "fa-user-tag",
+                    };
+
+                    const hasSupplierRole = data.some(role => role.name === "supplier");
+                    let supplierNames = row.supplier_names || [];
+                    if (!Array.isArray(supplierNames)) {
+                        supplierNames = [supplierNames];
                     }
 
-                    <div class="d-inline-flex align-items-center mt-2">
-                        <span class="fw-bold me-1">Supplier:</span>
-                        ${supplierNamesString}
+                    const supplierNamesString = hasSupplierRole
+                        ? supplierNames.length > 0
+                            ? supplierNames.map(name => `
+                                <span class="badge bg-info text-dark me-1">
+                                    <i class="fas fa-user-tag me-1"></i> ${name}
+                                </span>
+                            `).join(" ")
+                            : '<span class="badge bg-secondary">No Suppliers</span>'
+                        : '';
+
+                    return `
+                        <div class="d-inline-flex flex-wrap align-items-center">
+                            ${data.map(role => `
+                                <span class="badge rounded-pill bg-dark text-white me-2">
+                                    <i class="fas ${roleIcons[role.name] || "fa-user"} me-1"></i> ${role.name}
+                                    <button class="btn btn-sm btn-danger ms-2" onclick="deleteRole('${role.id}', ${row.id})">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </span>
+                            `).join(" ")}
+
+                            ${hasSupplierRole ? `
+                                <div class="d-inline-flex align-items-center me-2">
+                                    <button class="btn btn-sm btn-success" onclick="addSupplier(${row.id}, '${row.supplier_id}')" title="Add Supplier">
+                                        <i class="fas fa-plus"></i> Tambah Supplier
+                                    </button>
+                                </div>
+                            ` : ""}
+
+                            ${hasSupplierRole ? `
+                                <div class="d-inline-flex align-items-center mt-2">
+                                    <span class="fw-bold me-1">Supplier:</span>
+                                    ${supplierNamesString}
+                                </div>
+                            ` : ""}
+                        </div>
+                    `;
+                },
+            },
+            {
+                data: "region",
+                name: "region",
+                render: function (data) {
+                    return data ? data : "N/A";
+                },
+            },
+            {
+                data: "created_at",
+                name: "created_at",
+                render: function (data) {
+                    return new Date(data).toLocaleDateString("en-US", {
+                        weekday: "short",
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                    });
+                },
+            },
+            {
+                data: "user_emails",
+                name: "user_emails",
+                orderable: false,
+                searchable: false,
+                render: function (data, type, row) {
+                    const emailList = data.length > 0
+                        ? data.map(emailObj => emailObj.email).join(", ")
+                        : "No active emails";
+
+                    return `
+                    <div class="btn-group d-flex flex-wrap" role="group">
+                        <div class="d-flex w-100 justify-content-between mb-1">
+                            <button type="button" class="btn btn-sm btn-primary" onclick="editUser('${row.username}')" title="Edit User">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="deleteUser(${row.id})" title="Delete User">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-warning" onclick="changePassword(${row.id})" title="Change Password">
+                                <i class="fas fa-key"></i>
+                            </button>
+                        </div>
+                        <div class="d-flex w-100 justify-content-between">
+                            <button type="button" class="btn btn-sm btn-info" data-toggle="tooltip" title="<div class='tooltip-content'>${emailList}</div>" data-html="true" onclick="sendEmail('${row.username}')">
+                                <i class="fas fa-envelope"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-secondary" title="Add Email" onclick="addEmail('${row.username}')">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-success" title="Store" onclick="addStore('${row.username}')">
+                                <i class="fas fa-store"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
-            `;
-        },
-    },
-
-    {
-        data: "region",
-        name: "region",
-        render: function (data) {
-            return data ? data : "N/A";
-        },
-    },
-    {
-        data: "created_at",
-        name: "created_at",
-        render: function (data) {
-            return new Date(data).toLocaleDateString("en-US", {
-                weekday: "short",
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-            });
-        },
-    },
-    {
-        data: "user_emails",
-        name: "user_emails",
-        orderable: false,
-        searchable: false,
-        render: function (data, type, row) {
-            const emailList =
-                data.length > 0
-                    ? data.map((emailObj) => emailObj.email).join(", ")
-                    : "No active emails";
-
-            return `
-            <div class="btn-group d-flex flex-wrap" role="group">
-                <div class="d-flex w-100 justify-content-between mb-1">
-                    <button type="button" class="btn btn-sm btn-primary w-32" onclick="editUser('${row.username}')" title="Edit User">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-danger w-32" onclick="deleteUser(${row.id})" title="Delete User">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-warning w-32" onclick="changePassword(${row.id})" title="Change Password">
-                        <i class="fas fa-key"></i>
-                    </button>
-                </div>
-                <div class="d-flex w-100 justify-content-between">
-                    <button type="button" class="btn btn-sm btn-info w-32" data-toggle="tooltip" title="<div class='tooltip-content'>${emailList}</div>" data-html="true" onclick="sendEmail('${row.username}')">
-                        <i class="fas fa-envelope"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-secondary w-32 btn-add-email" title="Add Email" onclick="addEmail('${row.username}')">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-success w-32" title="Store" onclick="addStore('${row.username}')">
-                        <i class="fas fa-store"></i>
-                    </button>
-                </div>
-            </div>
-            `;
-        },
-    },
-]);
+                    `;
+                },
+            },
+        ],
+    });
+}
 
 if ($(window).width() < 768) {
     introJs()
@@ -385,7 +350,8 @@ function sendEmail(username) {
 }
 
 
-function addSupplier(userId) {
+function addSupplier(userId, supplierId) {
+    console.log(userId, supplierId, 'supplierId');
     document.getElementById("userId").value = userId; // Set the user ID in the hidden input field
     const modal = new bootstrap.Modal(
         document.getElementById("addSupplierModal")
@@ -404,6 +370,7 @@ function addSupplier(userId) {
             const supplierSelect = $("#supplierSelect");
             supplierSelect.empty(); // Clear previous options
             supplierSelect.append('<option value="">Select suppliers</option>'); // Add default option
+
             // Check if suppliers data is available
             if (data.suppliers && data.suppliers.length > 0) {
                 data.suppliers.forEach((supplier) => {
@@ -417,6 +384,13 @@ function addSupplier(userId) {
                     );
                     supplierSelect.append(option);
                 });
+
+                // If supplierId is already selected, set it in the select2
+                if (supplierId) {
+                    // Split supplierId by comma to handle multiple IDs
+                    const supplierIdsArray = supplierId.split(','); // Split the string into an array
+                    supplierSelect.val(supplierIdsArray).trigger('change'); // Set the selected suppliers
+                }
 
                 // Initialize Select2
                 supplierSelect.select2({
@@ -433,6 +407,7 @@ function addSupplier(userId) {
             toastr.error("An error occurred while fetching suppliers."); // Show error message
         });
 }
+
 
 // Handle form submission
 document
@@ -804,7 +779,6 @@ function fetchRoles() {
             $("#roles").empty();
             // Populate dropdown with new options
             response.forEach(function (role) {
-                console.log(role);
 
                 $("#roles").append(new Option(role.name, role.name));
             });
@@ -1127,7 +1101,6 @@ function deleteUser(id) {
 }
 
 function deleteRole(role, user_id) {
-    console.log(role, user_id);
     Swal.fire({
         title: "Are you sure?",
         text: `You want to delete the ${role} role from this user.`,

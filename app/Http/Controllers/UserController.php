@@ -858,7 +858,58 @@ class UserController extends Controller
         }
     }
 
+    public function updateSupplierProfile(Request $request, Supplier $supplier)
+    {
+        dd($request->all());
+        // Validate the incoming request
+        $request->validate([
+            'whatsapp' => 'required|string|max:15',
+            'mobile' => 'required|string|max:15',
+            'address1' => 'required|string|max:255',
+            'address2' => 'nullable|string|max:255',
+            'postcode' => 'required|string|max:10',
+            'city' => 'required|string|max:100',
+            'tax_no' => 'required|string|max:50',
+            'email' => 'required|email|max:255',
+            'country' => 'required|string|max:100',
+            'state_region' => 'required|string|max:100',
+        ]);
+
+        // Update the supplier profile
+        $supplier->update($request->all());
+
+        return response()->json(['success' => true, 'message' => 'Profile updated successfully.']);
+    }
 
 
+    public function supplierProfile($supplier)
+    {
+        try {
+            // Decode the supplier username if necessary
+            $decodedSupplier = urldecode($supplier);
+
+            // Fetch the supplier data from the database with a join to the users table
+            $supplierData = Supplier::join('users', 'supplier.supp_code', '=', 'users.username') // Join on supp_code
+                ->where('supplier.supp_code', $decodedSupplier)
+                ->firstOrFail();
+
+            // Log the activity of viewing the supplier profile
+            activity()
+                ->performedOn($supplierData) // Log the action on the supplier data
+                ->causedBy(auth()->user()) // Log the user who performed the action
+                ->log('Viewed supplier profile'); // Custom log message
+
+            // Return the view with the supplier data
+            return view('frontend.profile.supplier', compact('supplierData'));
+        } catch (Exception $e) {
+            // Log the error message using Spatie Activity Log
+            activity()
+                ->causedBy(auth()->user()) // Log the user who caused the error
+                ->log('Error fetching supplier profile: ' . $e->getMessage()); // Log the error message
+
+            // Optionally, you can redirect back with an error message
+            return redirect()->back()->with('error', 'Unable to fetch supplier profile. Please try again later.');
+        }
+    }
 
 }

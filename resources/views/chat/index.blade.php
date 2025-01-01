@@ -2,8 +2,14 @@
     /* Modal Styles */
     .modal-content {
         border-radius: 20px;
-        /* Make the modal more rounded */
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .people-list {
+        max-height: 400px;
+        /* Set a max height for the contact list */
+        overflow-y: auto;
+        /* Enable scrolling */
     }
 
     #chat-container {
@@ -39,7 +45,6 @@
 
     .input-group input:focus {
         border-color: #28a745;
-        /* Change focus border color to green */
         outline: none;
         box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
     }
@@ -48,7 +53,6 @@
         border-radius: 20px;
         margin-left: 10px;
         background-color: #28a745;
-        /* Change button background color to green */
         color: white;
         border: none;
         padding: 10px 20px;
@@ -58,7 +62,6 @@
 
     .input-group button:hover {
         background-color: #218838;
-        /* Darker green on hover */
         transform: scale(1.05);
     }
 
@@ -76,14 +79,12 @@
 
     .message.user {
         background-color: #28a745;
-        /* Change user message background to green */
         color: white;
         margin-left: auto;
     }
 
     .message.bot {
         background-color: #218838;
-        /* Change bot message background to a darker green */
         color: white;
         margin-right: auto;
     }
@@ -100,7 +101,6 @@
     /* Chat Button */
     .chat-button {
         background-color: #28a745;
-        /* Change chat button background to green */
         color: white;
         border: none;
         border-radius: 50%;
@@ -119,23 +119,11 @@
 
     .chat-button:hover {
         background-color: #218838;
-        /* Darker green on hover */
         transform: scale(1.05);
     }
 
     .chat-button i {
         font-size: 24px;
-    }
-
-    /* New styles for sender and recipient names */
-    .message .sender-name {
-        color: white;
-        font-weight: bold;
-    }
-
-    .message .recipient-name {
-        color: white;
-        font-weight: bold;
     }
 
     /* Typing Indicator Styles */
@@ -154,14 +142,6 @@
         animation: bounce 0.6s infinite alternate;
     }
 
-    .typing-indicator .dot:nth-child(2) {
-        animation-delay: 0.2s;
-    }
-
-    .typing-indicator .dot:nth-child(3) {
-        animation-delay: 0.4s;
-    }
-
     @keyframes bounce {
         0% {
             transform: translateY(0);
@@ -175,7 +155,6 @@
     /* Additional styles for better aesthetics */
     .modal-header {
         background-color: #28a745;
-        /* Change modal header background to green */
         color: white;
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
@@ -183,20 +162,6 @@
 
     .modal-title {
         font-weight: bold;
-    }
-
-    .input-group {
-        margin-top: 10px;
-    }
-
-    .input-group input {
-        border-radius: 20px;
-        padding: 10px 15px;
-    }
-
-    .input-group button {
-        border-radius: 20px;
-        padding: 10px 15px;
     }
 
     /* Recipient Selection Styles */
@@ -230,30 +195,24 @@
         /* Darker green on hover */
     }
 
-    /* File Upload Styles */
-    .file-upload {
-        display: none;
-        /* Hide the default file input */
+    .people-list {
+        max-height: 500px;
+        overflow-y: auto;
     }
 
-    .file-upload-label {
-        background-color: #28a745;
-        /* Change label background to green */
-        color: white;
-        border-radius: 20px;
-        padding: 10px 15px;
+    .list-group-item {
         cursor: pointer;
-        display: inline-block;
-        margin-left: 10px;
-        transition: background-color 0.3s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
-    .file-upload-label:hover {
-        background-color: #218838;
-        /* Darker green on hover */
+    .list-group-item:hover {
+        background-color: #f0f0f0;
     }
 </style>
 
+<!-- Chat Button -->
 <!-- Chat Button -->
 <button type="button" class="chat-button" data-bs-toggle="modal" data-bs-target="#chatModal">
     <i class="fas fa-comments"></i>
@@ -267,27 +226,34 @@
                 <h5 class="modal-title" id="chatModalLabel">Chat</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div id="chat-container">
-                    <!-- Chat messages will be displayed here -->
+            <div class="modal-body d-flex">
+                <!-- Contact List -->
+                <div class="people-list"
+                    style="width: 30%; border-right: 1px solid black;color:black; padding-right: 10px;">
+                    <div class="recipient-select">
+                        <label for="recipient">Contacts:</label>
+                        <div id="contacts-list" class="list-group">
+                            <span class="list-group-item badge" data-id="1">IT <i class="fas fa-user"></i></span>
+                            <span class="list-group-item badge" data-id="2">MD <i class="fas fa-user"></i></span>
+                            <span class="list-group-item badge" data-id="3">DC <i class="fas fa-user"></i></span>
+                        </div>
+                    </div>
                 </div>
-                <div class="typing-indicator" id="typing-indicator" style="display: none;">
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                </div>
-                <div class="input-group mt-3">
-                    <input type="text" id="message-input" class="form-control" placeholder="Type a message..." />
-                    <input type="file" id="file-upload" class="file-upload" accept="*/*" />
-                    <label for="file-upload" class="file-upload-label">Upload File</label>
-                    <button id="send-button" class="btn">Send</button>
-                </div>
-                <div class="recipient-select mt-3" id="recipient-select">
-                    <label for="recipient">Send to:</label>
-                    <div>
-                        <span class="badge" data-id="1">IT <i class="fas fa-user"></i></span>
-                        <span class="badge" data-id="2">MD <i class="fas fa-user"></i></span>
-                        <span class="badge" data-id="3">DC <i class="fas fa-user"></i></span>
+                <!-- Chat Area -->
+                <div id="chat-container" style="width: 70%; padding-left: 10px;">
+                    <div class="chat-history">
+                        <!-- Chat messages will be displayed here -->
+                    </div>
+                    <div class="typing-indicator" id="typing-indicator" style="display: none;">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                    <div class="input-group mt-3">
+                        <input type="text" id="message-input" class="form-control" placeholder="Type a message..." />
+                        <input type="file" id="file-upload" class="file-upload" accept="*/*" />
+                        <label for="file-upload" class="file-upload-label">Upload File</label>
+                        <button id="send-button" class="btn">Send</button>
                     </div>
                 </div>
             </div>
@@ -295,9 +261,42 @@
     </div>
 </div>
 
+<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     let selectedRecipient = null; // Variable to hold the selected recipient ID
+
+    // Initialize Pusher
+    const pusher = new Pusher('200a3ba86105ed6ce25f', {
+        cluster: 'ap1',
+        encrypted: true
+    });
+
+    // Subscribe to the channel for the selected recipient
+    const channel = pusher.subscribe('chat.' + selectedRecipient);
+
+    // Listen for the MessageSent event
+    channel.bind('MessageSent', function(data) {
+        // Display the message in the chat
+        fetchMessages(); // Refresh messages when a new message is received
+
+        // Show desktop notification
+        if (Notification.permission === "granted") {
+            new Notification("New message from " + data.message.sender_id, {
+                body: data.message.message,
+                icon: '/path/to/icon.png' // Optional: Add an icon
+            });
+        } else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    new Notification("New message from " + data.message.sender_id, {
+                        body: data.message.message,
+                        icon: '/path/to/icon.png' // Optional: Add an icon
+                    });
+                }
+            });
+        }
+    });
 
     // Fetch messages when the modal is opened
     document.getElementById('send-button').addEventListener('click', function() {
@@ -317,16 +316,14 @@
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
                     body: JSON.stringify({
-                        receiver_id: selectedRecipient, // Send the selected recipient ID
+                        receiver_id: selectedRecipient,
                         message: message
                     })
                 })
                 .then(response => {
                     if (!response.ok) {
-                        // Handle error response
                         return response.json().then(data => {
-                            throw new Error(data
-                            .message); // Throw an error with the message from the server
+                            throw new Error(data.message);
                         });
                     }
                     return response.json();
@@ -342,7 +339,7 @@
                 });
         } else {
             toastr.warning("Please select a recipient and enter a message.",
-            'Warning'); // Show warning using Toastr
+                'Warning'); // Show warning using Toastr
         }
     });
 
@@ -354,7 +351,7 @@
     });
 
     function fetchMessages() {
-        // Fetch messages for the selected recipient
+        console.log("masuk sini");
         const recipientId = selectedRecipient || '1'; // Default to IT if none selected
         fetch(`/fetch-messages/${recipientId}`)
             .then(response => response.json())
@@ -379,27 +376,7 @@
             });
     }
 
-
-
     // Update selectedRecipient based on badge selection
-    document.querySelectorAll('.recipient-select .badge').forEach(badge => {
-        badge.addEventListener('click', function() {
-            const recipientId = this.getAttribute('data-id');
-            if (selectedRecipient === recipientId) {
-                selectedRecipient = null; // Deselect if already selected
-                this.classList.remove('selected'); // Remove selected class
-            } else {
-                selectedRecipient = recipientId; // Set selected recipient ID
-                document.querySelectorAll('.recipient-select .badge').forEach(b => b.classList.remove(
-                    'selected')); // Remove selected class from all
-                this.classList.add('selected'); // Add selected class to the clicked badge
-            }
-        });
-    });
 
-    // Show recipient selection when the send button is clicked
-    document.getElementById('send-button').addEventListener('click', function() {
-        const recipientSelect = document.getElementById('recipient-select');
-        recipientSelect.style.display = 'block'; // Show recipient selection
-    });
+
 </script>

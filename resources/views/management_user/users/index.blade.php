@@ -239,8 +239,7 @@
         <script src="{{ asset('assets/js/toastify/toastify.min.js') }}" defer></script>
         <script src="{{ asset('assets/js/lightbox/lightbox.min.js') }}" defer></script>
         <script src="{{ asset('assets/js/zxcvbn/zxcvbn.js') }}" defer></script>
-        <script src="{{ asset('js/helpers/datatables.js') }}" defer></script>
-        <script src="{{ asset('js/users/tables.js') }}" defer></script>
+        <script src="{{ asset('js/users/index.js') }}" defer></script>
         <script src="{{ asset('assets/js/hashids/hashids.min.js') }}" defer></script>
     @endpush
 </x-default-layout>

@@ -81,6 +81,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/{id}/formUser', [UserController::class, 'formUser'])->name('formUser');
         Route::post('/add-suppliers', [UserController::class, 'addSuppliers'])->name('add-suppliers');
         Route::post('/send-account', [UserController::class, 'sendAccount'])->name('send-account');
+        Route::get('/supplier/{supplier}/profile', [UserController::class, 'supplierProfile'])->name('supplier.profile');
+        Route::get('/supplier/{supplier}/profile/update', [UserController::class, 'updateSupplierProfile'])->name('supplier.updateSupplierProfile');
+
     });
 
     // Dashboard Pilkada Routes
@@ -235,6 +238,9 @@ Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']
 Route::post('/send-message', [ChatController::class, 'sendMessage']);
 Route::get('/fetch-messages/{userId}', [ChatController::class, 'fetchMessages']);
 Route::get('/fetch-contacts', [ChatController::class, 'fetchContacts']);
+Route::post('/get-chat-id', [ChatController::class, 'getChatId']);
+Route::post('/send-otp', [ChatController::class, 'sendOtp']);
+Route::post('/check-otp', [ChatController::class, 'checkOtp']);
 
 Route::get('/test-bot', function () {
     $botInfo = Telegram::getMe();

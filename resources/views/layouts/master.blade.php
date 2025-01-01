@@ -35,42 +35,50 @@
     <link href="{{ asset('assets/plugins/global1/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css1/style.bundle.css') }}" rel="stylesheet" type="text/css" />
     <style>
+        /* Dark theme styles */
+        body.dark-theme {
+            background-color: #121212;
+            /* Dark background */
+            color: #ffffff;
+            /* Light text */
+        }
 
-          /* Dark theme styles */
-    body.dark-theme {
-        background-color: #121212; /* Dark background */
-        color: #ffffff; /* Light text */
-    }
+        .menu-gray-800 {
+            background-color: #1e1e1e;
+            /* Dark menu background */
+        }
 
-    .menu-gray-800 {
-        background-color: #1e1e1e; /* Dark menu background */
-    }
+        .text-muted {
+            color: rgba(255, 255, 255, 0.7) !important;
+            /* Light muted text */
+        }
 
-    .text-muted {
-        color: rgba(255, 255, 255, 0.7) !important; /* Light muted text */
-    }
+        .text-danger {
+            color: #ff4d4d !important;
+            /* Danger color for sign out */
+        }
 
-    .text-danger {
-        color: #ff4d4d !important; /* Danger color for sign out */
-    }
-    .dropdown-menu {
-    background-color: #343a40; /* Dark background */
-}
+        .dropdown-menu {
+            background-color: #343a40;
+            /* Dark background */
+        }
 
-.dropdown-menu .menu-link {
-    color: #ffffff; /* White text for links */
-}
+        .dropdown-menu .menu-link {
+            color: #ffffff;
+            /* White text for links */
+        }
 
-.dropdown-menu .menu-link:hover {
-    background-color: #495057; /* Darker background on hover */
-    color: #ffffff; /* Keep text white on hover */
-}
+        .dropdown-menu .menu-link:hover {
+            background-color: #495057;
+            /* Darker background on hover */
+            color: #ffffff;
+            /* Keep text white on hover */
+        }
 
-.separator {
-    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Light separator line */
-}
-
-
+        .separator {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            /* Light separator line */
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
@@ -134,8 +142,8 @@
                                             class="menu-item menu-lg-down-accordion me-0 me-lg-2">
                                             <!--begin:Menu link-->
                                             <a href="{{ route('home.supplier') }}" class="menu-link py-3">
-                                                    <span class="menu-title">Dashboards</span>
-                                                    <span class="menu-arrow d-lg-none"></span>
+                                                <span class="menu-title">Dashboards</span>
+                                                <span class="menu-arrow d-lg-none"></span>
                                             </a>
                                             <!--end:Menu sub-->
                                         </div>
@@ -145,7 +153,8 @@
                                             data-kt-menu-placement="bottom-start"
                                             class="menu-item menu-lg-down-accordion me-0 me-lg-2">
                                             <!--begin:Menu link-->
-                                            <a href="{{ route('purchase-orders.supplier.getOrders') }}" class="menu-link py-3">
+                                            <a href="{{ route('purchase-orders.supplier.getOrders') }}"
+                                                class="menu-link py-3">
                                                 <span class="menu-title">Purchase Order</span>
                                                 <span class="menu-arrow d-lg-none"></span>
                                             </a>
@@ -183,6 +192,20 @@
                                                 <span class="menu-arrow d-lg-none"></span>
                                             </span>
                                         </div>
+                                        <div data-kt-menu-trigger="{default: 'click', lg: 'hover'}"
+                                            data-kt-menu-placement="bottom-start"
+                                            class="menu-item menu-lg-down-accordion menu-sub-lg-down-indention me-0 me-lg-2">
+                                            <!--begin:Menu link-->
+                                            <a href="{{ route('users.supplier.profile', ['supplier' => urlencode(Auth::user()->username)]) }}"
+                                                class="menu-link py-3">
+                                                <i class="fas fa-user me-2"></i> <!-- Font Awesome icon -->
+                                                <span class="menu-title">Profile</span>
+                                                <span class="menu-arrow d-lg-none"></span>
+                                            </a>
+                                            <!--end:Menu link-->
+                                        </div>
+
+
                                         <!--end:Menu item-->
                                     </div>
                                     <!--end::Menu-->
@@ -195,22 +218,28 @@
                                 <!--begin::User-->
                                 <div class="d-flex align-items-center me-lg-n2 ms-1 ms-lg-3">
                                     <!--begin::Menu wrapper-->
-                                    <div class="btn btn-icon btn-active-light-primary btn-custom w-30px h-30px w-md-40px h-md-40px dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img class="h-30px w-30px rounded-circle" src="{{ asset('img/logo/m-mart.svg') }}" alt="Profile Picture" />
+                                    <div class="btn btn-icon btn-active-light-primary btn-custom w-30px h-30px w-md-40px h-md-40px dropdown"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <img class="h-30px w-30px rounded-circle"
+                                            src="{{ asset('img/logo/m-mart.svg') }}" alt="Profile Picture" />
                                     </div>
                                     <!--begin::User account menu-->
-                                    <div class="dropdown-menu dropdown-menu-end menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-275px rounded-3 shadow">
+                                    <div
+                                        class="dropdown-menu dropdown-menu-end menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-275px rounded-3 shadow">
                                         <!--begin::Menu item-->
                                         <div class="menu-item px-3">
                                             <div class="menu-content d-flex align-items-center px-3">
                                                 <div class="symbol symbol-50px me-5">
-                                                    <img alt="Profile Picture" src="{{ asset('img/logo/m-mart.svg') }}" class="rounded-circle" />
+                                                    <img alt="Profile Picture"
+                                                        src="{{ asset('img/logo/m-mart.svg') }}"
+                                                        class="rounded-circle" />
                                                 </div>
                                                 <div class="d-flex flex-column">
                                                     <div class="fw-bold d-flex align-items-center fs-5 text-white">
                                                         {{ Auth::user()->username }}
                                                     </div>
-                                                    <a href="#" class="fw-semibold text-muted text-hover-primary fs-7">{{ Auth::user()->email }}</a>
+                                                    <a href="#"
+                                                        class="fw-semibold text-muted text-hover-primary fs-7">{{ Auth::user()->email }}</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -218,14 +247,18 @@
                                         <div class="separator my-2"></div>
                                         <!--begin::Menu item-->
                                         <div class="menu-item px-5">
-                                            <a href="{{ route('users.profile') }}" class="menu-link px-5 text-white">My Profile</a>
+                                            <a href="{{ route('users.profile') }}"
+                                                class="menu-link px-5 text-white">My Profile</a>
                                         </div>
                                         <!--end::Menu item-->
                                         <div class="menu-item px-5">
-                                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                                style="display: none;">
                                                 @csrf
                                             </form>
-                                            <a href="#" class="menu-link px-5 text-danger" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Sign Out</a>
+                                            <a href="#" class="menu-link px-5 text-danger"
+                                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Sign
+                                                Out</a>
                                         </div>
                                         <!--end::Menu item-->
                                         <div class="separator my-2"></div>
@@ -233,7 +266,8 @@
                                         <div class="menu-item px-5">
                                             <div class="form-check form-switch">
                                                 <input class="form-check-input" type="checkbox" id="themeToggle" />
-                                                <label class="form-check-label text-white" for="themeToggle">Toggle Light/Dark</label>
+                                                <label class="form-check-label text-white" for="themeToggle">Toggle
+                                                    Light/Dark</label>
                                             </div>
                                         </div>
                                         <!--end::Theme Toggle-->
@@ -311,7 +345,7 @@
     <script src="{{ asset('assets/js/custom/utilities/modals/users-search.js') }}"></script>
     @yield('scripts')
     <script>
-          document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function() {
             const themeToggle = document.getElementById("themeToggle");
             const currentTheme = localStorage.getItem("theme") || "light";
             document.body.classList.toggle("dark-theme", currentTheme === "dark");
