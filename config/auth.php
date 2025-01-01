@@ -41,7 +41,7 @@ return [
             'provider' => 'users',
         ],
         'api' => [
-            'driver' => 'jwt', // Ensure this is set to 'jwt'
+            'driver' => 'passport', // Ensure this is set to 'jwt'
             'provider' => 'users',
         ],
     ],

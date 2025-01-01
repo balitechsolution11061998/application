@@ -14,6 +14,8 @@
         <style>
             body {
                 background-color: #f4f7fa;
+                font-family: 'Arial', sans-serif;
+                /* Change font family */
             }
 
             .card {
@@ -39,11 +41,22 @@
                 padding: 30px;
                 border-radius: 15px;
                 color: white;
+                font-family: 'Helvetica Neue', sans-serif;
+                /* Change font family */
             }
 
             .summary-card {
                 margin-bottom: 20px;
                 padding: 30px;
+                border-radius: 15px;
+                background-color: #f8f9fa;
+                /* Light background for summary cards */
+                transition: background-color 0.3s;
+            }
+
+            .summary-card:hover {
+                background-color: #e2e6ea;
+                /* Darker background on hover */
             }
 
             .icon {
@@ -104,69 +117,211 @@
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
                 background-color: #ffffff;
             }
+
+            /* Custom tooltip styling */
+            .apexcharts-tooltip {
+                background: #343a40;
+                /* Dark background for tooltip */
+                color: #ffffff;
+                /* White text for tooltip */
+                border-radius: 5px;
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            .spinner-container {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: none;
+                /* Hidden by default */
+            }
+
+            .date-range {
+                margin-top: 20px;
+                font-size: 1.2rem;
+                color: #6c757d;
+            }
         </style>
     @endpush
 
     <div class="container-fluid py-5">
+
+
+
+
         <!-- Dashboard Header -->
         <div class="dashboard-header text-center mb-5">
             <h1 class="display-4 fw-bold">Purchase Order Dashboard</h1>
             <p class="lead text-muted">Monitor and manage your purchase orders effectively</p>
         </div>
 
-        <!-- Summary Cards Section -->
-        <div class="row mb-5">
-            <div class="col-md-4">
-                <div class="summary-card card p-4 text-center position-relative">
-                    <h5 class="font-weight-bold">Total Orders</h5>
-                    <h2 class="text-primary display-4">1,250</h2>
-                    <p class="text-muted">+15% <span class="text-success">(+5% Inc)</span></p>
-                    <div class="progress mb-3"
-                        style="height: 25px; padding: 0 5px; border-radius: 15px; overflow: hidden;">
-                        <div class="progress-bar bg-primary progress-bar-animated" role="progressbar" style="width: 0%;"
-                            aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
-                            <span class="text-white" style="font-weight: bold;">75%</span>
+        <!-- Date Range Display -->
+        <div class="text-center date-range">
+            <span id="dateRange">Date Range: <strong>01 Jan 2025 - 31 Jan 2025</strong></span>
+        </div>
+
+        <!-- Summary Cards Carousel -->
+        <div id="summaryCardsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="row mb-5">
+                        <div class="col-md-4 mt-2">
+                            <div class="summary-card card p-4 text-center position-relative" style="padding-top: 40px;">
+                                <h5 class="font-weight-bold">Progress PO</h5>
+                                <h2 class="text-primary display-4">1,000</h2>
+                                <p class="text-muted">+10% <span class="text-success">(+5% Inc)</span></p>
+                                <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
+                                    <div class="progress-bar bg-primary progress-bar-animated" role="progressbar"
+                                        style="width: 70%;" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+                                        <span class="text-white" style="font-weight: bold;">70%</span>
+                                    </div>
+                                </div>
+                                <img src="{{ asset('img/background/workflow.png') }}" alt="Progress PO Icon"
+                                    class="icon"
+                                    style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mt-2">
+                            <div class="summary-card card p-4 text-center position-relative" style="padding-top: 40px;">
+                                <h5 class="font-weight-bold">Confirmed</h5>
+                                <h2 class="text-info display-4">500</h2>
+                                <p class="text-muted">+5% <span class="text-success">(+1% Inc)</span></p>
+                                <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
+                                    <div class="progress-bar bg-info progress-bar-animated" role="progressbar"
+                                        style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                                        <span class="text-white" style="font-weight: bold;">50%</span>
+                                    </div>
+                                </div>
+                                <img src="{{ asset('img/background/order.png') }}" alt="Confirmed Icon" class="icon"
+                                    style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mt-2">
+                            <div class="summary-card card p-4 text-center position-relative" style="padding-top: 40px;">
+                                <h5 class="font-weight-bold">Printed</h5>
+                                <h2 class="text-warning display-4">300</h2>
+                                <p class="text-muted">+15% <span class="text-success">(+3% Inc)</span></p>
+                                <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
+                                    <div class="progress-bar bg-warning progress-bar-animated" role="progressbar"
+                                        style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+                                        <span class="text-white" style="font-weight: bold;">60%</span>
+                                    </div>
+                                </div>
+                                <img src="{{ asset('img/background/receipt.png') }}" alt="Printed Icon" class="icon"
+                                    style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
+                            </div>
                         </div>
                     </div>
-                    <img src="{{ asset('img/background/order-now.png') }}" alt="Total Orders Icon" class="icon"
-                        style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
+                </div>
+
+                <div class="carousel-item">
+                    <div class="row mb-5">
+                        <div class="col-md-4 mt-2">
+                            <div class="summary-card card p-4 text-center position-relative" style="padding-top: 40px;">
+                                <h5 class="font-weight-bold">Completed</h5>
+                                <h2 class="text-success display-4">950</h2>
+                                <p class="text-muted">+20% <span class="text-danger">(-5% Dec)</span></p>
+                                <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
+                                    <div class="progress-bar bg-success progress-bar-animated" role="progressbar"
+                                        style="width: 80%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
+                                        <span class="text-white" style="font-weight: bold;">80%</span>
+                                    </div>
+                                </div>
+                                <img src="{{ asset('img/background/completed-task.png') }}" alt="Completed Icon"
+                                    class="icon"
+                                    style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mt-2">
+                            <div class="summary-card card p-4 text-center position-relative"
+                                style="padding-top: 40px;">
+                                <h5 class="font-weight-bold">Expired</h5>
+                                <h2 class="text-danger display-4">50</h2>
+                                <p class="text-muted">-10% <span class="text-danger">(-5% Dec)</span></p>
+                                <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
+                                    <div class="progress-bar bg-danger progress-bar-animated" role="progressbar"
+                                        style="width: 20%;" aria-valuenow="20" aria-valuemin="0"
+                                        aria-valuemax="100">
+                                        <span class="text-white" style="font-weight: bold;">20%</span>
+                                    </div>
+                                </div>
+                                <img src="{{ asset('img/background/expired.png') }}" alt="Expired Icon"
+                                    class="icon"
+                                    style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mt-2">
+                            <div class="summary-card card p-4 text-center position-relative"
+                                style="padding-top: 40px;">
+                                <h5 class="font-weight-bold">Rejected</h5>
+                                <h2 class="text-danger display-4">20</h2>
+                                <p class="text-muted">-5% <span class="text-danger">(-2% Dec)</span></p>
+                                <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
+                                    <div class="progress-bar bg-danger progress-bar-animated" role="progressbar"
+                                        style="width: 10%;" aria-valuenow="10" aria-valuemin="0"
+                                        aria-valuemax="100">
+                                        <span class="text-white" style="font-weight: bold;">10%</span>
+                                    </div>
+                                </div>
+                                <img src="{{ asset('img/background/rejected.png') }}" alt="Rejected Icon"
+                                    class="icon"
+                                    style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <div class="row mb-5">
+                        <div class="col-md-4 mt-2">
+                            <div class="summary-card card p-4 text-center position-relative"
+                                style="padding-top: 40px;">
+                                <h5 class="font-weight-bold">Delivery</h5>
+                                <h2 class="text-success display-4">400</h2>
+                                <p class="text-muted">+15% <span class="text-success">(+5% Inc)</span></p>
+                                <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
+                                    <div class="progress-bar bg-success progress-bar-animated" role="progressbar"
+                                        style="width: 75%;" aria-valuenow="75" aria-valuemin="0"
+                                        aria-valuemax="100">
+                                        <span class="text-white" style="font-weight: bold;">75%</span>
+                                    </div>
+                                </div>
+                                <img src="{{ asset('img/background/delivery.png') }}" alt="Delivery Icon"
+                                    class="icon"
+                                    style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="summary-card card p-4 text-center position-relative">
-                    <h5 class="font-weight-bold">Pending Orders</h5>
-                    <h2 class="text-warning display-4">300</h2>
-                    <p class="text-muted">+10% <span class="text-success">(+2% Inc)</span></p>
-                    <div class="progress mb-3"
-                        style="height: 25px; padding: 0 5px; border-radius: 15px; overflow: hidden;">
-                        <div class="progress-bar bg-warning progress-bar-animated" role="progressbar" style="width: 0%;"
-                            aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
-                            <span class="text-white" style="font-weight: bold;">60%</span>
-                        </div>
-                    </div>
-                    <img src="{{ asset('img/background/follow-up.png') }}" alt="Pending Orders Icon" class="icon"
-                        style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
-                </div>
-            </div>
+            <!-- Carousel Controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#summaryCardsCarousel"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#summaryCardsCarousel"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
 
-            <div class="col-md-4">
-                <div class="summary-card card p-4 text-center position-relative">
-                    <h5 class="font-weight-bold">Completed Orders</h5>
-                    <h2 class="text-success display-4">950</h2>
-                    <p class="text-muted">+20% <span class="text-danger">(-5% Dec)</span></p>
-                    <div class="progress mb-3"
-                        style="height: 25px; padding: 0 5px; border-radius: 15px; overflow: hidden;">
-                        <div class="progress-bar bg-success progress-bar-animated" role="progressbar" style="width: 0%;"
-                            aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
-                            <span class="text-white" style="font-weight: bold;">80%</span>
-                        </div>
-                    </div>
-                    <img src="{{ asset('img/background/completed-task.png') }}" alt="Completed Orders Icon"
-                        class="icon" style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
-                </div>
+            <!-- Loading Spinner -->
+            <div class="spinner-container" id="loadingSpinner">
+                <i class="fas fa-spinner fa-spin fa-3x"></i>
             </div>
         </div>
+
+
+
+
 
         <!-- Grid for Charts -->
         <div class="chart-grid">
@@ -192,9 +347,21 @@
 
     @push('scripts')
         <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 
         <script>
             $(document).ready(function() {
+                $('#loadingSpinner').show(); // Show spinner
+
+                // Hide spinner after the carousel is fully loaded
+                $('#summaryCardsCarousel').on('slide.bs.carousel', function() {
+                    $('#loadingSpinner').hide(); // Hide spinner when sliding
+                });
+
+                // Hide spinner after a short delay to simulate loading
+                setTimeout(function() {
+                    $('#loadingSpinner').hide(); // Hide spinner after 2 seconds
+                }, 2000);
                 // Initialize the active applications chart
                 const options = {
                     chart: {
@@ -226,7 +393,8 @@
                     series: [44, 55, 13, 43, 22], // Dummy data for the pie chart
                     labels: ['Order 1', 'Order 2', 'Order 3', 'Order 4', 'Order 5'], // Labels for the pie chart
                     colors: ['#007bff', '#ffc107', '#28a745', '#dc3545',
-                    '#17a2b8'], // Custom colors for the pie slices
+                        '#17a2b8'
+                    ], // Custom colors for the pie slices
                 };
 
                 const purchaseOrdersPieChart = new ApexCharts(document.querySelector("#purchaseOrdersPieChart"),
@@ -235,7 +403,6 @@
                     console.error("Error rendering purchase orders pie chart:", error);
                 });
 
-                // Initialize the bar chart for Net Profit and Revenue
                 // Initialize the bar chart for Net Profit and Revenue
                 var element = document.getElementById('kt_apexcharts_1');
                 var height = parseInt(window.getComputedStyle(element).height);
@@ -281,7 +448,8 @@
                         bar: {
                             horizontal: false,
                             columnWidth: ['30%'],
-                            endingShape: 'rounded' // Rounded corners for bars
+                            endingShape: 'rounded', // Rounded corners for bars
+                            borderRadius: 10 // Adjust this value for more or less rounding
                         },
                     },
                     legend: {
@@ -368,7 +536,6 @@
                 barChart.render().catch(error => {
                     console.error("Error rendering bar chart:", error);
                 });
-
             });
 
             document.addEventListener("DOMContentLoaded", function() {

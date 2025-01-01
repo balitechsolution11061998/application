@@ -4,52 +4,86 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
-use App\Models\User; // Make sure to import the User model
+use App\Models\User; // Import the User model
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log; // For logging errors
+use Spatie\Activitylog\Models\Activity; // For logging activities
 
 class LoginController extends Controller
 {
     /**
-     * Handle the incoming request.
+     * Handle user login and token generation.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function __invoke(Request $request)
+    public function login(Request $request)
     {
-        // Set validation
-        $validator = Validator::make($request->all(), [
-            'login'     => 'required', // Change to 'login' to accept either email or username
-            'password'  => 'required'
-        ]);
+        $user = null;  // Initialize user variable in case of error before user assignment
 
-        // If validation fails
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+        try {
+            // Validate the request
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
 
-        // Get credentials from request
-        $loginField = $request->input('login'); // This can be either email or username
-        $password = $request->input('password');
+            // Check credentials
+            if (!Auth::attempt($request->only('email', 'password'))) {
+                // Log failed login attempt to activity log
+                activity()
+                    ->withProperties(['ip' => $request->ip()])
+                    ->log('Failed login attempt - Invalid email or password.');
 
-        // Find user by email or username
-        $user = User::where('email', $loginField)->orWhere('username', $loginField)->first();
+                return response()->json([
+                    'message' => 'Invalid email or password.',
+                ], 401);
+            }
 
-        // If user not found or password does not match
-        if (!$user || !password_verify($password, $user->password)) {
+            // Fetch the authenticated user
+            $user = Auth::user();
+
+            // Log the login activity using Spatie Activity Log
+            activity()
+                ->causedBy($user)
+                ->withProperties(['ip' => $request->ip()])
+                ->log('User logged in');
+
+            // Generate a token
+            $token = $user->createToken('Personal Access Token')->accessToken;
+
+            // Log successful login to activity log
+            activity()
+                ->causedBy($user)
+                ->withProperties(['ip' => $request->ip()])
+                ->log('User successfully logged in and received token.');
+
+            // Return success response
             return response()->json([
-                'success' => false,
-                'message' => 'Email atau Username atau Password Anda salah'
-            ], 401);
+                'message' => 'Login successful.',
+                'user' => $user,
+                'token' => $token,
+            ]);
+        } catch (\Throwable $e) {
+            // Log the error with Spatie Activity Log, only log error if user exists
+            if ($user) {
+                activity()
+                    ->causedBy($user)
+                    ->withProperties(['error' => $e->getMessage(), 'ip' => $request->ip()])
+                    ->log('Login attempt failed.');
+            }
+
+            // Log the error with Spatie or default Laravel logging
+            Log::error('Login error: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request' => $request->all(),
+            ]);
+
+            // Return a generic error response with the error message
+            return response()->json([
+                'message' => 'An error occurred during login. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        // If auth success, generate token
-        $token = auth()->guard('api')->login($user);
-
-        return response()->json([
-            'success' => true,
-            'user'    => $user,
-            'token'   => $token
-        ], 200);
     }
 }

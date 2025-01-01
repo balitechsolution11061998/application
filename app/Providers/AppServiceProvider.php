@@ -27,6 +27,8 @@ use App\Services\Order\OrderService;
 use App\Services\Order\OrderServiceImplement;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Blade;
+use Laravel\Passport\Passport;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -92,5 +94,16 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('formattedDate', function ($expression) {
             return "<?php echo \App\Helpers\DateHelper::formatDate($expression); ?>";
         });
+
+             // Define Passport scopes (optional)
+             Passport::tokensCan([
+                'view-user' => 'View user information',
+                'edit-user' => 'Edit user information',
+            ]);
+
+            // Set token expiration times (optional)
+            Passport::personalAccessTokensExpireIn(now()->addMonths(1));
+            Passport::refreshTokensExpireIn(now()->addMonths(6));
+
     }
 }

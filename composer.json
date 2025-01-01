@@ -17,6 +17,7 @@
         "irazasyed/telegram-bot-sdk": "^3.14",
         "itmm/m-mart-skin": "^1.0",
         "laravel/framework": "^10.0",
+        "laravel/passport": "^12.3",
         "laravel/pulse": "^1.2",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
