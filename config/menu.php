@@ -25,7 +25,7 @@ return [
             'icon'           => 'fas',                        // Font Awesome Solid icon class
             'iconName'       => 'fa-chart-bar',               // Icon representing a dashboard/analytics view
             'route'          => 'dashboard-po.index',               // Route for the PO Dashboard
-            'active'         => ['dashboard.po', 'home.index'], // Active states for the menu
+            'active'         => ['dashboard-po.*'], // Active states for the menu
             'iconPath'       => 4,                            // Optional: Custom icon path (if applicable)
         ],
         [

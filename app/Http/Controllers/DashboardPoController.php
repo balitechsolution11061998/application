@@ -179,26 +179,48 @@ class DashboardPoController extends Controller
     }
     public function getPOCountPerStore(Request $request)
     {
-        // Fetch purchase orders grouped by ship_to and approval_date
+        // Get the selected store IDs from the request
+        $selectedStores = $request->input('stores', []);
+
+        // Convert selected store IDs from strings to integers
+        $selectedStores = array_map('intval', $selectedStores);
+
+        // Fetch purchase orders grouped by ship_to and status
         try {
-            $data = OrdHead::select(
-                    'ship_to',
-                    DB::raw('DATE(approval_date) as approval_date'),
+            $query = OrdHead::select(
+                    'ordhead.ship_to',
+                    'store.store_name', // Include store name from the stores table
+                    'ordhead.status', // Include status in the selection
                     DB::raw('count(*) as count')
                 )
-                ->groupBy('ship_to', DB::raw('DATE(approval_date)')) // Group by ship_to and approval_date
-                ->orderBy('ship_to') // Optional: Order by ship_to
-                ->orderBy(DB::raw('DATE(approval_date)')) // Optional: Order by approval_date
-                ->get();
+                ->join('store', 'ordhead.ship_to', '=', 'store.store') // Join with the stores table
+                ->groupBy('ordhead.ship_to', 'store.store_name', 'ordhead.status') // Group by ship_to, store_name, and status
+                ->orderBy('store.store_name', 'asc') // Order by store_name
+                ->orderBy('ordhead.status', 'asc'); // Order by status
+
+            // If no stores are selected, fetch data for all stores
+            if (!empty($selectedStores)) {
+                $query->whereIn('ordhead.ship_to', $selectedStores);
+            } else {
+                // Optionally, you can add a condition to filter for a specific store if needed
+                // For example, if you want to fetch data for a specific store (e.g., store with ID 40)
+                $query->where('ordhead.ship_to', 40); // Replace 40 with the actual identifier for the store you want to fetch
+            }
+
+            $data = $query->get();
 
             // Prepare the response
-            $categories = $data->pluck('ship_to'); // Assuming ship_to is the identifier for stores
-            $dates = $data->pluck('approval_date'); // Get the approval dates
-            $counts = $data->pluck('count'); // Get the counts
+            $categories = [];
+            $counts = [];
+
+            // Structure the response to include counts per store and status
+            foreach ($data as $item) {
+                $categories[] = $item->store_name . ' - ' . $item->status; // Combine store name and status for categories
+                $counts[] = $item->count; // Get the counts
+            }
 
             return response()->json([
                 'categories' => $categories,
-                'dates' => $dates,
                 'counts' => $counts,
             ]);
         } catch (\Exception $e) {
@@ -213,5 +235,9 @@ class DashboardPoController extends Controller
             return response()->json(['error' => 'Failed to fetch PO count per store'], 500);
         }
     }
+
+
+
+
 
 }

@@ -127,6 +127,68 @@
                 color: #343a40;
                 /* Dark color for the label */
             }
+
+
+            .chart-container {
+                background-color: #ffffff;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .chart-card {
+                text-align: center;
+            }
+
+            .chart-card h5 {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 1.25rem;
+                margin-bottom: 20px;
+                color: #333333;
+            }
+
+            .select-container {
+                text-align: right;
+                margin-bottom: 15px;
+            }
+
+            .checkbox-container {
+                text-align: left;
+                margin-top: 15px;
+            }
+
+            .custom-selects,
+            .form-check-input {
+                font-size: 0.9rem;
+                margin: 5px 0;
+            }
+
+            #dataPerDate,
+            #purchaseOrdersPieChart {
+                height: 300px;
+                /* Adjust height as needed */
+            }
+
+            .chart-container {
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .form-check-label {
+                margin-left: 10px;
+                /* Space between switch and label */
+            }
+
+            .loading-spinner {
+                margin-top: 10px;
+                font-weight: bold;
+                color: #007bff;
+                /* Bootstrap primary color */
+            }
         </style>
     @endpush
 
@@ -339,9 +401,20 @@
             <div class="col-md-6">
                 <!-- Active Applications Chart -->
                 <div class="chart-container chart-card">
-                    <h5 class="font-weight-bold">Active Applications</h5>
-                    <div id="dataPerDate"></div> <!-- Set a height for the chart -->
+                    <div class="mb-2">
+                        <div class="select-container">
+                            <label for="dataToggle" class="form-label me-2">Select Data Type:</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
+                                    onchange="toggleDataType()">
+                                <label class="form-check-label" for="flexSwitchCheckDefault"
+                                    id="switchLabel">Count</label>
+                            </div>
+                        </div>
+                    </div>
 
+                    <h5 class="font-weight-bold">PO Per Date</h5>
+                    <div id="dataPerDate"></div>
                 </div>
             </div>
 
@@ -349,11 +422,21 @@
                 <!-- Pie Chart for Purchase Orders per Date -->
                 <div class="chart-container chart-card">
                     <h5 class="font-weight-bold">Purchase Orders per Date</h5>
+                    <div class="select-container">
+                        <label class="form-label">Select Stores:</label>
+                        <select id="storeSelect" class="form-select" data-control="select2"
+                            data-placeholder="Select an option" multiple>
+                            <!-- Options will be populated here -->
+                        </select>
+                        <div id="loading" class="loading-spinner" style="display: none;">
+                            Loading...
+                        </div>
+                    </div>
                     <div id="purchaseOrdersPieChart"></div>
                 </div>
             </div>
-        </div>
 
+        </div>
 
 
     </div>
@@ -415,8 +498,39 @@
 
                 fetchDataPerStatus();
                 fetchPODataPerStore();
+                fetchSelectStore();
 
+                $('#storeSelect').on('change', function() {
+                    const selectedStores = $(this).val(); // Get selected store IDs
+                    console.log(selectedStores,'selectedStores');
+                    fetchPODataPerStore(selectedStores); // Fetch data for selected stores
+                });
             });
+
+            function fetchSelectStore() {
+                $.ajax({
+                    url: '{{ route('stores.getStores') }}', // Replace with your API endpoint
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        // Hide loading animation
+                        $('#loading').hide();
+
+                        // Populate the select options
+                        const storeSelect = $('#storeSelect');
+                        storeSelect.empty(); // Clear existing options
+                        data.forEach(store => {
+                            storeSelect.append(
+                                `<option value="${store.store}">${store.store_name}</option>`
+                            );
+                        });
+                    },
+                    error: function() {
+                        $('#loading').hide();
+                        alert('Failed to fetch store data. Please try again later.');
+                    }
+                });
+            }
 
             function fetchDataPerStatus(startDate, endDate) {
                 $.ajax({
@@ -507,6 +621,16 @@
                         $('#loadingSpinner').hide();
                     }
                 });
+            }
+
+            function toggleDataType() {
+                const switchLabel = document.getElementById('switchLabel');
+                const checkbox = document.getElementById('flexSwitchCheckDefault');
+                if (checkbox.checked) {
+                    switchLabel.textContent = 'Value'; // Change label to Value
+                } else {
+                    switchLabel.textContent = 'Count'; // Change label back to Count
+                }
             }
 
             function fetchPOData(startDate, endDate) {
@@ -655,27 +779,41 @@
                 });
             }
 
-            function fetchPODataPerStore() {
+            // Function to fetch purchase order data per selected stores
+            function fetchPODataPerStore(selectedStores) {
+                $('#loading').show(); // Show loading animation
                 $.ajax({
                     url: '/dashboard-po/purchase-orders/per-store', // Replace with your actual API endpoint
                     method: 'GET',
+                    data: {
+                        stores: selectedStores
+                    }, // Send selected store IDs
                     beforeSend: function() {
                         console.log("Fetching data..."); // Optional: Show loading message
                     },
                     success: function(response) {
-                        // Assuming response is structured as { categories: [...], counts: [...] }
+                        $('#loading').hide(); // Hide loading animation
                         const categories = response.categories; // Array of store names
                         const counts = response.counts; // Array of counts for each store
+
+                        // Check if the response is valid
+                        if (categories.length === 0 || counts.length === 0) {
+                            alert("No data available for the selected stores.");
+                            return;
+                        }
 
                         // Call the function to render the pie chart with the fetched data
                         renderPieChart(categories, counts);
                     },
                     error: function(xhr, status, error) {
+                        $('#loading').hide();
                         console.error("Error fetching data:", error); // Log error if the request fails
+                        alert("An error occurred while fetching data. Please try again.");
                     }
                 });
             }
 
+            // Function to render the pie chart
             function renderPieChart(categories, counts) {
                 var element = document.getElementById('purchaseOrdersPieChart'); // Get the pie chart element
 
@@ -705,7 +843,10 @@
                     series: counts,
                     chart: {
                         type: 'pie',
-                        height: 400
+                        height: 400,
+                        toolbar: {
+                            show: true // Show toolbar for chart interactions
+                        }
                     },
                     labels: categories,
                     tooltip: {
@@ -717,7 +858,20 @@
                                 return val; // Format the tooltip value as needed
                             }
                         }
-                    }
+                    },
+                    colors: ['#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0',
+                    '#546E7A'], // Custom colors for the pie chart
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            chart: {
+                                height: 300
+                            },
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }]
                 };
 
                 // Create and render the pie chart
@@ -726,6 +880,8 @@
                     console.error("Error rendering pie chart:", error); // Log any rendering errors
                 });
             }
+
+
 
 
 
