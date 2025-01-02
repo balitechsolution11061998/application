@@ -220,8 +220,8 @@
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <div class="row mb-5">
-                        <div class="col-md-4 mt-2">
-                            <div class="summary-card card p-4 text-center position-relative" style="padding-top: 40px;">
+                        <div class="col-md-4 col-sm-6 mt-2">
+                            <div class="summary-card card p-4 text-center position-relative shadow-sm">
                                 <h5 class="font-weight-bold">Progress PO</h5>
                                 <h2 class="text-primary display-4" id="progressPOValue">Loading...</h2>
                                 <p class="text-muted" id="progressPODetails">Loading...</p>
@@ -233,24 +233,20 @@
                                     </div>
                                 </div>
                                 <img src="{{ asset('img/background/workflow.png') }}" alt="Progress PO Icon"
-                                    class="icon"
-                                    style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
-
+                                    class="icon" style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
                             </div>
                         </div>
 
-
-                        <div class="col-md-4 mt-2">
-                            <div class="summary-card card p-4 text-center position-relative" style="padding-top: 40px;">
+                        <div class="col-md-4 col-sm-6 mt-2">
+                            <div class="summary-card card p-4 text-center position-relative shadow-sm">
                                 <h5 class="font-weight-bold">Confirmed</h5>
-                                <h2 class="text-info display-4" id="confirmedCount">Loading...</h2> <!-- Updated ID -->
+                                <h2 class="text-info display-4" id="confirmedCount">Loading...</h2>
                                 <p class="text-muted">+5% <span class="text-success">(+1% Inc)</span></p>
                                 <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
                                     <div class="progress-bar bg-info progress-bar-animated" role="progressbar"
                                         id="confirmedProgressBar" style="width: 50%;" aria-valuenow="50"
                                         aria-valuemin="0" aria-valuemax="100">
-                                        <span class="text-white" style="font-weight: bold;"
-                                            id="confirmedPercentage">50%</span> <!-- Updated ID -->
+                                        <span class="text-white" style="font-weight: bold;" id="confirmedPercentage">50%</span>
                                     </div>
                                 </div>
                                 <img src="{{ asset('img/background/order.png') }}" alt="Confirmed Icon" class="icon"
@@ -258,119 +254,96 @@
                             </div>
                         </div>
 
-
-                        <div class="col-md-4 mt-2">
-                            <div class="summary-card card p-4 text-center position-relative" style="padding-top: 40px;">
+                        <div class="col-md-4 col-sm-6 mt-2">
+                            <div class="summary-card card p-4 text-center position-relative shadow-sm">
                                 <h5 class="font-weight-bold">Printed</h5>
-                                <h2 class="text-warning display-4" id="printedCount">Loading...</h2> <!-- Updated ID -->
+                                <h2 class="text-warning display-4" id="printedCount">Loading...</h2>
                                 <p class="text-muted">+15% <span class="text-success">(+3% Inc)</span></p>
                                 <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
                                     <div class="progress-bar bg-warning progress-bar-animated" role="progressbar"
                                         id="printedProgressBar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0"
                                         aria-valuemax="100">
-                                        <span class="text-white" style="font-weight: bold;"
-                                            id="printedPercentage">60%</span> <!-- Updated ID -->
+                                        <span class="text-white" style="font-weight: bold;" id="printedPercentage">60%</span>
                                     </div>
                                 </div>
                                 <img src="{{ asset('img/background/receipt.png') }}" alt="Printed Icon" class="icon"
                                     style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
                             </div>
                         </div>
-
                     </div>
                 </div>
 
                 <div class="carousel-item">
                     <div class="row mb-5">
-                        <div class="col-md-3 mt-2">
-                            <div class="summary-card card p-4 text-center position-relative"
-                                style="padding-top: 40px;">
+                        <div class="col-md-3 col-sm-6 mt-2">
+                            <div class="summary-card card p-4 text-center position-relative shadow-sm">
                                 <h5 class="font-weight-bold">Completed</h5>
                                 <h2 class="text-success display-4" id="completedCount">Loading...</h2>
-                                <!-- Updated ID -->
                                 <p class="text-muted">+20% <span class="text-danger">(-5% Dec)</span></p>
                                 <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
                                     <div class="progress-bar bg-success progress-bar-animated" role="progressbar"
                                         id="completedProgressBar" style="width: 80%;" aria-valuenow="80"
                                         aria-valuemin="0" aria-valuemax="100">
-                                        <span class="text-white" style="font-weight: bold;"
-                                            id="completedPercentage">80%</span> <!-- Updated ID -->
+                                        <span class="text-white" style="font-weight: bold;" id="completedPercentage">80%</span>
                                     </div>
                                 </div>
                                 <img src="{{ asset('img/background/completed-task.png') }}" alt="Completed Icon"
-                                    class="icon"
-                                    style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
+                                    class="icon" style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
                             </div>
                         </div>
 
-
-                        <div class="col-md-3 mt-2">
-                            <div class="summary-card card p-4 text-center position-relative"
-                                style="padding-top: 40px;">
+                        <div class="col-md-3 col-sm-6 mt-2">
+                            <div class="summary-card card p-4 text-center position-relative shadow-sm">
                                 <h5 class="font-weight-bold">Expired</h5>
                                 <h2 class="text-danger display-4" id="expiredCount">Loading...</h2>
-                                <!-- Updated ID -->
                                 <p class="text-muted">-10% <span class="text-danger">(-5% Dec)</span></p>
                                 <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
                                     <div class="progress-bar bg-danger progress-bar-animated" role="progressbar"
                                         id="expiredProgressBar" style="width: 20%;" aria-valuenow="20"
                                         aria-valuemin="0" aria-valuemax="100">
-                                        <span class="text-white" style="font-weight: bold;"
-                                            id="expiredPercentage">20%</span> <!-- Updated ID -->
+                                        <span class="text-white" style="font-weight: bold;" id="expiredPercentage">20%</span>
                                     </div>
                                 </div>
-                                <img src="{{ asset('img/background/expired.png') }}" alt="Expired Icon"
-                                    class="icon"
+                                <img src="{{ asset('img/background/expired.png') }}" alt="Expired Icon" class="icon"
                                     style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
                             </div>
                         </div>
 
-
-                        <div class="col-md-3 mt-2">
-                            <div class="summary-card card p-4 text-center position-relative"
-                                style="padding-top: 40px;">
+                        <div class="col-md-3 col-sm-6 mt-2">
+                            <div class="summary-card card p-4 text-center position-relative shadow-sm">
                                 <h5 class="font-weight-bold">Rejected</h5>
                                 <h2 class="text-danger display-4" id="rejectedCount">Loading...</h2>
-                                <!-- Updated ID -->
                                 <p class="text-muted">-5% <span class="text-danger">(-2% Dec)</span></p>
                                 <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
                                     <div class="progress-bar bg-danger progress-bar-animated" role="progressbar"
                                         id="rejectedProgressBar" style="width: 10%;" aria-valuenow="10"
                                         aria-valuemin="0" aria-valuemax="100">
-                                        <span class="text-white" style="font-weight: bold;"
-                                            id="rejectedPercentage">10%</span> <!-- Updated ID -->
+                                        <span class="text-white" style="font-weight: bold;" id="rejectedPercentage">10%</span>
                                     </div>
                                 </div>
-                                <img src="{{ asset('img/background/rejected.png') }}" alt="Rejected Icon"
-                                    class="icon"
+                                <img src="{{ asset('img/background/rejected.png') }}" alt="Rejected Icon" class="icon"
                                     style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
                             </div>
                         </div>
-                        <div class="col-md-3 mt-2">
-                            <div class="summary-card card p-4 text-center position-relative"
-                                style="padding-top: 40px;">
+
+                        <div class="col-md-3 col-sm-6 mt-2">
+                            <div class="summary-card card p-4 text-center position-relative shadow-sm">
                                 <h5 class="font-weight-bold">Delivery</h5>
                                 <h2 class="text-success display-4" id="deliveryCount">Loading...</h2>
-                                <!-- Updated ID -->
                                 <p class="text-muted">+15% <span class="text-success">(+5% Inc)</span></p>
                                 <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
                                     <div class="progress-bar bg-success progress-bar-animated" role="progressbar"
                                         id="deliveryProgressBar" style="width: 75%;" aria-valuenow="75"
                                         aria-valuemin="0" aria-valuemax="100">
-                                        <span class="text-white" style="font-weight: bold;"
-                                            id="deliveryPercentage">75%</span> <!-- Updated ID -->
+                                        <span class="text-white" style="font-weight: bold;" id="deliveryPercentage">75%</span>
                                     </div>
                                 </div>
-                                <img src="{{ asset('img/background/delivery.png') }}" alt="Delivery Icon"
-                                    class="icon"
+                                <img src="{{ asset('img/background/delivery.png') }}" alt="Delivery Icon" class="icon"
                                     style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
                             </div>
                         </div>
-
                     </div>
                 </div>
-
-
             </div>
 
             <!-- Carousel Controls -->
@@ -390,6 +363,7 @@
                 <i class="fas fa-spinner fa-spin fa-3x"></i>
             </div>
         </div>
+
 
 
 
@@ -421,7 +395,7 @@
                     <div class="select-container">
                         <label class="form-label">Select Stores:</label>
                         <select id="storeSelect" class="form-select" data-control="select2"
-                            data-placeholder="Select an option" multiple>
+                            data-placeholder="Select an option">
                             <!-- Options will be populated here -->
                         </select>
                         <div id="loading" class="loading-spinner" style="display: none;">
@@ -444,7 +418,7 @@
         <script>
             let startDate = ""; // Change from const to let
             let endDate = ""; // Change from const to let
-            const selectedStores = [];
+            let selectedStores = "";
             let pieChart;
             let barChart;
             $(document).ready(function() {
