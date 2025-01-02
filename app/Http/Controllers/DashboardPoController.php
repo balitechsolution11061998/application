@@ -182,8 +182,17 @@ class DashboardPoController extends Controller
         // Get the selected store IDs from the request
         $selectedStores = $request->input('stores', []);
 
+        // Ensure $selectedStores is an array
+        if (!is_array($selectedStores)) {
+            $selectedStores = [$selectedStores]; // Convert to array if it's a single string
+        }
+
         // Convert selected store IDs from strings to integers
         $selectedStores = array_map('intval', $selectedStores);
+
+        // Get the start and end dates from the request
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
         // Fetch purchase orders grouped by ship_to and status
         try {
@@ -203,8 +212,12 @@ class DashboardPoController extends Controller
                 $query->whereIn('ordhead.ship_to', $selectedStores);
             } else {
                 // Optionally, you can add a condition to filter for a specific store if needed
-                // For example, if you want to fetch data for a specific store (e.g., store with ID 40)
                 $query->where('ordhead.ship_to', 40); // Replace 40 with the actual identifier for the store you want to fetch
+            }
+
+            // Apply date filtering if both start and end dates are provided
+            if ($startDate && $endDate) {
+                $query->whereBetween('ordhead.approval_date', [$startDate, $endDate]); // Adjust the column name as necessary
             }
 
             $data = $query->get();
@@ -215,7 +228,7 @@ class DashboardPoController extends Controller
 
             // Structure the response to include counts per store and status
             foreach ($data as $item) {
-                $categories[] = $item->store_name . ' - ' . $item->status; // Combine store name and status for categories
+                $categories[] = $item->store_name . ' - ' . $item->status . ' (' . $item->count . ')'; // Include count in the category
                 $counts[] = $item->count; // Get the counts
             }
 
@@ -235,9 +248,6 @@ class DashboardPoController extends Controller
             return response()->json(['error' => 'Failed to fetch PO count per store'], 500);
         }
     }
-
-
-
 
 
 }

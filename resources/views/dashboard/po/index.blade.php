@@ -282,7 +282,7 @@
 
                 <div class="carousel-item">
                     <div class="row mb-5">
-                        <div class="col-md-4 mt-2">
+                        <div class="col-md-3 mt-2">
                             <div class="summary-card card p-4 text-center position-relative"
                                 style="padding-top: 40px;">
                                 <h5 class="font-weight-bold">Completed</h5>
@@ -304,7 +304,7 @@
                         </div>
 
 
-                        <div class="col-md-4 mt-2">
+                        <div class="col-md-3 mt-2">
                             <div class="summary-card card p-4 text-center position-relative"
                                 style="padding-top: 40px;">
                                 <h5 class="font-weight-bold">Expired</h5>
@@ -326,7 +326,7 @@
                         </div>
 
 
-                        <div class="col-md-4 mt-2">
+                        <div class="col-md-3 mt-2">
                             <div class="summary-card card p-4 text-center position-relative"
                                 style="padding-top: 40px;">
                                 <h5 class="font-weight-bold">Rejected</h5>
@@ -346,13 +346,7 @@
                                     style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
                             </div>
                         </div>
-
-                    </div>
-                </div>
-
-                <div class="carousel-item">
-                    <div class="row mb-5">
-                        <div class="col-md-4 mt-2">
+                        <div class="col-md-3 mt-2">
                             <div class="summary-card card p-4 text-center position-relative"
                                 style="padding-top: 40px;">
                                 <h5 class="font-weight-bold">Delivery</h5>
@@ -375,6 +369,8 @@
 
                     </div>
                 </div>
+
+
             </div>
 
             <!-- Carousel Controls -->
@@ -448,7 +444,9 @@
         <script>
             let startDate = ""; // Change from const to let
             let endDate = ""; // Change from const to let
-
+            const selectedStores = [];
+            let pieChart;
+            let barChart;
             $(document).ready(function() {
                 // Initialize the date range picker
                 $('#dateRangePicker').daterangepicker({
@@ -474,6 +472,11 @@
 
                         fetchDataPerStatus(startDate.format('YYYY-MM-DD'), endDate.format(
                             'YYYY-MM-DD')); // Pass formatted dates
+                        fetchPODataPerStore(selectedStores, startDate.format('YYYY-MM-DD'), endDate.format(
+                            'YYYY-MM-DD')); // Pass formatted dates
+                        fetchPOData(startDate.format('YYYY-MM-DD'), endDate.format(
+                            'YYYY-MM-DD')); // Pass formatted dates
+
                     } else {
                         alert('Please select a start date.');
                     }
@@ -501,8 +504,7 @@
                 fetchSelectStore();
 
                 $('#storeSelect').on('change', function() {
-                    const selectedStores = $(this).val(); // Get selected store IDs
-                    console.log(selectedStores,'selectedStores');
+                    selectedStores = $(this).val(); // Get selected store IDs
                     fetchPODataPerStore(selectedStores); // Fetch data for selected stores
                 });
             });
@@ -633,6 +635,7 @@
                 }
             }
 
+            // Function to fetch purchase order data per selected date range
             function fetchPOData(startDate, endDate) {
                 $.ajax({
                     url: '/dashboard-po/purchase-orders/count-per-date', // Replace with your API endpoint
@@ -673,10 +676,19 @@
                     return; // Exit if the element is not found
                 }
 
+                // Destroy the existing chart instance if it exists
+                if (barChart) {
+                    barChart.destroy(); // Destroy the existing chart instance
+                }
+
                 var height = parseInt(window.getComputedStyle(element).height) || 400; // Default height if not found
                 var labelColor = getComputedStyle(document.documentElement).getPropertyValue('--kt-gray-500') || '#6c757d';
                 var borderColor = getComputedStyle(document.documentElement).getPropertyValue('--kt-gray-200') || '#e9ecef';
-                var baseColor = getComputedStyle(document.documentElement).getPropertyValue('--kt-primary') || '#007bff';
+                var baseColors = ['#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0',
+                '#546E7A']; // Array of colors for the bars
+
+                // Generate colors for each bar based on the counts
+                var barColors = counts.map((_, index) => baseColors[index % baseColors.length]);
 
                 // Chart options
                 var barOptions = {
@@ -748,6 +760,7 @@
                         }
                     },
                     fill: {
+                        colors: barColors, // Use the generated colors for the bars
                         opacity: 1
                     },
                     tooltip: {
@@ -760,7 +773,6 @@
                             }
                         }
                     },
-                    colors: [baseColor],
                     grid: {
                         borderColor: borderColor,
                         strokeDashArray: 4,
@@ -773,21 +785,24 @@
                 };
 
                 // Create and render the bar chart
-                var barChart = new ApexCharts(element, barOptions);
+                barChart = new ApexCharts(element, barOptions); // Assign the new chart instance to the variable
                 barChart.render().catch(error => {
                     console.error("Error rendering bar chart:", error); // Log any rendering errors
                 });
             }
 
-            // Function to fetch purchase order data per selected stores
-            function fetchPODataPerStore(selectedStores) {
+
+            // Function to fetch purchase order data per selected stores with date filtering
+            function fetchPODataPerStore(selectedStores, startDate, endDate) {
                 $('#loading').show(); // Show loading animation
                 $.ajax({
                     url: '/dashboard-po/purchase-orders/per-store', // Replace with your actual API endpoint
                     method: 'GET',
                     data: {
-                        stores: selectedStores
-                    }, // Send selected store IDs
+                        stores: selectedStores,
+                        start_date: startDate, // Include start date
+                        end_date: endDate // Include end date
+                    }, // Send selected store IDs and date range
                     beforeSend: function() {
                         console.log("Fetching data..."); // Optional: Show loading message
                     },
@@ -839,6 +854,11 @@
                     return; // Exit if they are empty
                 }
 
+                // Destroy the existing chart instance if it exists
+                if (pieChart) {
+                    pieChart.destroy(); // Destroy the existing chart instance
+                }
+
                 var pieOptions = {
                     series: counts,
                     chart: {
@@ -860,7 +880,8 @@
                         }
                     },
                     colors: ['#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0',
-                    '#546E7A'], // Custom colors for the pie chart
+                        '#546E7A'
+                    ], // Custom colors for the pie chart
                     responsive: [{
                         breakpoint: 480,
                         options: {
@@ -875,7 +896,7 @@
                 };
 
                 // Create and render the pie chart
-                var pieChart = new ApexCharts(element, pieOptions);
+                pieChart = new ApexCharts(element, pieOptions); // Assign the new chart instance to the variable
                 pieChart.render().catch(error => {
                     console.error("Error rendering pie chart:", error); // Log any rendering errors
                 });
