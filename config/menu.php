@@ -9,7 +9,7 @@ return [
         [
             'label'          => 'Dashboard System',               // Menu label updated to Dashboard
             'type'           => 'item',                    // Type (item represents a clickable menu option)
-            'permission'     => [],                        // Permissions required to view this item
+            'permission'     => ['show-dashboard-system'],                        // Permissions required to view this item
             'permissionType' => 'gate',                    // Permission type (gate or policy)
             'icon'           => 'fas',                     // Font Awesome Solid icons (FA class)
             'iconName'       => 'fa-tachometer-alt',        // Updated icon for the dashboard (optional)

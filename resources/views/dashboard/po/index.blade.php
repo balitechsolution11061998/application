@@ -189,6 +189,32 @@
                 color: #007bff;
                 /* Bootstrap primary color */
             }
+
+            .container {
+                background-color: #f8f9fa;
+                /* Light background for the filter section */
+                padding: 20px;
+                /* Add padding for spacing */
+                border-radius: 8px;
+                /* Rounded corners */
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                /* Subtle shadow for depth */
+            }
+
+            .input-group .form-control {
+                border-radius: 0.375rem 0 0 0.375rem;
+                /* Rounded corners for the input */
+            }
+
+            .input-group .btn {
+                border-radius: 0 0.375rem 0.375rem 0;
+                /* Rounded corners for the button */
+            }
+
+            .form-label {
+                font-weight: bold;
+                /* Bold label for better visibility */
+            }
         </style>
     @endpush
 
@@ -204,11 +230,26 @@
         </div>
 
         <!-- Date Range Filter -->
-        <div class="text-center mb-4">
-            <input type="text" id="dateRangePicker" class="form-control d-inline-block"
-                style="width: auto; display: inline-block;" placeholder="Select Date Range" />
-            <button class="btn btn-primary" id="filterButton">Set Date Range</button>
+        <div class="container mb-4">
+            <h4 class="text-center mb-3">Filter Options</h4>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="input-group">
+                        <input type="text" id="dateRangePicker" class="form-control"
+                            placeholder="Select Date Range" />
+                        <button class="btn btn-primary" id="filterButton">Set Date Range</button>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <select id="storeSelect" class="form-select" data-control="select2"
+                        data-placeholder="Select an option">
+                        <!-- Options will be populated here -->
+                    </select>
+                </div>
+            </div>
         </div>
+
+
 
         <!-- Date Range Display -->
         <div class="text-center date-range">
@@ -233,7 +274,8 @@
                                     </div>
                                 </div>
                                 <img src="{{ asset('img/background/workflow.png') }}" alt="Progress PO Icon"
-                                    class="icon" style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
+                                    class="icon"
+                                    style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
                             </div>
                         </div>
 
@@ -246,7 +288,8 @@
                                     <div class="progress-bar bg-info progress-bar-animated" role="progressbar"
                                         id="confirmedProgressBar" style="width: 50%;" aria-valuenow="50"
                                         aria-valuemin="0" aria-valuemax="100">
-                                        <span class="text-white" style="font-weight: bold;" id="confirmedPercentage">50%</span>
+                                        <span class="text-white" style="font-weight: bold;"
+                                            id="confirmedPercentage">50%</span>
                                     </div>
                                 </div>
                                 <img src="{{ asset('img/background/order.png') }}" alt="Confirmed Icon" class="icon"
@@ -263,10 +306,12 @@
                                     <div class="progress-bar bg-warning progress-bar-animated" role="progressbar"
                                         id="printedProgressBar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0"
                                         aria-valuemax="100">
-                                        <span class="text-white" style="font-weight: bold;" id="printedPercentage">60%</span>
+                                        <span class="text-white" style="font-weight: bold;"
+                                            id="printedPercentage">60%</span>
                                     </div>
                                 </div>
-                                <img src="{{ asset('img/background/receipt.png') }}" alt="Printed Icon" class="icon"
+                                <img src="{{ asset('img/background/receipt.png') }}" alt="Printed Icon"
+                                    class="icon"
                                     style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
                             </div>
                         </div>
@@ -284,11 +329,13 @@
                                     <div class="progress-bar bg-success progress-bar-animated" role="progressbar"
                                         id="completedProgressBar" style="width: 80%;" aria-valuenow="80"
                                         aria-valuemin="0" aria-valuemax="100">
-                                        <span class="text-white" style="font-weight: bold;" id="completedPercentage">80%</span>
+                                        <span class="text-white" style="font-weight: bold;"
+                                            id="completedPercentage">80%</span>
                                     </div>
                                 </div>
                                 <img src="{{ asset('img/background/completed-task.png') }}" alt="Completed Icon"
-                                    class="icon" style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
+                                    class="icon"
+                                    style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
                             </div>
                         </div>
 
@@ -301,10 +348,12 @@
                                     <div class="progress-bar bg-danger progress-bar-animated" role="progressbar"
                                         id="expiredProgressBar" style="width: 20%;" aria-valuenow="20"
                                         aria-valuemin="0" aria-valuemax="100">
-                                        <span class="text-white" style="font-weight: bold;" id="expiredPercentage">20%</span>
+                                        <span class="text-white" style="font-weight: bold;"
+                                            id="expiredPercentage">20%</span>
                                     </div>
                                 </div>
-                                <img src="{{ asset('img/background/expired.png') }}" alt="Expired Icon" class="icon"
+                                <img src="{{ asset('img/background/expired.png') }}" alt="Expired Icon"
+                                    class="icon"
                                     style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
                             </div>
                         </div>
@@ -318,10 +367,12 @@
                                     <div class="progress-bar bg-danger progress-bar-animated" role="progressbar"
                                         id="rejectedProgressBar" style="width: 10%;" aria-valuenow="10"
                                         aria-valuemin="0" aria-valuemax="100">
-                                        <span class="text-white" style="font-weight: bold;" id="rejectedPercentage">10%</span>
+                                        <span class="text-white" style="font-weight: bold;"
+                                            id="rejectedPercentage">10%</span>
                                     </div>
                                 </div>
-                                <img src="{{ asset('img/background/rejected.png') }}" alt="Rejected Icon" class="icon"
+                                <img src="{{ asset('img/background/rejected.png') }}" alt="Rejected Icon"
+                                    class="icon"
                                     style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
                             </div>
                         </div>
@@ -335,10 +386,12 @@
                                     <div class="progress-bar bg-success progress-bar-animated" role="progressbar"
                                         id="deliveryProgressBar" style="width: 75%;" aria-valuenow="75"
                                         aria-valuemin="0" aria-valuemax="100">
-                                        <span class="text-white" style="font-weight: bold;" id="deliveryPercentage">75%</span>
+                                        <span class="text-white" style="font-weight: bold;"
+                                            id="deliveryPercentage">75%</span>
                                     </div>
                                 </div>
-                                <img src="{{ asset('img/background/delivery.png') }}" alt="Delivery Icon" class="icon"
+                                <img src="{{ asset('img/background/delivery.png') }}" alt="Delivery Icon"
+                                    class="icon"
                                     style="position: absolute; top: 10px; right: 10px; width: 70px; height: 70px;">
                             </div>
                         </div>
@@ -393,11 +446,7 @@
                 <div class="chart-container chart-card">
                     <h5 class="font-weight-bold">Purchase Orders per Date</h5>
                     <div class="select-container">
-                        <label class="form-label">Select Stores:</label>
-                        <select id="storeSelect" class="form-select" data-control="select2"
-                            data-placeholder="Select an option">
-                            <!-- Options will be populated here -->
-                        </select>
+
                         <div id="loading" class="loading-spinner" style="display: none;">
                             Loading...
                         </div>
@@ -416,11 +465,12 @@
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 
         <script>
-            let startDate = ""; // Change from const to let
-            let endDate = ""; // Change from const to let
-            let selectedStores = "";
-            let pieChart;
-            let barChart;
+            let startDate = ""; // Initialize start date
+            let endDate = ""; // Initialize end date
+            let selectedStores = ""; // Initialize selected stores
+            let pieChart; // Variable for pie chart
+            let barChart; // Variable for bar chart
+
             $(document).ready(function() {
                 // Initialize the date range picker
                 $('#dateRangePicker').daterangepicker({
@@ -431,84 +481,97 @@
                     }
                 });
 
+                // Fetch stores and populate the select dropdown
+                fetchSelectStore();
+
+                // Show loading spinner while the carousel is loading
+                showLoadingSpinner();
+                console.log($('#storeSelect').val(), "$('#storeSelect').val()")
+                // Initial data fetch with empty dates
+                fetchData($('#storeSelect').val(), "", ""); // Pass empty dates initially
+
                 // Handle the button click to set the date range
                 $('#filterButton').click(function() {
                     startDate = $('#dateRangePicker').data('daterangepicker').startDate;
 
                     if (startDate) {
-                        // Calculate the end date as one month from the start date
-                        endDate = moment(startDate).add(1, 'months');
+                        endDate = moment(startDate).add(1, 'months'); // Calculate the end date
 
                         // Update the displayed date range
                         $('#dateRange').html(
                             `Date Range: <strong>${startDate.format('DD MMMM YYYY')} - ${endDate.format('DD MMMM YYYY')}</strong>`
                         );
 
-                        fetchDataPerStatus(startDate.format('YYYY-MM-DD'), endDate.format(
-                            'YYYY-MM-DD')); // Pass formatted dates
-                        fetchPODataPerStore(selectedStores, startDate.format('YYYY-MM-DD'), endDate.format(
-                            'YYYY-MM-DD')); // Pass formatted dates
-                        fetchPOData(startDate.format('YYYY-MM-DD'), endDate.format(
-                            'YYYY-MM-DD')); // Pass formatted dates
-
+                        // Pass formatted dates to the functions
+                        fetchData(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
                     } else {
-                        alert('Please select a start date.');
+                        toastr.error('Please select a start date.'); // Use Toastr for error notification
                     }
                 });
 
-                // Show loading spinner while the carousel is loading
-                $('#loadingSpinner').show(); // Show spinner
-
-                // Hide spinner after a short delay to simulate loading
-                setTimeout(function() {
-                    $('#loadingSpinner').hide(); // Hide spinner after 2 seconds
-                }, 2000);
-
-                // Update date range based on user input
-
-
-                // Initialize the pie chart for purchase orders per date
-
-                // Initialize the bar chart for Net Profit and Revenue
-                fetchPOData();
-
-
-                fetchDataPerStatus();
-                fetchPODataPerStore();
-                fetchSelectStore();
-
+                // Handle store selection change
                 $('#storeSelect').on('change', function() {
                     selectedStores = $(this).val(); // Get selected store IDs
-                    fetchPODataPerStore(selectedStores); // Fetch data for selected stores
+
+                    // Check if any store is selected
+                    if (!selectedStores || selectedStores.length === 0) {
+                        toastr.warning(
+                        'Please select at least one store.'); // Use Toastr for warning notification
+                        return; // Exit the function
+                    }
+
+                    if (startDate) {
+                        endDate = moment(startDate).add(1, 'months'); // Calculate the end date
+                        fetchData(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
+                    } else {
+                        toastr.error('Please select a start date.'); // Use Toastr for error notification
+                    }
                 });
             });
 
+            // Function to show loading spinner
+            function showLoadingSpinner() {
+                $('#loadingSpinner').show(); // Show spinner
+                setTimeout(function() {
+                    $('#loadingSpinner').hide(); // Hide spinner after 2 seconds
+                }, 2000);
+            }
+
+            // Function to fetch store data
             function fetchSelectStore() {
                 $.ajax({
                     url: '{{ route('stores.getStores') }}', // Replace with your API endpoint
                     method: 'GET',
                     dataType: 'json',
+                    beforeSend: function() {
+                        $('#loading').show(); // Show loading animation
+                    },
                     success: function(data) {
-                        // Hide loading animation
-                        $('#loading').hide();
-
-                        // Populate the select options
+                        $('#loading').hide(); // Hide loading animation
                         const storeSelect = $('#storeSelect');
                         storeSelect.empty(); // Clear existing options
                         data.forEach(store => {
                             storeSelect.append(
-                                `<option value="${store.store}">${store.store_name}</option>`
-                            );
+                                `<option value="${store.store}">${store.store_name}</option>`);
                         });
                     },
                     error: function() {
                         $('#loading').hide();
-                        alert('Failed to fetch store data. Please try again later.');
+                        toastr.error(
+                        'Failed to fetch store data. Please try again later.'); // Use Toastr for error notification
                     }
                 });
             }
 
-            function fetchDataPerStatus(startDate, endDate) {
+            // Function to fetch data based on selected stores and date range
+            function fetchData(startDate, endDate) {
+                fetchDataPerStatus(selectedStores, startDate, endDate);
+                fetchPODataPerStore(selectedStores, startDate, endDate);
+                fetchPOData(selectedStores, startDate, endDate);
+            }
+
+            // Function to fetch purchase order data per status
+            function fetchDataPerStatus(selectedStores, startDate, endDate) {
                 $.ajax({
                     url: '/dashboard-po/purchase-orders/status', // Replace with your API endpoint
                     method: 'GET',
@@ -517,96 +580,55 @@
                         end_date: endDate
                     },
                     beforeSend: function() {
-                        // Show the loading spinner before the request is sent
-                        $('#loadingSpinner').show();
+                        $('#loadingSpinner').show(); // Show loading spinner
                     },
                     success: function(response) {
-                        // Assuming response contains the data you need
-                        const progressValue = response.progress; // e.g., 1000
-                        const progressPercentage = response.percentage; // e.g., 70%
-                        const progressDetails = response.details; // e.g., "+10% (+5% Inc)"
-                        const confirmedCount = response.confirmed; // e.g., 500
-                        const confirmedPercentage = response.confirmedPercentage; // e.g., 50%
-                        const printedCount = response.printed; // e.g., 300
-                        const printedPercentage = response.printedPercentage; // e.g., 60%
-                        const completedCount = response.completed; // e.g., 950
-                        const completedPercentage = response.completedPercentage; // e.g., 80%
-                        const expiredCount = response.expired; // e.g., 50
-                        const expiredPercentage = response.expiredPercentage; // e.g., 20%
-                        const rejectedCount = response.rejected; // e.g., 20
-                        const rejectedPercentage = response.rejectedPercentage; // e.g., 10%
-                        const deliveryCount = response.delivery; // e.g., 400
-                        const deliveryPercentage = response.deliveryPercentage; // e.g., 75%
-
-                        // Update the UI with the fetched data for Progress PO
-                        $('#progressPOValue').text(progressValue);
-                        $('#progressPODetails').html(progressDetails);
-                        $('#progressPOBar').css('width', progressPercentage + '%').attr('aria-valuenow',
-                            progressPercentage);
-                        $('#progressPOBar').text(progressPercentage + '%');
-
-                        // Update the UI with the fetched data for Confirmed
-                        $('#confirmedCount').text(confirmedCount);
-                        $('#confirmedPercentage').text(confirmedPercentage + '%');
-                        $('#confirmedProgressBar').css('width', confirmedPercentage + '%').attr('aria-valuenow',
-                            confirmedPercentage);
-                        $('#confirmedProgressBar').text(confirmedPercentage + '%');
-
-                        // Update the UI with the fetched data for Printed
-                        $('#printedCount').text(printedCount);
-                        $('#printedPercentage').text(printedPercentage + '%');
-                        $('#printedProgressBar').css('width', printedPercentage + '%').attr('aria-valuenow',
-                            printedPercentage);
-                        $('#printedProgressBar').text(printedPercentage + '%');
-
-                        // Update the UI with the fetched data for Completed
-                        $('#completedCount').text(completedCount);
-                        $('#completedPercentage').text(completedPercentage + '%');
-                        $('#completedProgressBar').css('width', completedPercentage + '%').attr('aria-valuenow',
-                            completedPercentage);
-                        $('#completedProgressBar').text(completedPercentage + '%');
-
-                        // Update the UI with the fetched data for Expired
-                        $('#expiredCount').text(expiredCount);
-                        $('#expiredPercentage').text(expiredPercentage + '%');
-                        $('#expiredProgressBar').css('width', expiredPercentage + '%').attr('aria-valuenow',
-                            expiredPercentage);
-                        $('#expiredProgressBar').text(expiredPercentage + '%');
-
-                        // Update the UI with the fetched data for Rejected
-                        $('#rejectedCount').text(rejectedCount);
-                        $('#rejectedPercentage').text(rejectedPercentage + '%');
-                        $('#rejectedProgressBar').css('width', rejectedPercentage + '%').attr('aria-valuenow',
-                            rejectedPercentage);
-                        $('#rejectedProgressBar').text(rejectedPercentage + '%');
-
-                        // Update the UI with the fetched data for Delivery
-                        $('#deliveryCount').text(deliveryCount);
-                        $('#deliveryPercentage').text(deliveryPercentage + '%');
-                        $('#deliveryProgressBar').css('width', deliveryPercentage + '%').attr('aria-valuenow',
-                            deliveryPercentage);
-                        $('#deliveryProgressBar').text(deliveryPercentage + '%');
-
-                        // Hide the loading spinner
-                        $('#loadingSpinner').hide();
+                        updateProgressUI(response); // Update the UI with the fetched data
+                        $('#loadingSpinner').hide(); // Hide loading spinner
                     },
                     error: function() {
-                        // Handle error
-                        $('#progressPOValue').text('Error loading data');
-                        $('#progressPODetails').text('');
                         $('#loadingSpinner').hide();
+                        toastr.error('Error loading data'); // Use Toastr for error notification
                     }
                 });
             }
 
-            function toggleDataType() {
-                const switchLabel = document.getElementById('switchLabel');
-                const checkbox = document.getElementById('flexSwitchCheckDefault');
-                if (checkbox.checked) {
-                    switchLabel.textContent = 'Value'; // Change label to Value
-                } else {
-                    switchLabel.textContent = 'Count'; // Change label back to Count
-                }
+            // Function to update the UI with fetched progress data
+            function updateProgressUI(response) {
+                // Update the UI with the fetched data
+                $('#progressPOValue').text(response.progress);
+                $('#progressPODetails').html(response.details);
+                updateProgressBar('#progressPOBar', response.percentage);
+
+                $('#confirmedCount').text(response.confirmed);
+                $('#confirmedPercentage').text(response.confirmedPercentage + '%');
+                updateProgressBar('#confirmedProgressBar', response.confirmedPercentage);
+
+                $('#printedCount').text(response.printed);
+                $('#printedPercentage').text(response.printedPercentage + '%');
+                updateProgressBar('#printedProgressBar', response.printedPercentage);
+
+                $('#completedCount').text(response.completed);
+                $('#completedPercentage').text(response.completedPercentage + '%');
+                updateProgressBar('#completedProgressBar', response.completedPercentage);
+
+                $('#expiredCount').text(response.expired);
+                $('#expiredPercentage').text(response.expiredPercentage + '%');
+                updateProgressBar('#expiredProgressBar', response.expiredPercentage);
+
+                $('#rejectedCount').text(response.rejected);
+                $('#rejectedPercentage').text(response.rejectedPercentage + '%');
+                updateProgressBar('#rejectedProgressBar', response.rejectedPercentage);
+
+                $('#deliveryCount').text(response.delivery);
+                $('#deliveryPercentage').text(response.deliveryPercentage + '%');
+                updateProgressBar('#deliveryProgressBar', response.deliveryPercentage);
+            }
+
+            // Function to update a progress bar
+            function updateProgressBar(selector, percentage) {
+                $(selector).css('width', percentage + '%').attr('aria-valuenow', percentage);
+                $(selector).text(percentage + '%');
             }
 
             // Function to fetch purchase order data per selected date range
@@ -619,24 +641,18 @@
                         end_date: endDate
                     },
                     beforeSend: function() {
-                        // Show a loading spinner before the request is sent
-                        $('#loadingSpinner').show();
+                        $('#loadingSpinner').show(); // Show loading spinner
                     },
                     success: function(response) {
-                        console.log(response, 'approval_date'); // Log the response for debugging
-                        // Extract categories (dates) and counts from the response
                         const categories = response.approval_date; // Array of dates
                         const counts = response.counts; // Array of counts for each date
-
-                        // Call the function to render the chart with the fetched data
-                        renderPOChart(categories, counts);
+                        renderPOChart(categories, counts); // Render the chart
                     },
                     error: function() {
                         console.error('Error fetching PO data'); // Log error if the request fails
                     },
                     complete: function() {
-                        // Hide the loading spinner after the request is complete
-                        $('#loadingSpinner').hide();
+                        $('#loadingSpinner').hide(); // Hide the loading spinner after the request is complete
                     }
                 });
             }
@@ -765,9 +781,13 @@
                 });
             }
 
-
             // Function to fetch purchase order data per selected stores with date filtering
             function fetchPODataPerStore(selectedStores, startDate, endDate) {
+                // Check if selectedStores is empty or null, and set it to '40' if true
+                if (!selectedStores || selectedStores.length === 0) {
+                    selectedStores = '40'; // Default to store ID 40
+                }
+
                 $('#loading').show(); // Show loading animation
                 $.ajax({
                     url: '/dashboard-po/purchase-orders/per-store', // Replace with your actual API endpoint
@@ -787,7 +807,8 @@
 
                         // Check if the response is valid
                         if (categories.length === 0 || counts.length === 0) {
-                            alert("No data available for the selected stores.");
+                            toastr.warning(
+                            "No data available for the selected stores."); // Use Toastr for warning notification
                             return;
                         }
 
@@ -797,7 +818,8 @@
                     error: function(xhr, status, error) {
                         $('#loading').hide();
                         console.error("Error fetching data:", error); // Log error if the request fails
-                        alert("An error occurred while fetching data. Please try again.");
+                        toastr.error(
+                        "An error occurred while fetching data. Please try again."); // Use Toastr for error notification
                     }
                 });
             }
@@ -854,8 +876,7 @@
                         }
                     },
                     colors: ['#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0',
-                        '#546E7A'
-                    ], // Custom colors for the pie chart
+                    '#546E7A'], // Custom colors for the pie chart
                     responsive: [{
                         breakpoint: 480,
                         options: {
@@ -877,9 +898,7 @@
             }
 
 
-
-
-
+            // Initialize progress bars on DOMContentLoaded
             document.addEventListener("DOMContentLoaded", function() {
                 const progressBars = document.querySelectorAll('.progress-bar');
                 progressBars[0].style.width = '75%'; // Total Orders

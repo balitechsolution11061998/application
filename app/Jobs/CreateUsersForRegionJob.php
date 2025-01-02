@@ -1,51 +1,18 @@
 <?php
 
-namespace App\Jobs;
+namespace Database\Seeders;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use App\Models\Role;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
-use Faker\Factory as Faker;
-use Illuminate\Support\Carbon;
+use App\Models\User; // Make sure to import the User model
+use Laratrust\Models\LaratrustRole;
 
-class CreateUsersForRegionJob implements ShouldQueue
+class UsersTableSeeder extends Seeder
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    public int $regionId;
-    public int $usersPerRegion;
-
-    public function __construct(int $regionId, int $usersPerRegion)
+    public function run()
     {
-        $this->regionId = $regionId;
-        $this->usersPerRegion = $usersPerRegion;
-    }
-
-    public function handle()
-    {
-        $regionId = $this->regionId;
-        $usersPerRegion = $this->usersPerRegion;
-
-        // Define roles
-        $roles = [
-            'superadministrator',
-            'administrator',
-            'supplier',
-            'it',
-            'md',
-            'dc',
-        ];
-
-        // Fetch role IDs
-        $roleIds = DB::table('roles')->whereIn('name', $roles)->pluck('id', 'name');
-
-        // Initialize Faker
-        $faker = Faker::create('id_ID'); // Use Indonesian locale
-
         // Predefined users with actual names
         $predefinedUsers = [
             [
@@ -54,13 +21,11 @@ class CreateUsersForRegionJob implements ShouldQueue
                 'email' => 'notification@supplier.m-mart.co.id',
                 'status' => 'y',
                 'all_supplier' => 'y',
-                'password' => Hash::make('99@123'), // Set password for admin
-                'password_show' => '99@123',
+                'password' => Hash::make('t34m1tmm'), // Set password for admin
                 'link_sync' => 'https://supplier.m-mart.co.id',
-                'region' => $regionId,
+                'region' => 1, // Set a default region ID
                 'address' => 'Jl. Merdeka No.1, Jakarta',
                 'phone_number' => '081234567890',
-                'profile_picture' => '/logo.png',
                 'role' => 'administrator',
             ],
             [
@@ -69,10 +34,9 @@ class CreateUsersForRegionJob implements ShouldQueue
                 'email' => 'sulaksana60@gmail.com',
                 'status' => 'y',
                 'all_supplier' => 'y',
-                'password' => Hash::make('219811991@123'), // Set password for superadmin
-                'password_show' => '219811991@123',
+                'password' => Hash::make('Superman2000@'), // Set password for superadmin
                 'link_sync' => null,
-                'region' => $regionId,
+                'region' => 1, // Set a default region ID
                 'address' => 'Jl. Bali Merdeka',
                 'phone_number' => '081219811991',
                 'role' => 'superadministrator',
@@ -84,199 +48,36 @@ class CreateUsersForRegionJob implements ShouldQueue
                 'status' => 'y',
                 'all_supplier' => 'y',
                 'password' => Hash::make('111095@123'), // Set password for supplier
-                'password_show' => '111095@123',
                 'link_sync' => null,
-                'region' => $regionId,
+                'region' => 1, // Set a default region ID
                 'address' => 'Jl. Supplier No.1, Jakarta',
                 'phone_number' => '081234567891',
                 'role' => 'supplier',
             ],
-            // Predefined users for IT, MD, and DC
-            [
-                'username' => 'it_user',
-                'name' => 'IT User',
-                'email' => 'it_user@example.com',
-                'status' => 'y',
-                'all_supplier' => 'n',
-                'password' => Hash::make('it_user@123'),
-                'password_show' => 'it_user@123',
-                'link_sync' => null,
-                'region' => $regionId,
-                'address' => 'Jl. IT No.1, Jakarta',
-                'phone_number' => '081234567892',
-                'role' => 'it',
-            ],
-            [
-                'username' => 'md_user',
-                'name' => 'Managing Director',
-                'email' => 'md_user@example.com',
-                'status' => 'y',
-                'all_supplier' => 'n',
-                'password' => Hash::make('md_user@123'),
-                'password_show' => 'md_user@123',
-                'link_sync' => null,
-                'region' => $regionId,
-                'address' => 'Jl. MD No.1, Jakarta',
-                'phone_number' => '081234567893',
-                'role' => 'md',
-            ],
-            [
-                'username' => 'dc_user',
-                'name' => 'Distribution Center',
-                'email' => 'dc_user@example.com',
-                'status' => 'y',
-                'all_supplier' => 'n',
-                'password' => Hash::make('dc_user@123'),
-                'password_show' => 'dc_user@123',
-                'link_sync' => null,
-                'region' => $regionId,
-                'address' => 'Jl. DC No.1, Jakarta',
-                'phone_number' => '081234567894',
-                'role' => 'dc',
-            ],
-            // New users to be added
-            [
-                'username' => 111254,
-                'name' => 'BAHTERA WIRANIAGA INTERNUSA PT',
-                'email' => 'finance2bali@pt-bahtera.co.id',
-                'status' => 'y',
-                'all_supplier' => 'y',
-                'password' => Hash::make('111254@123'), // Set password for supplier
-                'password_show' => '111254@123',
-                'link_sync' => null,
-                'region' => $regionId,
-                'address' => 'Jl. Bahtera No.1, Jakarta',
-                'phone_number' => '081234567895',
-                'role' => 'supplier',
-            ],
-            [
-                'username' => 111188,
-                'name' => 'SO GOOD FOOD, PT',
-                'email' => 'gita.puspitasari@japfa.com',
-                'status' => 'y',
-                'all_supplier' => 'y',
-                'password' => Hash::make('111188@123'), // Set password for supplier
-                'password_show' => '111188@123',
-                'link_sync' => null,
-                'region' => $regionId,
-                'address' => 'Jl. So Good No.1, Jakarta',
-                'phone_number' => '081234567896',
-                'role' => 'supplier',
-            ],
-            [
-                'username' => 151034,
-                'name' => 'GAMBINO ARTISAN PRIMA PT. - KO',
-                'email' => 'gambinocoffee@gmail.com',
-                'status' => 'y',
-                'all_supplier' => 'y',
-                'password' => Hash::make('151034@123'), // Set password for supplier
-                'password_show' => '151034@123',
-                'link_sync' => null,
-                'region' => $regionId,
-                'address' => 'Jl. Gambino No.1, Jakarta',
-                'phone_number' => '081234567897',
-                'role' => 'supplier',
-            ],
-            [
-                'username' => 111149,
-                'name' => 'JARI PERKASA, CV',
-                'email' => 'dirajariperkasa@gmail.com',
-                'status' => 'y',
-                'all_supplier' => 'y',
-                'password' => Hash::make('111149@123'), // Set password for supplier
-                'password_show' => '111149@123',
-                'link_sync' => null,
-                'region' => $regionId,
-                'address' => 'Jl. Jari No.1, Jakarta',
-                'phone_number' => '081234567898',
-                'role' => 'supplier',
-            ],
-            [
-                'username' => 111157,
-                'name' => 'MASUYA PPN',
-                'email' => 'balirsm@masuya.co.id',
-                'status' => 'y',
-                'all_supplier' => 'y',
-                'password' => Hash::make('111157@123'), // Set password for supplier
-                'password_show' => '111157@123',
-                'link_sync' => null,
-                'region' => $regionId,
-                'address' => 'Jl. Masuya No.1, Jakarta',
-                'phone_number' => '081234567899',
-                'role' => 'supplier',
-            ],
-            [
-                'username' => 162082,
-                'name' => 'PANGAN MITRA BALI, CV',
-                'email' => 'cvpangmitrabali@gmail.com',
-                'status' => 'y',
-                'all_supplier' => 'y',
-                'password' => Hash::make('162082@123'), // Set password for supplier
-                'password_show' => '162082@123',
-                'link_sync' => null,
-                'region' => $regionId,
-                'address' => 'Jl. Pangan No.1, Jakarta',
-                'phone_number' => '081234567900',
-                'role' => 'supplier',
-            ],
+            // Add other predefined users here...
         ];
 
-        // Generate additional users with Faker
-        for ($i = 0; $i < $usersPerRegion - count($predefinedUsers); $i++) {
-            $name = $faker->name; // Generate a random Indonesian name
-            $username = strtolower(str_replace(' ', '.', $name)); // Create username from name
-            $email = strtolower(str_replace(' ', '.', $name)) . '@example.com'; // Create email from name
+        // Insert predefined users into the database
+        foreach ($predefinedUsers as $userData) {
+            // Create the user
+            $user = User::create([
+                'username' => $userData['username'],
+                'name' => $userData['name'],
+                'email' => $userData['email'],
+                'status' => $userData['status'],
+                'all_supplier' => $userData['all_supplier'],
+                'password' => $userData['password'],
+                'link_sync' => $userData['link_sync'],
+                'region' => $userData['region'],
+                'address' => $userData['address'],
+                'phone_number' => $userData['phone_number'],
+            ]);
 
-            // Randomly assign role as either 'user' or 'supplier'
-            $role = $faker->randomElement(['supplier', 'it', 'md', 'dc']); // Include new roles
-
-            $predefinedUsers[] = [
-                'username' => $username, // Use the generated username
-                'name' => $name, // Use the generated name
-                'email' => $email, // Use the generated email
-                'status' => 'y',
-                'all_supplier' => 'n',
-                'password' => Hash::make($username . '@123'), // Set password based on username
-                'password_show' => $username . '@123',
-                'link_sync' => null,
-                'region' => $regionId,
-                'address' => $faker->address, // Generate a random address
-                'phone_number' => '081' . str_pad($i, 8, '0', STR_PAD_RIGHT),
-                'role' => $role, // Assign the randomly selected role
-            ];
+            // Assign the role using Laratrust
+            $role = Role::where('name', $userData['role'])->first();
+            if ($role) {
+                $user->attachRole($role);
+            }
         }
-
-        DB::transaction(function () use ($predefinedUsers, $regionId, $roleIds) {
-            // Insert predefined users first
-            $users = [];
-            foreach ($predefinedUsers as $user) {
-                // Check if user already exists
-                if (!DB::table('users')->where('username', $user['username'])->exists()) {
-                    $users[] = $user;
-                }
-            }
-
-            // Insert users and assign roles
-            foreach ($users as $user) {
-                $role = $user['role'] ?? 'user';
-                unset($user['role']);
-                $user['created_at'] = Carbon::now();
-                // Insert user and get the ID
-                $userId = DB::table('users')->insertGetId($user);
-
-                // Assign the role
-                $roleId = $roleIds[$role] ?? null;
-                if ($roleId) {
-                    DB::table('role_user')->updateOrInsert(
-                        [
-                            'role_id' => $roleId,
-                            'user_id' => $userId,
-                            'user_type' => 'App\Models\User',
-                        ],
-                        []
-                    );
-                }
-            }
-        });
     }
 }
