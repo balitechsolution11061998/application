@@ -26,12 +26,26 @@ class DashboardPoController extends Controller
         try {
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
+            // Get the selected store IDs from the request
+            $selectedStores = $request->input('stores', []);
+
+            // Ensure $selectedStores is an array
+            if (!is_array($selectedStores)) {
+                $selectedStores = [$selectedStores]; // Convert to array if it's a single string
+            }
+
+            // Convert selected store IDs from strings to integers
+            $selectedStores = array_map('intval', $selectedStores);
 
             // Initialize query for progress
             $progressQuery = OrdHead::where('status', 'progress');
+            if (!empty($selectedStores)) {
+                $progressQuery->whereIn('ship_to', $selectedStores);
+            }
             if (!empty($startDate) && !empty($endDate)) {
                 $progressQuery->whereBetween('created_at', [$startDate, $endDate]);
             }
+
             $progressCount = $progressQuery->count();
             $totalCount = OrdHead::count(); // Total count for percentage calculation
 
@@ -40,6 +54,9 @@ class DashboardPoController extends Controller
 
             // Initialize query for confirmed
             $confirmedQuery = OrdHead::where('status', 'confirmed');
+            if (!empty($selectedStores)) {
+                $confirmedQuery->whereIn('ship_to', $selectedStores);
+            }
             if (!empty($startDate) && !empty($endDate)) {
                 $confirmedQuery->whereBetween('created_at', [$startDate, $endDate]);
             }
@@ -48,6 +65,9 @@ class DashboardPoController extends Controller
 
             // Initialize query for printed
             $printedQuery = OrdHead::where('status', 'printed');
+            if (!empty($selectedStores)) {
+                $printedQuery->whereIn('ship_to', $selectedStores);
+            }
             if (!empty($startDate) && !empty($endDate)) {
                 $printedQuery->whereBetween('created_at', [$startDate, $endDate]);
             }
@@ -56,6 +76,9 @@ class DashboardPoController extends Controller
 
             // Initialize query for completed
             $completedQuery = OrdHead::where('status', 'completed');
+            if (!empty($selectedStores)) {
+                $completedQuery->whereIn('ship_to', $selectedStores);
+            }
             if (!empty($startDate) && !empty($endDate)) {
                 $completedQuery->whereBetween('created_at', [$startDate, $endDate]);
             }
@@ -64,6 +87,9 @@ class DashboardPoController extends Controller
 
             // Initialize query for expired
             $expiredQuery = OrdHead::where('status', 'expired');
+            if (!empty($selectedStores)) {
+                $expiredQuery->whereIn('ship_to', $selectedStores);
+            }
             if (!empty($startDate) && !empty($endDate)) {
                 $expiredQuery->whereBetween('created_at', [$startDate, $endDate]);
             }
@@ -72,6 +98,9 @@ class DashboardPoController extends Controller
 
             // Initialize query for rejected
             $rejectedQuery = OrdHead::where('status', 'rejected');
+            if (!empty($selectedStores)) {
+                $rejectedQuery->whereIn('ship_to', $selectedStores);
+            }
             if (!empty($startDate) && !empty($endDate)) {
                 $rejectedQuery->whereBetween('created_at', [$startDate, $endDate]);
             }
@@ -80,6 +109,9 @@ class DashboardPoController extends Controller
 
             // Initialize query for delivery
             $deliveryQuery = OrdHead::where('status', 'delivery');
+            if (!empty($selectedStores)) {
+                $deliveryQuery->whereIn('ship_to', $selectedStores);
+            }
             if (!empty($startDate) && !empty($endDate)) {
                 $deliveryQuery->whereBetween('created_at', [$startDate, $endDate]);
             }
@@ -129,10 +161,20 @@ class DashboardPoController extends Controller
             return response()->json(['error' => 'Failed to fetch progress count'], 500);
         }
     }
+
     public function getPOCountPerDate(Request $request)
     {
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
+        $selectedStores = $request->input('stores', []);
+
+        // Ensure $selectedStores is an array
+        if (!is_array($selectedStores)) {
+            $selectedStores = [$selectedStores]; // Convert to array if it's a single string
+        }
+
+        // Convert selected store IDs from strings to integers
+        $selectedStores = array_map('intval', $selectedStores);
 
         try {
             // Initialize the query
@@ -141,6 +183,12 @@ class DashboardPoController extends Controller
             // Apply date filtering only if both dates are provided
             if ($startDate && $endDate) {
                 $query->whereBetween('approval_date', [$startDate, $endDate]);
+            }
+            if (!empty($selectedStores)) {
+                $query->whereIn('ordhead.ship_to', $selectedStores);
+            } else {
+                // Optionally, you can add a condition to filter for a specific store if needed
+                $query->where('ordhead.ship_to', 40); // Replace 40 with the actual identifier for the store you want to fetch
             }
 
             // Group by date and order by date
@@ -189,7 +237,6 @@ class DashboardPoController extends Controller
 
         // Convert selected store IDs from strings to integers
         $selectedStores = array_map('intval', $selectedStores);
-
         // Get the start and end dates from the request
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
@@ -206,7 +253,6 @@ class DashboardPoController extends Controller
                 ->groupBy('ordhead.ship_to', 'store.store_name', 'ordhead.status') // Group by ship_to, store_name, and status
                 ->orderBy('store.store_name', 'asc') // Order by store_name
                 ->orderBy('ordhead.status', 'asc'); // Order by status
-
             // If no stores are selected, fetch data for all stores
             if (!empty($selectedStores)) {
                 $query->whereIn('ordhead.ship_to', $selectedStores);

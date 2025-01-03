@@ -13,7 +13,7 @@ return [
             'permissionType' => 'gate',                    // Permission type (gate or policy)
             'icon'           => 'fas',                     // Font Awesome Solid icons (FA class)
             'iconName'       => 'fa-tachometer-alt',        // Updated icon for the dashboard (optional)
-            'route'          => 'home.index',    // Route updated to dashboard (replace with your dashboard route)
+            'route'          => 'dashboard-system.index',    // Route updated to dashboard (replace with your dashboard route)
             'active'         => [],                        // Define conditions when this item is active
             'iconPath'       => 4,
         ],

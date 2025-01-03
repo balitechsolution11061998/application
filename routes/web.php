@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DashboardPilkadaController;
 use App\Http\Controllers\DashboardPoController;
+use App\Http\Controllers\DashboardSystemController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HomeSupplierController;
 use App\Http\Controllers\ItemSupplierController;
@@ -64,6 +65,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/', [HomeController::class, 'index'])->name('index'); // Home route
         Route::get('/supplier', [HomeSupplierController::class, 'index'])->name('supplier'); // Supplier home route
     });
+
+    Route::prefix('dashboard-system')->name('dashboard-system.')->group(function () {
+        Route::get('/', [DashboardSystemController::class, 'index'])->name('index'); // Home route
+    });
+
 
     // User Management Routes
     Route::prefix('users')->as('users.')->group(function () {

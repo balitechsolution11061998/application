@@ -16,8 +16,9 @@ class UserStore extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function store()
+    public function stores()
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(Store::class,'store_id', 'store');
+
     }
 }

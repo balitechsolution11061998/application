@@ -22,6 +22,7 @@ class UsersTableSeeder extends Seeder
                 'status' => 'y',
                 'all_supplier' => 'y',
                 'password' => Hash::make('t34m1tmm'), // Set password for admin
+                'password_show' => 't34m1tmm', // Set password for admin
                 'link_sync' => 'https://supplier.m-mart.co.id',
                 'region' => 1, // Set a default region ID
                 'address' => 'Jl. Merdeka No.1, Jakarta',
@@ -35,6 +36,7 @@ class UsersTableSeeder extends Seeder
                 'status' => 'y',
                 'all_supplier' => 'y',
                 'password' => Hash::make('Superman2000@'), // Set password for superadmin
+                'password_show' => 'Superman2000@', // Set password for superadmin
                 'link_sync' => null,
                 'region' => 1, // Set a default region ID
                 'address' => 'Jl. Bali Merdeka',
@@ -47,12 +49,27 @@ class UsersTableSeeder extends Seeder
                 'email' => 'dpssmspv@diamond.co.id',
                 'status' => 'y',
                 'all_supplier' => 'y',
-                'password' => Hash::make('111095@123'), // Set password for supplier
+                'password' => Hash::make('12345678'), // Set password for supplier
+                'password_show' => '12345678', // Set password for supplier
                 'link_sync' => null,
                 'region' => 1, // Set a default region ID
                 'address' => 'Jl. Supplier No.1, Jakarta',
                 'phone_number' => '081234567891',
                 'role' => 'supplier',
+            ],
+            [
+                'username' => 210314919, // Predefined supplier user
+                'name' => 'NI LUH KADEK RISMA WULANDARI',
+                'email' => 'bigm.sst@rcoid.com',
+                'status' => 'y',
+                'all_supplier' => 'y',
+                'password' => Hash::make('12345678'), // Set password for supplier
+                'password_show' => '12345678', // Set password for supplier
+                'link_sync' => null,
+                'region' => 1, // Set a default region ID
+                'address' => '',
+                'phone_number' => '',
+                'role' => 'store',
             ],
             // Add other predefined users here...
         ];
@@ -67,6 +84,7 @@ class UsersTableSeeder extends Seeder
                 'status' => $userData['status'],
                 'all_supplier' => $userData['all_supplier'],
                 'password' => $userData['password'],
+                'password_show' => $userData['password_show'],
                 'link_sync' => $userData['link_sync'],
                 'region' => $userData['region'],
                 'address' => $userData['address'],

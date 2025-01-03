@@ -47,15 +47,28 @@ class StoreController extends Controller
     {
         try {
             // Start building the query
-            $query = Store::select('store', 'store_name');
+            $query = Store::select('store.store', 'store.store_name')
+                ->leftJoin('user_store', 'store.store', '=', 'user_store.store_id');
+
+            // Get the authenticated user
+            $user = auth()->user();
+
+            // If the user has a specific role (e.g., 'store'), filter by user_store
+            if ($user->hasRole('store')) { // Adjust the role name as necessary
+                // Get the store IDs associated with the user
+                $storeIds = $user->userStore->pluck('store_id'); // Assuming userStore is a relationship that returns a collection
+
+                // Use whereIn to filter stores based on the user's associated store IDs
+                $query->whereIn('user_store.store_id', $storeIds);
+            }
 
             // Check if there is a search term in the request
             if ($request->has('search') && !empty($request->search)) {
                 $searchTerm = $request->search;
                 // Apply a where clause to filter stores based on the search term
                 $query->where(function ($q) use ($searchTerm) {
-                    $q->where('store', 'LIKE', "%{$searchTerm}%")
-                        ->orWhere('store_name', 'LIKE', "%{$searchTerm}%");
+                    $q->where('stores.store', 'LIKE', "%{$searchTerm}%")
+                        ->orWhere('stores.store_name', 'LIKE', "%{$searchTerm}%");
                 });
             }
 
@@ -72,6 +85,8 @@ class StoreController extends Controller
             return response()->json(['error' => 'An error occurred while fetching stores: ' . $e->getMessage()], 500);
         }
     }
+
+
 
     public function store(Request $request)
     {
@@ -196,7 +211,7 @@ class StoreController extends Controller
             // Validate the request
             $request->validate([
                 'username' => 'required|exists:users,username', // Ensure the username exists in the users table
-                'store_id' => 'required|exists:store,id', // Ensure the store_id exists in the stores table
+                'store_id' => 'required', // Ensure the store_id exists in the stores table
             ]);
 
             // Find the user by username
@@ -216,8 +231,6 @@ class StoreController extends Controller
                     'success' => true,
                     'message' => 'User  store updated successfully',
                     'userStoreId' => $userStore->id,
-                    'store_name' => $userStore->store->store_name, // Assuming you have a relationship to get the store name
-                    'store' => $userStore->store->id, // Assuming you want to return the store ID
                 ], 200);
             } else {
                 // If it does not exist, create a new record
@@ -230,8 +243,6 @@ class StoreController extends Controller
                     'success' => true,
                     'message' => 'User  store created successfully',
                     'userStoreId' => $userStore->id,
-                    'store_name' => $userStore->store->store_name, // Assuming you have a relationship to get the store name
-                    'store' => $userStore->store->id, // Assuming you want to return the store ID
                 ], 201);
             }
         } catch (\Exception $e) {

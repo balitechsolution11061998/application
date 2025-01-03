@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\SystemMetrics;
-use App\Models\ActivityLog;
 use App\Models\SystemUsage;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Spatie\ServerMonitor\Models\Check;
 
-class HomeController extends Controller
+class DashboardSystemController extends Controller
 {
     //
-
+    public function __construct()
+    {
+        // Apply Laratrust middleware to check for permission
+        $this->middleware('permission:show-dashboard-system'); // Replace 'view_home' with your actual permission name
+    }
     public function index()
     {
         // Get the available total RAM (this is platform-dependent)
@@ -36,8 +36,6 @@ class HomeController extends Controller
         });
 
         // Pass the aggregated data to the view
-        return view('home', compact('remainingRamPerHour'));
+        return view('dashboard.system.index', compact('remainingRamPerHour'));
     }
-
-
 }

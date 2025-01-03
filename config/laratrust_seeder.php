@@ -14,8 +14,9 @@ return [
     'roles_structure' => [
         'superadministrator' => [
             'dashboard' => 's',
+            'dashboard-po' => 's',
             'dashboard-system' => 's',
-            'management'=>'usr',
+            'management' => 'usr',
             'roles' => 'c,r,u,d',
             'permissions' => 'c,r,u,d',
             'users' => 'c,r,u,d',
@@ -23,7 +24,7 @@ return [
             'home' => 's,u',
         ],
         'administrator' => [
-            'dashboard'=>'s',
+            'dashboard' => 's',
             'users' => 'c,r,u,d',
             'profile' => 'r,u',
         ],
@@ -74,6 +75,12 @@ return [
             'warehouse' => 'c,r,u,d',
             'profile' => 'r,u',
         ],
+        // New store role added
+        'store' => [
+            'inventory' => 'c,r,u,d',
+            'orders' => 'c,r,u,d',
+            'profile' => 'r,u',
+        ],
     ],
 
     'permissions_map' => [
@@ -82,6 +89,6 @@ return [
         'u' => 'update',
         'd' => 'delete',
         's' => 'show',
-        'usr' =>'user',
+        'usr' => 'user',
     ],
 ];

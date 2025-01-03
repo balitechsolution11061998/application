@@ -1,3 +1,6 @@
+@push('styles')
+    <link href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
+@endpush
 <div class="container mt-5 shadow-sm p-4 rounded bg-light">
     <h4 class="stepper-title text-primary mb-4">Manage Store Information</h4>
 
@@ -8,8 +11,9 @@
             name="store_id">
             <option value="" disabled selected>Select a store</option>
             @foreach ($stores as $store)
-                <option value="{{ $store->id }}">
-                    <i class="fas fa-store"></i> {{ $store->store_name }} ({{ $store->id }})
+                <option value="{{ $store->store }}">
+                    <i class="fas fa-store"></i> {{ $store->store_name }} ({{ $store->store }})
+                </option>
                 </option>
             @endforeach
         </select>
@@ -34,8 +38,8 @@
             @foreach ($user->userStore as $userStore)
                 <div class="alert alert-info d-flex justify-content-between align-items-center"
                     data-id="{{ $userStore->id }}">
-                    <span>{{ $userStore->store->store_name }} - {{ $userStore->store->store_add1 }},
-                        {{ $userStore->store->store_city }} (Region: {{ $userStore->store->region }})</span>
+                    <span>{{ $userStore->stores->store_name }} - {{ $userStore->stores->store_add1 }},
+                        {{ $userStore->stores->store_city }} (Region: {{ $userStore->stores->region }})</span>
                     <button class="btn btn-danger btn-sm" data-id="{{ $userStore->id }}"
                         onclick="deleteStore(event, this)">
                         <i class="fas fa-trash-alt"></i> Remove
@@ -48,9 +52,11 @@
 </div>
 
 @push('scripts')
+    <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
     <script>
         $(document).ready(function() {
             // Initialize Select2
+
 
             // Save store information function
             $("#saveStoreBtn").click(function(e) {
@@ -87,13 +93,9 @@
                             success: function(response) {
                                 console.log(response, 'response');
                                 if (response.success) {
-                                    Toastify({
-                                        text: "Store information saved successfully!",
-                                        duration: 3000,
-                                        gravity: "top",
-                                        position: "right",
-                                        backgroundColor: "#28a745",
-                                    }).showToast();
+                                    toastr.success(
+                                        "Store information saved successfully!",
+                                        "Success");
 
                                     // Clear the selection after saving
                                     $("#storeSelect").val(null).trigger('change');
@@ -102,13 +104,13 @@
                                     if (response.message.includes("created")) {
                                         // Append new store to the list
                                         $("#userStoresList").append(`
-            <div class="alert alert-info d-flex justify-content-between align-items-center" data-id="${response.userStoreId}">
-                <span>${response.store_name} (${response.store})</span>
-                <button class="btn btn-danger btn-sm deleteStoreBtn" data-id="${response.userStoreId}">
-                    <i class="fas fa-trash"></i> Delete
-                </button>
-            </div>
-        `);
+                                <div class="alert alert-info d-flex justify-content-between align-items-center" data-id="${response.userStoreId}">
+                                    <span>${response.store_name} (${response.store})</span>
+                                    <button class="btn btn-danger btn-sm deleteStoreBtn" data-id="${response.userStoreId}">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            `);
                                     }
                                 } else {
                                     Swal.fire({
@@ -129,6 +131,7 @@
                     }
                 });
             });
+
 
             // Delete store function
             window.deleteStore = function(e, button) {

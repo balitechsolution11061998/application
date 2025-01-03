@@ -1,7 +1,7 @@
 @extends('errors::minimal')
 
-@section('title', 'Forbidden')
+@section('title', 'Dilarang')
 @section('code', '403')
 @section('message', $exception->getMessage() ?: 'Akses Ditolak: Izin Tidak Memadai.')
-@section('image', image('illustrations/sigma-1/21.png'))
-@section('image-dark', image('illustrations/sigma-1/21-dark.png'))
+@section('image', 'img/background/403.png')
+@section('image-dark', 'img/background/403.png')

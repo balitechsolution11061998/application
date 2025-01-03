@@ -488,7 +488,6 @@
                 showLoadingSpinner();
                 console.log($('#storeSelect').val(), "$('#storeSelect').val()")
                 // Initial data fetch with empty dates
-                fetchData($('#storeSelect').val(), "", ""); // Pass empty dates initially
 
                 // Handle the button click to set the date range
                 $('#filterButton').click(function() {
@@ -554,6 +553,7 @@
                             storeSelect.append(
                                 `<option value="${store.store}">${store.store_name}</option>`);
                         });
+                        fetchData($('#storeSelect').val(),null,null); // Pass empty dates initially
                     },
                     error: function() {
                         $('#loading').hide();
@@ -564,7 +564,7 @@
             }
 
             // Function to fetch data based on selected stores and date range
-            function fetchData(startDate, endDate) {
+            function fetchData(selectedStores,startDate, endDate) {
                 fetchDataPerStatus(selectedStores, startDate, endDate);
                 fetchPODataPerStore(selectedStores, startDate, endDate);
                 fetchPOData(selectedStores, startDate, endDate);
@@ -572,10 +572,12 @@
 
             // Function to fetch purchase order data per status
             function fetchDataPerStatus(selectedStores, startDate, endDate) {
+                console.log("masuk sini",selectedStores,'selectedStores', startDate, endDate);
                 $.ajax({
                     url: '/dashboard-po/purchase-orders/status', // Replace with your API endpoint
                     method: 'GET',
                     data: {
+                        stores:selectedStores,
                         start_date: startDate,
                         end_date: endDate
                     },
@@ -632,11 +634,12 @@
             }
 
             // Function to fetch purchase order data per selected date range
-            function fetchPOData(startDate, endDate) {
+            function fetchPOData(storeSelect,startDate, endDate) {
                 $.ajax({
                     url: '/dashboard-po/purchase-orders/count-per-date', // Replace with your API endpoint
                     method: 'GET',
                     data: {
+                        stores:storeSelect,
                         start_date: startDate,
                         end_date: endDate
                     },

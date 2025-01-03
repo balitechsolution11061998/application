@@ -210,8 +210,9 @@ return [
              */
             'abort' => [
                 'code' => 403,
-                'message' => 'User does not have any of the necessary access rights.',
+                'message' => 'Pengguna tidak memiliki hak akses ke halaman ini silahkan hubungi administrator untuk mendapatkan hak akses ke halaman ini.',
             ],
+
 
             /**
              * Redirects the user to the given url.
