@@ -19,68 +19,13 @@
         </div>
     @endif
 
+
     <!-- Card Start -->
     <div class="card rounded">
         <div class="card-header d-flex justify-content-between align-items-center bg-light border-bottom-0">
             <h5 class="card-title mb-0 text-primary">Purchase Orders Management</h5>
             <div class="d-flex align-items-center gap-2">
-                <!-- Date Range Picker for Filtering -->
-                <div class="input-group input-group-sm">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text bg-white border-secondary">
-                            <i class="fas fa-calendar-alt"></i>
-                        </span>
-                    </div>
-                    <input type="text" id="filterDateRange" class="form-control border-secondary"
-                        placeholder="Select Date Range">
-                </div>
 
-                <!-- Input field for filtering by order_no -->
-                <div class="input-group input-group-sm">
-                    <input type="text" id="orderNo"
-                        class="form-control form-control-sm rounded-pill border-primary" placeholder="Enter Order No" />
-                </div>
-
-                <!-- Store Filter with Select2 -->
-                <div class="input-group input-group-sm">
-                    <select id="filterStore" class="form-control border-secondary" multiple="multiple">
-                        <!-- Options will be populated dynamically -->
-                    </select>
-                </div>
-
-                <!-- Supplier Filter with Select2 -->
-                <div class="input-group input-group-sm">
-                    <select id="filterSupplier" class="form-control border-secondary" multiple="multiple">
-                        <!-- Options will be populated dynamically -->
-                    </select>
-                </div>
-
-                <!-- Region Filter with Select2 -->
-                <div class="input-group input-group-sm">
-                    <select id="filterRegion" class="form-control border-secondary" multiple="multiple">
-                        <!-- Options will be populated dynamically -->
-                    </select>
-                </div>
-
-                <!-- Status Filter with Select2 -->
-                <div class="input-group input-group-sm">
-                    <select id="filterStatus" class="form-control border-secondary" multiple="multiple">
-                        <option value="Progress">Progress</option>
-                        <option value="Rejected">Reject</option>
-                        <option value="Printed">Print</option>
-                        <option value="Expired">Expired</option>
-                        <option value="Confirmed">Konfirmasi</option>
-                        <option value="Completed">Receiving</option>
-                        <option value="Incompleted">Receiving Incompleted</option>
-                        <!-- Add more status options as needed -->
-                    </select>
-                </div>
-
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" id="filterDataBtn">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
 
                 <!-- Date Picker for Syncing -->
                 <div class="input-group input-group-sm">
@@ -103,6 +48,7 @@
 
 
 
+
         <div class="card-body">
             <!-- Search and Toolbar -->
             <div class="d-flex flex-stack mb-4">
@@ -113,6 +59,82 @@
                 </div>
 
             </div>
+
+            <div class="row mb-4">
+                <!-- Date Range Picker for Filtering -->
+                <div class="col-md-3 mb-2">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-light border-secondary">
+                                <i class="fas fa-calendar-alt"></i>
+                            </span>
+                        </div>
+                        <input type="text" id="filterDateRange" class="form-control border-secondary"
+                            placeholder="Select Date Range">
+                    </div>
+                </div>
+
+                <!-- Input field for filtering by order_no -->
+                <div class="col-md-3 mb-2">
+                    <div class="input-group input-group-sm">
+                        <input type="text" id="orderNo"
+                            class="form-control form-control-sm rounded-pill border-primary"
+                            placeholder="Enter Order No" />
+                    </div>
+                </div>
+
+                <!-- Store Filter with Select2 -->
+                <div class="col-md-3 mb-2">
+                    <div class="input-group input-group-sm">
+                        <select id="filterStore" class="form-control border-secondary" multiple="multiple">
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Supplier Filter with Select2 -->
+                <div class="col-md-3 mb-2">
+                    <div class="input-group input-group-sm">
+                        <select id="filterSupplier" class="form-control border-secondary" multiple="multiple">
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Region Filter with Select2 -->
+                <div class="col-md-3 mb-2">
+                    <div class="input-group input-group-sm">
+                        <select id="filterRegion" class="form-control border-secondary" multiple="multiple">
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Status Filter with Select2 -->
+                <div class="col-md-3 mb-2">
+                    <div class="input-group input-group-sm">
+                        <select id="filterStatus" class="form-control border-secondary" multiple="multiple">
+                            <option value="Progress">Progress</option>
+                            <option value="Rejected">Reject</option>
+                            <option value="Printed">Print</option>
+                            <option value="Expired">Expired</option>
+                            <option value="Confirmed">Konfirmasi</option>
+                            <option value="Completed">Receiving</option>
+                            <option value="Incompleted">Receiving Incompleted</option>
+                            <!-- Add more status options as needed -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" id="filterDataBtn">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+
 
             <!-- DataTable -->
             <table id="po_table" class="table align-middle table-row-dashed fs-6 gy-4">
@@ -626,7 +648,7 @@
 
                                 // Format the date if it exists
                                 let formattedDate = moment(data).format(
-                                'DD MMMM YYYY'); // e.g., "23 December 2023"
+                                    'DD MMMM YYYY'); // e.g., "23 December 2023"
                                 return `
                                     <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; padding: 5px 10px; border-radius: 15px; background-color: #f5f5f5; color: #4a4a4a;">
                                         <i class="fas fa-calendar-alt" style="font-size: 16px; color: #ff7f50;"></i>
