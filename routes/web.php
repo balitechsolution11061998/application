@@ -38,7 +38,7 @@ use Illuminate\Support\Facades\Route;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
 // Web Routes
-Route::get('/', fn() => view('auth.login'));
+// Route::get('/', fn() => view('auth.login'));
 
 // Authentication Routes
 Route::controller(RegisterController::class)->group(function () {
@@ -61,7 +61,7 @@ Route::get('/koperasi', fn() => view('koperasi'));
 // Grouping Authenticated Routes
 Route::group(['middleware' => ['auth']], function () {
 
-    Route::prefix('home')->name('home.')->group(function () {
+    Route::prefix('/')->name('home.')->group(function () {
         Route::get('/', [HomeController::class, 'index'])->name('index'); // Home route
         Route::get('/supplier', [HomeSupplierController::class, 'index'])->name('supplier'); // Supplier home route
     });
