@@ -64,7 +64,7 @@
         <!-- Kolom Kiri: Gambar Ponsel -->
         <div
             class="hidden md:flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-l-xl overflow-hidden shadow-lg transition-transform transform hover:scale-105">
-            <img src="{{ asset('img/background/about-img.png') }}" alt="Phone Image" class="w-3/4 md:w-2/3">
+            <img src="{{ asset('img/background/supplier.png') }}" alt="Phone Image" class="w-3/4 md:w-2/3">
         </div>
 
         <!-- Kolom Kanan: Form Login -->
