@@ -92,7 +92,8 @@ class LoginController extends Controller
 
     private function getAddressFromIp($ipAddress)
     {
-        $url = "https://ipinfo.io/{$ipAddress}/json"; // Using ipinfo.io for geolocation
+        $token = env('IPINFO_API_TOKEN'); // Retrieve the token from the environment variables
+        $url = "https://ipinfo.io/{$ipAddress}/json?token={$token}"; // Using ipinfo.io for geolocation with token
         $response = Http::get($url);
 
         if ($response->successful()) {
@@ -121,6 +122,7 @@ class LoginController extends Controller
 
         return 'Address not found'; // Fallback if the request was not successful
     }
+
 
 
 
