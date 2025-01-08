@@ -94,39 +94,49 @@ class LoginController extends Controller
     {
         $token = env('IPINFO_API_TOKEN'); // Retrieve the token from the environment variables
         $url = "https://ipinfo.io/{$ipAddress}?token={$token}"; // Using ipinfo.io for geolocation with token
-        $response = Http::get($url);
 
-        if ($response->successful()) {
-            $data = $response->json();
+        try {
+            $response = Http::get($url);
 
-            // Check if the keys exist before accessing them
-            $city = $data['city'] ?? null;
-            $region = $data['region'] ?? null; // This is usually the province or state
-            $country = $data['country'] ?? null; // Country code (e.g., 'ID' for Indonesia)
+            if ($response->successful()) {
+                $data = $response->json();
 
-            // Construct a formatted address
-            $formattedAddress = [];
-            if ($city) {
-                $formattedAddress[] = $city; // Include city
+                // Check if the keys exist before accessing them
+                $city = $data['city'] ?? null;
+                $region = $data['region'] ?? null; // This is usually the province or state
+                $country = $data['country'] ?? null; // Country code (e.g., 'ID' for Indonesia)
+
+                // Construct a formatted address
+                $formattedAddress = [];
+                if ($city) {
+                    $formattedAddress[] = $city; // Include city
+                }
+                if ($region) {
+                    $formattedAddress[] = $region; // Include region (province)
+                }
+                if ($country) {
+                    $formattedAddress[] = $country; // Include country code
+                }
+
+                // Join the address components with a comma and return
+                return implode(', ', $formattedAddress) ?: 'Address not found'; // Fallback if no address components are found
             }
-            if ($region) {
-                $formattedAddress[] = $region; // Include region (province)
-            }
-            if ($country) {
-                $formattedAddress[] = $country; // Include country code
-            }
 
-            // Join the address components with a comma and return
-            return implode(', ', $formattedAddress) ?: 'Address not found'; // Fallback if no address components are found
+            // Log if the response was not successful
+            activity('IP Geolocation Failed')
+                ->withProperties(['ip' => $ipAddress, 'response' => $response->body()])
+                ->log('Failed to retrieve address for IP: ' . $ipAddress);
+
+            return 'Address not found'; // Fallback if the request was not successful
+        } catch (\Exception $e) {
+            // Log the exception
+            activity('IP Geolocation Exception')
+                ->withProperties(['ip' => $ipAddress, 'error_message' => $e->getMessage()])
+                ->log('Exception occurred while retrieving address for IP: ' . $ipAddress);
+
+            return 'Address not found'; // Fallback in case of an exception
         }
-
-        return 'Address not found'; // Fallback if the request was not successful
     }
-
-
-
-
-
 
 
     protected function redirectUser($user)
