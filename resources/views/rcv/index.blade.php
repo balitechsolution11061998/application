@@ -110,14 +110,7 @@
         </style>
     @endpush
 
-    @if (session('message'))
-        <div class="alert alert-danger">
-            <strong>{{ session('message') }}</strong>
-            @if (session('error'))
-                <p>{{ session('error') }}</p>
-            @endif
-        </div>
-    @endif
+
 
     <!-- Card Start -->
     <div class="card rounded">
@@ -503,22 +496,52 @@
                         title: 'Loading...',
                         html: '<i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i><br>Please wait while we load the details.',
                         allowOutsideClick: false,
-                        showConfirmButton: false, // Hide the confirm button
-                        onBeforeOpen: () => {
-                            Swal.showLoading();
-                        }
+                        showConfirmButton: false // Hide the confirm button
                     });
 
-                    // Simulate loading with a spinner
-                    setTimeout(function() {
-                        // Redirect to the details page with the encoded order number
-                        var encodedOrderNo = btoa(orderNo); // Encode the order number
-                        window.location.href = '/purchase-orders/show/' +
-                        encodedOrderNo; // Redirect to the details page
+                    // Show loading spinner
+                    Swal.showLoading();
 
-                        // Show success notification using Toastr
-                        toastr.success('Details loaded successfully!'); // Show success message
-                    }, 1000); // Simulate a delay of 1 second for loading
+                    // Perform AJAX request to check if the order exists
+                    $.ajax({
+                        url: '/purchase-orders/get-delivery-items/' +
+                        orderNo, // Replace with your actual endpoint
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            // Close the loading spinner
+                            Swal.close();
+
+                            if (!response.message) { // Assuming the response has an 'exists' property
+                                // Redirect to the details page with the encoded order number
+                                var encodedOrderNo = btoa(orderNo); // Encode the order number
+                                window.location.href = '/purchase-orders/show/' +
+                                encodedOrderNo; // Redirect to the details page
+
+                                // Show success notification using Toastr
+                                toastr.success('Details loaded successfully!'); // Show success message
+                            } else {
+                                // If no data found, show error notification
+                                toastr.error(response.message, 'Error', {
+                                    closeButton: true,
+                                    progressBar: true,
+                                    timeOut: 5000 // Duration in milliseconds
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            // Close the loading spinner
+                            console.log(xhr,'xhr');
+                            Swal.close();
+                            toastr.error(
+                                'An error occurred while checking the order details. Please try again.',
+                                'Error', {
+                                    closeButton: true,
+                                    progressBar: true,
+                                    timeOut: 5000 // Duration in milliseconds
+                                });
+                        }
+                    });
                 });
 
             }

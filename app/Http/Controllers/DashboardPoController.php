@@ -43,11 +43,17 @@ class DashboardPoController extends Controller
                 $progressQuery->whereIn('ship_to', $selectedStores);
             }
             if (!empty($startDate) && !empty($endDate)) {
-                $progressQuery->whereBetween('created_at', [$startDate, $endDate]);
+                $progressQuery->whereBetween('approval_date', [$startDate, $endDate]);
             }
 
             $progressCount = $progressQuery->count();
-            $totalCount = OrdHead::count(); // Total count for percentage calculation
+
+            // First, get the total count of purchase orders without any filtering
+            $totalCountQuery = OrdHead::select(DB::raw('count(*) as total_count'));
+
+            // Get the total count result
+            $totalCountResult = $totalCountQuery->first();
+            $totalCount = $totalCountResult->total_count; // Access the total_count property
 
             // Calculate progress percentage
             $progressPercentage = $totalCount > 0 ? ($progressCount / $totalCount) * 100 : 0;
@@ -58,7 +64,7 @@ class DashboardPoController extends Controller
                 $confirmedQuery->whereIn('ship_to', $selectedStores);
             }
             if (!empty($startDate) && !empty($endDate)) {
-                $confirmedQuery->whereBetween('created_at', [$startDate, $endDate]);
+                $confirmedQuery->whereBetween('approval_date', [$startDate, $endDate]);
             }
             $confirmedCount = $confirmedQuery->count();
             $confirmedPercentage = $totalCount > 0 ? ($confirmedCount / $totalCount) * 100 : 0;
@@ -69,7 +75,7 @@ class DashboardPoController extends Controller
                 $printedQuery->whereIn('ship_to', $selectedStores);
             }
             if (!empty($startDate) && !empty($endDate)) {
-                $printedQuery->whereBetween('created_at', [$startDate, $endDate]);
+                $printedQuery->whereBetween('approval_date', [$startDate, $endDate]);
             }
             $printedCount = $printedQuery->count();
             $printedPercentage = $totalCount > 0 ? ($printedCount / $totalCount) * 100 : 0;
@@ -80,7 +86,7 @@ class DashboardPoController extends Controller
                 $completedQuery->whereIn('ship_to', $selectedStores);
             }
             if (!empty($startDate) && !empty($endDate)) {
-                $completedQuery->whereBetween('created_at', [$startDate, $endDate]);
+                $completedQuery->whereBetween('approval_date', [$startDate, $endDate]);
             }
             $completedCount = $completedQuery->count();
             $completedPercentage = $totalCount > 0 ? ($completedCount / $totalCount) * 100 : 0;
@@ -91,18 +97,18 @@ class DashboardPoController extends Controller
                 $expiredQuery->whereIn('ship_to', $selectedStores);
             }
             if (!empty($startDate) && !empty($endDate)) {
-                $expiredQuery->whereBetween('created_at', [$startDate, $endDate]);
+                $expiredQuery->whereBetween('approval_date', [$startDate, $endDate]);
             }
             $expiredCount = $expiredQuery->count();
             $expiredPercentage = $totalCount > 0 ? ($expiredCount / $totalCount) * 100 : 0;
 
             // Initialize query for rejected
-            $rejectedQuery = OrdHead::where('status', 'rejected');
+            $rejectedQuery = OrdHead::where('status', 'reject');
             if (!empty($selectedStores)) {
                 $rejectedQuery->whereIn('ship_to', $selectedStores);
             }
             if (!empty($startDate) && !empty($endDate)) {
-                $rejectedQuery->whereBetween('created_at', [$startDate, $endDate]);
+                $rejectedQuery->whereBetween('approval_date', [$startDate, $endDate]);
             }
             $rejectedCount = $rejectedQuery->count();
             $rejectedPercentage = $totalCount > 0 ? ($rejectedCount / $totalCount) * 100 : 0;
@@ -113,7 +119,7 @@ class DashboardPoController extends Controller
                 $deliveryQuery->whereIn('ship_to', $selectedStores);
             }
             if (!empty($startDate) && !empty($endDate)) {
-                $deliveryQuery->whereBetween('created_at', [$startDate, $endDate]);
+                $deliveryQuery->whereBetween('approval_date', [$startDate, $endDate]);
             }
             $deliveryCount = $deliveryQuery->count();
             $deliveryPercentage = $totalCount > 0 ? ($deliveryCount / $totalCount) * 100 : 0;
@@ -121,8 +127,7 @@ class DashboardPoController extends Controller
             // Prepare the response data
             $data = [
                 'progress' => $progressCount,
-                'percentage' => round($progressPercentage, 2),
-                'details' => "+10% (+5% Inc)", // Example details
+                'progressPercentage' => round($progressPercentage, 2),
                 'confirmed' => $confirmedCount,
                 'confirmedPercentage' => round($confirmedPercentage, 2), // Round to 2 decimal places
                 'printed' => $printedCount,
@@ -161,6 +166,7 @@ class DashboardPoController extends Controller
             return response()->json(['error' => 'Failed to fetch progress count'], 500);
         }
     }
+
 
     public function getPOCountPerDate(Request $request)
     {
@@ -237,12 +243,21 @@ class DashboardPoController extends Controller
 
         // Convert selected store IDs from strings to integers
         $selectedStores = array_map('intval', $selectedStores);
+
         // Get the start and end dates from the request
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
         // Fetch purchase orders grouped by ship_to and status
         try {
+            // First, get the total count of purchase orders without any filtering
+            $totalCountQuery = OrdHead::select(DB::raw('count(*) as total_count'));
+
+            // Get the total count result
+            $totalCountResult = $totalCountQuery->first();
+            $totalCount = $totalCountResult->total_count; // Access the total_count property
+
+            // Now, fetch the counts per store and status
             $query = OrdHead::select(
                     'ordhead.ship_to',
                     'store.store_name', // Include store name from the stores table
@@ -253,7 +268,8 @@ class DashboardPoController extends Controller
                 ->groupBy('ordhead.ship_to', 'store.store_name', 'ordhead.status') // Group by ship_to, store_name, and status
                 ->orderBy('store.store_name', 'asc') // Order by store_name
                 ->orderBy('ordhead.status', 'asc'); // Order by status
-            // If no stores are selected, fetch data for all stores
+
+            // Apply store filtering if selected
             if (!empty($selectedStores)) {
                 $query->whereIn('ordhead.ship_to', $selectedStores);
             } else {
@@ -271,16 +287,19 @@ class DashboardPoController extends Controller
             // Prepare the response
             $categories = [];
             $counts = [];
+            $percentages = [];
 
-            // Structure the response to include counts per store and status
+            // Structure the response to include counts and percentages per store and status
             foreach ($data as $item) {
-                $categories[] = $item->store_name . ' - ' . $item->status . ' (' . $item->count . ')'; // Include count in the category
+                $categories[] = $item->store_name . ' - ' . $item->status; // Category without count
                 $counts[] = $item->count; // Get the counts
+                $percentages[] = $totalCount > 0 ? ($item->count / $totalCount) * 100 : 0; // Calculate percentage
             }
 
             return response()->json([
                 'categories' => $categories,
                 'counts' => $counts,
+                'percentages' => $percentages, // Include percentages in the response
             ]);
         } catch (\Exception $e) {
             // Log the error using Spatie Activity Log
@@ -294,6 +313,8 @@ class DashboardPoController extends Controller
             return response()->json(['error' => 'Failed to fetch PO count per store'], 500);
         }
     }
+
+
 
 
 }

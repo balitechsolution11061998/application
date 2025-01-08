@@ -237,23 +237,35 @@
                     <div class="input-group">
                         <input type="text" id="dateRangePicker" class="form-control"
                             placeholder="Select Date Range" />
-                        <button class="btn btn-primary" id="filterButton">Set Date Range</button>
+                        <button class="btn btn-primary" id="filterButton">
+                            <i class="fas fa-calendar-alt"></i> Set Date Range
+                        </button>
+                        <button class="btn btn-secondary" id="syncButton">
+                            <i class="fas fa-sync"></i> Sync
+                        </button>
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
                     <select id="storeSelect" class="form-select" data-control="select2"
                         data-placeholder="Select an option">
                         <!-- Options will be populated here -->
+                        <option value="" disabled selected>All Store</option> <!-- Default option -->
+
                     </select>
                 </div>
+            </div>
+            <div id="spinner" class="text-center" style="display: none;">
+                <i class="fas fa-spinner fa-spin"></i>
             </div>
         </div>
 
 
 
+
         <!-- Date Range Display -->
         <div class="text-center date-range">
-            <span id="dateRange">Date Range: <strong>01 Jan 2025 - 31 Jan 2025</strong></span>
+            <span id="dateRange"> <i class="fas fa-calendar-alt" style="margin-right: 5px;"></i>
+                Date Range: <strong>01 Jan 2025 - 31 Jan 2025</strong></span>
         </div>
 
         <!-- Summary Cards Carousel -->
@@ -265,7 +277,6 @@
                             <div class="summary-card card p-4 text-center position-relative shadow-sm">
                                 <h5 class="font-weight-bold">Progress PO</h5>
                                 <h2 class="text-primary display-4" id="progressPOValue">Loading...</h2>
-                                <p class="text-muted" id="progressPODetails">Loading...</p>
                                 <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
                                     <div class="progress-bar bg-primary progress-bar-animated" role="progressbar"
                                         id="progressPOBar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0"
@@ -283,7 +294,6 @@
                             <div class="summary-card card p-4 text-center position-relative shadow-sm">
                                 <h5 class="font-weight-bold">Confirmed</h5>
                                 <h2 class="text-info display-4" id="confirmedCount">Loading...</h2>
-                                <p class="text-muted">+5% <span class="text-success">(+1% Inc)</span></p>
                                 <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
                                     <div class="progress-bar bg-info progress-bar-animated" role="progressbar"
                                         id="confirmedProgressBar" style="width: 50%;" aria-valuenow="50"
@@ -301,11 +311,10 @@
                             <div class="summary-card card p-4 text-center position-relative shadow-sm">
                                 <h5 class="font-weight-bold">Printed</h5>
                                 <h2 class="text-warning display-4" id="printedCount">Loading...</h2>
-                                <p class="text-muted">+15% <span class="text-success">(+3% Inc)</span></p>
                                 <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
                                     <div class="progress-bar bg-warning progress-bar-animated" role="progressbar"
-                                        id="printedProgressBar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0"
-                                        aria-valuemax="100">
+                                        id="printedProgressBar" style="width: 60%;" aria-valuenow="60"
+                                        aria-valuemin="0" aria-valuemax="100">
                                         <span class="text-white" style="font-weight: bold;"
                                             id="printedPercentage">60%</span>
                                     </div>
@@ -324,7 +333,6 @@
                             <div class="summary-card card p-4 text-center position-relative shadow-sm">
                                 <h5 class="font-weight-bold">Completed</h5>
                                 <h2 class="text-success display-4" id="completedCount">Loading...</h2>
-                                <p class="text-muted">+20% <span class="text-danger">(-5% Dec)</span></p>
                                 <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
                                     <div class="progress-bar bg-success progress-bar-animated" role="progressbar"
                                         id="completedProgressBar" style="width: 80%;" aria-valuenow="80"
@@ -343,7 +351,6 @@
                             <div class="summary-card card p-4 text-center position-relative shadow-sm">
                                 <h5 class="font-weight-bold">Expired</h5>
                                 <h2 class="text-danger display-4" id="expiredCount">Loading...</h2>
-                                <p class="text-muted">-10% <span class="text-danger">(-5% Dec)</span></p>
                                 <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
                                     <div class="progress-bar bg-danger progress-bar-animated" role="progressbar"
                                         id="expiredProgressBar" style="width: 20%;" aria-valuenow="20"
@@ -362,7 +369,6 @@
                             <div class="summary-card card p-4 text-center position-relative shadow-sm">
                                 <h5 class="font-weight-bold">Rejected</h5>
                                 <h2 class="text-danger display-4" id="rejectedCount">Loading...</h2>
-                                <p class="text-muted">-5% <span class="text-danger">(-2% Dec)</span></p>
                                 <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
                                     <div class="progress-bar bg-danger progress-bar-animated" role="progressbar"
                                         id="rejectedProgressBar" style="width: 10%;" aria-valuenow="10"
@@ -381,7 +387,6 @@
                             <div class="summary-card card p-4 text-center position-relative shadow-sm">
                                 <h5 class="font-weight-bold">Delivery</h5>
                                 <h2 class="text-success display-4" id="deliveryCount">Loading...</h2>
-                                <p class="text-muted">+15% <span class="text-success">(+5% Inc)</span></p>
                                 <div class="progress mb-3" style="height: 25px; border-radius: 15px;">
                                     <div class="progress-bar bg-success progress-bar-animated" role="progressbar"
                                         id="deliveryProgressBar" style="width: 75%;" aria-valuenow="75"
@@ -444,7 +449,7 @@
             <div class="col-md-6">
                 <!-- Pie Chart for Purchase Orders per Date -->
                 <div class="chart-container chart-card">
-                    <h5 class="font-weight-bold">Purchase Orders per Date</h5>
+                    <h5 class="font-weight-bold">Purchase Orders per Status</h5>
                     <div class="select-container">
 
                         <div id="loading" class="loading-spinner" style="display: none;">
@@ -502,7 +507,8 @@
                         );
 
                         // Pass formatted dates to the functions
-                        fetchData(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
+                        fetchData($('#storeSelect').val(), startDate.format('YYYY-MM-DD'), endDate.format(
+                            'YYYY-MM-DD'));
                     } else {
                         toastr.error('Please select a start date.'); // Use Toastr for error notification
                     }
@@ -510,24 +516,294 @@
 
                 // Handle store selection change
                 $('#storeSelect').on('change', function() {
-                    selectedStores = $(this).val(); // Get selected store IDs
+                    selectedStores = $('#storeSelect').val(); // Get selected store IDs
+                    startDate = $('#dateRangePicker').data('daterangepicker').startDate;
 
                     // Check if any store is selected
                     if (!selectedStores || selectedStores.length === 0) {
                         toastr.warning(
-                        'Please select at least one store.'); // Use Toastr for warning notification
+                            'Please select at least one store.'); // Use Toastr for warning notification
                         return; // Exit the function
                     }
 
                     if (startDate) {
                         endDate = moment(startDate).add(1, 'months'); // Calculate the end date
-                        fetchData(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
+                        fetchData(selectedStores, startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
                     } else {
                         toastr.error('Please select a start date.'); // Use Toastr for error notification
                     }
                 });
             });
 
+            function convertDateFormat(dateString) {
+                // Create a new Date object from the input string
+                const date = new Date(dateString);
+
+                // Check if the date is valid
+                if (isNaN(date.getTime())) {
+                    throw new Error("Invalid date format");
+                }
+
+                // Extract year, month, and day
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+                const day = String(date.getDate()).padStart(2, '0');
+
+                // Return the formatted date
+                return `${year}-${month}-${day}`;
+            }
+
+            document.getElementById('syncButton').addEventListener('click', function() {
+                const syncDate = document.getElementById('dateRangePicker').value;
+                let formattedDate;
+
+                try {
+                    formattedDate = convertDateFormat(syncDate);
+                } catch (error) {
+                    Swal.fire({
+                        title: 'Invalid Date',
+                        text: error.message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+
+                // Show confirmation dialog with SweetAlert2
+                Swal.fire({
+                    title: 'Sync Data?',
+                    text: "Do you want to proceed with syncing data?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, sync it!',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Show loading modal with custom progress bar and spinner
+                        Swal.fire({
+                            title: 'Syncing and Saving Data...',
+                            html: `
+                            <div class="spinner" style="display: flex; justify-content: center; margin-bottom: 20px;">
+                                <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: #4caf50;"></i>
+                            </div>
+                            <div class="progress-bar-container" style="width: 100%; background-color: #f3f3f3; border-radius: 10px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                                <div id="progress" class="progress-inner" style="width: 0%; background-color: #4caf50; height: 20px; transition: width 0.3s ease;"></div>
+                            </div>
+                            <p id="progressText" style="font-size: 16px; font-weight: 500; color: #666; text-align: center;">Starting...</p>
+                        `,
+                            allowOutsideClick: false,
+                            showConfirmButton: false
+                        });
+
+                        const progressElem = document.getElementById('progress');
+                        const progressText = document.getElementById('progressText');
+
+                        // Step 1: Sync data from API with progress tracking
+                        axios.get('https://supplier.m-mart.co.id/api/po/getData?filterDate=' + formattedDate, {
+                                onDownloadProgress: function(progressEvent) {
+                                    if (progressEvent.lengthComputable) {
+                                        const percentCompleted = Math.round((progressEvent.loaded *
+                                            50) / progressEvent.total);
+                                        progressElem.style.width = percentCompleted + '%';
+                                        progressText.innerText = `Syncing data... ${percentCompleted}%`;
+                                    }
+                                }
+                            })
+                            .then(response => {
+                                const responseData = response.data
+                                    .data; // Adjust based on actual response structure
+
+                                // Check if data is empty
+                                if (!responseData || responseData.length === 0) {
+                                    Swal.close(); // Close the progress modal
+                                    toastr.warning('No data available to sync.', 'Sync Warning!', {
+                                        closeButton: true,
+                                        progressBar: true,
+                                        timeOut: 5000
+                                    });
+                                    return; // Stop further execution
+                                }
+
+                                // Split data into chunks of 25 items
+                                const chunkSize = 25;
+                                const totalChunks = Math.ceil(responseData.length / chunkSize);
+                                let currentChunk = 0;
+
+                                // Step 2: Insert data chunks into the database with progress tracking
+                                const interval = setInterval(() => {
+                                    if (currentChunk < totalChunks) {
+                                        const chunk = responseData.slice(currentChunk * chunkSize, (
+                                            currentChunk + 1) * chunkSize);
+
+                                        // Perform POST request for each chunk
+                                        axios.post('/purchase-orders/store', {
+                                                orders: chunk
+                                            })
+                                            .then(() => {
+                                                currentChunk++;
+                                                const percentCompleted = Math.round(50 + (
+                                                    currentChunk / totalChunks * 50));
+                                                progressElem.style.width = percentCompleted +
+                                                    '%';
+                                                progressText.innerText =
+                                                    `Storing data... ${percentCompleted}%`;
+
+                                                if (currentChunk >= totalChunks) {
+                                                    clearInterval(
+                                                        interval
+                                                        ); // Stop interval when all chunks are processed
+
+                                                    // Close the SweetAlert progress modal
+                                                    Swal.close();
+
+                                                    // Display a success toast notification
+                                                    toastr.success(
+                                                        'Data synchronized and saved successfully to the database.',
+                                                        'Sync Complete!', {
+                                                            closeButton: true,
+                                                            progressBar: true,
+                                                            timeOut: 5000
+                                                        });
+
+                                                    // Call receiveData function after sync is complete
+                                                    receiveData(formattedDate);
+                                                }
+                                            })
+                                            .catch(postError => {
+                                                clearInterval(
+                                                    interval); // Stop interval on error
+                                                Swal.fire({
+                                                    title: 'Sync Failed',
+                                                    text: 'An error occurred while storing the data in the database.',
+                                                    icon: 'error',
+                                                    confirmButtonText: 'Retry'
+                                                });
+                                            });
+                                    }
+                                }, 1000); // Insert 25 items per second
+                            })
+                            .catch(error => {
+                                Swal.fire({
+                                    title: 'Sync Failed',
+                                    text: 'An error occurred while syncing data.',
+                                    icon: 'error',
+                                    confirmButtonText: 'Retry'
+                                });
+                            });
+                    }
+                });
+            });
+
+            // Function to receive data (RCV)
+            function receiveData(syncDate) {
+                // Show loading modal with custom progress bar and spinner
+                Swal.fire({
+                    title: 'Syncing and Saving Data...',
+                    html: `
+                                <div class="spinner" style="display: flex; justify-content: center; margin-bottom: 20px;">
+                                    <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: #4caf50;"></i>
+                                </div>
+                                <div class="progress-bar-container" style="width: 100%; background-color: #f3f3f3; border-radius: 10px; overflow: hidden; margin-bottom: 20px;">
+                                    <div id="progress" class="progress-inner" style="width: 0%; background-color: #4caf50; height: 20px; transition: width 0.3s ease;"></div>
+                                </div>
+                                <p id="progressText" style="font-size: 16px; font-weight: 500; color: #666; text-align: center;">Starting...</p>
+                            `,
+                    allowOutsideClick: false,
+                    showConfirmButton: false
+                });
+
+                const progressElem = document.getElementById('progress');
+                const progressText = document.getElementById('progressText');
+
+                // Step 1: Sync data from API with progress tracking
+                axios.get('https://supplier.m-mart.co.id/api/rcv/getData?filterDate=' + syncDate, {
+                        onDownloadProgress: function(progressEvent) {
+                            if (progressEvent.lengthComputable) {
+                                const percentCompleted = Math.round((progressEvent.loaded *
+                                    50) / progressEvent.total);
+                                progressElem.style.width = percentCompleted + '%';
+                                progressText.innerText = `Syncing data... ${percentCompleted}%`;
+                            }
+                        }
+                    })
+                    .then(response => {
+                        const responseData = response.data
+                            .data; // Adjust based on actual response structure
+
+                        // Check if data is empty
+                        if (!responseData || responseData.length === 0) {
+                            Swal.close(); // Close the progress modal
+                            toastr.warning('No data available to sync.', 'Sync Warning!', {
+                                closeButton: true,
+                                progressBar: true,
+                                timeOut: 5000
+                            });
+                            return; // Stop further execution
+                        }
+
+                        // Split data into chunks of 25 items
+                        const chunkSize = 25;
+                        const totalChunks = Math.ceil(responseData.length / chunkSize);
+                        let currentChunk = 0;
+
+                        // Step 2: Insert data chunks into the database with progress tracking
+                        const interval = setInterval(() => {
+                            if (currentChunk < totalChunks) {
+                                const chunk = responseData.slice(currentChunk * chunkSize, (
+                                    currentChunk + 1) * chunkSize);
+
+                                // Perform POST request for each chunk
+                                axios.post('/receiving/store', {
+                                        rcv: chunk
+                                    })
+                                    .then(() => {
+                                        currentChunk++;
+                                        const percentCompleted = Math.round(50 + (
+                                            currentChunk / totalChunks * 50));
+                                        progressElem.style.width = percentCompleted +
+                                            '%';
+                                        progressText.innerText =
+                                            `Storing data... ${percentCompleted}%`;
+
+                                        if (currentChunk >= totalChunks) {
+                                            clearInterval(
+                                                interval
+                                            ); // Stop interval when all chunks are processed
+                                            Swal
+                                                .close(); // Close the SweetAlert progress modal
+                                            toastr.success(
+                                                'Data synchronized and saved successfully to the database.',
+                                                'Sync Complete!', {
+                                                    closeButton: true,
+                                                    progressBar: true,
+                                                    timeOut: 5000
+                                                });
+                                            fetchData(); // Refresh the data
+                                        }
+                                    })
+                                    .catch(postError => {
+                                        clearInterval(
+                                            interval); // Stop interval on error
+                                        Swal.fire({
+                                            title: 'Sync Failed',
+                                            text: 'An error occurred while storing the data in the database.',
+                                            icon: 'error',
+                                            confirmButtonText: 'Retry'
+                                        });
+                                    });
+                            }
+                        }, 1000); // Insert 25 items per second
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            title: 'Sync Failed',
+                            text: 'An error occurred while syncing data.',
+                            icon: 'error',
+                            confirmButtonText: 'Retry'
+                        });
+                    });
+            }
             // Function to show loading spinner
             function showLoadingSpinner() {
                 $('#loadingSpinner').show(); // Show spinner
@@ -553,18 +829,20 @@
                             storeSelect.append(
                                 `<option value="${store.store}">${store.store_name}</option>`);
                         });
-                        fetchData($('#storeSelect').val(),null,null); // Pass empty dates initially
+                        fetchData($('#storeSelect').val(), null, null); // Pass empty dates initially
                     },
                     error: function() {
                         $('#loading').hide();
                         toastr.error(
-                        'Failed to fetch store data. Please try again later.'); // Use Toastr for error notification
+                            'Failed to fetch store data. Please try again later.'
+                        ); // Use Toastr for error notification
                     }
                 });
             }
 
             // Function to fetch data based on selected stores and date range
-            function fetchData(selectedStores,startDate, endDate) {
+            function fetchData(selectedStores, startDate, endDate) {
+                console.log(selectedStores, startDate, endDate, 'selectedStores, startDate, endDate')
                 fetchDataPerStatus(selectedStores, startDate, endDate);
                 fetchPODataPerStore(selectedStores, startDate, endDate);
                 fetchPOData(selectedStores, startDate, endDate);
@@ -572,12 +850,12 @@
 
             // Function to fetch purchase order data per status
             function fetchDataPerStatus(selectedStores, startDate, endDate) {
-                console.log("masuk sini",selectedStores,'selectedStores', startDate, endDate);
+                console.log("masuk sini", selectedStores, 'selectedStores', startDate, endDate);
                 $.ajax({
                     url: '/dashboard-po/purchase-orders/status', // Replace with your API endpoint
                     method: 'GET',
                     data: {
-                        stores:selectedStores,
+                        stores: selectedStores,
                         start_date: startDate,
                         end_date: endDate
                     },
@@ -600,7 +878,7 @@
                 // Update the UI with the fetched data
                 $('#progressPOValue').text(response.progress);
                 $('#progressPODetails').html(response.details);
-                updateProgressBar('#progressPOBar', response.percentage);
+                updateProgressBar('#progressPOBar', response.progressPercentage);
 
                 $('#confirmedCount').text(response.confirmed);
                 $('#confirmedPercentage').text(response.confirmedPercentage + '%');
@@ -634,12 +912,12 @@
             }
 
             // Function to fetch purchase order data per selected date range
-            function fetchPOData(storeSelect,startDate, endDate) {
+            function fetchPOData(storeSelect, startDate, endDate) {
                 $.ajax({
                     url: '/dashboard-po/purchase-orders/count-per-date', // Replace with your API endpoint
                     method: 'GET',
                     data: {
-                        stores:storeSelect,
+                        stores: storeSelect,
                         start_date: startDate,
                         end_date: endDate
                     },
@@ -678,7 +956,8 @@
                 var labelColor = getComputedStyle(document.documentElement).getPropertyValue('--kt-gray-500') || '#6c757d';
                 var borderColor = getComputedStyle(document.documentElement).getPropertyValue('--kt-gray-200') || '#e9ecef';
                 var baseColors = ['#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0',
-                '#546E7A']; // Array of colors for the bars
+                    '#546E7A'
+                ]; // Array of colors for the bars
 
                 // Generate colors for each bar based on the counts
                 var barColors = counts.map((_, index) => baseColors[index % baseColors.length]);
@@ -807,28 +1086,31 @@
                         $('#loading').hide(); // Hide loading animation
                         const categories = response.categories; // Array of store names
                         const counts = response.counts; // Array of counts for each store
+                        const percentages = response.percentages; // Array of percentages for each store
 
                         // Check if the response is valid
                         if (categories.length === 0 || counts.length === 0) {
                             toastr.warning(
-                            "No data available for the selected stores."); // Use Toastr for warning notification
+                                "No data available for the selected stores."
+                            ); // Use Toastr for warning notification
                             return;
                         }
 
                         // Call the function to render the pie chart with the fetched data
-                        renderPieChart(categories, counts);
+                        renderPieChart(categories, counts, percentages);
                     },
                     error: function(xhr, status, error) {
                         $('#loading').hide();
                         console.error("Error fetching data:", error); // Log error if the request fails
                         toastr.error(
-                        "An error occurred while fetching data. Please try again."); // Use Toastr for error notification
+                            "An error occurred while fetching data. Please try again."
+                        ); // Use Toastr for error notification
                     }
                 });
             }
 
             // Function to render the pie chart
-            function renderPieChart(categories, counts) {
+            function renderPieChart(categories, counts, percentages) {
                 var element = document.getElementById('purchaseOrdersPieChart'); // Get the pie chart element
 
                 if (!element) {
@@ -837,18 +1119,20 @@
                 }
 
                 // Validate categories and counts
-                if (!Array.isArray(categories) || !Array.isArray(counts)) {
-                    console.error("Categories or counts are not arrays:", {
+                if (!Array.isArray(categories) || !Array.isArray(counts) || !Array.isArray(percentages)) {
+                    console.error("Categories, counts, or percentages are not arrays:", {
                         categories,
-                        counts
+                        counts,
+                        percentages
                     });
                     return; // Exit if they are not arrays
                 }
 
-                if (categories.length === 0 || counts.length === 0) {
-                    console.error("Categories or counts are empty:", {
+                if (categories.length === 0 || counts.length === 0 || percentages.length === 0) {
+                    console.error("Categories, counts, or percentages are empty:", {
                         categories,
-                        counts
+                        counts,
+                        percentages
                     });
                     return; // Exit if they are empty
                 }
@@ -873,8 +1157,10 @@
                             fontSize: '12px'
                         },
                         y: {
-                            formatter: function(val) {
-                                return val; // Format the tooltip value as needed
+                            formatter: function(val, {
+                                seriesIndex
+                            }) {
+                                return `${val} (${percentages[seriesIndex].toFixed(2)}%)`; // Show count and percentage in tooltip
                             }
                         }
                     },
@@ -899,6 +1185,7 @@
                     console.error("Error rendering pie chart:", error); // Log any rendering errors
                 });
             }
+
 
 
             // Initialize progress bars on DOMContentLoaded

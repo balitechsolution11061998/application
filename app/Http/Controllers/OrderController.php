@@ -140,9 +140,16 @@ class OrderController extends Controller
         $order = OrdHead::with('ordsku')->where('order_no', $order_no)->first();
 
         // Check if the order exists
+        // Check if the order exists
         if (!$order) {
             return response()->json(['message' => 'Order not found.'], 404);
         }
+
+        // Check if the order has SKU items
+        if ($order->ordsku->isEmpty()) {
+            return response()->json(['message' => 'No items found for this order.'], 204); // No Content
+        }
+
 
         // Prepare the response data
         $responseData = [];
