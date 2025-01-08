@@ -98,14 +98,22 @@ class LoginController extends Controller
             $city = $data['city'] ?? null;
             $region = $data['region'] ?? null;
             $country = $data['country'] ?? null;
+            $postal = $data['postal'] ?? null; // Postal code if available
+            $hostname = $data['hostname'] ?? null; // Hostname if available
 
             // Construct a formatted address
             $formattedAddress = [];
+            if ($hostname) {
+                $formattedAddress[] = $hostname; // Include hostname if available
+            }
             if ($city) {
                 $formattedAddress[] = $city;
             }
             if ($region) {
                 $formattedAddress[] = $region;
+            }
+            if ($postal) {
+                $formattedAddress[] = $postal; // Include postal code if available
             }
             if ($country) {
                 $formattedAddress[] = $country;
@@ -117,6 +125,7 @@ class LoginController extends Controller
 
         return 'Address not found'; // Fallback if the request was not successful
     }
+
 
 
 
