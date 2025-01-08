@@ -60,12 +60,16 @@ class LoginController extends Controller
                 $this->logSystemUsage($request, 'login', $startTime, $memoryBefore); // Log system usage
 
                 // Send Telegram notification for successful login
+             // Send Telegram notification for successful login
                 $this->sendTelegramNotification(
                     $user->name, // User name
+                    $user->email, // User email
                     $address, // User address from IP
                     'User logged in', // Status
-                    $user->channel_id // Dynamic chat_id from user
+                    $user->channel_id, // Dynamic chat_id from user
+                    $ipAddress // User's IP address
                 );
+
 
                 return $this->redirectUser($user);
             }
@@ -129,6 +133,7 @@ class LoginController extends Controller
 
 
 
+
     protected function redirectUser($user)
     {
         // Determine the redirect route based on user role
@@ -160,13 +165,16 @@ class LoginController extends Controller
         $user->save();
     }
 
-    private function sendTelegramNotification($userName, $userAddress, $status, $chatId)
+    private function sendTelegramNotification($userName, $userEmail, $userAddress, $status, $chatId, $ipAddress)
     {
         // Create a more engaging message
         $message = "👤 **User Login Notification** 👤\n\n";
         $message .= "🏢 *User:* **$userName**\n";
+        $message .= "📧 *Email:* **$userEmail**\n"; // Include user's email
         $message .= "🏠 *User Address:* **$userAddress**\n\n";
-        $message .= "🎉 *Status:* **$status**\n\n";
+        $message .= "🌐 *IP Address:* **$ipAddress**\n"; // Include user's IP address
+        $message .= "🎉 *Status:* **$status**\n";
+        $message .= "🕒 *Login Time:* **" . now()->toDateTimeString() . "**\n"; // Include login timestamp
 
         // Send the message to Telegram
         $this->sendMessageToTelegram($message, $chatId);
