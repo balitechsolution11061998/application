@@ -100,35 +100,28 @@ class LoginController extends Controller
 
             // Check if the keys exist before accessing them
             $city = $data['city'] ?? null;
-            $region = $data['region'] ?? null;
-            $country = $data['country'] ?? null;
-            $postal = $data['postal'] ?? null; // Postal code if available
-            $hostname = $data['hostname'] ?? null; // Hostname if available
+            $region = $data['region'] ?? null; // This is usually the province or state
+            $country = $data['country'] ?? null; // Country code (e.g., 'ID' for Indonesia)
 
             // Construct a formatted address
             $formattedAddress = [];
-            if ($hostname) {
-                $formattedAddress[] = $hostname; // Include hostname if available
-            }
             if ($city) {
-                $formattedAddress[] = $city;
+                $formattedAddress[] = $city; // Include city
             }
             if ($region) {
-                $formattedAddress[] = $region;
-            }
-            if ($postal) {
-                $formattedAddress[] = $postal; // Include postal code if available
+                $formattedAddress[] = $region; // Include region (province)
             }
             if ($country) {
-                $formattedAddress[] = $country;
+                $formattedAddress[] = $country; // Include country code
             }
 
-            // Join the address components with a comma
+            // Join the address components with a comma and return
             return implode(', ', $formattedAddress) ?: 'Address not found'; // Fallback if no address components are found
         }
 
         return 'Address not found'; // Fallback if the request was not successful
     }
+
 
 
 
