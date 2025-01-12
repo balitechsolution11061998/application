@@ -38,7 +38,7 @@ jobs:
 
       - name: Set remote URL with token for push
         run: |
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git remote set-url origin https://x-access-token:${{ secrets.CUSTOM_GITHUB_PAT }}@github.com/${{ github.repository }}.git
 
       - name: Create and push new version tag
         run: |
@@ -52,7 +52,7 @@ jobs:
 
       - name: Commit version update
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CUSTOM_GITHUB_PAT: ${{ secrets.CUSTOM_GITHUB_PAT }}
         run: |
           git add .env.version
           git commit -m "Update version to ${{ env.NEW_VERSION }}"
