@@ -72,7 +72,19 @@ Breadcrumbs::for('store', function (BreadcrumbTrail $trail) {
     $trail->push('Store', route('stores.index'));
 });
 
+Breadcrumbs::for('roles.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Roles Management', route('roles.index'));
+});
 
+Breadcrumbs::for('roles.edit', function (BreadcrumbTrail $trail, $role) {
+    $trail->parent('roles.index');
+    $trail->push('Edit Role: ' . $role->name, route('roles.edit', $role));
+});
+Breadcrumbs::for('roles.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('roles.index'); // Set the parent breadcrumb to roles.index
+    $trail->push('Create Role', route('roles.create')); // Add the current breadcrumb
+});
 // Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
 //     $trail->push('Dashboard', route('example.dashboard.default'));
 // });

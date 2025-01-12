@@ -1,53 +1,21 @@
 <x-default-layout>
-    @section('title')
-        Roles Management
-    @endsection
+    @section('title', 'Roles Management')
 
     @section('breadcrumbs')
         {{ Breadcrumbs::render('roles') }}
     @endsection
 
-    <!-- Card Start -->
-    <div class="card">
-        <div class="card-header">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
             <h5 class="card-title">Roles Management</h5>
+            <div class="card-toolbar">
+                <a href="{{ route('roles.create') }}" class="btn btn-light">
+                    <i class="fas fa-plus"></i> Add Role
+                </a>
+            </div>
         </div>
         <div class="card-body">
-            <!--begin::Wrapper-->
-            <div class="d-flex flex-stack mb-4">
-                <!--begin::Search-->
-                <div class="d-flex align-items-center position-relative my-1">
-                    <i class="ki-duotone ki-magnifier fs-1 position-absolute ms-6"><span class="path1"></span><span
-                            class="path2"></span></i>
-                    <input type="text" data-kt-docs-table-filter="search"
-                        class="form-control form-control-solid w-250px ps-15" placeholder="Search Roles" />
-                </div>
-                <!--end::Search-->
-
-                <!--begin::Toolbar-->
-                <div class="d-flex justify-content-end" data-kt-docs-table-toolbar="base">
-                    <!--begin::Filter-->
-                    <button type="button" class="btn btn-light-primary me-3" data-bs-toggle="tooltip"
-                        title="Coming Soon">
-                        <i class="ki-duotone ki-filter fs-2"><span class="path1"></span><span
-                                class="path2"></span></i>
-                        Filter
-                    </button>
-                    <!--end::Filter-->
-
-                    <!--begin::Add Role-->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" title="Add Role">
-                        <i class="ki-duotone ki-plus fs-2"></i>
-                        Add Role
-                    </button>
-                    <!--end::Add Role-->
-                </div>
-                <!--end::Toolbar-->
-            </div>
-            <!--end::Wrapper-->
-
-            <!--begin::Datatable-->
-            <table id="roles-table" class="table align-middle table-striped table-hover fs-6 gy-5">
+            <table id="roles-table" class="table align-middle table-row-dashed fs-6 gy-5">
                 <thead>
                     <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
                         <th>Name</th>
@@ -55,48 +23,29 @@
                         <th class="text-end min-w-100px">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="text-gray-600 fw-semibold">
-                </tbody>
+                <tbody class="text-gray-600 fw-semibold"></tbody>
             </table>
-            <!--end::Datatable-->
         </div>
     </div>
-    <!-- Card End -->
 
-    <!-- Include jQuery and DataTables -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-
-    <!-- DataTables Initialization Script -->
+    @push('scripts')
     <script>
         $(document).ready(function() {
-            var table = $('#roles-table').DataTable({
+            $('#roles-table').DataTable({
                 processing: true,
                 serverSide: true,
-                responsive: true,
                 ajax: '{{ route('roles.data') }}',
-                columns: [{
-                        data: 'name',
-                        name: 'name'
-                    },
+                columns: [
+                    { data: 'name', name: 'name' },
                     {
                         data: 'permissions',
                         name: 'permissions',
-                        render: function(data, type, row, meta) {
-                            if (type === 'display') {
-                                let badges = data.map(permission => {
-                                    return `<span class="badge badge-info" style="margin: 5px;">${permission.replace('-', ' ').toUpperCase()}</span>`;
-                                }).join(' ');
-
-                                return `
-                                    <div>
-                                        <strong>${row.name}</strong>
-                                        <div>${badges}</div>
-                                    </div>
-                                `;
-                            }
-                            return data;
+                        render: function(data) {
+                            return data.map(permission => `
+                                <span class="badge badge-info me-1 p-2">
+                                    <i class="fas fa-check-circle text-white"></i> ${permission}
+                                </span>
+                            `).join(' ');
                         }
                     },
                     {
@@ -106,22 +55,61 @@
                         searchable: false,
                         render: function(data) {
                             return `
-                                <a href="/roles/${data}/edit" class="btn btn-warning btn-sm">Edit</a>
+                                <a href="/roles/${data}/edit" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
                                 <form action="/roles/${data}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
                                 </form>
                             `;
                         }
                     }
                 ]
             });
-
-            // Custom search input integration
-            $('input[data-kt-docs-table-filter="search"]').on('keyup', function() {
-                table.search(this.value).draw();
-            });
         });
     </script>
+    @endpush
+    @push('styles')
+    <style>
+        /* Custom styles for padding and design */
+        .card {
+            padding: 20px;
+        }
+
+        .card-header {
+            padding: 15px;
+        }
+
+        .table {
+            margin-top: 20px;
+        }
+
+        .badge {
+            margin-right: 5px;
+            padding: 5px 10px;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-light {
+            background-color: #f8f9fa;
+            color: #000;
+        }
+
+        .btn-light:hover {
+            background-color: #e2e6ea;
+        }
+
+        /* New styles for Font Awesome icons */
+        .fas {
+            padding: 5px; /* Adjust padding as needed */
+            margin-right: 5px; /* Space between icon and text */
+        }
+    </style>
+    @endpush
+
 </x-default-layout>

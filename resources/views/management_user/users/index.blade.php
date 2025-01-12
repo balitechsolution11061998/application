@@ -11,30 +11,45 @@
     <link rel="stylesheet" href="{{ asset('assets/css/toastify/toastify.min.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
     <style>
-    .tooltip-inner {
-        background-color: black; /* Set tooltip background to black */
-        color: white; /* Text color */
-        max-width: 250px; /* Limit tooltip width */
-        font-weight: bold; /* Bold font */
-        font-size: 0.9em; /* Slightly smaller text */
-        padding: 8px; /* Increase padding for better readability */
-        text-align: left; /* Align text to the left */
-    }
-    .tooltip-content {
-        padding: 5px;
-    }
-    .tooltip-arrow {
-        border-bottom-color: black; /* Match the arrow color with the tooltip background */
-    }
-    @media (max-width: 576px) { /* Targets mobile devices */
-    .btn-group .btn {
-        flex: 1 1 32%; /* Each button takes 32% of the width for 3 buttons per row */
-    }
-    .btn-group .btn-group {
-        margin-bottom: 0.5rem; /* Adds space between rows */
-    }
-}
+        .tooltip-inner {
+            background-color: black;
+            /* Set tooltip background to black */
+            color: white;
+            /* Text color */
+            max-width: 250px;
+            /* Limit tooltip width */
+            font-weight: bold;
+            /* Bold font */
+            font-size: 0.9em;
+            /* Slightly smaller text */
+            padding: 8px;
+            /* Increase padding for better readability */
+            text-align: left;
+            /* Align text to the left */
+        }
 
+        .tooltip-content {
+            padding: 5px;
+        }
+
+        .tooltip-arrow {
+            border-bottom-color: black;
+            /* Match the arrow color with the tooltip background */
+        }
+
+        @media (max-width: 576px) {
+
+            /* Targets mobile devices */
+            .btn-group .btn {
+                flex: 1 1 32%;
+                /* Each button takes 32% of the width for 3 buttons per row */
+            }
+
+            .btn-group .btn-group {
+                margin-bottom: 0.5rem;
+                /* Adds space between rows */
+            }
+        }
 
     </style>
     <!--begin::Card-->
@@ -69,15 +84,14 @@
             </div>
         </div>
 
-
         <!--end::Card header-->
 
         <!--begin::Card body-->
         <div class="card-body py-4">
             <div class="table-wrapper">
-                <table class="table table-striped table-bordered table-hover align-middle fs-6 gy-5" id="users_table">
+                <table class="table align-middle table-row-dashed fs-6 gy-5" id="users_table">
                     <thead>
-                        <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0 bg-light">
+                        <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
                             <th class="min-w-50px">
                                 <input type="checkbox" id="select-all"> <!-- Select all checkbox -->
                             </th>
@@ -147,7 +161,8 @@
                         <div class="mb-3">
                             <label for="superadmin_password" class="form-label">Enter Superadministrator
                                 Password</label>
-                            <input type="password" class="form-control" id="superadmin_password" placeholder="Password">
+                            <input type="password" class="form-control" id="superadmin_password"
+                                placeholder="Password">
                             <div id="superadminError" class="text-danger mt-2" style="display: none;">Incorrect
                                 password. Please try again.</div>
                         </div>
@@ -204,16 +219,19 @@
 
 
     <!-- Modal for Adding Supplier -->
-    <div class="modal fade" id="addSupplierModal" tabindex="-1" aria-labelledby="addSupplierModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addSupplierModal" tabindex="-1" aria-labelledby="addSupplierModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="addSupplierModalLabel">Add Supplier</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="addSupplierForm">
-                        <input type="hidden" id="userId" name="userId" value=""> <!-- Hidden input for userId -->
+                        <input type="hidden" id="userId" name="userId" value="">
+                        <!-- Hidden input for userId -->
                         <div class="mb-3">
                             <label for="supplierSelect" class="form-label">Select Suppliers</label>
                             <select class="form-select" id="supplierSelect" multiple required>
@@ -235,7 +253,7 @@
 
 
     @push('scripts')
-    <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+        <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
         <script src="{{ asset('assets/js/toastify/toastify.min.js') }}" defer></script>
         <script src="{{ asset('assets/js/lightbox/lightbox.min.js') }}" defer></script>
         <script src="{{ asset('assets/js/zxcvbn/zxcvbn.js') }}" defer></script>

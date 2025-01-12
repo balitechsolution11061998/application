@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\UserLoggedIn;
+use App\Events\UserLoggedOut;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\Login\LoginService;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\ActivityLogger; // Import the activity logger trait
 use App\Traits\SystemUsageLogger; // Import the system usage logger trait
-use Illuminate\Support\Facades\Http; // Ensure Http is imported for sending requests
+use App\Traits\IpGeolocationTrait; // Import the IP geolocation trait
+use App\Traits\TelegramNotificationTrait; // Import the Telegram notification trait
 
 class LoginController extends Controller
 {
     use ActivityLogger; // Use the activity logger trait
     use SystemUsageLogger; // Use the system usage logger trait
+    use IpGeolocationTrait; // Use the IP geolocation trait
+    use TelegramNotificationTrait; // Use the Telegram notification trait
 
     protected LoginService $loginService;
 
@@ -52,24 +57,15 @@ class LoginController extends Controller
                 // Get the user's IP address
                 $ipAddress = $request->ip();
 
-                // Get the address from the IP address
+                // Get the address from the IP address using the trait method
                 $address = $this->getAddressFromIp($ipAddress);
 
                 // Log activity for successful login
                 $this->logActivity('Login successful', $user, 'login', $request, $startTime, $memoryBefore);
                 $this->logSystemUsage($request, 'login', $startTime, $memoryBefore); // Log system usage
 
-                // Send Telegram notification for successful login
-             // Send Telegram notification for successful login
-                $this->sendTelegramNotification(
-                    $user->name, // User name
-                    $user->email, // User email
-                    $address, // User address from IP
-                    'User logged in', // Status
-                    $user->channel_id, // Dynamic chat_id from user
-                    $ipAddress // User's IP address
-                );
-
+                // Dispatch the UserLoggedIn event
+                event(new UserLoggedIn($user, $address, $ipAddress));
 
                 return $this->redirectUser($user);
             }
@@ -90,53 +86,6 @@ class LoginController extends Controller
         }
     }
 
-    private function getAddressFromIp($ipAddress)
-    {
-        $token = env('IPINFO_API_TOKEN'); // Retrieve the token from the environment variables
-        $url = "https://ipinfo.io/{$ipAddress}?token={$token}"; // Using ipinfo.io for geolocation with token
-
-        try {
-            $response = Http::get($url);
-
-            if ($response->successful()) {
-                $data = $response->json();
-
-                // Check if the keys exist before accessing them
-                $city = $data['city'] ?? null;
-                $region = $data['region'] ?? null; // This is usually the province or state
-                $country = $data['country'] ?? null; // Country code (e.g., 'ID' for Indonesia)
-
-                // Construct a formatted address
-                $formattedAddress = [];
-                if ($city) {
-                    $formattedAddress[] = $city; // Include city
-                }
-                if ($region) {
-                    $formattedAddress[] = $region; // Include region (province)
-                }
-                if ($country) {
-                    $formattedAddress[] = $country; // Include country code
-                }
-
-                // Join the address components with a comma and return
-                return implode(', ', $formattedAddress) ?: 'Address not found'; // Fallback if no address components are found
-            }
-
-            // Log if the response was not successful
-            activity('IP Geolocation Failed')
-                ->withProperties(['ip' => $ipAddress, 'response' => $response->body()])
-                ->log('Failed to retrieve address for IP: ' . $ipAddress);
-
-            return 'Address not found'; // Fallback if the request was not successful
-        } catch (\Exception $e) {
-            // Log the exception
-            activity('IP Geolocation Exception')
-                ->withProperties(['ip' => $ipAddress, 'error_message' => $e->getMessage()])
-                ->log('Exception occurred while retrieving address for IP: ' . $ipAddress);
-
-            return 'Address not found'; // Fallback in case of an exception
-        }
-    }
 
 
     protected function redirectUser($user)
@@ -154,9 +103,23 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        $startTime = microtime(true); // Start time for performance measurement
+        $memoryBefore = memory_get_usage(); // Memory usage before logout attempt
+
         $user = Auth::user();
 
         if ($user) {
+            // Log activity for successful logout
+            $this->logActivity('Logout successful', $user, 'logout', $request, $startTime, $memoryBefore);
+            $this->logSystemUsage($request, 'logout', $startTime, $memoryBefore); // Log system usage
+
+            // Optionally, get the user's IP address for logging
+            $ipAddress = $request->ip();
+
+            // Dispatch the UserLoggedOut event
+            event(new UserLoggedOut($user, $ipAddress));
+
+            // Set user as logged out
             $this->setUserLoggedIn($user, false);
         }
 
@@ -164,70 +127,13 @@ class LoginController extends Controller
         return redirect('/login/form');
     }
 
+
+
+
+
     protected function setUserLoggedIn($user, $status)
     {
         $user->is_logged_in = $status;
         $user->save();
-    }
-
-    private function sendTelegramNotification($userName, $userEmail, $userAddress, $status, $chatId, $ipAddress)
-    {
-        // Create a more engaging message
-        $message = "👤 **User Login Notification** 👤\n\n";
-        $message .= "🏢 *User:* **$userName**\n";
-        $message .= "📧 *Email:* **$userEmail**\n"; // Include user's email
-        $message .= "🏠 *User Address:* **$userAddress**\n\n";
-        $message .= "🌐 *IP Address:* **$ipAddress**\n"; // Include user's IP address
-        $message .= "🎉 *Status:* **$status**\n";
-        $message .= "🕒 *Login Time:* **" . now()->toDateTimeString() . "**\n"; // Include login timestamp
-
-        // Send the message to Telegram
-        $this->sendMessageToTelegram($message, $chatId);
-    }
-
-    private function sendMessageToTelegram($message, $chatId)
-    {
-        $telegramToken = env('TELEGRAM_BOT_TOKEN');
-        $url = "https://api.telegram.org/bot$telegramToken/sendMessage";
-
-        // Construct the full URL for debugging
-        $fullUrl = $url . "?chat_id=" . $chatId . "&text=" . urlencode($message) . "&parse_mode=Markdown";
-        try {
-            // Log the full URL for debugging
-
-            // Send the message to Telegram
-            $response = Http::post($fullUrl, [
-                'chat_id' => $chatId,
-                'text' => $message,
-                'parse_mode' => 'Markdown', // Use Markdown for formatting
-            ]);
-
-            // Check if the response is successful
-            if ($response->successful()) {
-                activity('Telegram Notification Sent')
-                    ->withProperties([
-                        'chat_id' => $chatId,
-                        'message' => $message,
-                    ])
-                    ->log('Telegram notification sent successfully for chat ID: ' . $chatId);
-            } else {
-                // Log the error response for debugging
-                $errorMessage = $response->json()['description'] ?? 'Unknown error';
-                activity('Telegram Notification Failed')
-                    ->withProperties([
-                        'chat_id' => $chatId,
-                        'error' => $response->body(),
-                    ])
-                    ->log('Failed to send Telegram notification for chat ID: ' . $chatId . '. Error: ' . $errorMessage);
-            }
-        } catch (\Exception $e) {
-            // Log the exception
-            activity('Telegram Notification Exception')
-                ->withProperties([
-                    'chat_id' => $chatId,
-                    'error_message' => $e->getMessage(),
-                ])
-                ->log('Exception occurred while sending Telegram notification for chat ID: ' . $chatId);
-        }
     }
 }
