@@ -34,16 +34,16 @@ jobs:
           NEW_VERSION="v$MAJOR.$MINOR.$NEW_PATCH"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
-
+      - name: Set remote URL with token
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/balitechsolution11061998/application.git
 
       - name: Create and push new tag
         run: |
           git config --global user.name "balitechsolution11061998"
           git config --global user.email "balitechsolution11061998@gmail.com"
-          git tag ${{ steps.increment_version.outputs.new_version }}
-          git push origin ${{ steps.increment_version.outputs.new_version }}
-
-
+          git tag ${{ env.NEW_VERSION }}
+          git push origin ${{ env.NEW_VERSION }}
 
       - name: Update version in .env file
         run: echo "APP_VERSION=${{ env.NEW_VERSION }}" > .env.version
