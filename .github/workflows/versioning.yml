@@ -1,12 +1,12 @@
-name: Update Version Automatically
+name: Auto Version Update
 
 on:
   push:
     branches:
-      - main
+      - main # Trigger on push to main branch
 
 jobs:
-  update-version:
+  versioning:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,6 +20,7 @@ jobs:
         id: get_version
         run: |
           TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "v0.0.0")
+          echo "Current Version: $TAG"
           echo "TAG=$TAG" >> $GITHUB_ENV
 
       - name: Increment version
@@ -33,27 +34,26 @@ jobs:
           NEW_PATCH=$((PATCH + 1))
           NEW_VERSION="v$MAJOR.$MINOR.$NEW_PATCH"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          echo "New Version: $NEW_VERSION"
 
-      - name: Set remote URL with token
+      - name: Set remote URL with token for push
         run: |
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/balitechsolution11061998/application.git
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
 
-      - name: Create and push new tag
+      - name: Create and push new version tag
         run: |
-          git config --global user.name "balitechsolution11061998"
-          git config --global user.email "balitechsolution11061998@gmail.com"
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git tag ${{ env.NEW_VERSION }}
           git push origin ${{ env.NEW_VERSION }}
 
       - name: Update version in .env file
         run: echo "APP_VERSION=${{ env.NEW_VERSION }}" > .env.version
 
-      - name: Commit updated .env.version
+      - name: Commit version update
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.name "balitechsolution11061998"
-          git config --global user.email "balitechsolution11061998@gmail.com"
           git add .env.version
           git commit -m "Update version to ${{ env.NEW_VERSION }}"
           git push origin main
