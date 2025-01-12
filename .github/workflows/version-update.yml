@@ -35,14 +35,14 @@ jobs:
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
 
-      - name: Create new tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and push new tag
         run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git tag ${{ env.NEW_VERSION }}
-          git push origin ${{ env.NEW_VERSION }}
+          git tag ${{ steps.increment_version.outputs.new_version }}
+          git push origin ${{ steps.increment_version.outputs.new_version }}
+
 
 
       - name: Update version in .env file
@@ -57,3 +57,6 @@ jobs:
           git add .env.version
           git commit -m "Update version to ${{ env.NEW_VERSION }}"
           git push origin main
+      - name: Set remote URL with token
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/balitechsolution11061998/application.git
