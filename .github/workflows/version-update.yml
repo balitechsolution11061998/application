@@ -20,6 +20,7 @@ jobs:
         id: get_version
         run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
 
+
       - name: Increment version
         id: increment_version
         run: |
@@ -31,6 +32,7 @@ jobs:
           NEW_PATCH=$((PATCH + 1))
           NEW_VERSION="v$MAJOR.$MINOR.$NEW_PATCH"
           echo "::set-output name=new_version::$NEW_VERSION"
+
 
       - name: Create new tag
         env:
