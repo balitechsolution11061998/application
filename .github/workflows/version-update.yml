@@ -57,6 +57,3 @@ jobs:
           git add .env.version
           git commit -m "Update version to ${{ env.NEW_VERSION }}"
           git push origin main
-      - name: Set remote URL with token
-        run: |
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/balitechsolution11061998/application.git
