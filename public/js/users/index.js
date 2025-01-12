@@ -120,7 +120,7 @@ function dataUser(){
                                     <i class="fas fa-user-tag me-1"></i> ${name}
                                 </span>
                             `).join(" ")
-                            : '<span class="badge bg-secondary">No Suppliers</span>'
+                            : '<span class="badge bg-secondary">Tidak Ada Supplier</span>' // Translated to Indonesian
                         : '';
 
                     return `
@@ -136,7 +136,7 @@ function dataUser(){
 
                             ${hasSupplierRole ? `
                                 <div class="d-inline-flex align-items-center me-2">
-                                    <button class="btn btn-sm btn-success" onclick="addSupplier(${row.id}, '${row.supplier_id}')" title="Add Supplier">
+                                    <button class="btn btn-sm btn-success" onclick="addSupplier(${row.id}, '${row.supplier_id}')" title="Tambah Supplier">
                                         <i class="fas fa-plus"></i> Tambah Supplier
                                     </button>
                                 </div>

@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/toastify/toastify.min.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
     <style>
+
         .tooltip-inner {
             background-color: black;
             /* Set tooltip background to black */
