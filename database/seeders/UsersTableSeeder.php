@@ -37,6 +37,7 @@ class UsersTableSeeder extends Seeder
                 'all_supplier' => 'y',
                 'password' => Hash::make('Superman2000@'), // Set password for superadmin
                 'password_show' => 'Superman2000@', // Set password for superadmin
+                'channel_id'=>'-4741355755',
                 'link_sync' => null,
                 'region' => 1, // Set a default region ID
                 'address' => 'Jl. Bali Merdeka',
@@ -49,8 +50,8 @@ class UsersTableSeeder extends Seeder
                 'email' => 'dpssmspv@diamond.co.id',
                 'status' => 'y',
                 'all_supplier' => 'y',
-                'password' => Hash::make('12345678'), // Set password for supplier
-                'password_show' => '12345678', // Set password for supplier
+                'password' => Hash::make('111095@123'), // Set password for supplier
+                'password_show' => '111095@123', // Set password for supplier
                 'link_sync' => null,
                 'region' => 1, // Set a default region ID
                 'address' => 'Jl. Supplier No.1, Jakarta',
@@ -70,6 +71,62 @@ class UsersTableSeeder extends Seeder
                 'address' => '',
                 'phone_number' => '',
                 'role' => 'store',
+            ],
+            [
+                'username' => 111254, // New user
+                'name' => 'BAHTERA WIRANIAGA INTERNUSA PT',
+                'email' => 'finance2bali@pt-bahtera.co.id',
+                'status' => 'y',
+                'all_supplier' => 'y',
+                'password' => Hash::make('111254@123'), // Set a password for the new user
+                'password_show' => '111254@123', // Set a password for the new user
+                'link_sync' => null,
+                'region' => 1, // Set a default region ID
+                'address' => '', // Add address if available
+                'phone_number' => '', // Add phone number if available
+                'role' => 'supplier', // Set the role for the new user
+            ],
+            [
+                'username' => 111188, // New user
+                'name' => 'SO GOOD FOOD, PT',
+                'email' => 'gita.puspitasari@japfa.com',
+                'status' => 'y',
+                'all_supplier' => 'y',
+                'password' => Hash::make('111188@123'), // Set a password for the new user
+                'password_show' => '111188@123', // Set a password for the new user
+                'link_sync' => null,
+                'region' => 1, // Set a default region ID
+                'address' => '', // Add address if available
+                'phone_number' => '', // Add phone number if available
+                'role' => 'supplier', // Set the role for the new user
+            ],
+            [
+                'username' => 151034, // New user
+                'name' => 'GAMBINO ARTISAN PRIMA PT. - KO',
+                'email' => 'gambinocoffee@gmail.com',
+                'status' => 'y',
+                'all_supplier' => 'y',
+                'password' => Hash::make('151034@123'), // Set a password for the new user
+                'password_show' => '151034@123', // Set a password for the new user
+                'link_sync' => null,
+                'region' => 1, // Set a default region ID
+                'address' => '', // Add address if available
+                'phone_number' => '', // Add phone number if available
+                'role' => 'supplier', // Set the role for the new user
+            ],
+            [
+                'username' => 111149, // New user
+                'name' => 'JARI PERKASA, CV',
+                'email' => 'dirajariperkasa@gmail.com',
+                'status' => 'y',
+                'all_supplier' => 'y',
+                'password' => Hash::make('111149@123'), // Set a password for the new user
+                'password_show' => '111149@123', // Set a password for the new user
+                'link_sync' => null,
+                'region' => 1, // Set a default region ID
+                'address' => '', // Add address if available
+                'phone_number' => '', // Add phone number if available
+                'role' => 'supplier', // Set the role for the new user
             ],
             // Add other predefined users here...
         ];
