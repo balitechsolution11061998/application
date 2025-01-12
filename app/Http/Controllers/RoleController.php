@@ -131,7 +131,6 @@ class RoleController extends Controller
         $startTime = microtime(true);
         $memoryBefore = memory_get_usage();
 
-
         try {
             // Create the role
             $role = $this->roleService->createRole(['name' => $request->name]);
