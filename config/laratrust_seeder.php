@@ -14,81 +14,113 @@ return [
     'roles_structure' => [
         'superadministrator' => [
             'dashboard' => 's',
-            'dashboard-po' => 's',
-            'dashboard-system' => 's',
-            'management' => 'usr',
-            'roles' => 'c,r,u,d',
+            'home'=>'c,r,u,d',
             'permissions' => 'c,r,u,d',
-            'users' => 'c,r,u,d',
-            'profile' => 'r,u',
-            'home' => 's,u',
+            'roles' => 'c,r,u,d',
+            'users' => 's,c,r,u,d',
+            'supplier' => 's,c,r,u,d',
+            'store' => 's,c,r,u,d',
+            'toplevelsupplier' => 's',
+            'filter' => 'su',
+            'pricelist' => 'c,r,u,d,a,up,re,s',
+            'po' => 'c,r,u,d,a,up,dw,sy,s',
+            'rcv' => 'c,r,u,d,a,up,dw,sy,s',
+            'rtv' => 'c,r,u,d,a,s',
+            'report' => 's',
+            'rtv' => 's',
+            'tanda-terima' => 's',
+            'usermanagement'=>'s',
+            'faq'=>'s',
+            'service-level'=>'s',
+            'history'=>'log',
         ],
         'administrator' => [
             'dashboard' => 's',
-            'users' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'user' => [
-            'profile' => 'r,u',
-        ],
-        'admin_md_region' => [
-            'users' => 'c,r,u,d',
-            'profile' => 'r,u',
-            'md_region' => 'c,r,u,d',
-        ],
-        'acct' => [
-            'finance' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'bdm' => [
-            'business' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'data_analyst_md' => [
-            'data' => 'c,r,u,d',
-            'profile' => 'r,u',
+            'home'=>'c,r,u,d',
+            'permissions' => 'c,r,u,d',
+            'roles' => 'c,r,u,d',
+            'user' => 'c,r,u,d',
+            'supplier' => 's,c,r,u,d',
+            'store' => 's,c,r,u,d',
+            'toplevelsupplier' => 's',
+            'filter' => 'su',
+            'pricelist' => 'c,r,u,d,a,up,re,s',
+            'po' => 'c,r,u,d,a,up,dw,sy,s',
+            'rcv' => 'c,r,u,d,a,up,dw,sy,s',
+            'rtv' => 'c,r,u,d,a,s',
+            'report' => 's',
+            'rtv' => 's',
+            'tanda-terima' => 's',
+            'usermanagement'=>'s',
+            'faq'=>'s',
+            'service-level'=>'s',
+            'history'=>'log',
         ],
         'it' => [
-            'technology' => 'c,r,u,d',
+            'users' => 'c,r,u,d',
             'profile' => 'r,u',
         ],
-        'md_ho' => [
-            'head_office' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'md_manager' => [
-            'management' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'md_region' => [
-            'region' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'opr' => [
-            'operations' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'supplier' => [
+        'acct' => [
             'profile' => 'r,u',
         ],
         'wh' => [
-            'warehouse' => 'c,r,u,d',
-            'profile' => 'r,u',
+            'dashboard' => 's',
+            'pricelist' => 's',
+            'filter' => 'su',
+            'po' => 's',
+            'rcv' => 's',
+            'rtv' => 's',
+            'tanda-terima' => 's',
         ],
-        // New store role added
-        'store' => [
-            'inventory' => 'c,r,u,d',
-            'orders' => 'c,r,u,d',
-            'profile' => 'r,u',
+        'opr' => [
+            'dashboard' => 's',
+            'filter' => 'su',
+            'po' => 's',
+            'rcv' => 's',
+            'rtv' => 's',
+        ],
+        'supplier' => [
+            'dashboard' => 's',
+            'pricelist' => 's,c,r,u,d,up',
+            'po' => 's',
+            'rcv' => 's',
+            'rtv' => 's',
+            'tanda-terima' => 's',
+            'faq'=>'s',
+        ],
+        'admin-md-region' => [
+            'pricelist' => 'r,u,d,a,re',
+        ],
+        'md-region' => [
+        ],
+        'md-ho' => [
+        ],
+        'data-analyst-md' => [
+        ],
+        'bdm' => [
+        ],
+        'md-manager' => [
+        ],
+        'vendor' => [
+        ],
+        'customer' => [
         ],
     ],
 
     'permissions_map' => [
+        's' => 'show',
         'c' => 'create',
+        'a' => 'approve',
         'r' => 'read',
+        'up'=>'upload',
         'u' => 'update',
         'd' => 'delete',
-        's' => 'show',
-        'usr' => 'user',
+        'dw' => 'download',
+        'sy' => 'syncront',
+        'su' => 'supplier',
+        're' => 'reject',
+
+        'log' => 'login',
+
     ],
 ];

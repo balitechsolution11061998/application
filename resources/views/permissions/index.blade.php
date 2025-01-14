@@ -31,10 +31,10 @@
         <!-- Card body -->
         <div class="card-body py-4">
             <div class="table-wrapper">
-                <table class="table table-striped table-bordered table-hover align-middle fs-6 gy-5"
+                <table class="table align-middle table-row-dashed fs-6 gy-5"
                     id="permissionsTable">
                     <thead>
-                        <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0 bg-light">
+                        <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
                             <th class="min-w-150px">ID</th>
                             <th class="min-w-150px">Permission Name</th>
                             <th class="min-w-150px">Display Name</th>
@@ -219,7 +219,7 @@
             $('#editPermissionId').val(permission.data.id);
             $('#editPermissionName').val(permission.data.name);
             $('#editDisplayName').val(permission.data.display_name);
-            $('#editpermission.dataDescription').val(permission.data.description);
+            $('#editPermissionDescription').val(permission.data.description);
             $('#editPermissionModal').modal('show');
         });
     });

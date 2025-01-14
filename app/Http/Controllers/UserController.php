@@ -891,7 +891,21 @@ class UserController extends Controller
             // Fetch the supplier data from the database with a join to the users table
             $supplierData = Supplier::join('users', 'supplier.supp_code', '=', 'users.username') // Join on supp_code
                 ->where('supplier.supp_code', $decodedSupplier)
-                ->firstOrFail();
+                ->first(); // Use first() instead of firstOrFail()
+
+            // Check if supplier data was found
+            if (!$supplierData) {
+                // Log the activity of trying to view a non-existent supplier profile
+                activity()
+                    ->causedBy(auth()->user()) // Log the user who performed the action
+                    ->log('Attempted to view non-existent supplier profile: ' . $decodedSupplier); // Custom log message
+
+                // Return the view with a message indicating no data found
+                return view('frontend.profile.supplier', [
+                    'supplierData' => null, // Pass null to indicate no data
+                    'message' => 'Supplier profile not found.' // Custom message
+                ]);
+            }
 
             // Log the activity of viewing the supplier profile
             activity()
@@ -911,5 +925,6 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'Unable to fetch supplier profile. Please try again later.');
         }
     }
+
 
 }

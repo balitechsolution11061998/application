@@ -215,28 +215,46 @@
             white-space: nowrap;
             /* Prevent button text from wrapping */
         }
+
         .container {
-            max-width: 600px; /* Limit the width of the form */
-            margin-top: 50px; /* Add some top margin */
-            padding: 20px; /* Add padding */
-            background-color: #ffffff; /* White background for the form */
-            border-radius: 8px; /* Rounded corners */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            max-width: 600px;
+            /* Limit the width of the form */
+            margin-top: 50px;
+            /* Add some top margin */
+            padding: 20px;
+            /* Add padding */
+            background-color: #ffffff;
+            /* White background for the form */
+            border-radius: 8px;
+            /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Subtle shadow */
         }
+
         .card {
-            border: none; /* Remove card border */
+            border: none;
+            /* Remove card border */
         }
+
         .profile-image {
-            width: 100px; /* Set a fixed width for the profile image */
-            height: auto; /* Maintain aspect ratio */
-            border-radius: 50%; /* Make the image circular */
-            margin-bottom: 10px; /* Space below the image */
+            width: 100px;
+            /* Set a fixed width for the profile image */
+            height: auto;
+            /* Maintain aspect ratio */
+            border-radius: 50%;
+            /* Make the image circular */
+            margin-bottom: 10px;
+            /* Space below the image */
         }
+
         .btn {
-            margin-top: 10px; /* Add some space above buttons */
+            margin-top: 10px;
+            /* Add some space above buttons */
         }
+
         .input-group .btn {
-            margin-left: 5px; /* Space between input and button */
+            margin-left: 5px;
+            /* Space between input and button */
         }
     </style>
 
@@ -244,31 +262,36 @@
         <div class="card p-4">
             <h2 class="card-title text-center mb-4">Profile Settings</h2>
             <div class="text-center mb-4">
-                <img src="{{ asset('img/logo/m-mart.svg') }}" alt="Profile Image" class="profile-image">
-                <h5>{{ $supplierData->name }}</h5>
-                <p class="text-muted">{{ $supplierData->email }}</p>
+                @if ($supplierData)
+                    <img src="{{ asset('img/logo/m-mart.svg') }}" alt="Profile Image" class="profile-image">
+                    <h5>{{ $supplierData->name }}</h5>
+                    <p class="text-muted">{{ $supplierData->email }}</p>
+                @else
+                    <p class="text-danger">Supplier data not found. Please check your input or contact support.</p>
+                @endif
             </div>
-            <form id="profileForm" action="{{ route('users.supplier.updateSupplierProfile', $supplierData->id) }}" method="POST">
+            <form id="profileForm" action="{{ route('users.supplier.updateSupplierProfile', $supplierData->id ?? '') }}"
+                method="POST">
                 @csrf
                 @method('PUT')
 
                 <div class="mb-3">
                     <label for="name" class="form-label"><i class="fas fa-user"></i> Name</label>
                     <input type="text" class="form-control" id="name" name="name"
-                        value="{{ $supplierData->name }}" required>
+                        value="{{ $supplierData->name ?? '' }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="surname" class="form-label"><i class="fas fa-user-tag"></i> Username</label>
                     <input type="text" class="form-control" id="surname" name="surname"
-                        value="{{ $supplierData->username }}" required>
+                        value="{{ $supplierData->username ?? '' }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="channel_id" class="form-label"><i class="fas fa-id-badge"></i> Channel ID</label>
                     <div class="input-group">
                         <input type="text" class="form-control" id="channel_id" name="channel_id"
-                            value="{{ $supplierData->channel_id }}" required>
+                            value="{{ $supplierData->channel_id ?? '' }}" required>
                         <button type="button" class="btn btn-success" onclick="checkChatId()">
                             <i class="fas fa-check"></i> Check
                         </button>
@@ -294,7 +317,7 @@
                     <label for="password" class="form-label"><i class="fas fa-lock"></i> Password</label>
                     <div class="input-group">
                         <input type="password" class="form-control" id="password" name="password" required
-                            value="{{ $supplierData->password_show }}" disabled>
+                            value="{{ $supplierData->password_show ?? '' }}" disabled>
                         <button type="button" class="btn btn-success" id="togglePassword"
                             onclick="togglePasswordVisibility()" disabled>
                             <i class="fas fa-eye" id="eyeIcon"></i>
@@ -306,64 +329,62 @@
                 <div class="mb-3">
                     <label for="whatsapp" class="form-label"><i class="fab fa-whatsapp"></i> WhatsApp Number</label>
                     <input type="text" class="form-control" id="whatsapp" name="whatsapp"
-                        value="{{ $supplierData->whatsapp }}" required>
+                        value="{{ $supplierData->whatsapp ?? '' }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="mobile" class="form-label"><i class="fas fa-phone"></i> Mobile Number</label>
                     <input type="text" class="form-control" id="mobile" name="mobile"
-                        value="{{ $supplierData->contact_phone }}" required>
+                        value="{{ $supplierData->contact_phone ?? '' }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="address1" class="form-label"><i class="fas fa-map-marker-alt"></i> Address Line 1</label>
                     <input type="text" class="form-control" id="address1" name="address1"
-                        value="{{ $supplierData->address_1 }}" required>
+                        value="{{ $supplierData->address_1 ?? '' }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="address2" class="form-label"><i class="fas fa-map-marker-alt"></i> Address Line 2</label>
                     <input type="text" class="form-control" id="address2" name="address2"
-                        value="{{ $supplierData->address_2 }}">
+                        value="{{ $supplierData->address_2 ?? '' }}">
                 </div>
 
                 <div class="mb-3">
                     <label for="postcode" class="form-label"><i class="fas fa-code"></i> Postcode</label>
                     <input type="text" class="form-control" id="postcode" name="postcode"
-                        value="{{ $supplierData->post_code }}" required>
+                        value="{{ $supplierData->post_code ?? '' }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="city" class="form-label"><i class="fas fa-city"></i> City</label>
                     <input type="text" class="form-control" id="city" name="city"
-                        value="{{ $supplierData->city }}" required>
+                        value="{{ $supplierData->city ?? '' }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="tax_no" class="form-label"><i class="fas fa-map"></i> Tax No</label>
                     <input type="text" class="form-control" id="tax_no" name="tax_no"
-                        value="{{ $supplierData->tax_no }}" required>
+                        value="{{ $supplierData->tax_no ?? '' }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="email" class="form-label"><i class="fas fa-envelope"></i> Email ID</label>
                     <input type="email" class="form-control" id="email" name="email"
-                        value="{{ $supplierData->email }}" required>
+                        value="{{ $supplierData->email ?? '' }}" required>
                 </div>
-
-
 
                 <div class="mb-3">
                     <label for="country" class="form-label"><i class="fas fa-globe"></i> Country</label>
                     <input type="text" class="form-control" id="country" name="country"
-                        value="{{ $supplierData->country }}" required>
+                        value="{{ $supplierData->country ?? '' }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="state_region" class="form-label"><i class="fas fa-map-marker-alt"></i>
                         State/Region</label>
                     <input type="text" class="form-control" id="state_region" name="state_region"
-                        value="{{ $supplierData->state_region }}" required>
+                        value="{{ $supplierData->state_region ?? '' }}" required>
                 </div>
 
                 @if (empty($supplierData->channel_id))
@@ -375,8 +396,6 @@
 
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Profile</button>
             </form>
-
-
         </div>
     </div>
 
@@ -629,7 +648,8 @@
                             toastr.error(value[0]); // Show each error message
                         });
                     } else {
-                        toastr.error('An error occurred while updating the profile.'); // General error message
+                        toastr.error(
+                        'An error occurred while updating the profile.'); // General error message
                     }
                 }
             });

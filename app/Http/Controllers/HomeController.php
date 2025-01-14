@@ -8,6 +8,8 @@ use App\Models\SystemUsage;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\ServerMonitor\Models\Check;
+use Artisan;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -38,6 +40,30 @@ class HomeController extends Controller
         // Pass the aggregated data to the view
         return view('home', compact('remainingRamPerHour'));
     }
+    public function importDatabase(Request $request)
+    {
+        // Define the tables you want to truncate
+        $tablesToTruncate = ['supplier']; // Replace with your actual table names
+
+        // Truncate the tables
+        foreach ($tablesToTruncate as $table) {
+            DB::table($table)->truncate();
+        }
+
+        // Simulate a long-running process
+        sleep(1); // Simulate some delay for the truncation process
+
+        // Execute the Artisan command to import the SQL file
+        Artisan::call('db:migrate-and-import database/supplier.sql');
+
+        // Simulate another delay for the import process
+        sleep(1); // Simulate some delay for the import process
+
+        // Return a JSON response
+        return response()->json(['success' => true, 'message' => 'Database imported successfully!']);
+    }
+
+
 
 
 }

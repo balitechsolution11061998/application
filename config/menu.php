@@ -166,44 +166,44 @@ return [
 
         // Management User menu item with sub-items (children)
         [
-            'label'          => 'Management User',       // Main menu label
-            'type'           => 'item',                  // Type item (clickable menu item)
-            'permission'     => ['user-management'],                      // Permissions (empty implies no restrictions)
-            'permissionType' => 'gate',                  // Permission type (gate or policy)
-            'icon'           => 'fas',                   // Font Awesome icons class
-            'iconName'       => 'fa-users',              // Icon name for this main item
-            'iconPath'       => 4,                       // Optional icon size/path
-            'children'       => [                        // Sub-items (children)
+            'label'          => 'Management User',
+            'type'           => 'item',
+            'permission'     => ['show-usermanagement', 'usermanagement-show'], // Include both
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-users',
+            'iconPath'       => 4,
+            'children'       => [
                 [
-                    'label'          => 'User',          // Child item label
-                    'type'           => 'item',          // Type item (clickable)
-                    'route'          => 'users.index', // Route for user management
-                    'active'         => [],              // Define when this item is active
-                    'permission'     => [],              // Permissions required for this item
-                    'permissionType' => 'gate',          // Permission type
-                    'icon'           => 'dot',           // Optional small icon for child items
+                    'label'          => 'User',
+                    'type'           => 'item',
+                    'route'          => 'users.index',
+                    'active'         => [],
+                    'permission'     => ['show-user', 'user-show'],
+                    'permissionType' => 'gate',
+                    'icon'           => 'dot',
                 ],
                 [
-                    'label'          => 'Roles',         // Child item for managing roles
+                    'label'          => 'Roles',
                     'type'           => 'item',
-                    'route'          => 'roles.index',  // Route for role management
+                    'route'          => 'roles.index',
                     'active'         => [],
-                    'permission'     => [],
+                    'permission'     => ['show-roles', 'roles-show'],
                     'permissionType' => 'gate',
-                    'icon'           => 'dot',           // Dot icon for sub-items
+                    'icon'           => 'dot',
                 ],
                 [
                     'label'          => 'Permissions',
                     'type'           => 'item',
                     'route'          => 'permissions.index',
                     'active'         => [],
-                    'permission'     => [],
-                    'permissionType' => 'gate', // Using Laravel's gate for permission checking
+                    'permission'     => ['show-permissions', 'permissions-show'],
+                    'permissionType' => 'gate',
                     'icon'           => 'dot',
                 ],
-
-            ]
+            ],
         ],
+
 
         // Profile item (this one can be removed if it's redundant)
         [

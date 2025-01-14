@@ -60,6 +60,7 @@ Route::get('/koperasi', fn() => view('koperasi'));
 
 // Grouping Authenticated Routes
 Route::group(['middleware' => ['auth']], function () {
+    Route::post('/import-database', [HomeController::class, 'importDatabase'])->name('import.database');
 
     Route::prefix('/')->name('home.')->group(function () {
         Route::get('/', [HomeController::class, 'index'])->name('index'); // Home route
