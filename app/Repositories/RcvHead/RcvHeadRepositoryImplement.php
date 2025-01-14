@@ -19,6 +19,11 @@ class RcvHeadRepositoryImplement extends Eloquent implements RcvHeadRepository{
         $this->model = $model;
     }
 
+    public function findByReceiveNo(string $receiveNo)
+    {
+        return $this->model->where('receive_no', $receiveNo)->first();
+    }
+
     public function updateOrCreate(array $attributes, array $values = [])
     {
         return $this->model->updateOrCreate($attributes, $values);

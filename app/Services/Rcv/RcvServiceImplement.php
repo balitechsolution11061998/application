@@ -9,52 +9,57 @@ use App\Repositories\Rcv\RcvRepository;
 use App\Repositories\OrdHead\OrdHeadRepository;
 use App\Repositories\RcvDetail\RcvDetailRepository;
 use App\Repositories\RcvHead\RcvHeadRepository;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class RcvServiceImplement extends ServiceApi implements RcvService{
-
-    /**
-     * set title message api for CRUD
-     * @param string $title
-     */
-     protected string $title = "";
-     /**
-     * uncomment this to override the default message
-     * protected string $create_message = "";
-     * protected string $update_message = "";
-     * protected string $delete_message = "";
-     */
-
-     /**
-     * don't change $this->mainRepository variable name
-     * because used in extends service class
-     */
-
+class RcvServiceImplement extends ServiceApi implements RcvService
+{
+    protected string $title = "";
     protected OrdHeadRepository $ordHeadRepository;
     protected RcvDetailRepository $rcvDetailRepository;
     protected RcvHeadRepository $rcvHeadRepository;
 
-     public function __construct(OrdHeadRepository $ordHeadRepository, RcvDetailRepository $rcvDetailRepository, RcvHeadRepository $rcvHeadRepository)
-    {
-      $this->ordHeadRepository = $ordHeadRepository;
-      $this->rcvDetailRepository = $rcvDetailRepository;
-      $this->rcvHeadRepository = $rcvHeadRepository;
+    public function __construct(
+        OrdHeadRepository $ordHeadRepository,
+        RcvDetailRepository $rcvDetailRepository,
+        RcvHeadRepository $rcvHeadRepository
+    ) {
+        $this->ordHeadRepository = $ordHeadRepository;
+        $this->rcvDetailRepository = $rcvDetailRepository;
+        $this->rcvHeadRepository = $rcvHeadRepository;
     }
-
-
 
     public function store($data)
     {
         try {
             $requestData = $data;
-
             $chunkSize = 100;
 
+            // Insert into temp_rcv in chunks
             collect($requestData)->chunk($chunkSize)->each(function ($chunk) {
                 DB::table('temp_rcv')->insert($chunk->toArray());
             });
+            activity()->log("Data inserted into temp_rcv in chunks of {$chunkSize}.");
 
+            // Process temp_rcv data and check for duplicates
+            collect($requestData)->chunk($chunkSize)->each(function ($chunk) {
+                foreach ($chunk as $item) {
+                    $exists = DB::table('temp_rcv')
+                        ->where('receive_no', $item['receive_no'])
+                        ->where('sku', $item['sku'])
+                        ->exists();
+
+                    if ($exists) {
+                        activity()
+                            ->causedBy(auth()->user())
+                            ->withProperties(['receive_no' => $item['receive_no'], 'sku' => $item['sku']])
+                            ->log("Duplicate entry skipped for temp_rcv: receive_no {$item['receive_no']}, sku {$item['sku']}");
+                    } else {
+                        DB::table('temp_rcv')->insert($item);
+                    }
+                }
+            });
+
+            // Process non-existing data in RcvHead
             $rcvNotExists = DB::table('temp_rcv')
                 ->select('temp_rcv.*')
                 ->leftJoin('rcvhead', function ($join) {
@@ -87,10 +92,9 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                     "comment_desc" => $data[0]->comment_desc,
                 ];
 
-                // Use Eloquent model to check for existing RcvHead
-                $existingRcvHead = RcvHead::where('receive_no', $data[0]->receive_no)->first();
+                // $existingRcvHead = RcvHead::where('receive_no', $data[0]->receive_no)->first();
+                $existingRcvHead = $this->rcvHeadRepository->findByReceiveNo($data[0]->receive_no);
 
-                // Log existing RcvHead state before update
                 if ($existingRcvHead) {
                     activity()
                         ->performedOn($existingRcvHead)
@@ -98,25 +102,21 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                         ->log("Existing RcvHead state before update for receive_no {$data[0]->receive_no}");
                 }
 
-                // Set status based on existing record
                 if (!$existingRcvHead || $existingRcvHead->status !== 'y') {
                     $rcvHeadData['status'] = 'n';
                 }
 
-                // Update or create RcvHead
                 $rcvHead = $this->rcvHeadRepository->updateOrCreate(
                     ["receive_no" => $data[0]->receive_no],
                     $rcvHeadData
                 );
 
-                // Log activity for RcvHead insert/update after the operation
                 activity()
                     ->performedOn($rcvHead)
                     ->withProperties([
                         'receive_no' => $data[0]->receive_no,
-                        'order_no' => $data[0]->order_no,
                         'status' => $existingRcvHead && $existingRcvHead->status === 'y' ? 'Unchanged' : 'Updated to n',
-                        'after_update' => $rcvHead->toArray()
+                        'after_update' => $rcvHead->toArray(),
                     ])
                     ->log("RcvHead for receive_no {$data[0]->receive_no} " . ($rcvHead->wasRecentlyCreated ? 'Inserted' : 'Updated'));
 
@@ -135,10 +135,12 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                         "service_level" => $detail->qty_received / $detail->qty_expected * 100,
                     ];
 
-                    // Use Eloquent model to check for existing RcvDetail
-                    $existingRcvDetail = RcvDetail::where(['rcvhead_id' => $rcvHead->id, 'sku' => $detail->sku, 'receive_no' => $detail->receive_no])->first();
+                    $existingRcvDetail = RcvDetail::where([
+                        'rcvhead_id' => $rcvHead->id,
+                        'sku' => $detail->sku,
+                        'receive_no' => $detail->receive_no,
+                    ])->first();
 
-                    // Log existing RcvDetail state before update
                     if ($existingRcvDetail) {
                         activity()
                             ->performedOn($existingRcvDetail)
@@ -146,13 +148,11 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                             ->log("Existing RcvDetail state before update for SKU {$detail->sku}");
                     }
 
-                    // Update or create RcvDetail
                     $rcvDetail = $this->rcvDetailRepository->updateOrCreate(
                         ['rcvhead_id' => $rcvHead->id, 'sku' => $detail->sku, 'receive_no' => $detail->receive_no],
                         $rcvDetailData
                     );
 
-                    // Log activity for RcvDetail insert/update after the operation
                     activity()
                         ->performedOn($rcvDetail)
                         ->withProperties([
@@ -161,7 +161,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
                             'qty_expected' => $detail->qty_expected,
                             'qty_received' => $detail->qty_received,
                             'service_level' => $rcvDetailData['service_level'],
-                            'after_update' => $rcvDetail->toArray()
+                            'after_update' => $rcvDetail->toArray(),
                         ])
                         ->log("RcvDetail for receive_no {$detail->receive_no} " . ($rcvDetail->wasRecentlyCreated ? 'Inserted' : 'Updated'));
 
@@ -172,52 +172,39 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
 
                 $averageServiceLevel = $totalItems > 0 ? $totalServiceLevel / $totalItems : 0;
 
-                // Update RcvHead with calculated values
                 $rcvHead->update([
                     'average_service_level' => $averageServiceLevel,
                     'sub_total' => $sub_total,
                     'sub_total_vat_cost' => $sub_total_vat_cost,
                 ]);
 
-                // Log update for RcvHead with calculated values after the operation
                 activity()
                     ->performedOn($rcvHead)
                     ->withProperties([
                         'average_service_level' => $averageServiceLevel,
                         'sub_total' => $sub_total,
                         'sub_total_vat_cost' => $sub_total_vat_cost,
-                        'after_update' => $rcvHead->toArray()
+                        'after_update' => $rcvHead->toArray(),
                     ])
                     ->log("Updated RcvHead with calculated values for receive_no {$data[0]->receive_no}");
 
                 $podata = $this->ordHeadRepository->where('order_no', $data[0]->order_no)->first();
 
-                if ($podata != null && $averageServiceLevel == 100) {
+                if ($podata != null) {
+                    $newStatus = $averageServiceLevel == 100 ? 'Completed' : 'Incompleted';
                     $podata->update([
-                        'status' => 'Completed',
+                        'status' => $newStatus,
                         'estimated_delivery_date' => $data[0]->receive_date,
                     ]);
+
                     activity()
                         ->performedOn($podata)
                         ->withProperties([
                             'order_no' => $data[0]->order_no,
-                            'status' => 'Completed',
+                            'status' => $newStatus,
                             'estimated_delivery_date' => $data[0]->receive_date,
                         ])
-                        ->log("Updated ordHead status to 'Completed' for order_no {$data[0]->order_no}");
-                } else if ($podata != null && $averageServiceLevel < 100) {
-                    $podata->update([
-                        'status' => 'Incompleted',
-                        'estimated_delivery_date' => $data[0]->receive_date,
-                    ]);
-                    activity()
-                        ->performedOn($podata)
-                        ->withProperties([
-                            'order_no' => $data[0]->order_no,
-                            'status' => 'Incompleted',
-                            'estimated_delivery_date' => $data[0]->receive_date,
-                        ])
-                        ->log("Updated ordHead status to 'Incompleted' for order_no {$data[0]->order_no}");
+                        ->log("Updated ordHead status to '{$newStatus}' for order_no {$data[0]->order_no}");
                 }
             }
 
@@ -225,12 +212,9 @@ class RcvServiceImplement extends ServiceApi implements RcvService{
             activity()->log("Processed all receive_no groups and cleared temp_rcv table.");
 
         } catch (\Throwable $th) {
-            activity()->withProperties(['error' => $th->getMessage()])->log("Error processing data");
+            activity()->withProperties(['error' => $th->getMessage()])
+                ->log("Error processing data in RcvService.");
             throw $th;
         }
     }
-
-
-
-
 }
