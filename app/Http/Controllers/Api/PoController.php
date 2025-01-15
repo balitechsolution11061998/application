@@ -8,10 +8,11 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Spatie\Activitylog\Models\Activity; // Import the Activity model
 
 class PoController extends Controller
 {
-    //
+
     public function store(Request $request)
     {
         $successCount = 0;
@@ -170,6 +171,12 @@ class PoController extends Controller
                             'cost_po' => $detail->cost_po,
                         ];
                         $historyMessage = 'Price differences found';
+
+                        // Log activity for price difference
+                        activity()
+                            ->performedOn(new DiffCostPo())
+                            ->causedBy($user)
+                            ->log('Price difference found for order no: ' . $data[0]->order_no . ', SKU: ' . $detail->sku);
                     }
                     $successCount++;
                 } else {
@@ -183,6 +190,12 @@ class PoController extends Controller
                     'status' => $historyMessage,
                     'message' => json_encode($errors)
                 ]);
+
+                // Log activity for successful upload
+                activity()
+                    ->performedOn(new DiffCostPo())
+                    ->causedBy($user)
+                    ->log('Successfully uploaded order no: ' . $data[0]->order_no);
             }
 
             DB::table('temp_po')->truncate();
@@ -193,6 +206,12 @@ class PoController extends Controller
                 'order_no' => 'unknown',
                 'message' => $e->getMessage()
             ];
+
+            // Log activity for error
+            activity()
+                ->performedOn(new DiffCostPo())
+                ->causedBy($user)
+                ->log('Error occurred while uploading: ' . $e->getMessage());
         }
 
         return response()->json([
@@ -205,5 +224,4 @@ class PoController extends Controller
             'different_count' => count($errors),
         ]);
     }
-
 }

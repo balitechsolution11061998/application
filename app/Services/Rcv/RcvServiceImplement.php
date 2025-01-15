@@ -92,7 +92,7 @@ class RcvServiceImplement extends ServiceApi implements RcvService
                     "comment_desc" => $data[0]->comment_desc,
                 ];
 
-                // $existingRcvHead = RcvHead::where('receive_no', $data[0]->receive_no)->first();
+                $existingRcvHead = RcvHead::where('receive_no', $data[0]->receive_no)->first();
                 $existingRcvHead = $this->rcvHeadRepository->findByReceiveNo($data[0]->receive_no);
 
                 if ($existingRcvHead) {

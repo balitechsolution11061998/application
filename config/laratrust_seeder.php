@@ -13,6 +13,7 @@ return [
 
     'roles_structure' => [
         'superadministrator' => [
+            'dashboard-system' => 's',
             'dashboard' => 's',
             'home'=>'c,r,u,d',
             'permissions' => 'c,r,u,d',
