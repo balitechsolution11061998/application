@@ -194,6 +194,8 @@
             {!! sprintf('<script src="%s"></script>', asset($path)) !!}
         @endforeach
         <script>
+            var isAdmin = <?php echo json_encode(Auth::user()->hasRole('superadministrator')); ?>;
+
             document.getElementById('syncDataBtn').addEventListener('click', function() {
                 const syncDate = document.getElementById('syncDatePicker').value;
 
@@ -672,7 +674,6 @@
                                 `;
                             }
                         },
-
                         {
                             data: 'status',
                             name: 'status',
@@ -739,11 +740,23 @@
                                         break;
                                 }
 
+                                // Check if the user is an administrator and the status is not 'Progress'
+                                let actionButton = '';
+                                if (data !== 'Progress' && data !== 'Rejected' && isAdmin) { // Use the isAdmin variable
+                                    actionButton =
+                                        `<button class="btn btn-danger btn-sm" onclick="changeStatusToReject(${row.order_no})">                    <i class="fas fa-times"></i> Reject
+                                        </button>`;
+                                }
+
                                 // Return the status badge with icon, text, and improved styling
-                                return `<span class="${statusClass}" style="${badgeStyle}">${icon} ${statusText}</span>`;
+                                return `
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <span class="${statusClass}" style="${badgeStyle}">${icon} ${statusText}</span>
+                                        ${actionButton}
+                                    </div>
+                                `;
                             }
                         }
-
 
 
                     ]
@@ -768,6 +781,107 @@
                 if (amount === null || amount === undefined) return 'N/A';
                 return 'Rp' + amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
             }
+
+            // Function to change status to 'Rejected'
+            function changeStatusToReject(order_no) {
+                // Prompt for a reason for rejection
+                Swal.fire({
+                    title: 'Reason for Rejection',
+                    input: 'textarea',
+                    inputPlaceholder: 'Enter the reason for rejecting this order...',
+                    showCancelButton: true,
+                    confirmButtonText: 'Submit',
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        popup: 'custom-swal' // Apply the custom class to the popup
+                    },
+                    preConfirm: (reason) => {
+                        if (!reason) {
+                            Swal.showValidationMessage('You need to provide a reason for rejection!');
+                        }
+                        return reason;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const reason = result.value;
+
+                        // Show a SweetAlert progress bar
+                        Swal.fire({
+                            title: 'Processing...',
+                            html: 'Please wait while we process your request.',
+                            didOpen: () => {
+                                Swal.showLoading();
+                            },
+                            customClass: {
+                                popup: 'custom-swal' // Apply the custom class to the progress popup
+                            }
+                        });
+
+                        // Make the AJAX call to update the status in the backend
+                        $.ajax({
+                            url: '/purchase-orders/reject-order/' + order_no, // Adjust the URL as needed
+                            type: 'POST',
+                            data: {
+                                reason: reason, // Include the reason for rejection
+                                _token: '{{ csrf_token() }}' // Include CSRF token if using Laravel
+                            },
+                            success: function(response) {
+                                // Close the loading dialog
+                                Swal.close();
+
+                                // Handle success
+                                Swal.fire({
+                                    title: 'Rejected!',
+                                    text: response.message, // Use the message from the response
+                                    icon: 'success',
+                                    customClass: {
+                                        popup: 'custom-swal' // Apply the custom class to the success popup
+                                    },
+                                    timer: 1000, // Set timer to close the dialog after 3 seconds
+                                    showConfirmButton: false,
+                                    timerProgressBar: true, // Show progress bar for the timer
+                                    willClose: () => {
+                                        // Show confirmation dialog after rejection
+                                        Swal.fire({
+                                            title: 'Confirmation',
+                                            text: 'The order has been successfully rejected.',
+                                            icon: 'info',
+                                            showConfirmButton: false,
+                                            timer: 1000, // Set timer to close the dialog after 3 seconds
+                                            customClass: {
+                                                popup: 'custom-swal' // Apply the custom class to the confirmation popup
+                                            }
+                                        });
+                                    }
+                                });
+                                fetchData();
+                                toastr.success(
+                                'The order has been successfully rejected.'); // Toastr success notification
+                                // Optionally, refresh the data table or update the UI
+                            },
+                            error: function(xhr) {
+                                // Close the loading dialog
+                                Swal.close();
+
+                                // Handle error
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: xhr.responseJSON.message ||
+                                        'There was an error rejecting the order.',
+                                    icon: 'error',
+                                    customClass: {
+                                        popup: 'custom-swal' // Apply the custom class to the error popup
+                                    }
+                                });
+                                toastr.error(
+                                'There was an error rejecting the order.'); // Toastr error notification
+                            }
+                        });
+                    }
+                });
+            }
+
+
 
 
             function showLoadingSpinner(button) {

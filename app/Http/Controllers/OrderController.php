@@ -7,6 +7,7 @@ use App\Models\OrderConfirmationHistory;
 use App\Models\OrdHead;
 use App\Models\OrdSku;
 use App\Models\PrintHistory;
+use App\Models\RejectedOrder;
 use App\Models\SupplierQuantity;
 use App\Services\Order\OrderService;
 use DateTime;
@@ -20,9 +21,11 @@ use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http; // For making HTTP requests
 use Pusher\Pusher; // For Pusher integration
+use App\Traits\ActivityLogger;
 
 class OrderController extends Controller
 {
+    use ActivityLogger;
     private $orderService;
     public function __construct(OrderService $orderService)
     {
@@ -1022,5 +1025,67 @@ class OrderController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function rejectOrder(Request $request, $order_no)
+    {
+        // Start a database transaction
+        DB::beginTransaction();
+
+        try {
+            // Validate the request
+            $request->validate([
+                'reason' => 'required|string|max:255',
+            ]);
+
+            // Find the order
+            $order = OrdHead::where('order_no', $order_no)->firstOrFail(); // Use firstOrFail for automatic 404 response
+
+            // Create a new rejected order record
+            $rejectedOrder = new RejectedOrder();
+            $rejectedOrder->order_no = $order->order_no;
+            $rejectedOrder->reason = $request->reason;
+            $rejectedOrder->save();
+
+            // Update the order status
+            $order->status = "Rejected"; // Use a consistent status string
+            $order->save();
+
+            // Log the activity
+            $this->logActivity(
+                'Order rejected', // Message
+                $order, // Subject (the order being rejected)
+                'order_rejection', // Event name
+                $request, // Request object
+                null, // Start time (optional)
+                null, // Memory before (optional)
+                ['order_no' => $order->order_no, 'reason' => $request->reason] // Additional properties
+            );
+
+            // Commit the transaction
+            DB::commit();
+
+            // Return a JSON response
+            return response()->json(['message' => 'Order rejected successfully.', 'order_no' => $order->order_no], 200);
+        } catch (\Exception $e) {
+            // Rollback the transaction if something went wrong
+            DB::rollBack();
+
+            // Log the error for debugging (optional)
+            \Log::error('Error rejecting order: ' . $e->getMessage());
+
+            // Return a JSON response with a generic error message
+            return response()->json(['message' => 'An error occurred while rejecting the order.'], 500);
+        }
+    }
+
+
+
+
+    // Method to view rejected orders
+    public function rejectedOrders()
+    {
+        $rejectedOrders = RejectedOrder::with('order')->get(); // Assuming you have a relationship defined
+        return view('rejected_orders.index', compact('rejectedOrders')); // Return a view with rejected orders
     }
 }

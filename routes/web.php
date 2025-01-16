@@ -184,7 +184,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/supplier/confirm', [OrderController::class, 'confirmOrder'])->name('supplier.confirm');
         Route::get('/supplier/show/{id}', [OrderController::class, 'showOrderSupplier'])->name('supplier.show');
 
-
+        Route::post('/reject-order/{id}', [OrderController::class, 'rejectOrder'])->name('rejectOrder'); // Route to handle rejection
+        Route::get('/rejected-orders', [OrderController::class, 'rejectedOrders'])->name('rejectedOrders'); // Route to view rejected orders
     });
 
 
