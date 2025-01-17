@@ -199,6 +199,7 @@ return [
         Torann\GeoIP\GeoIPServiceProvider::class,
 
         Spatie\ServerMonitor\ServerMonitorServiceProvider::class,
+        Laravel\Passport\PassportServiceProvider::class,
 
     ],
 

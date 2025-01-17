@@ -39,11 +39,13 @@ class DashboardPoController extends Controller
 
             // Initialize query for progress
             $progressQuery = OrdHead::where('status', 'progress');
-            if (!empty($selectedStores)) {
-                $progressQuery->whereIn('ship_to', $selectedStores);
-            }
+
             if (!empty($startDate) && !empty($endDate)) {
                 $progressQuery->whereBetween('approval_date', [$startDate, $endDate]);
+                if (!empty($selectedStores)) {
+                    $progressQuery->whereIn('ship_to', $selectedStores);
+                }
+
             }
 
             $progressCount = $progressQuery->count();
@@ -189,12 +191,13 @@ class DashboardPoController extends Controller
             // Apply date filtering only if both dates are provided
             if ($startDate && $endDate) {
                 $query->whereBetween('approval_date', [$startDate, $endDate]);
-            }
-            if (!empty($selectedStores)) {
-                $query->whereIn('ordhead.ship_to', $selectedStores);
-            } else {
-                // Optionally, you can add a condition to filter for a specific store if needed
-                $query->where('ordhead.ship_to', 40); // Replace 40 with the actual identifier for the store you want to fetch
+                if (!empty($selectedStores)) {
+                    $query->whereIn('ordhead.ship_to', $selectedStores);
+                } else {
+                    // Optionally, you can add a condition to filter for a specific store if needed
+                    $query->where('ordhead.ship_to', 40); // Replace 40 with the actual identifier for the store you want to fetch
+                }
+
             }
 
             // Group by date and order by date
@@ -269,17 +272,18 @@ class DashboardPoController extends Controller
                 ->orderBy('store.store_name', 'asc') // Order by store_name
                 ->orderBy('ordhead.status', 'asc'); // Order by status
 
-            // Apply store filtering if selected
-            if (!empty($selectedStores)) {
-                $query->whereIn('ordhead.ship_to', $selectedStores);
-            } else {
-                // Optionally, you can add a condition to filter for a specific store if needed
-                $query->where('ordhead.ship_to', 40); // Replace 40 with the actual identifier for the store you want to fetch
-            }
+
 
             // Apply date filtering if both start and end dates are provided
             if ($startDate && $endDate) {
                 $query->whereBetween('ordhead.approval_date', [$startDate, $endDate]); // Adjust the column name as necessary
+                          // Apply store filtering if selected
+                if (!empty($selectedStores)) {
+                    $query->whereIn('ordhead.ship_to', $selectedStores);
+                } else {
+                    // Optionally, you can add a condition to filter for a specific store if needed
+                    $query->where('ordhead.ship_to', 40); // Replace 40 with the actual identifier for the store you want to fetch
+                }
             }
 
             $data = $query->get();
