@@ -116,6 +116,7 @@ return array(
     'LaravelEasyRepository\\Database\\Factories\\' => array($vendorDir . '/yaza/laravel-repository-service/database/factories'),
     'LaravelEasyRepository\\' => array($vendorDir . '/yaza/laravel-repository-service/src'),
     'Laratrust\\' => array($vendorDir . '/santigarcor/laratrust/src'),
+    'Ladumor\\LaravelPwa\\' => array($vendorDir . '/ladumor/laravel-pwa/src'),
     'JmesPath\\' => array($vendorDir . '/mtdowling/jmespath.php/src'),
     'Itmm\\MMartSkin\\' => array($vendorDir . '/itmm/m-mart-skin/src'),
     'Intervention\\Image\\' => array($vendorDir . '/intervention/image/src'),

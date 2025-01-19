@@ -203,6 +203,7 @@ class ComposerStaticInite7a151a1413e988cd84ec8450df4214f
             'LaravelEasyRepository\\Database\\Factories\\' => 41,
             'LaravelEasyRepository\\' => 22,
             'Laratrust\\' => 10,
+            'Ladumor\\LaravelPwa\\' => 19,
         ),
         'J' => 
         array (
@@ -725,6 +726,10 @@ class ComposerStaticInite7a151a1413e988cd84ec8450df4214f
         'Laratrust\\' => 
         array (
             0 => __DIR__ . '/..' . '/santigarcor/laratrust/src',
+        ),
+        'Ladumor\\LaravelPwa\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ladumor/laravel-pwa/src',
         ),
         'JmesPath\\' => 
         array (
@@ -5332,6 +5337,9 @@ class ComposerStaticInite7a151a1413e988cd84ec8450df4214f
         'JmesPath\\TreeCompiler' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/TreeCompiler.php',
         'JmesPath\\TreeInterpreter' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/TreeInterpreter.php',
         'JmesPath\\Utils' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/Utils.php',
+        'Ladumor\\LaravelPwa\\LaravelPwa' => __DIR__ . '/..' . '/ladumor/laravel-pwa/src/LaravelPwa.php',
+        'Ladumor\\LaravelPwa\\PWAServiceProvider' => __DIR__ . '/..' . '/ladumor/laravel-pwa/src/PWAServiceProvider.php',
+        'Ladumor\\LaravelPwa\\commands\\PublishPWA' => __DIR__ . '/..' . '/ladumor/laravel-pwa/src/commands/PublishPWA.php',
         'Laratrust\\Checkers\\CheckersManager' => __DIR__ . '/..' . '/santigarcor/laratrust/src/Checkers/CheckersManager.php',
         'Laratrust\\Checkers\\Role\\RoleChecker' => __DIR__ . '/..' . '/santigarcor/laratrust/src/Checkers/Role/RoleChecker.php',
         'Laratrust\\Checkers\\Role\\RoleDefaultChecker' => __DIR__ . '/..' . '/santigarcor/laratrust/src/Checkers/Role/RoleDefaultChecker.php',

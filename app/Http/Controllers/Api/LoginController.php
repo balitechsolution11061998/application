@@ -11,74 +11,26 @@ use Carbon\Carbon; // For handling expiration dates
 
 class LoginController extends Controller
 {
-    /**
-     * Handle user login and token generation.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function login(Request $request)
     {
-        try {
-            // Validate the request
-            $request->validate([
-                'email' => 'required|email',
-                'password' => 'required',
-            ]);
+        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
+            // successfull authentication
+            $user = User::find(Auth::user()->id);
 
-            // Check credentials
-            if (!Auth::attempt($request->only('email', 'password'))) {
-                return response()->json([
-                    'message' => 'Invalid email or password.',
-                ], 401);
-            }
+            $user_token['token'] = $user->createToken('appToken')->accessToken;
 
-            // Fetch the authenticated user
-            $user = Auth::user();
-
-            // Log the login activity using Spatie Activity Log
-            activity()
-                ->causedBy($user)
-                ->withProperties(['ip' => $request->ip()])
-                ->log('User logged in');
-
-            // Generate a token with an expiration time (e.g., 1 hour from now)
-            $tokenResult = $user->createToken('Personal Access Token');
-            $token = $tokenResult->accessToken;
-
-            // Set token expiration (1 hour from now)
-            $expires_at = Carbon::now()->addHours(1);
-
-            // Log successful login to activity log
-            activity()
-                ->causedBy($user)
-                ->withProperties(['ip' => $request->ip()])
-                ->log('User successfully logged in and received token.');
-
-            // Return success response with token and expires_at
             return response()->json([
-                'message' => 'Login successful.',
+                'success' => true,
+                'token' => $user_token,
                 'user' => $user,
-                'token' => $token,
-                'expires_at' => $expires_at->toDateTimeString(),
-            ]);
-        } catch (\Throwable $e) {
-            // Log the error with Spatie Activity Log
-            activity()
-                ->causedBy($user ?? null)
-                ->withProperties(['error' => $e->getMessage(), 'ip' => $request->ip()])
-                ->log('Login attempt failed.');
-
-            // Log the error with Spatie or default Laravel logging
-            Log::error('Login error: ' . $e->getMessage(), [
-                'exception' => $e,
-                'request' => $request->all(),
-            ]);
-
-            // Return a generic error response
+            ], 200);
+        } else {
+            // failure to authenticate
             return response()->json([
-                'message' => 'An error occurred during login. Please try again.',
-            ], 500);
+                'success' => false,
+                'message' => 'Failed to authenticate.',
+            ], 401);
         }
     }
+
 }

@@ -38,8 +38,9 @@ use Illuminate\Support\Facades\Route;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
 // Web Routes
-// Route::get('/', fn() => view('auth.login'));
-
+Route::get('/mywebsite', function(){
+    return view('welcomepage');
+});
 // Authentication Routes
 Route::controller(RegisterController::class)->group(function () {
     Route::get('register', 'showRegisterForm')->name('register');

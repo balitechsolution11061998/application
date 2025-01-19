@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Login</title>
+    <meta name="google-adsense-account" content="ca-pub-7503392728334197">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,7 +27,43 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
+            transition: background-color 0.5s ease;
+        }
+
+        .light-mode {
             background: linear-gradient(135deg, #f0f4ff, #e6ebff);
+        }
+
+        .dark-mode {
+            background: linear-gradient(135deg, #1a202c, #2d3748);
+        }
+
+        .welcome-section {
+            transition: background-color 0.5s ease;
+        }
+
+        .welcome-section.light-mode {
+            background-color: transparent; /* No background for welcome section in light mode */
+            color: black; /* Black text in light mode */
+        }
+
+        .welcome-section.dark-mode {
+            background-color: #2d3748; /* Dark background for welcome section */
+            color: white; /* White text in dark mode */
+        }
+
+        .login-form {
+            transition: background-color 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        .login-form.light-mode {
+            background-color: #ffffff; /* Light background for login form */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .login-form.dark-mode {
+            background-color: #2d3748; /* Dark background for login form */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
         }
 
         .rounded-l-xl {
@@ -37,10 +74,6 @@
         .rounded-r-xl {
             border-top-right-radius: 1rem;
             border-bottom-right-radius: 1rem;
-        }
-
-        .shadow-lg {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
         .transition-transform {
@@ -58,7 +91,7 @@
 
 </head>
 
-<body class="min-h-screen flex items-center justify-center bg-gray-100 transition-colors duration-500 dark:bg-gray-900">
+<body class="min-h-screen flex items-center justify-center bg-gray-100 transition-colors duration-500 light-mode">
 
     <div class="grid grid-cols-1 md:grid-cols-2 w-full max-w-4xl mx-auto animate__animated animate__fadeInUp">
         <!-- Kolom Kiri: Gambar Ponsel -->
@@ -67,13 +100,15 @@
         </div>
 
         <!-- Kolom Kanan: Form Login -->
-        <div class="bg-white shadow-2xl rounded-r-xl p-8 dark:bg-gray-800 transition-colors duration-500 hover:shadow-2xl">
+        <div class="login-form light-mode shadow-2xl rounded-r-xl p-8 dark:bg-gray-800 transition-colors duration-500 hover:shadow-2xl">
             <!-- Dark/Light Mode Toggle -->
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">Welcome Back</h1>
-                <button id="themeToggle" class="focus:outline-none text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
-                    <i class="fas fa-moon"></i>
-                </button>
+            <div class="welcome-section light-mode" id="welcomeSection">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-2xl font-semibold">Welcome Back</h1>
+                    <button id="themeToggle" class="focus:outline-none text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="text-center mb-6">
@@ -176,7 +211,7 @@
         function handleLogin() {
             Swal.fire({
                 title: 'Logging in...',
-                html: 'Please wait while we log you in.',
+                html: '<i class="fas fa-spinner fa-spin"></i> Please wait while we log you in.',
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
@@ -223,17 +258,56 @@
 
         const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
+        const welcomeSection = document.getElementById('welcomeSection');
+        const loginForm = document.querySelector('.login-form');
+
+        // Load theme from local storage
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'dark') {
+            html.classList.add('dark');
+            document.body.classList.remove('light-mode');
+            document.body.classList.add('dark-mode');
+            welcomeSection.classList.remove('light-mode');
+            welcomeSection.classList.add('dark-mode');
+            loginForm.classList.remove('light-mode');
+            loginForm.classList.add('dark-mode');
+            themeToggle.querySelector('i').classList.remove('fa-moon');
+            themeToggle.querySelector('i').classList.add('fa-sun');
+        } else {
+            document.body.classList.add('light-mode');
+            welcomeSection.classList.add('light-mode');
+            welcomeSection.classList.remove('dark-mode');
+            loginForm.classList.add('light-mode');
+            loginForm.classList.remove('dark-mode');
+        }
 
         themeToggle.addEventListener('click', () => {
             const isDarkMode = html.classList.toggle('dark');
             localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+            // Change background class based on theme
+            if (isDarkMode) {
+                document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
+                welcomeSection.classList.remove('light-mode');
+                welcomeSection.classList.add('dark-mode');
+                loginForm.classList.remove('light-mode');
+                loginForm.classList.add('dark-mode');
+                themeToggle.querySelector('i').classList.remove('fa-moon');
+                themeToggle.querySelector('i').classList.add('fa-sun');
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.body.classList.add('light-mode');
+                welcomeSection.classList.remove('dark-mode');
+                welcomeSection.classList.add('light-mode');
+                loginForm.classList.remove('dark-mode');
+                loginForm.classList.add('light-mode');
+                themeToggle.querySelector('i').classList.remove('fa-sun');
+                themeToggle.querySelector('i').classList.add('fa-moon');
+            }
         });
-
-        const currentTheme = localStorage.getItem('theme');
-        if (currentTheme === 'dark') {
-            html.classList.add('dark');
-        }
     </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7503392728334197"
+      crossorigin="anonymous"></script>
 </body>
 
 </html>
