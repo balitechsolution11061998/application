@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Socialite\Facades\Socialite;
@@ -66,27 +67,31 @@ class RegisterController extends Controller
 
     public function handleGoogleCallback()
     {
+        // Retrieve the user from Google
         $googleUser = Socialite::driver('google')->user();
-        return $googleUser;
-        // Check if the user already exists
+
+        // Check if the user already exists in the database
         $user = User::where('email', $googleUser->getEmail())->first();
 
-        if (!$user) {
-            // Create a new user if not exists
+        if ($user) {
+            // User exists, log them in
+            Auth::login($user);
+        } else {
+            // User does not exist, create a new user
             $user = User::create([
-                'username' => $googleUser->getName(),
+                'username' => $googleUser->getName(), // You can customize this
                 'name' => $googleUser->getName(),
                 'email' => $googleUser->getEmail(),
-                'password' => Hash::make(uniqid()), // Generate a random password
-                'photo' => $googleUser->getAvatar(), // Store the user's Google profile picture
-                'status' => 'y', // Default status
-                'all_supplier' => 'n', // Default value
+                'password' => bcrypt(str_random(16)), // Generate a random password
+                'photo' => $googleUser->getAvatar(), // Store the user's avatar
+                // Add any other fields you need to populate
             ]);
+
+            // Log the new user in
+            Auth::login($user);
         }
 
-        // Log the user in
-        // Auth::login($user);
-
-        return redirect()->route('home')->with('success', 'Welcome back, ' . $user->name);
+        // Redirect to the desired route after login
+        return redirect()->route('dashboard'); // Change 'dashboard' to your desired route
     }
 }
