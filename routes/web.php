@@ -42,10 +42,12 @@ Route::get('/', function(){
     return view('welcomepage');
 });
 // Authentication Routes
-Route::controller(RegisterController::class)->group(function () {
-    Route::get('register', 'showRegisterForm')->name('register');
-    Route::post('register', 'register');
-});
+
+
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
+Route::get('/auth/google', [RegisterController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('/auth/google/callback', [RegisterController::class, 'handleGoogleCallback']);
 
 Route::controller(LoginController::class)->group(function () {
     Route::get('login/koperasi', 'showLoginFormKoperasi')->name('login.formKoperasi');

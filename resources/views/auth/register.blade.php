@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-         body { background-color: #f8f9fa; }
+        body { background-color: #f8f9fa; }
         .form-container { padding: 30px; border-radius: 15px; background-color: #fff; transition: transform 0.3s, box-shadow 0.3s; }
         .form-container:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); }
         .form-label-custom { font-weight: bold; color: #495057; }
@@ -19,6 +19,8 @@
         .btn-primary { border-radius: 8px; padding: 10px; background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); }
         .btn-primary:hover { background-color: #0056b3; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); }
         .form-image { width: 100%; height: auto; border-radius: 15px; }
+        .btn-google { background-color: #db4437; color: white; }
+        .btn-google:hover { background-color: #c13527; }
     </style>
 </head>
 <body>
@@ -27,7 +29,7 @@
 
             <!-- Image Column -->
             <div class="col-md-6 d-none d-md-block">
-                <img src="{{ asset('img/logo/logo.png') }}" alt="Registration Image" class="form-image">
+                <img src="{{ asset('img/logo/m-mart.svg') }}" alt="Registration Image" class="form-image">
             </div>
 
             <!-- Form Column -->
@@ -60,25 +62,15 @@
                         </div>
                     </div>
 
-                    <!-- Email and Role Fields -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="email" class="form-label-custom">Email</label>
-                            <div class="input-group has-validation">
-                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required>
-                                @error('email')
-                                    <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="role" class="form-label-custom">Role</label>
-                            <select id="role" name="role" class="form-select" required>
-                                @foreach ($roles as $role)
-                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                @endforeach
-                            </select>
+                    <!-- Email Field -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label-custom">Email</label>
+                        <div class="input-group has-validation">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required>
+                            @error('email')
+                                <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
@@ -114,6 +106,53 @@
                         </div>
                     </div>
 
+                    <!-- Additional Fields -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="whatshapp_no" class="form-label-custom">WhatsApp Number</label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                <input id="whatshapp_no" type="text" class="form-control @error('whatshapp_no') is-invalid @enderror" name="whatshapp_no" value="{{ old('whatshapp_no') }}">
+                                @error('whatshapp_no')
+                                    <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="channel_id" class="form-label-custom">Channel ID</label>
+                            <div class="input-group has-validation">
+                                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                <input id="channel_id" type="text" class="form-control @error('channel_id') is-invalid @enderror" name="channel_id" value="{{ old('channel_id') }}">
+                                @error('channel_id')
+                                    <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="status" class="form-label-custom">Status</label>
+                            <select id="status" name="status" class="form-select @error('status') is-invalid @enderror">
+                                <option value="y" {{ old('status') == 'y' ? 'selected' : '' }}>Active</option>
+                                <option value="n" {{ old('status') == 'n' ? 'selected' : '' }}>Inactive</option>
+                            </select>
+                            @error('status')
+                                <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="all_supplier" class="form-label-custom">All Supplier</label>
+                            <select id="all_supplier" name="all_supplier" class="form-select @error('all_supplier') is-invalid @enderror">
+                                <option value="y" {{ old('all_supplier') == 'y' ? 'selected' : '' }}>Yes</option>
+                                <option value="n" {{ old('all_supplier') == 'n' ? 'selected' : '' }}>No</option>
+                            </select>
+                            @error('all_supplier')
+                                <div class="invalid-feedback"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
                     <!-- Submit Button -->
                     <div class="d-flex justify-content-center">
                         <button type="submit" class="btn btn-primary">
@@ -121,6 +160,13 @@
                         </button>
                     </div>
                 </form>
+
+                <!-- Google Sign-In Button -->
+                <div class="text-center mt-4">
+                    <a href="{{ route('google.login') }}" class="btn btn-google">
+                        <i class="fab fa-google"></i> Sign in with Google
+                    </a>
+                </div>
             </div>
         </div>
     </div>

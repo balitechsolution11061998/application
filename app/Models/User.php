@@ -54,8 +54,17 @@ class User extends Authenticatable implements LaratrustUser,JWTSubject
      *
      * @var array<string, string>
      */
+    // protected $casts = [
+    //     'email_verified_at' => 'datetime',
+    // ];
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'oauth_token_expires_at' => 'datetime',
+        'last_activity' => 'datetime',
+        'suppliers_added_at' => 'date',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     public function passwordHistories()
