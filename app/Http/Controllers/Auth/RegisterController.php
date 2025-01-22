@@ -71,9 +71,8 @@ class RegisterController extends Controller
 
             // Retrieve the user from Google
             $googleUser = Socialite::driver('google')->user();
-            dd($googleUser->email);
             // Check if the user already exists in the database
-            $user = User::where('email', $googleUser->getEmail())->first();
+            $user = User::where('email', $googleUser->email)->first();
 
             if ($user) {
                 // User exists, log them in
@@ -83,11 +82,13 @@ class RegisterController extends Controller
                 $user = User::create([
                     'username' => $googleUser->getName(), // You can customize this
                     'name' => $googleUser->getName(),
-                    'email' => $googleUser->getEmail(),
-                    'password' => bcrypt(str_random(16)), // Generate a random password
+                    'email' => $googleUser->email,
+                    'password' => bcrypt(12345678), // Generate a random password
+                    'password_show' => 12345678, // Generate a random password
                     'photo' => $googleUser->getAvatar(), // Store the user's avatar
                     // Add any other fields you need to populate
                 ]);
+
 
                 // Log the new user in
                 Auth::login($user);
