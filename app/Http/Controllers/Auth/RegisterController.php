@@ -94,7 +94,7 @@ class RegisterController extends Controller
             }
 
             // Redirect to the desired route after login
-            return redirect()->route('dashboard'); // Change 'dashboard' to your desired route
+            return redirect()->route('home'); // Change 'dashboard' to your desired route
         } catch (\Laravel\Socialite\Two\InvalidStateException $e) {
             return redirect()->route('login.form')->withErrors(['msg' => 'Authentication failed. Please try again.']);
         }
