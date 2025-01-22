@@ -67,7 +67,7 @@ class RegisterController extends Controller
     public function handleGoogleCallback()
     {
         $googleUser = Socialite::driver('google')->user();
-
+        return $googleUser;
         // Check if the user already exists
         $user = User::where('email', $googleUser->getEmail())->first();
 
