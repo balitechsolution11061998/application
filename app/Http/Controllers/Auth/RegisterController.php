@@ -73,7 +73,7 @@ class RegisterController extends Controller
             $googleUser = Socialite::driver('google')->user();
             // Check if the user already exists in the database
             $user = User::where('email', $googleUser->email)->first();
-
+            dd($user);
             if ($user) {
                 // User exists, log them in
                 Auth::login($user);
