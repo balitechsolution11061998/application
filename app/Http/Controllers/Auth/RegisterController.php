@@ -67,31 +67,36 @@ class RegisterController extends Controller
 
     public function handleGoogleCallback()
     {
-        // Retrieve the user from Google
-        $googleUser = Socialite::driver('google')->user();
+        try {
 
-        // Check if the user already exists in the database
-        $user = User::where('email', $googleUser->getEmail())->first();
+            // Retrieve the user from Google
+            $googleUser = Socialite::driver('google')->user();
 
-        if ($user) {
-            // User exists, log them in
-            Auth::login($user);
-        } else {
-            // User does not exist, create a new user
-            $user = User::create([
-                'username' => $googleUser->getName(), // You can customize this
-                'name' => $googleUser->getName(),
-                'email' => $googleUser->getEmail(),
-                'password' => bcrypt(str_random(16)), // Generate a random password
-                'photo' => $googleUser->getAvatar(), // Store the user's avatar
-                // Add any other fields you need to populate
-            ]);
+            // Check if the user already exists in the database
+            $user = User::where('email', $googleUser->getEmail())->first();
 
-            // Log the new user in
-            Auth::login($user);
+            if ($user) {
+                // User exists, log them in
+                Auth::login($user);
+            } else {
+                // User does not exist, create a new user
+                $user = User::create([
+                    'username' => $googleUser->getName(), // You can customize this
+                    'name' => $googleUser->getName(),
+                    'email' => $googleUser->getEmail(),
+                    'password' => bcrypt(str_random(16)), // Generate a random password
+                    'photo' => $googleUser->getAvatar(), // Store the user's avatar
+                    // Add any other fields you need to populate
+                ]);
+
+                // Log the new user in
+                Auth::login($user);
+            }
+
+            // Redirect to the desired route after login
+            return redirect()->route('dashboard'); // Change 'dashboard' to your desired route
+        } catch (\Laravel\Socialite\Two\InvalidStateException $e) {
+            return redirect()->route('login.form')->withErrors(['msg' => 'Authentication failed. Please try again.']);
         }
-
-        // Redirect to the desired route after login
-        return redirect()->route('dashboard'); // Change 'dashboard' to your desired route
     }
 }
