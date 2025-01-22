@@ -71,7 +71,7 @@ class RegisterController extends Controller
 
             // Retrieve the user from Google
             $googleUser = Socialite::driver('google')->user();
-            dd($googleUser);
+            dd($googleUser->email);
             // Check if the user already exists in the database
             $user = User::where('email', $googleUser->getEmail())->first();
 
