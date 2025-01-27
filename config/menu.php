@@ -209,15 +209,26 @@ return [
         [
             'label'          => 'Profile',
             'type'           => 'item',
-            'permission'     => ['read-profile'],
+            'permission'     => ['show-profile','profile-show'],
             'permissionType' => 'gate',
             'icon'           => 'fas',
             'iconName'       => 'fa-user',
             'route'          => 'users.profile',
             'active'         => [],
             'iconPath'       => 4,
-
         ],
+        [
+            'label'          => 'Data Kependudukan',
+            'type'           => 'item',
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-user',
+            'route'          => 'data-kependudukan.index',
+            'active'         => [],
+            'iconPath'       => 4,
+        ],
+
     ],
 
 

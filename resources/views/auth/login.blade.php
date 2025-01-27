@@ -43,13 +43,17 @@
         }
 
         .welcome-section.light-mode {
-            background-color: transparent; /* No background for welcome section in light mode */
-            color: black; /* Black text in light mode */
+            background-color: transparent;
+            /* No background for welcome section in light mode */
+            color: black;
+            /* Black text in light mode */
         }
 
         .welcome-section.dark-mode {
-            background-color: #2d3748; /* Dark background for welcome section */
-            color: white; /* White text in dark mode */
+            background-color: #2d3748;
+            /* Dark background for welcome section */
+            color: white;
+            /* White text in dark mode */
         }
 
         .login-form {
@@ -57,12 +61,14 @@
         }
 
         .login-form.light-mode {
-            background-color: #ffffff; /* Light background for login form */
+            background-color: #ffffff;
+            /* Light background for login form */
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
         .login-form.dark-mode {
-            background-color: #2d3748; /* Dark background for login form */
+            background-color: #2d3748;
+            /* Dark background for login form */
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
         }
 
@@ -95,17 +101,20 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 w-full max-w-4xl mx-auto animate__animated animate__fadeInUp">
         <!-- Kolom Kiri: Gambar Ponsel -->
-        <div class="hidden md:flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-l-xl overflow-hidden shadow-lg transition-transform transform hover:scale-105">
+        <div
+            class="hidden md:flex items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-l-xl overflow-hidden shadow-lg transition-transform transform hover:scale-105">
             <img src="{{ asset('img/background/supplier.png') }}" alt="Phone Image" class="w-3/4 md:w-2/3">
         </div>
 
         <!-- Kolom Kanan: Form Login -->
-        <div class="login-form light-mode shadow-2xl rounded-r-xl p-8 dark:bg-gray-800 transition-colors duration-500 hover:shadow-2xl">
+        <div
+            class="login-form light-mode shadow-2xl rounded-r-xl p-8 dark:bg-gray-800 transition-colors duration-500 hover:shadow-2xl">
             <!-- Dark/Light Mode Toggle -->
             <div class="welcome-section light-mode" id="welcomeSection">
                 <div class="flex justify-between items-center mb-6">
                     <h1 class="text-2xl font-semibold">Welcome Back</h1>
-                    <button id="themeToggle" class="focus:outline-none text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
+                    <button id="themeToggle"
+                        class="focus:outline-none text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
                         <i class="fas fa-moon"></i>
                     </button>
                 </div>
@@ -121,7 +130,8 @@
                 @csrf
 
                 <div class="mb-5">
-                    <label for="login" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email or Username</label>
+                    <label for="login" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email or
+                        Username</label>
                     <div class="relative mt-2">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-user text-gray-400"></i>
@@ -138,7 +148,8 @@
                 </div>
 
                 <div class="mb-5">
-                    <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                    <label for="password"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
                     <div class="relative mt-2">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-lock text-gray-400"></i>
@@ -146,7 +157,8 @@
                         <input id="password" type="password" name="password" required
                             class="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                             placeholder="Enter your password">
-                        <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <button type="button" id="togglePassword"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center">
                             <i class="fas fa-eye text-gray-400"></i>
                         </button>
                         @error('password')
@@ -158,26 +170,41 @@
                 </div>
 
                 <div class="flex items-center mb-6">
-                    <input type="checkbox" name="remember" id="remember" class="h-4 w-4 text-blue-600 border-gray-300 rounded" {{ old('remember') ? 'checked' : '' }}>
-                    <label for="remember" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Remember Me</label>
+                    <input type="checkbox" name="remember" id="remember"
+                        class="h-4 w-4 text-blue-600 border-gray-300 rounded" {{ old('remember') ? 'checked' : '' }}>
+                    <label for="remember" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Remember
+                        Me</label>
                 </div>
 
                 <div class="mb-4">
-                    <button type="button" id="loginButton" class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 transition duration-300 ease-in-out">
+                    <button type="button" id="loginButton"
+                        class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 transition duration-300 ease-in-out">
                         <i class="fas fa-sign-in-alt"></i> Login
                     </button>
                 </div>
 
+                <!-- Google Login Button -->
+                <div class="mb-4">
+                    <a href="{{ route('google.login') }}"
+                        class="w-full flex items-center justify-center bg-red-600 text-white font-semibold py-2 rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-300 ease-in-out">
+                        <i class="fab fa-google mr-2"></i> Login with Google
+                    </a>
+                </div>
+
                 @if (Route::has('password.request'))
                     <div class="text-center">
-                        <a href="{{ route('password.request') }}" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">Forgot Your Password?</a>
+                        <a href="{{ route('password.request') }}"
+                            class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">Forgot
+                            Your Password?</a>
                     </div>
                 @endif
 
                 @if (Route::has('register'))
                     <div class="text-center mt-4">
                         <span class="text-sm text-gray-500 dark:text-gray-400">Don't have an account?</span>
-                        <a href="{{ route('register') }}" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500">Register Here</a>
+                        <a href="{{ route('register') }}"
+                            class="text-blue-600 hover:text-blue-700 dark :text-blue-400 dark:hover:text-blue-500">Register
+                            Here</a>
                     </div>
                 @endif
             </form>
@@ -307,7 +334,7 @@
         });
     </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7503392728334197"
-      crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script>
 </body>
 
 </html>

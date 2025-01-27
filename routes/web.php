@@ -9,6 +9,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DashboardPilkadaController;
 use App\Http\Controllers\DashboardPoController;
 use App\Http\Controllers\DashboardSystemController;
+use App\Http\Controllers\DataKependudukanController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HomeSupplierController;
 use App\Http\Controllers\ItemSupplierController;
@@ -240,6 +241,19 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::resource('members', MemberController::class)->except(['show']);
     Route::get('members/data', [MemberController::class, 'getMembersData'])->name('members.data');
+
+    Route::prefix('data-kependudukan')->name('data-kependudukan.')->group(function () {
+        Route::get('/', [DataKependudukanController::class, 'index'])->name('index');
+        Route::get('/create', [DataKependudukanController::class, 'create'])->name('create');
+        Route::post('/store', [DataKependudukanController::class, 'store'])->name('store');
+        Route::get('/edit/{id}', [DataKependudukanController::class, 'edit'])->name('edit');
+        Route::put('/update/{id}', [DataKependudukanController::class, 'update'])->name('update');
+        Route::delete('/delete/{id}', [DataKependudukanController::class, 'destroy'])->name('destroy');
+        Route::get('/get-data', [DataKependudukanController::class, 'getData'])->name('getData');
+    });
+    Route::get('data-kependudukan/import', [DataKependudukanController::class, 'import'])->name('data-kependudukan.import');
+    Route::post('data-kependudukan/import', [DataKependudukanController::class, 'importStore'])->name('data-kependudukan.import.store');
+    Route::post('/data-kependudukan/bulk-store', [DataKependudukanController::class, 'bulkStore'])->name('data-kependudukan.bulkStore');
 });
 Route::post('/generate', [OpenAIController::class, 'generate']);
 
