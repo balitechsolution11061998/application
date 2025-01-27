@@ -173,7 +173,7 @@ class UsersTableSeeder extends Seeder
             [
                 'username' => 111225, // New user
                 'name' => 'Kaifa Indonesia, PT',
-                'email' => 'sulaksana60@gmail.com',
+                'email' => 'sulaksana61@gmail.com',
                 'status' => 'y',
                 'all_supplier' => 'y',
                 'password' => Hash::make('111225@123'), // Set a password for the new user
