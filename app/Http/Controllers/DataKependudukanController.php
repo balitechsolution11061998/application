@@ -27,7 +27,30 @@ class DataKependudukanController extends Controller
     public function getData()
     {
         $data = DataKependudukan::query();
+
         return DataTables::of($data)
+            ->filter(function ($query) {
+                if (request()->has('search') && request()->get('search')['value']) {
+                    $search = request()->get('search')['value'];
+                    $query->where(function ($q) use ($search) {
+                        $q->where('nama', 'like', '%' . $search . '%')
+                          ->orWhere('nik', 'like', '%' . $search . '%')
+                          ->orWhere('jenis_kelamin', 'like', '%' . $search . '%')
+                          ->orWhere('tempat_lahir', 'like', '%' . $search . '%')
+                          ->orWhere('tanggal_lahir', 'like', '%' . $search . '%')
+                          ->orWhere('agama', 'like', '%' . $search . '%')
+                          ->orWhere('no_kk', 'like', '%' . $search . '%')
+                          ->orWhere('pendidikan', 'like', '%' . $search . '%')
+                          ->orWhere('pekerjaan', 'like', '%' . $search . '%')
+                          ->orWhere('golongan_darah', 'like', '%' . $search . '%')
+                          ->orWhere('status_kawin', 'like', '%' . $search . '%')
+                          ->orWhere('nama_ibu', 'like', '%' . $search . '%')
+                          ->orWhere('nama_bapak', 'like', '%' . $search . '%')
+                          ->orWhere('alamat', 'like', '%' . $search . '%')
+                          ->orWhere('keterangan', 'like', '%' . $search . '%');
+                    });
+                }
+            })
             ->addColumn('actions', function ($row) {
                 $editUrl = route('data-kependudukan.edit', $row->id);
                 $deleteUrl = route('data-kependudukan.destroy', $row->id);

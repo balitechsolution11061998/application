@@ -1,5 +1,8 @@
 <x-default-layout>
     @section('title', 'Form Data Kependudukan Management')
+    @section('breadcrumbs')
+        {{ Breadcrumbs::render('members') }}
+    @endsection
     <div class="card shadow rounded-2xl">
         <div class="card-header rounded-top-2xl">
             <h5 class="card-title mb-0">Form Data Kependudukan</h5>
