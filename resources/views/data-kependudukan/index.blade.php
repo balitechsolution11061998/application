@@ -67,7 +67,7 @@
                     <i class="ki-duotone ki-magnifier fs-1 position-absolute ms-6"><span class="path1"></span><span
                             class="path2"></span></i>
                     <input type="text" data-kt-docs-table-filter="search"
-                        class="form-control form-control-solid w-250px ps-15" placeholder="Search Customers" />
+                        class="form-control form-control-solid w-250px ps-15" placeholder="Search Penduduk" />
                 </div>
                 <!--end::Search-->
 
@@ -85,7 +85,7 @@
                     <!--begin::Add customer-->
                     <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" title="Coming Soon">
                         <i class="ki-duotone ki-plus fs-2"></i>
-                        Add Customer
+                        Add Penduduk
                     </button>
                     <!--end::Add customer-->
                 </div>
