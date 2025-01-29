@@ -1,7 +1,7 @@
 <!--begin::loader-->
 <div class="page-loader flex-column p-5 rounded shadow-lg">
     <img alt="Logo" class="h-50px rounded-circle"
-    src="{{ Auth::user()->profile_picture ?? asset('/img/logo/m-mart.svg') }}" />
+    src="{{ Auth::user()->profile_picture ?? asset('/img/logo/logo.png') }}" />
    {{-- <img alt="Logo" class="theme-light-show max-h-50px" src="{{ asset('assets/media/logos/keenthemes.svg') }}" />
     <img alt="Logo" class="theme-dark-show max-h-50px" src="{{ asset('assets/media/logos/keenthemes-dark.svg') }}" /> --}}
     <div class="d-flex align-items-center mt-5">

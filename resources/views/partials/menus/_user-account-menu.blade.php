@@ -5,9 +5,9 @@
         <div class="menu-content d-flex align-items-center px-3">
             <!--begin::Avatar-->
             <div class="symbol symbol-50px me-5">
-                <a href="{{ Auth::user()->profile_picture ?? asset('/img/logo/m-mart.svg') }}" data-lightbox="user-image" data-title="User Profile Picture">
+                <a href="{{ Auth::user()->profile_picture ?? asset('/img/logo/logo.png') }}" data-lightbox="user-image" data-title="User Profile Picture">
                     <div class="symbol-label fs-3 {{ app(\App\Actions\GetThemeType::class)->handle('bg-light-' . substr(Auth::user()->email, 0, 1) . ' text-' . substr(Auth::user()->email, 0, 1)) }} rounded-circle overflow-hidden d-flex justify-content-center align-items-center">
-                        <img src="{{ Auth::user()->profile_picture ?? asset('/img/logo/m-mart.svg') }}" alt="User Profile Picture" class="img-fluid" style="width: 100%; height: auto; object-fit: cover;">
+                        <img src="{{ Auth::user()->profile_picture ?? asset('/img/logo/logo.png') }}" alt="User Profile Picture" class="img-fluid" style="width: 100%; height: auto; object-fit: cover;">
                     </div>
                 </a>
             </div>

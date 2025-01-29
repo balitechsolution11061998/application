@@ -34,6 +34,13 @@ return [
             'faq'=>'s',
             'service-level'=>'s',
             'history'=>'log',
+            'user'=>'s',
+            'roles'=>'s',
+            'permissions'=>'s',
+            'data-kependudukan'=>'s',
+        ],
+        'superadminektp' => [
+            'data-kependudukan' => 's',
         ],
         'administrator' => [
             'dashboard' => 's',

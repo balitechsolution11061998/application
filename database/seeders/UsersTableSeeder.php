@@ -184,6 +184,21 @@ class UsersTableSeeder extends Seeder
                 'phone_number' => '', // Add phone number if available
                 'role' => 'supplier', // Set the role for the new user
             ],
+
+            [
+                'username' => "widana", // New user
+                'name' => 'Ketut Widana',
+                'email' => 'ketutwidana@gmail.com',
+                'status' => 'y',
+                'all_supplier' => 'y',
+                'password' => Hash::make('widana123@'), // Set a password for the new user
+                'password_show' => 'widana123@', // Set a password for the new user
+                'link_sync' => null,
+                'region' => 1, // Set a default region ID
+                'address' => '', // Add address if available
+                'phone_number' => '', // Add phone number if available
+                'role' => 'superadminektp', // Set the role for the new user
+            ],
             // Add other predefined users here...
         ];
 

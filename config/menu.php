@@ -9,7 +9,7 @@ return [
         [
             'label'          => 'Dashboard System',               // Menu label updated to Dashboard
             'type'           => 'item',                    // Type (item represents a clickable menu option)
-            'permission'     => ['show-dashboard-system'],                        // Permissions required to view this item
+            'permission'     => ['show-dashboard-system','dashboard-system-show'],                        // Permissions required to view this item
             'permissionType' => 'gate',                    // Permission type (gate or policy)
             'icon'           => 'fas',                     // Font Awesome Solid icons (FA class)
             'iconName'       => 'fa-tachometer-alt',        // Updated icon for the dashboard (optional)
@@ -20,7 +20,7 @@ return [
         [
             'label'          => 'Dashboard PO',               // Label for the menu (e.g., Dashboard PO)
             'type'           => 'item',                       // Represents a single clickable menu item
-            'permission'     => [],        // Permissions required to access the menu
+            'permission'     => ['show-dashboard-po','dashboard-po-show'],        // Permissions required to access the menu
             'permissionType' => 'gate',                       // Use Laravel's gate for permission checks
             'icon'           => 'fas',                        // Font Awesome Solid icon class
             'iconName'       => 'fa-chart-bar',               // Icon representing a dashboard/analytics view
@@ -31,7 +31,7 @@ return [
         [
             'label'          => 'Dashboard Pilkada',           // Menu label
             'type'           => 'item',                        // Type of menu (item represents a clickable menu option)
-            'permission'     => [],                            // Permissions required to view this item
+            'permission'     => ['show-dashboard-pilkada','dashboard-pilkada-show'],                            // Permissions required to view this item
             'permissionType' => 'gate',                        // Permission type (gate or policy)
             'icon'           => 'fas',                         // Font Awesome Solid icons (FA class)
             'iconName'       => 'fa-vote-yea',                 // Updated icon for Pemilu (vote icon)
@@ -42,7 +42,7 @@ return [
         [
             'label'          => 'Activity Logs',                // Menu label
             'type'           => 'item',                         // Type of menu (item represents a clickable menu option)
-            'permission'     => [],                             // Permissions required to view this item
+            'permission'     => ['show-activity-log','activity-log-log'],                             // Permissions required to view this item
             'permissionType' => 'gate',                         // Permission type (gate or policy)
             'icon'           => 'fas',                          // Font Awesome Solid icons (FA class)
             'iconName'       => 'fa-list-alt',                  // Icon for Activity Logs
@@ -53,7 +53,7 @@ return [
         [
             'label'          => 'Price Change',                  // Menu label for Price Change
             'type'           => 'item',                          // Type (item represents a clickable menu option)
-            'permission'     => [],                              // Permissions required to view this item
+            'permission'     => ['show-price-change','price-change-show'],                              // Permissions required to view this item
             'permissionType' => 'gate',                          // Permission type (gate or policy)
             'icon'           => 'fas',                           // Font Awesome Solid icons (FA class)
             'iconName'       => 'fa-tag',                        // Icon for the price change section
@@ -65,7 +65,7 @@ return [
         [
             'label'          => 'Purchase Order',               // Menu label for Purchase Order
             'type'           => 'item',                          // Type (item represents a clickable menu option)
-            'permission'     => [],                              // Permissions required to view this item
+            'permission'     => ['show-purchase-order','purchase-order-show'],                              // Permissions required to view this item
             'permissionType' => 'gate',                          // Permission type (gate or policy)
             'icon'           => 'fas',                           // Font Awesome Solid icons (FA class)
             'iconName'       => 'fa-shopping-cart',              // Icon for the purchase order section
@@ -76,7 +76,7 @@ return [
         [
             'label'          => 'Receiving',                     // Menu label for Receiving
             'type'           => 'item',                          // Type (item represents a clickable menu option)
-            'permission'     => [],                              // Permissions required to view this item
+            'permission'     => ['show-receiving','receiving-show'],                              // Permissions required to view this item
             'permissionType' => 'gate',                          // Permission type (gate or policy)
             'icon'           => 'fas',                           // Font Awesome Solid icons (FA class)
             'iconName'       => 'fa-box',                       // Updated icon for the Receiving section
@@ -87,7 +87,7 @@ return [
         [
             'label'          => 'Item Supplier',                  // Menu label for Item Supplier
             'type'           => 'item',                           // Type (item represents a clickable menu option)
-            'permission'     => [],                               // Permissions required to view this item
+            'permission'     => ['show-item-supplier','item-supplier-show'],                               // Permissions required to view this item
             'permissionType' => 'gate',                           // Permission type (gate or policy)
             'icon'           => 'fas',                            // Font Awesome Solid icons (FA class)
             'iconName'       => 'fa-user-tie',                   // Icon for the item supplier section
@@ -98,7 +98,7 @@ return [
         [
             'label'          => 'Supplier',                       // Menu label for Supplier
             'type'           => 'item',                           // Type (item represents a clickable menu option)
-            'permission'     => [],                               // Permissions required to view this item
+            'permission'     => ['show-supplier','supplier-show'],                               // Permissions required to view this item
             'permissionType' => 'gate',                           // Permission type (gate or policy)
             'icon'           => 'fas',                            // Font Awesome Solid icons (FA class)
             'iconName'       => 'fa-user-tag',                   // Updated icon for the supplier section
@@ -109,7 +109,7 @@ return [
         [
             'label'          => 'Store',                          // Menu label for Store
             'type'           => 'item',                           // Type (item represents a clickable menu option)
-            'permission'     => [],                               // Permissions required to view this item
+            'permission'     => ['show-store','store-show'],                               // Permissions required to view this item
             'permissionType' => 'gate',                           // Permission type (gate or policy)
             'icon'           => 'fas',                            // Font Awesome Solid icons (FA class)
             'iconName'       => 'fa-store',                       // Updated icon for the store section
@@ -121,7 +121,7 @@ return [
         [
             'label'          => 'Members',                        // Menu label for Members
             'type'           => 'item',                           // Type (item represents a clickable menu option)
-            'permission'     => [],                               // Permissions required to view this item
+            'permission'     => ['show-members','members-show'],                               // Permissions required to view this item
             'permissionType' => 'gate',                           // Permission type (gate or policy)
             'icon'           => 'fas',                            // Font Awesome Solid icons (FA class)
             'iconName'       => 'fa-users',                       // Updated icon for the members section
@@ -139,7 +139,7 @@ return [
         [
             'label'          => 'Master Data',        // Main menu label
             'type'           => 'item',                   // Type item (clickable menu item)
-            'permission'     => [],                       // Permissions (empty implies no restrictions)
+            'permission'     => ['show-master-data','master-data-show'],                       // Permissions (empty implies no restrictions)
             'permissionType' => 'gate',                   // Permission type (gate or policy)
             'icon'           => 'fas',                    // Font Awesome icons class
             'iconName'       => 'fa-database',               // Icon name for this main item
@@ -154,7 +154,7 @@ return [
                     'type'           => 'item',             // Item type
                     'route'          => 'tahun-pelajaran.index',  // Route for managing academic years
                     'active'         => [],                 // Define when this item is active
-                    'permission'     => [],   // Permissions required to access this menu item
+                    'permission'     => ['show-tahun-pelajaran','tahun-pelajaran-show'],   // Permissions required to access this menu item
                     'permissionType' => 'gate',             // Gate-based permission checking
                     'icon'           => 'fas',
                     'iconName'       => 'fa-calendar',
@@ -220,7 +220,7 @@ return [
         [
             'label'          => 'Data Kependudukan',
             'type'           => 'item',
-            'permission'     => [],
+            'permission'     => ['show-data-kependudukan','data-kependudukan-show'],
             'permissionType' => 'gate',
             'icon'           => 'fas',
             'iconName'       => 'fa-user',

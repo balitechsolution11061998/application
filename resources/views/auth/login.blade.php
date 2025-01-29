@@ -121,7 +121,7 @@
             </div>
 
             <div class="text-center mb-6">
-                <img src="{{ asset('img/logo/m-mart.svg') }}" alt="Logo" class="w-20 mx-auto rounded-full">
+                <img src="{{ asset('img/logo/logo.jpeg') }}" alt="Logo" class="w-20 mx-auto rounded-full">
             </div>
 
             <p class="text-center text-gray-500 mb-6 dark:text-gray-400">Login to your account</p>
