@@ -153,119 +153,287 @@
     </div>
 
     @push('scripts')
-    <script src="https://jsuites.net/v5/jsuites.js"></script>
-    <script src="https://bossanova.uk/jspreadsheet/v4/jspreadsheet.js"></script>
+        <script src="https://jsuites.net/v5/jsuites.js"></script>
+        <script src="https://bossanova.uk/jspreadsheet/v4/jspreadsheet.js"></script>
 
-    <script>
-        $(function() {
-            // Initialize DataTable
-            const dataTable = $('#dataKependudukanTable').DataTable({
-                processing: true,
-                serverSide: true,
-                searchable: true,
-                deferRender: true,
-                ajax: "{{ route('data-kependudukan.getData') }}",
-                columns: [
-                    { data: 'nama', name: 'nama' },
-                    { data: 'nik', name: 'nik' },
-                    { data: 'jenis_kelamin', name: 'jenis_kelamin' },
-                    { data: 'tempat_lahir', name: 'tempat_lahir', render: function(data) { return data ? data : '<span class="badge bg-warning"><i class="fas fa-map-marker-alt"></i> No Data</span>'; }},
-                    { data: 'tanggal_lahir', name: 'tanggal_lahir', render: function(data) { return data ? data : '<span class="badge bg-warning"><i class="fas fa-calendar-times"></i> No Data</span>'; }},
-                    { data: 'agama', name: 'agama' },
-                    { data: 'no_kk', name: 'no_kk' },
-                    { data: 'pendidikan', name: 'pendidikan', render: function(data) { return data ? data : '<span class="badge bg-warning"><i class="fas fa-exclamation-circle"></i> No Data</span>'; }},
-                    { data: 'pekerjaan', name: 'pekerjaan', render: function(data) { return data ? data : '<span class="badge bg-warning"><i class="fas fa-exclamation-circle"></i> No Data</span>'; }},
-                    { data: 'golongan_darah', name: 'golongan_darah', render: function(data) { return data ? data : '<span class="badge bg-warning"><i class="fas fa-exclamation-circle"></i> No Data</span>'; }},
-                    { data: 'status_kawin', name: 'status_kawin', render: function(data) { return data ? data : '<span class="badge bg-warning"><i class="fas fa-exclamation-circle"></i> No Data</span>'; }},
-                    { data: 'nama_ibu', name: 'nama_ibu', render: function(data) { return data ? data : '<span class="badge bg-warning"><i class="fas fa-exclamation-circle"></i> No Data</span>'; }},
-                    { data: 'nama_bapak', name: 'nama_bapak', render: function(data) { return data ? data : '<span class="badge bg-warning"><i class="fas fa-exclamation-circle"></i> No Data</span>'; }},
-                    { data: 'alamat', name: 'alamat', render: function(data) { return data ? data : '<span class="badge bg-warning"><i class="fas fa-exclamation-circle"></i> No Data</span>'; }},
-                    { data: 'ktp_elektronik', name: 'ktp_elektronik', render: function(data) { return data ? '<span class="badge bg-success"><i class="fas fa-check-circle"></i> Yes</span>' : '<span class="badge bg-warning"><i class="fas fa-times-circle"></i> No</span>'; }},
-                    { data: 'keterangan', name: 'keterangan', render: function(data) { return data ? data : '<span class="badge bg-warning"><i class="fas fa-exclamation-circle"></i> No Data</span>'; }},
-                    { data: 'actions', name: 'actions', orderable: false, searchable: false }
-                ],
-                responsive: true,
-                lengthMenu: [10, 25, 50, 100],
-            });
-
-            // Real-time search functionality
-            $('input[data-kt-docs-table-filter="search"]').on('keyup', function() {
-                dataTable.search(this.value).draw();
-            });
-
-            // Initialize JSpreadsheet for Bulk Input
-            let bulkInputTable;
-            $('#bulkInputButton').click(function() {
-                $('#bulkInputModal').modal('show');
-
-                // Clear previous jExcel instance
-                if (bulkInputTable) {
-                    bulkInputTable.destroy();
-                }
-
-                bulkInputTable = jspreadsheet(document.getElementById('bulkInputTable'), {
-                    data: [[]], // Start with an empty grid
-                    columns: [
-                        { title: 'Nama', type: 'text', width: 150 },
-                        { title: 'NIK', type: 'text', width: 150 },
-                        { title: 'Jenis Kelamin', type: 'dropdown', source: ['L', 'P'], width: 100 },
-                        { title: 'Tempat Lahir', type: 'text', width: 150 },
-                        { title: 'Tanggal Lahir', type: 'calendar', options: { format: 'YYYY-MM-DD' }, width: 150 },
-                        { title: 'Agama', type: 'text', width: 100 },
-                        { title: 'No KK', type: 'text', width: 150 },
-                        { title: 'Pendidikan', type: 'text', width: 150 },
-                        { title: 'Pekerjaan', type: 'text', width: 150 },
-                        { title: 'Golongan Darah', type: 'dropdown', source: ['A', 'B', 'AB', 'O'], width: 100 },
-                        { title: 'Status Kawin', type: 'dropdown', source: ['KAWIN', 'BELUM KAWIN', 'KAWIN TERCATAT'], width: 150 },
-                        { title: 'Nama Ibu', type: 'text', width: 150 },
-                        { title: 'Nama Bapak', type: 'text', width: 150 },
-                        { title: 'Alamat', type: 'text', width: 200 },
-                        { title: 'KTP Elektronik', type: 'checkbox', width: 100 },
-                        { title: 'Keterangan', type: 'text', width: 200 },
-                    ],
-                    minDimensions: [5, 10], // Minimum 5 columns and 10 rows
-                    allowInsertColumn: false,
-                    allowDeleteColumn: false,
-                    responsive: true, // Make the spreadsheet responsive
-                });
-            });
-
-            // Save Bulk Input
-            $('#saveBulkInput').click(function() {
-                const data = bulkInputTable.getData();
-
-                // Filter out empty rows
-                const filteredData = data.filter(row => row.some(cell => cell !== null && cell !== ''));
-
-                if (filteredData.length === 0) {
-                    alert('No data to save!');
-                    return;
-                }
-
-                $.ajax({
-                    url: "{{ route('data-kependudukan.bulkStore') }}",
-                    method: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        data: filteredData,
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            alert(response.message);
-                            dataTable.ajax.reload();
-                            $('#bulkInputModal').modal('hide');
-                        } else {
-                            alert(response.message);
+        <script>
+            $(function() {
+                // Initialize DataTable
+                const dataTable = $('#dataKependudukanTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    searchable: true,
+                    deferRender: true,
+                    ajax: "{{ route('data-kependudukan.getData') }}",
+                    columns: [{
+                            data: 'nama',
+                            name: 'nama'
+                        },
+                        {
+                            data: 'nik',
+                            name: 'nik'
+                        },
+                        {
+                            data: 'jenis_kelamin',
+                            name: 'jenis_kelamin'
+                        },
+                        {
+                            data: 'tempat_lahir',
+                            name: 'tempat_lahir',
+                            render: function(data) {
+                                return data ? data :
+                                    '<span class="badge bg-warning"><i class="fas fa-map-marker-alt"></i> No Data</span>';
+                            }
+                        },
+                        {
+                            data: 'tanggal_lahir',
+                            name: 'tanggal_lahir',
+                            render: function(data) {
+                                return data ? data :
+                                    '<span class="badge bg-warning"><i class="fas fa-calendar-times"></i> No Data</span>';
+                            }
+                        },
+                        {
+                            data: 'agama',
+                            name: 'agama'
+                        },
+                        {
+                            data: 'no_kk',
+                            name: 'no_kk'
+                        },
+                        {
+                            data: 'pendidikan',
+                            name: 'pendidikan',
+                            render: function(data) {
+                                return data ? data :
+                                    '<span class="badge bg-warning"><i class="fas fa-exclamation-circle"></i> No Data</span>';
+                            }
+                        },
+                        {
+                            data: 'pekerjaan',
+                            name: 'pekerjaan',
+                            render: function(data) {
+                                return data ? data :
+                                    '<span class="badge bg-warning"><i class="fas fa-exclamation-circle"></i> No Data</span>';
+                            }
+                        },
+                        {
+                            data: 'golongan_darah',
+                            name: 'golongan_darah',
+                            render: function(data) {
+                                return data ? data :
+                                    '<span class="badge bg-warning"><i class="fas fa-exclamation-circle"></i> No Data</span>';
+                            }
+                        },
+                        {
+                            data: 'status_kawin',
+                            name: 'status_kawin',
+                            render: function(data) {
+                                return data ? data :
+                                    '<span class="badge bg-warning"><i class="fas fa-exclamation-circle"></i> No Data</span>';
+                            }
+                        },
+                        {
+                            data: 'nama_ibu',
+                            name: 'nama_ibu',
+                            render: function(data) {
+                                return data ? data :
+                                    '<span class="badge bg-warning"><i class="fas fa-exclamation-circle"></i> No Data</span>';
+                            }
+                        },
+                        {
+                            data: 'nama_bapak',
+                            name: 'nama_bapak',
+                            render: function(data) {
+                                return data ? data :
+                                    '<span class="badge bg-warning"><i class="fas fa-exclamation-circle"></i> No Data</span>';
+                            }
+                        },
+                        {
+                            data: 'alamat',
+                            name: 'alamat',
+                            render: function(data) {
+                                return data ? data :
+                                    '<span class="badge bg-warning"><i class="fas fa-exclamation-circle"></i> No Data</span>';
+                            }
+                        },
+                        {
+                            data: 'ktp_elektronik',
+                            name: 'ktp_elektronik',
+                            render: function(data) {
+                                return data === 1 ?
+                                    '<span class="badge bg-success"><i class="fas fa-check-circle"></i> Yes</span>' :
+                                    '<span class="badge bg-warning"><i class="fas fa-times-circle"></i> No</span>';
+                            }
+                        },
+                        {
+                            data: 'keterangan',
+                            name: 'keterangan',
+                            render: function(data) {
+                                return data ? data :
+                                    '<span class="badge bg-warning"><i class="fas fa-exclamation-circle"></i> No Data</span>';
+                            }
+                        },
+                        {
+                            data: 'actions',
+                            name: 'actions',
+                            orderable: false,
+                            searchable: false
                         }
-                    },
-                    error: function() {
-                        alert('Failed to save data. Please try again.');
-                    },
+                    ],
+                    responsive: true,
+                    lengthMenu: [10, 25, 50, 100],
+                });
+
+                // Real-time search functionality
+                $('input[data-kt-docs-table-filter="search"]').on('keyup', function() {
+                    dataTable.search(this.value).draw();
+                });
+
+                // Initialize JSpreadsheet for Bulk Input
+                let bulkInputTable;
+                $('#bulkInputButton').click(function() {
+                    $('#bulkInputModal').modal('show');
+
+                    // Clear previous jExcel instance
+                    if (bulkInputTable) {
+                        bulkInputTable.destroy();
+                    }
+
+                    bulkInputTable = jspreadsheet(document.getElementById('bulkInputTable'), {
+                        data: [
+                            []
+                        ], // Start with an empty grid
+                        columns: [{
+                                title: 'Nama',
+                                type: 'text',
+                                width: 150
+                            },
+                            {
+                                title: 'NIK',
+                                type: 'text',
+                                width: 150
+                            },
+                            {
+                                title: 'Jenis Kelamin',
+                                type: 'dropdown',
+                                source: ['L', 'P'],
+                                width: 100
+                            },
+                            {
+                                title: 'Tempat Lahir',
+                                type: 'text',
+                                width: 150
+                            },
+                            {
+                                title: 'Tanggal Lahir',
+                                type: 'calendar',
+                                options: {
+                                    format: 'YYYY-MM-DD'
+                                },
+                                width: 150
+                            },
+                            {
+                                title: 'Agama',
+                                type: 'text',
+                                width: 100
+                            },
+                            {
+                                title: 'No KK',
+                                type: 'text',
+                                width: 150
+                            },
+                            {
+                                title: 'Pendidikan',
+                                type: 'text',
+                                width: 150
+                            },
+                            {
+                                title: 'Pekerjaan',
+                                type: 'text',
+                                width: 150
+                            },
+                            {
+                                title: 'Golongan Darah',
+                                type: 'dropdown',
+                                source: ['A', 'B', 'AB', 'O'],
+                                width: 100
+                            },
+                            {
+                                title: 'Status Kawin',
+                                type: 'dropdown',
+                                source: ['KAWIN', 'BELUM KAWIN', 'KAWIN TERCATAT'],
+                                width: 150
+                            },
+                            {
+                                title: 'Nama Ibu',
+                                type: 'text',
+                                width: 150
+                            },
+                            {
+                                title: 'Nama Bapak',
+                                type: 'text',
+                                width: 150
+                            },
+                            {
+                                title: 'Alamat',
+                                type: 'text',
+                                width: 200
+                            },
+                            {
+                                title: 'KTP Elektronik',
+                                type: 'checkbox',
+                                width: 100
+                            },
+                            {
+                                title: 'Keterangan',
+                                type: 'text',
+                                width: 200
+                            },
+                        ],
+                        minDimensions: [5, 10], // Minimum 5 columns and 10 rows
+                        allowInsertColumn: false,
+                        allowDeleteColumn: false,
+                        responsive: true, // Make the spreadsheet responsive
+                    });
+                });
+
+                // Save Bulk Input
+                $('#saveBulkInput').click(function() {
+                    const data = bulkInputTable.getData();
+
+                    // Filter out empty rows
+                    const filteredData = data.filter(row => row.some(cell => cell !== null && cell !== ''));
+
+                    if (filteredData.length === 0) {
+                        alert('No data to save!');
+                        return;
+                    }
+
+                    $.ajax({
+                        url: "{{ route('data-kependudukan.bulkStore') }}",
+                        method: 'POST',
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            data: filteredData,
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                alert(response.message);
+                                dataTable.ajax.reload();
+                                $('#bulkInputModal').modal('hide');
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function() {
+                            alert('Failed to save data. Please try again.');
+                        },
+                    });
                 });
             });
-        });
-    </script>
-@endpush
+        </script>
+    @endpush
 
 
 </x-default-layout>
