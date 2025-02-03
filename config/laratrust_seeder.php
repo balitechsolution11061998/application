@@ -20,6 +20,8 @@ return [
             'activity-log' => 's',
             'price-change' => 's',
             'purchase-order' => 's',
+            'receiving' => 's',
+            'item-supplier' => 's',
         ],
         'superadminektp' => [
             'data-kependudukan' => 's',
