@@ -16,6 +16,7 @@ return [
             'dashboard-system' => 's',
             'data-kependudukan' => 's',
             'dashboard-pilkada' => 's',
+            'dashboard-po' => 's',
             'activity-log' => 's',
             'price-change' => 's',
             'purchase-order' => 's',
