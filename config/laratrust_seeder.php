@@ -16,6 +16,7 @@ return [
             'dashboard-system' => 's',
             'data-kependudukan' => 's',
             'dashboard-pilkada' => 's',
+            'activity-log' => 's',
         ],
         'superadminektp' => [
             'data-kependudukan' => 's',
