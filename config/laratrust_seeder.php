@@ -22,6 +22,7 @@ return [
             'purchase-order' => 's',
             'receiving' => 's',
             'item-supplier' => 's',
+            'supplier' => 's',
         ],
         'superadminektp' => [
             'data-kependudukan' => 's',
