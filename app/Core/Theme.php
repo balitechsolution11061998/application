@@ -449,7 +449,7 @@ class Theme
                         continue;
                 }
                 else if($menu['permissionType'] == 'gate'){
-                    // dd($menu['permission']);
+                    // dd(Auth::user()->allPermissions(),Auth::user()->hasRole('superadministrator'));
                     # Cek permission menu dengan laratrust
                     if(!Auth::user()->hasPermission($menu['permission']))
                         continue;

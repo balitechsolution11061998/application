@@ -24,6 +24,7 @@ use App\Http\Controllers\PriceChangeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\ReceivingController;
+use App\Http\Controllers\RefreshLaratrustController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoomController;
@@ -237,6 +238,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/get-ram-usage', [SystemUsageController::class, 'getRamUsageData']);
 
+    Route::post('/refresh-laratrust', [RefreshLaratrustController::class, 'refreshLaratrust'])->name('refresh.laratrust');
 
 
     Route::resource('members', MemberController::class)->except(['show']);
