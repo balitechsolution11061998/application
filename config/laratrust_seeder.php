@@ -17,6 +17,7 @@ return [
             'data-kependudukan' => 's',
             'dashboard-pilkada' => 's',
             'activity-log' => 's',
+            'price-change' => 's',
         ],
         'superadminektp' => [
             'data-kependudukan' => 's',
