@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('system_usages', function (Blueprint $table) {
             $table->id();
-            $table->decimal('memory_usage_mb', 8, 2); // Store memory usage in MB
+            $table->double('memory_usage_mb', 8, 2); // Store memory usage in MB
             $table->integer('load_time_ms'); // Load time in milliseconds
             $table->timestamp('accessed_at'); // Timestamp of access
             $table->string('function');

@@ -70,32 +70,36 @@ class DataKependudukanController extends Controller
         $request->validate([
             'nama' => 'required|string|max:255',
             'nik' => 'required|unique:data_kependudukan|numeric|digits:16',
-            'jenis_kelamin' => 'required|in:L,P',
-            'tempat_lahir' => 'required|string|max:255',
-            'tanggal_lahir' => 'required|date',
-            'agama' => 'required|string|max:50',
-            'no_kk' => 'required|numeric|digits:16',
-            'pendidikan' => 'nullable|string|max:100',
-            'pekerjaan' => 'nullable|string|max:100',
-            'golongan_darah' => 'nullable|string|max:3',
-            'status_kawin' => 'required|in:KAWIN,BELUM KAWIN,KAWIN TERCATAT',
-            'nama_ibu' => 'nullable|string|max:255',
-            'nama_bapak' => 'nullable|string|max:255',
-            'alamat' => 'nullable|string',
-            'ktp_elektronik' => 'nullable|boolean',
-            'keterangan' => 'nullable|string',
+            // 'jenis_kelamin' => 'required|in:L,P',
+            // 'tempat_lahir' => 'required|string|max:255',
+            // 'tanggal_lahir' => 'required|date',
+            // 'agama' => 'required|string|max:50',
+            // 'no_kk' => 'required|numeric|digits:16',
+            // 'pendidikan' => 'nullable|string|max:100',
+            // 'pekerjaan' => 'nullable|string|max:100',
+            // 'golongan_darah' => 'nullable|string|max:3',
+            // 'status_kawin' => 'required|in:KAWIN,BELUM KAWIN,KAWIN TERCATAT',
+            // 'nama_ibu' => 'nullable|string|max:255',
+            // 'nama_bapak' => 'nullable|string|max:255',
+            // 'alamat' => 'nullable|string',
+            // 'ktp_elektronik' => 'nullable|boolean', // Keep this for validation
+            // 'keterangan' => 'nullable|string',
         ]);
 
+        // Convert the checkbox value to an integer (1 for checked, 0 for unchecked)
+        $data = $request->all();
+        $data['ktp_elektronik'] = $request->has('ktp_elektronik') ? 1 : 0;
+
         try {
-            $data = DataKependudukan::create($request->all());
+            $dataKependudukan = DataKependudukan::create($data);
 
             // Log successful creation
             activity()
                 ->causedBy(auth()->user())
-                ->performedOn($data)
+                ->performedOn($dataKependudukan)
                 ->withProperties([
                     'action' => 'create',
-                    'data' => $data,
+                    'data' => $dataKependudukan,
                 ])
                 ->log('Data successfully added to DataKependudukan table');
 
@@ -121,6 +125,7 @@ class DataKependudukanController extends Controller
             ], 500);
         }
     }
+
 
 
     public function edit($id)
