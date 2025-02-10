@@ -69,7 +69,7 @@ class DataKependudukanController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:255',
-            'nik' => 'required|unique:data_kependudukan|numeric|digits:16',
+            'nik' => 'required|numeric|digits:16',
             // 'jenis_kelamin' => 'required|in:L,P',
             // 'tempat_lahir' => 'required|string|max:255',
             // 'tanggal_lahir' => 'required|date',
@@ -91,22 +91,46 @@ class DataKependudukanController extends Controller
         $data['ktp_elektronik'] = $request->has('ktp_elektronik') ? 1 : 0;
 
         try {
-            $dataKependudukan = DataKependudukan::create($data);
+            // Check if the record already exists
+            $dataKependudukan = DataKependudukan::where('nik', $data['nik'])->first();
 
-            // Log successful creation
-            activity()
-                ->causedBy(auth()->user())
-                ->performedOn($dataKependudukan)
-                ->withProperties([
-                    'action' => 'create',
-                    'data' => $dataKependudukan,
-                ])
-                ->log('Data successfully added to DataKependudukan table');
+            if ($dataKependudukan) {
+                // Update the existing record
+                $dataKependudukan->update($data);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Data successfully added!',
-            ]);
+                // Log successful update
+                activity()
+                    ->causedBy(auth()->user())
+                    ->performedOn($dataKependudukan)
+                    ->withProperties([
+                        'action' => 'update',
+                        'data' => $dataKependudukan,
+                    ])
+                    ->log('Data successfully updated in DataKependudukan table');
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data successfully updated!',
+                ]);
+            } else {
+                // Create a new record
+                $dataKependudukan = DataKependudukan::create($data);
+
+                // Log successful creation
+                activity()
+                    ->causedBy(auth()->user())
+                    ->performedOn($dataKependudukan)
+                    ->withProperties([
+                        'action' => 'create',
+                        'data' => $dataKependudukan,
+                    ])
+                    ->log('Data successfully added to DataKependudukan table');
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data successfully added!',
+                ]);
+            }
         } catch (\Exception $e) {
             // Log the error
             activity()
@@ -117,21 +141,22 @@ class DataKependudukanController extends Controller
                     'error_message' => $e->getMessage(),
                     'error_trace' => $e->getTraceAsString(),
                 ])
-                ->log('Failed to store data in DataKependudukan table');
+                ->log('Failed to store or update data in DataKependudukan table');
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to add data, please try again.',
+                'message' => 'Failed to add or update data, please try again.',
             ], 500);
         }
     }
 
 
 
+
     public function edit($id)
     {
         $data = DataKependudukan::findOrFail($id);
-        return view('data-kependudukan.edit', compact('data'));
+        return view('data-kependudukan.create', compact('data'));
     }
 
     public function update(Request $request, $id)
