@@ -130,6 +130,18 @@ return [
             'iconPath'       => 4,                                // Path for the icon (if applicable)
         ],
 
+        [
+            'label'          => 'Tanda Terima',                        // Menu label for Members
+            'type'           => 'item',                           // Type (item represents a clickable menu option)
+            'permission'     => ['show-tanda-terima','tanda-terima-show'],                               // Permissions required to view this item
+            'permissionType' => 'gate',                           // Permission type (gate or policy)
+            'icon'           => 'fas',                            // Font Awesome Solid icons (FA class)
+            'iconName'       => 'fa-users',                       // Updated icon for the members section
+            'route'          => 'tanda-terima.index',                  // Route for the item members index page
+            'active'         => ['tanda-terima.*'],                    // Define conditions when this item is active (e.g., all item members routes)
+            'iconPath'       => 4,                                // Path for the icon (if applicable)
+        ],
+
         // Pages section heading
         [
             'label' => 'Pages',

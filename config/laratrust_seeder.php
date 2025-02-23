@@ -32,6 +32,7 @@ return [
             'roles' => 's',
             'permissions' => 's',
             'profile' => 's',
+            'tanda-terima' => 's',
         ],
         'superadminektp' => [
             'data-kependudukan' => 's',

@@ -35,6 +35,7 @@ use App\Http\Controllers\TahunPelajaranController;
 use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\TpsController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TandaTerimaController;
 use App\Models\ItemSupplier;
 use Illuminate\Support\Facades\Route;
 use Telegram\Bot\Laravel\Facades\Telegram;
@@ -214,6 +215,16 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/index', [ActivityLogContoller::class, 'index'])->name('index');
         Route::get('/data', [ActivityLogContoller::class, 'data'])->name('data');
     });
+
+    Route::prefix('tanda-terima')->as('tanda-terima.')->group(function () {
+        Route::get('/index', [TandaTerimaController::class, 'index'])->name('index');
+        Route::get('/faktur-pajaks/data', [TandaTerimaController::class, 'getDataFakturPajak'])->name('getDataFakturPajak');
+
+        Route::post('/faktur-pajaks', [TandaTerimaController::class, 'storeFakturPajak'])->name('faktur-pajaks.store');
+        Route::delete('/faktur-pajaks/{id}', [TandaTerimaController::class, 'destroyFakturPajak'])->name('faktur-pajaks.destroy');
+    });
+
+
 
     // Profile Picture Management Routes
     Route::post('/upload-profile-picture', [ProfileController::class, 'uploadProfilePicture']);

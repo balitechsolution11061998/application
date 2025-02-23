@@ -200,7 +200,7 @@ return [
 
         Spatie\ServerMonitor\ServerMonitorServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
-
+     
     ],
 
     /*

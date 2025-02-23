@@ -2,38 +2,35 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Index - Bootslander Bootstrap Template</title>
-    <meta name="description" content="">
-    <meta name="keywords" content="">
-    <meta name="google-adsense-account" content="ca-pub-7503392728334197">
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Index - Yummy Bootstrap Template</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
 
-    <!-- Favicons -->
-    <link href="{{ asset('frontend/assets/img/favicon.png') }}" rel="icon">
-    <link href="{{ asset('frontend/assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+  <!-- Favicons -->
+  <link href="frontend/img/favicon.png" rel="icon">
+  <link href="frontend/img/apple-touch-icon.png" rel="apple-touch-icon">
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-        rel="stylesheet">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Amatic+SC:wght@400;700&display=swap" rel="stylesheet">
 
-    <!-- Vendor CSS Files -->
-    <link href="{{ asset('frontend/assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('frontend/assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
-    <link href="{{ asset('frontend/assets/vendor/aos/aos.css" rel="stylesheet') }}">
-    <link href="{{ asset('frontend/assets/vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('frontend/assets/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
+  <!-- Vendor CSS Files -->
+  <link href="frontend/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="frontend/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="frontend/vendor/aos/aos.css" rel="stylesheet">
+  <link href="frontend/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="frontend/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
-    <!-- Main CSS File -->
-    <link href="{{ asset('frontend/assets/css/main.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <!-- Main CSS File -->
+  <link rel="preload" href="frontend/css/main.css" as="style" onload="this.rel='stylesheet'">
 
-    <!-- =======================================================
-  * Template Name: Bootslander
-  * Template URL: https://bootstrapmade.com/bootslander-free-bootstrap-landing-page-template/
+
+  <!-- =======================================================
+  * Template Name: Yummy
+  * Template URL: https://bootstrapmade.com/yummy-bootstrap-restaurant-website-template/
   * Updated: Aug 07 2024 with Bootstrap v5.3.3
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
@@ -42,505 +39,592 @@
 
 <body class="index-page">
 
-    <header id="header" class="header d-flex align-items-center fixed-top">
-        <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container position-relative d-flex align-items-center justify-content-between">
 
-            <a href="index.html" class="logo d-flex align-items-center">
-                <!-- Uncomment the line below if you also wish to use an image logo -->
-                <!-- <img src="assets/img/logo.png" alt=""> -->
-                <h1 class="sitename">BAYU SYSTEM</h1>
-            </a>
+      <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="frontend/img/logo.png" alt=""> -->
+        <h1 class="sitename">Yummy</h1>
+        <span>.</span>
+      </a>
 
-            <nav id="navmenu" class="navmenu">
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="#hero" class="active">Home<br></a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#menu">Menu</a></li>
+          <li><a href="#events">Events</a></li>
+          <li><a href="#chefs">Chefs</a></li>
+          <li><a href="#gallery">Gallery</a></li>
+          <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <ul>
+              <li><a href="#">Dropdown 1</a></li>
+              <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                 <ul>
-                    <li><a href="#hero" class="active">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#gallery">Gallery</a></li>
-                    <li><a href="#team">Team</a></li>
-                    <li><a href="#pricing">Pricing</a></li>
-                    <li class="dropdown"><a href="#"><span>Dropdown</span> <i
-                                class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul>
-                            <li><a href="#">Dropdown 1</a></li>
-                            <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i
-                                        class="bi bi-chevron-down toggle-dropdown"></i></a>
-                                <ul>
-                                    <li><a href="#">Deep Dropdown 1</a></li>
-                                    <li><a href="#">Deep Dropdown 2</a></li>
-                                    <li><a href="#">Deep Dropdown 3</a></li>
-                                    <li><a href="#">Deep Dropdown 4</a></li>
-                                    <li><a href="#">Deep Dropdown 5</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="#">Dropdown 2</a></li>
-                            <li><a href="#">Dropdown 3</a></li>
-                            <li><a href="#">Dropdown 4</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="#contact">Contact</a></li>
-                    <li><a href="#" id="loginLink">Login</a></li>
+                  <li><a href="#">Deep Dropdown 1</a></li>
+                  <li><a href="#">Deep Dropdown 2</a></li>
+                  <li><a href="#">Deep Dropdown 3</a></li>
+                  <li><a href="#">Deep Dropdown 4</a></li>
+                  <li><a href="#">Deep Dropdown 5</a></li>
                 </ul>
-                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-            </nav>
+              </li>
+              <li><a href="#">Dropdown 2</a></li>
+              <li><a href="#">Dropdown 3</a></li>
+              <li><a href="#">Dropdown 4</a></li>
+            </ul>
+          </li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+      <a class="btn-getstarted" href="index.html#book-a-table">Book a Table</a>
+
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero section light-background">
+
+      <div class="container">
+        <div class="row gy-4 justify-content-center justify-content-lg-between">
+          <div class="col-lg-5 order-2 order-lg-1 d-flex flex-column justify-content-center">
+            <h1 data-aos="fade-up">Enjoy Your Healthy<br>Delicious Food</h1>
+            <p data-aos="fade-up" data-aos-delay="100">We are team of talented designers making websites with Bootstrap</p>
+            <div class="d-flex" data-aos="fade-up" data-aos-delay="200">
+              <a href="#book-a-table" class="btn-get-started">Booka a Table</a>
+              <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox btn-watch-video d-flex align-items-center"><i class="bi bi-play-circle"></i><span>Watch Video</span></a>
+            </div>
+          </div>
+          <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
+            <img src="frontend/img/hero-img.png" class="img-fluid animated" alt="">
+          </div>
+        </div>
+      </div>
+
+    </section><!-- /Hero Section -->
+
+    <!-- About Section -->
+    <section id="about" class="about section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>About Us<br></h2>
+        <p><span>Learn More</span> <span class="description-title">About Us</span></p>
+      </div><!-- End Section Title -->
+
+      <div class="container">
+
+        <div class="row gy-4">
+          <div class="col-lg-7" data-aos="fade-up" data-aos-delay="100">
+            <img src="frontend/img/about.jpg" class="img-fluid mb-4" alt="">
+            <div class="book-a-table">
+              <h3>Book a Table</h3>
+              <p>+1 5589 55488 55</p>
+            </div>
+          </div>
+          <div class="col-lg-5" data-aos="fade-up" data-aos-delay="250">
+            <div class="content ps-0 ps-lg-5">
+              <p class="fst-italic">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                magna aliqua.
+              </p>
+              <ul>
+                <li><i class="bi bi-check-circle-fill"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></li>
+                <li><i class="bi bi-check-circle-fill"></i> <span>Duis aute irure dolor in reprehenderit in voluptate velit.</span></li>
+                <li><i class="bi bi-check-circle-fill"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</span></li>
+              </ul>
+              <p>
+                Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident
+              </p>
+
+              <div class="position-relative mt-4">
+                <img src="frontend/img/about-2.jpg" class="img-fluid" alt="">
+                <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox pulsating-play-btn"></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section><!-- /About Section -->
+
+    <!-- Why Us Section -->
+    <section id="why-us" class="why-us section light-background">
+
+      <div class="container">
+
+        <div class="row gy-4">
+
+          <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="why-box">
+              <h3>Why Choose Yummy</h3>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis aute irure dolor in reprehenderit
+                Asperiores dolores sed et. Tenetur quia eos. Autem tempore quibusdam vel necessitatibus optio ad corporis.
+              </p>
+              <div class="text-center">
+                <a href="#" class="more-btn"><span>Learn More</span> <i class="bi bi-chevron-right"></i></a>
+              </div>
+            </div>
+          </div><!-- End Why Box -->
+
+          <div class="col-lg-8 d-flex align-items-stretch">
+            <div class="row gy-4" data-aos="fade-up" data-aos-delay="200">
+
+              <div class="col-xl-4">
+                <div class="icon-box d-flex flex-column justify-content-center align-items-center">
+                  <i class="bi bi-clipboard-data"></i>
+                  <h4>Corporis voluptates officia eiusmod</h4>
+                  <p>Consequuntur sunt aut quasi enim aliquam quae harum pariatur laboris nisi ut aliquip</p>
+                </div>
+              </div><!-- End Icon Box -->
+
+              <div class="col-xl-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="icon-box d-flex flex-column justify-content-center align-items-center">
+                  <i class="bi bi-gem"></i>
+                  <h4>Ullamco laboris ladore lore pan</h4>
+                  <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt</p>
+                </div>
+              </div><!-- End Icon Box -->
+
+              <div class="col-xl-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="icon-box d-flex flex-column justify-content-center align-items-center">
+                  <i class="bi bi-inboxes"></i>
+                  <h4>Labore consequatur incidid dolore</h4>
+                  <p>Aut suscipit aut cum nemo deleniti aut omnis. Doloribus ut maiores omnis facere</p>
+                </div>
+              </div><!-- End Icon Box -->
+
+            </div>
+          </div>
 
         </div>
-    </header>
 
-    <main class="main">
+      </div>
 
-        <!-- Hero Section -->
-        <section id="hero" class="hero section dark-background">
-            <img src="{{ asset('frontend/assets/img/hero-bg-2.jpg') }}" alt="" class="hero-bg">
+    </section><!-- /Why Us Section -->
 
-            <div class="container">
-                <div class="row gy-4 justify-content-between">
-                    <div class="col-lg-4 order-lg-last hero-img" data-aos="zoom-out" data-aos-delay="100">
-                        <img src="{{ asset('frontend/assets/img/hero-img.png') }}" class="img-fluid animated"
-                            alt="">
-                    </div>
+    <!-- Stats Section -->
+    <section id="stats" class="stats section dark-background">
 
-                    <div class="col-lg-6  d-flex flex-column justify-content-center" data-aos="fade-in">
-                        <h1>Build Your Landing Page With <span>Bootslander</span></h1>
-                        <p>We are team of talented designers making websites with Bootstrap</p>
-                        <div class="d-flex">
-                            <a href="#about" class="btn-get-started">Get Started</a>
-                            <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8"
-                                class="glightbox btn-watch-video d-flex align-items-center"><i
-                                    class="bi bi-play-circle"></i><span>Watch Video</span></a>
-                        </div>
-                    </div>
+      <img src="frontend/img/stats-bg.jpg" alt="" data-aos="fade-in">
 
-                </div>
+      <div class="container position-relative" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row gy-4">
+
+          <div class="col-lg-3 col-md-6">
+            <div class="stats-item text-center w-100 h-100">
+              <span data-purecounter-start="0" data-purecounter-end="232" data-purecounter-duration="1" class="purecounter"></span>
+              <p>Clients</p>
+            </div>
+          </div><!-- End Stats Item -->
+
+          <div class="col-lg-3 col-md-6">
+            <div class="stats-item text-center w-100 h-100">
+              <span data-purecounter-start="0" data-purecounter-end="521" data-purecounter-duration="1" class="purecounter"></span>
+              <p>Projects</p>
+            </div>
+          </div><!-- End Stats Item -->
+
+          <div class="col-lg-3 col-md-6">
+            <div class="stats-item text-center w-100 h-100">
+              <span data-purecounter-start="0" data-purecounter-end="1453" data-purecounter-duration="1" class="purecounter"></span>
+              <p>Hours Of Support</p>
+            </div>
+          </div><!-- End Stats Item -->
+
+          <div class="col-lg-3 col-md-6">
+            <div class="stats-item text-center w-100 h-100">
+              <span data-purecounter-start="0" data-purecounter-end="32" data-purecounter-duration="1" class="purecounter"></span>
+              <p>Workers</p>
+            </div>
+          </div><!-- End Stats Item -->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Stats Section -->
+
+    <!-- Menu Section -->
+    <section id="menu" class="menu section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Our Menu</h2>
+        <p><span>Check Our</span> <span class="description-title">Yummy Menu</span></p>
+      </div><!-- End Section Title -->
+
+      <div class="container">
+
+        <ul class="nav nav-tabs d-flex justify-content-center" data-aos="fade-up" data-aos-delay="100">
+
+          <li class="nav-item">
+            <a class="nav-link active show" data-bs-toggle="tab" data-bs-target="#menu-starters">
+              <h4>Starters</h4>
+            </a>
+          </li><!-- End tab nav item -->
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" data-bs-target="#menu-breakfast">
+              <h4>Breakfast</h4>
+            </a><!-- End tab nav item -->
+
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" data-bs-target="#menu-lunch">
+              <h4>Lunch</h4>
+            </a>
+          </li><!-- End tab nav item -->
+
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" data-bs-target="#menu-dinner">
+              <h4>Dinner</h4>
+            </a>
+          </li><!-- End tab nav item -->
+
+        </ul>
+
+        <div class="tab-content" data-aos="fade-up" data-aos-delay="200">
+
+          <div class="tab-pane fade active show" id="menu-starters">
+
+            <div class="tab-header text-center">
+              <p>Menu</p>
+              <h3>Starters</h3>
             </div>
 
-            <svg class="hero-waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                viewBox="0 24 150 28 " preserveAspectRatio="none">
-                <defs>
-                    <path id="wave-path" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z">
-                    </path>
-                </defs>
-                <g class="wave1">
-                    <use xlink:href="#wave-path" x="50" y="3"></use>
-                </g>
-                <g class="wave2">
-                    <use xlink:href="#wave-path" x="50" y="0"></use>
-                </g>
-                <g class="wave3">
-                    <use xlink:href="#wave-path" x="50" y="9"></use>
-                </g>
-            </svg>
+            <div class="row gy-5">
 
-        </section><!-- /Hero Section -->
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-1.png" class="glightbox"><img src="frontend/img/menu/menu-item-1.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Magnam Tiste</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $5.95
+                </p>
+              </div><!-- Menu Item -->
 
-        <!-- About Section -->
-        <section id="about" class="about section">
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-2.png" class="glightbox"><img src="frontend/img/menu/menu-item-2.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Aut Luia</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $14.95
+                </p>
+              </div><!-- Menu Item -->
 
-            <div class="container" data-aos="fade-up" data-aos-delay="100">
-                <div class="row align-items-xl-center gy-5">
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-3.png" class="glightbox"><img src="frontend/img/menu/menu-item-3.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Est Eligendi</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $8.95
+                </p>
+              </div><!-- Menu Item -->
 
-                    <div class="col-xl-5 content">
-                        <h3>About Us</h3>
-                        <h2>Ducimus rerum libero reprehenderit cumque</h2>
-                        <p>Ipsa sint sit. Quis ducimus tempore dolores impedit et dolor cumque alias maxime. Enim
-                            reiciendis minus et rerum hic non. Dicta quas cum quia maiores iure. Quidem nulla qui
-                            assumenda incidunt voluptatem tempora deleniti soluta.</p>
-                        <a href="#" class="read-more"><span>Read More</span><i
-                                class="bi bi-arrow-right"></i></a>
-                    </div>
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-4.png" class="glightbox"><img src="frontend/img/menu/menu-item-4.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Eos Luibusdam</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $12.95
+                </p>
+              </div><!-- Menu Item -->
 
-                    <div class="col-xl-7">
-                        <div class="row gy-4 icon-boxes">
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-5.png" class="glightbox"><img src="frontend/img/menu/menu-item-5.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Eos Luibusdam</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $12.95
+                </p>
+              </div><!-- Menu Item -->
 
-                            <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
-                                <div class="icon-box">
-                                    <i class="bi bi-buildings"></i>
-                                    <h3>Eius provident</h3>
-                                    <p>Magni repellendus vel ullam hic officia accusantium ipsa dolor omnis dolor
-                                        voluptatem</p>
-                                </div>
-                            </div> <!-- End Icon Box -->
-
-                            <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
-                                <div class="icon-box">
-                                    <i class="bi bi-clipboard-pulse"></i>
-                                    <h3>Rerum aperiam</h3>
-                                    <p>Autem saepe animi et aut aspernatur culpa facere. Rerum saepe rerum voluptates
-                                        quia</p>
-                                </div>
-                            </div> <!-- End Icon Box -->
-
-                            <div class="col-md-6" data-aos="fade-up" data-aos-delay="400">
-                                <div class="icon-box">
-                                    <i class="bi bi-command"></i>
-                                    <h3>Veniam omnis</h3>
-                                    <p>Omnis perferendis molestias culpa sed. Recusandae quas possimus. Quod consequatur
-                                        corrupti</p>
-                                </div>
-                            </div> <!-- End Icon Box -->
-
-                            <div class="col-md-6" data-aos="fade-up" data-aos-delay="500">
-                                <div class="icon-box">
-                                    <i class="bi bi-graph-up-arrow"></i>
-                                    <h3>Delares sapiente</h3>
-                                    <p>Sint et dolor voluptas minus possimus nostrum. Reiciendis commodi eligendi omnis
-                                        quideme lorenda</p>
-                                </div>
-                            </div> <!-- End Icon Box -->
-
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-        </section><!-- /About Section -->
-
-        <!-- Features Section -->
-        <section id="features" class="features section">
-
-            <div class="container">
-
-                <div class="row gy-4">
-
-                    <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="100">
-                        <div class="features-item">
-                            <i class="bi bi-eye" style="color: #ffbb2c;"></i>
-                            <h3><a href="" class="stretched-link">Lorem Ipsum</a></h3>
-                        </div>
-                    </div><!-- End Feature Item -->
-
-                    <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="200">
-                        <div class="features-item">
-                            <i class="bi bi-infinity" style="color: #5578ff;"></i>
-                            <h3><a href="" class="stretched-link">Dolor Sitema</a></h3>
-                        </div>
-                    </div><!-- End Feature Item -->
-
-                    <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="300">
-                        <div class="features-item">
-                            <i class="bi bi-mortarboard" style="color: #e80368;"></i>
-                            <h3><a href="" class="stretched-link">Sed perspiciatis</a></h3>
-                        </div>
-                    </div><!-- End Feature Item -->
-
-                    <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="400">
-                        <div class="features-item">
-                            <i class="bi bi-nut" style="color: #e361ff;"></i>
-                            <h3><a href="" class="stretched-link">Magni Dolores</a></h3>
-                        </div>
-                    </div><!-- End Feature Item -->
-
-                    <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="500">
-                        <div class="features-item">
-                            <i class="bi bi-shuffle" style="color: #47aeff;"></i>
-                            <h3><a href="" class="stretched-link">Nemo Enim</a></h3>
-                        </div>
-                    </div><!-- End Feature Item -->
-
-                    <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="600">
-                        <div class="features-item">
-                            <i class="bi bi-star" style="color: #ffa76e;"></i>
-                            <h3><a href="" class="stretched-link">Eiusmod Tempor</a></h3>
-                        </div>
-                    </div><!-- End Feature Item -->
-
-                    <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="700">
-                        <div class="features-item">
-                            <i class="bi bi-x-diamond" style="color: #11dbcf;"></i>
-                            <h3><a href="" class="stretched-link">Midela Teren</a></h3>
-                        </div>
-                    </div><!-- End Feature Item -->
-
-                    <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="800">
-                        <div class="features-item">
-                            <i class="bi bi-camera-video" style="color: #4233ff;"></i>
-                            <h3><a href="" class="stretched-link">Pira Neve</a></h3>
-                        </div>
-                    </div><!-- End Feature Item -->
-
-                    <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="900">
-                        <div class="features-item">
-                            <i class="bi bi-command" style="color: #b2904f;"></i>
-                            <h3><a href="" class="stretched-link">Dirada Pack</a></h3>
-                        </div>
-                    </div><!-- End Feature Item -->
-
-                    <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="1000">
-                        <div class="features-item">
-                            <i class="bi bi-dribbble" style="color: #b20969;"></i>
-                            <h3><a href="" class="stretched-link">Moton Ideal</a></h3>
-                        </div>
-                    </div><!-- End Feature Item -->
-
-                    <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="1100">
-                        <div class="features-item">
-                            <i class="bi bi-activity" style="color: #ff5828;"></i>
-                            <h3><a href="" class="stretched-link">Verdo Park</a></h3>
-                        </div>
-                    </div><!-- End Feature Item -->
-
-                    <div class="col-lg-3 col-md-4" data-aos="fade-up" data-aos-delay="1200">
-                        <div class="features-item">
-                            <i class="bi bi-brightness-high" style="color: #29cc61;"></i>
-                            <h3><a href="" class="stretched-link">Flavor Nivelanda</a></h3>
-                        </div>
-                    </div><!-- End Feature Item -->
-
-                </div>
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-6.png" class="glightbox"><img src="frontend/img/menu/menu-item-6.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Laboriosam Direva</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $9.95
+                </p>
+              </div><!-- Menu Item -->
 
             </div>
+          </div><!-- End Starter Menu Content -->
 
-        </section><!-- /Features Section -->
+          <div class="tab-pane fade" id="menu-breakfast">
 
-        <!-- Stats Section -->
-        <section id="stats" class="stats section light-background">
-
-            <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-                <div class="row gy-4">
-
-                    <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
-                        <i class="bi bi-emoji-smile"></i>
-                        <div class="stats-item">
-                            <span data-purecounter-start="0" data-purecounter-end="232" data-purecounter-duration="1"
-                                class="purecounter"></span>
-                            <p>Happy Clients</p>
-                        </div>
-                    </div><!-- End Stats Item -->
-
-                    <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
-                        <i class="bi bi-journal-richtext"></i>
-                        <div class="stats-item">
-                            <span data-purecounter-start="0" data-purecounter-end="521" data-purecounter-duration="1"
-                                class="purecounter"></span>
-                            <p>Projects</p>
-                        </div>
-                    </div><!-- End Stats Item -->
-
-                    <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
-                        <i class="bi bi-headset"></i>
-                        <div class="stats-item">
-                            <span data-purecounter-start="0" data-purecounter-end="1463"
-                                data-purecounter-duration="1" class="purecounter"></span>
-                            <p>Hours Of Support</p>
-                        </div>
-                    </div><!-- End Stats Item -->
-
-                    <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
-                        <i class="bi bi-people"></i>
-                        <div class="stats-item">
-                            <span data-purecounter-start="0" data-purecounter-end="15" data-purecounter-duration="1"
-                                class="purecounter"></span>
-                            <p>Hard Workers</p>
-                        </div>
-                    </div><!-- End Stats Item -->
-
-                </div>
-
+            <div class="tab-header text-center">
+              <p>Menu</p>
+              <h3>Breakfast</h3>
             </div>
 
-        </section><!-- /Stats Section -->
+            <div class="row gy-5">
 
-        <!-- Details Section -->
-        <section id="details" class="details section">
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-1.png" class="glightbox"><img src="frontend/img/menu/menu-item-1.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Magnam Tiste</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $5.95
+                </p>
+              </div><!-- Menu Item -->
 
-            <!-- Section Title -->
-            <div class="container section-title" data-aos="fade-up">
-                <h2>Details</h2>
-                <div><span>Check Our</span> <span class="description-title">Details</span></div>
-            </div><!-- End Section Title -->
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-2.png" class="glightbox"><img src="frontend/img/menu/menu-item-2.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Aut Luia</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $14.95
+                </p>
+              </div><!-- Menu Item -->
 
-            <div class="container">
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-3.png" class="glightbox"><img src="frontend/img/menu/menu-item-3.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Est Eligendi</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $8.95
+                </p>
+              </div><!-- Menu Item -->
 
-                <div class="row gy-4 align-items-center features-item">
-                    <div class="col-md-5 d-flex align-items-center" data-aos="zoom-out" data-aos-delay="100">
-                        <img src="assets/img/details-1.png" class="img-fluid" alt="">
-                    </div>
-                    <div class="col-md-7" data-aos="fade-up" data-aos-delay="100">
-                        <h3>Voluptatem dignissimos provident quasi corporis voluptates sit assumenda.</h3>
-                        <p class="fst-italic">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                            labore et dolore
-                            magna aliqua.
-                        </p>
-                        <ul>
-                            <li><i class="bi bi-check"></i><span> Ullamco laboris nisi ut aliquip ex ea commodo
-                                    consequat.</span></li>
-                            <li><i class="bi bi-check"></i> <span>Duis aute irure dolor in reprehenderit in voluptate
-                                    velit.</span></li>
-                            <li><i class="bi bi-check"></i> <span>Ullam est qui quos consequatur eos accusamus.</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div><!-- Features Item -->
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-4.png" class="glightbox"><img src="frontend/img/menu/menu-item-4.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Eos Luibusdam</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $12.95
+                </p>
+              </div><!-- Menu Item -->
 
-                <div class="row gy-4 align-items-center features-item">
-                    <div class="col-md-5 order-1 order-md-2 d-flex align-items-center" data-aos="zoom-out"
-                        data-aos-delay="200">
-                        <img src="assets/img/details-2.png" class="img-fluid" alt="">
-                    </div>
-                    <div class="col-md-7 order-2 order-md-1" data-aos="fade-up" data-aos-delay="200">
-                        <h3>Corporis temporibus maiores provident</h3>
-                        <p class="fst-italic">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                            labore et dolore
-                            magna aliqua.
-                        </p>
-                        <p>
-                            Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                            reprehenderit in voluptate
-                            velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-                            proident, sunt in
-                            culpa qui officia deserunt mollit anim id est laborum
-                        </p>
-                    </div>
-                </div><!-- Features Item -->
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-5.png" class="glightbox"><img src="frontend/img/menu/menu-item-5.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Eos Luibusdam</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $12.95
+                </p>
+              </div><!-- Menu Item -->
 
-                <div class="row gy-4 align-items-center features-item">
-                    <div class="col-md-5 d-flex align-items-center" data-aos="zoom-out">
-                        <img src="assets/img/details-3.png" class="img-fluid" alt="">
-                    </div>
-                    <div class="col-md-7" data-aos="fade-up">
-                        <h3>Sunt consequatur ad ut est nulla consectetur reiciendis animi voluptas</h3>
-                        <p>Cupiditate placeat cupiditate placeat est ipsam culpa. Delectus quia minima quod. Sunt saepe
-                            odit aut quia voluptatem hic voluptas dolor doloremque.</p>
-                        <ul>
-                            <li><i class="bi bi-check"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo
-                                    consequat.</span></li>
-                            <li><i class="bi bi-check"></i><span> Duis aute irure dolor in reprehenderit in voluptate
-                                    velit.</span></li>
-                            <li><i class="bi bi-check"></i> <span>Facilis ut et voluptatem aperiam. Autem soluta ad
-                                    fugiat</span>.</li>
-                        </ul>
-                    </div>
-                </div><!-- Features Item -->
-
-                <div class="row gy-4 align-items-center features-item">
-                    <div class="col-md-5 order-1 order-md-2 d-flex align-items-center" data-aos="zoom-out">
-                        <img src="assets/img/details-4.png" class="img-fluid" alt="">
-                    </div>
-                    <div class="col-md-7 order-2 order-md-1" data-aos="fade-up">
-                        <h3>Quas et necessitatibus eaque impedit ipsum animi consequatur incidunt in</h3>
-                        <p class="fst-italic">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                            labore et dolore
-                            magna aliqua.
-                        </p>
-                        <p>
-                            Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                            reprehenderit in voluptate
-                            velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-                            proident, sunt in
-                            culpa qui officia deserunt mollit anim id est laborum
-                        </p>
-                    </div>
-                </div><!-- Features Item -->
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-6.png" class="glightbox"><img src="frontend/img/menu/menu-item-6.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Laboriosam Direva</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $9.95
+                </p>
+              </div><!-- Menu Item -->
 
             </div>
+          </div><!-- End Breakfast Menu Content -->
 
-        </section><!-- /Details Section -->
+          <div class="tab-pane fade" id="menu-lunch">
 
-        <!-- Gallery Section -->
-        <section id="gallery" class="gallery section">
-
-            <!-- Section Title -->
-            <div class="container section-title" data-aos="fade-up">
-                <h2>Gallery</h2>
-                <div><span>Check Our</span> <span class="description-title">Gallery</span></div>
-            </div><!-- End Section Title -->
-
-            <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-                <div class="row g-0">
-
-                    <div class="col-lg-3 col-md-4">
-                        <div class="gallery-item">
-                            <a href="assets/img/gallery/gallery-1.jpg" class="glightbox"
-                                data-gallery="images-gallery">
-                                <img src="assets/img/gallery/gallery-1.jpg" alt="" class="img-fluid">
-                            </a>
-                        </div>
-                    </div><!-- End Gallery Item -->
-
-                    <div class="col-lg-3 col-md-4">
-                        <div class="gallery-item">
-                            <a href="assets/img/gallery/gallery-2.jpg" class="glightbox"
-                                data-gallery="images-gallery">
-                                <img src="assets/img/gallery/gallery-2.jpg" alt="" class="img-fluid">
-                            </a>
-                        </div>
-                    </div><!-- End Gallery Item -->
-
-                    <div class="col-lg-3 col-md-4">
-                        <div class="gallery-item">
-                            <a href="assets/img/gallery/gallery-3.jpg" class="glightbox"
-                                data-gallery="images-gallery">
-                                <img src="assets/img/gallery/gallery-3.jpg" alt="" class="img-fluid">
-                            </a>
-                        </div>
-                    </div><!-- End Gallery Item -->
-
-                    <div class="col-lg-3 col-md-4">
-                        <div class="gallery-item">
-                            <a href="assets/img/gallery/gallery-4.jpg" class="glightbox"
-                                data-gallery="images-gallery">
-                                <img src="assets/img/gallery/gallery-4.jpg" alt="" class="img-fluid">
-                            </a>
-                        </div>
-                    </div><!-- End Gallery Item -->
-
-                    <div class="col-lg-3 col-md-4">
-                        <div class="gallery-item">
-                            <a href="assets/img/gallery/gallery-5.jpg" class="glightbox"
-                                data-gallery="images-gallery">
-                                <img src="assets/img/gallery/gallery-5.jpg" alt="" class="img-fluid">
-                            </a>
-                        </div>
-                    </div><!-- End Gallery Item -->
-
-                    <div class="col-lg-3 col-md-4">
-                        <div class="gallery-item">
-                            <a href="assets/img/gallery/gallery-6.jpg" class="glightbox"
-                                data-gallery="images-gallery">
-                                <img src="assets/img/gallery/gallery-6.jpg" alt="" class="img-fluid">
-                            </a>
-                        </div>
-                    </div><!-- End Gallery Item -->
-
-                    <div class="col-lg-3 col-md-4">
-                        <div class="gallery-item">
-                            <a href="assets/img/gallery/gallery-7.jpg" class="glightbox"
-                                data-gallery="images-gallery">
-                                <img src="assets/img/gallery/gallery-7.jpg" alt="" class="img-fluid">
-                            </a>
-                        </div>
-                    </div><!-- End Gallery Item -->
-
-                    <div class="col-lg-3 col-md-4">
-                        <div class="gallery-item">
-                            <a href="assets/img/gallery/gallery-8.jpg" class="glightbox"
-                                data-gallery="images-gallery">
-                                <img src="assets/img/gallery/gallery-8.jpg" alt="" class="img-fluid">
-                            </a>
-                        </div>
-                    </div><!-- End Gallery Item -->
-
-                </div>
-
+            <div class="tab-header text-center">
+              <p>Menu</p>
+              <h3>Lunch</h3>
             </div>
 
-        </section><!-- /Gallery Section -->
+            <div class="row gy-5">
 
-        <!-- Testimonials Section -->
-        <section id="testimonials" class="testimonials section dark-background">
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-1.png" class="glightbox"><img src="frontend/img/menu/menu-item-1.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Magnam Tiste</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $5.95
+                </p>
+              </div><!-- Menu Item -->
 
-            <img src="assets/img/testimonials-bg.jpg" class="testimonials-bg" alt="">
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-2.png" class="glightbox"><img src="frontend/img/menu/menu-item-2.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Aut Luia</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $14.95
+                </p>
+              </div><!-- Menu Item -->
 
-            <div class="container" data-aos="fade-up" data-aos-delay="100">
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-3.png" class="glightbox"><img src="frontend/img/menu/menu-item-3.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Est Eligendi</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $8.95
+                </p>
+              </div><!-- Menu Item -->
 
-                <div class="swiper init-swiper">
-                    <script type="application/json" class="swiper-config">
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-4.png" class="glightbox"><img src="frontend/img/menu/menu-item-4.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Eos Luibusdam</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $12.95
+                </p>
+              </div><!-- Menu Item -->
+
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-5.png" class="glightbox"><img src="frontend/img/menu/menu-item-5.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Eos Luibusdam</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $12.95
+                </p>
+              </div><!-- Menu Item -->
+
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-6.png" class="glightbox"><img src="frontend/img/menu/menu-item-6.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Laboriosam Direva</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $9.95
+                </p>
+              </div><!-- Menu Item -->
+
+            </div>
+          </div><!-- End Lunch Menu Content -->
+
+          <div class="tab-pane fade" id="menu-dinner">
+
+            <div class="tab-header text-center">
+              <p>Menu</p>
+              <h3>Dinner</h3>
+            </div>
+
+            <div class="row gy-5">
+
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-1.png" class="glightbox"><img src="frontend/img/menu/menu-item-1.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Magnam Tiste</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $5.95
+                </p>
+              </div><!-- Menu Item -->
+
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-2.png" class="glightbox"><img src="frontend/img/menu/menu-item-2.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Aut Luia</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $14.95
+                </p>
+              </div><!-- Menu Item -->
+
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-3.png" class="glightbox"><img src="frontend/img/menu/menu-item-3.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Est Eligendi</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $8.95
+                </p>
+              </div><!-- Menu Item -->
+
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-4.png" class="glightbox"><img src="frontend/img/menu/menu-item-4.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Eos Luibusdam</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $12.95
+                </p>
+              </div><!-- Menu Item -->
+
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-5.png" class="glightbox"><img src="frontend/img/menu/menu-item-5.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Eos Luibusdam</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $12.95
+                </p>
+              </div><!-- Menu Item -->
+
+              <div class="col-lg-4 menu-item">
+                <a href="frontend/img/menu/menu-item-6.png" class="glightbox"><img src="frontend/img/menu/menu-item-6.png" class="menu-img img-fluid" alt=""></a>
+                <h4>Laboriosam Direva</h4>
+                <p class="ingredients">
+                  Lorem, deren, trataro, filede, nerada
+                </p>
+                <p class="price">
+                  $9.95
+                </p>
+              </div><!-- Menu Item -->
+
+            </div>
+          </div><!-- End Dinner Menu Content -->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Menu Section -->
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials section light-background">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>TESTIMONIALS</h2>
+        <p>What Are They <span class="description-title">Saying About Us</span></p>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="swiper init-swiper">
+          <script type="application/json" class="swiper-config">
             {
               "loop": true,
               "speed": 600,
@@ -555,565 +639,552 @@
               }
             }
           </script>
-                    <div class="swiper-wrapper">
+          <div class="swiper-wrapper">
 
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <img src="assets/img/testimonials/testimonials-1.jpg" class="testimonial-img"
-                                    alt="">
-                                <h3>Saul Goodman</h3>
-                                <h4>Ceo &amp; Founder</h4>
-                                <div class="stars">
-                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                        class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                        class="bi bi-star-fill"></i>
-                                </div>
-                                <p>
-                                    <i class="bi bi-quote quote-icon-left"></i>
-                                    <span>Proin iaculis purus consequat sem cure digni ssim donec porttitora entum
-                                        suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et.
-                                        Maecen aliquam, risus at semper.</span>
-                                    <i class="bi bi-quote quote-icon-right"></i>
-                                </p>
-                            </div>
-                        </div><!-- End testimonial item -->
-
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <img src="assets/img/testimonials/testimonials-2.jpg" class="testimonial-img"
-                                    alt="">
-                                <h3>Sara Wilsson</h3>
-                                <h4>Designer</h4>
-                                <div class="stars">
-                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                        class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                        class="bi bi-star-fill"></i>
-                                </div>
-                                <p>
-                                    <i class="bi bi-quote quote-icon-left"></i>
-                                    <span>Export tempor illum tamen malis malis eram quae irure esse labore quem cillum
-                                        quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat
-                                        irure amet legam anim culpa.</span>
-                                    <i class="bi bi-quote quote-icon-right"></i>
-                                </p>
-                            </div>
-                        </div><!-- End testimonial item -->
-
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <img src="assets/img/testimonials/testimonials-3.jpg" class="testimonial-img"
-                                    alt="">
-                                <h3>Jena Karlis</h3>
-                                <h4>Store Owner</h4>
-                                <div class="stars">
-                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                        class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                        class="bi bi-star-fill"></i>
-                                </div>
-                                <p>
-                                    <i class="bi bi-quote quote-icon-left"></i>
-                                    <span>Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla
-                                        quem veniam duis minim tempor labore quem eram duis noster aute amet eram fore
-                                        quis sint minim.</span>
-                                    <i class="bi bi-quote quote-icon-right"></i>
-                                </p>
-                            </div>
-                        </div><!-- End testimonial item -->
-
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <img src="assets/img/testimonials/testimonials-4.jpg" class="testimonial-img"
-                                    alt="">
-                                <h3>Matt Brandon</h3>
-                                <h4>Freelancer</h4>
-                                <div class="stars">
-                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                        class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                        class="bi bi-star-fill"></i>
-                                </div>
-                                <p>
-                                    <i class="bi bi-quote quote-icon-left"></i>
-                                    <span>Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos export minim
-                                        fugiat minim velit minim dolor enim duis veniam ipsum anim magna sunt elit fore
-                                        quem dolore labore illum veniam.</span>
-                                    <i class="bi bi-quote quote-icon-right"></i>
-                                </p>
-                            </div>
-                        </div><!-- End testimonial item -->
-
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <img src="assets/img/testimonials/testimonials-5.jpg" class="testimonial-img"
-                                    alt="">
-                                <h3>John Larson</h3>
-                                <h4>Entrepreneur</h4>
-                                <div class="stars">
-                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                        class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                        class="bi bi-star-fill"></i>
-                                </div>
-                                <p>
-                                    <i class="bi bi-quote quote-icon-left"></i>
-                                    <span>Quis quorum aliqua sint quem legam fore sunt eram irure aliqua veniam tempor
-                                        noster veniam enim culpa labore duis sunt culpa nulla illum cillum fugiat legam
-                                        esse veniam culpa fore nisi cillum quid.</span>
-                                    <i class="bi bi-quote quote-icon-right"></i>
-                                </p>
-                            </div>
-                        </div><!-- End testimonial item -->
-
+            <div class="swiper-slide">
+              <div class="testimonial-item">
+                <div class="row gy-4 justify-content-center">
+                  <div class="col-lg-6">
+                    <div class="testimonial-content">
+                      <p>
+                        <i class="bi bi-quote quote-icon-left"></i>
+                        <span>Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper.</span>
+                        <i class="bi bi-quote quote-icon-right"></i>
+                      </p>
+                      <h3>Saul Goodman</h3>
+                      <h4>Ceo &amp; Founder</h4>
+                      <div class="stars">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                      </div>
                     </div>
-                    <div class="swiper-pagination"></div>
+                  </div>
+                  <div class="col-lg-2 text-center">
+                    <img src="frontend/img/testimonials/testimonials-1.jpg" class="img-fluid testimonial-img" alt="">
+                  </div>
                 </div>
+              </div>
+            </div><!-- End testimonial item -->
 
-            </div>
-
-        </section><!-- /Testimonials Section -->
-
-        <!-- Team Section -->
-        <section id="team" class="team section">
-
-            <!-- Section Title -->
-            <div class="container section-title" data-aos="fade-up">
-                <h2>Team</h2>
-                <div><span>Check Our</span> <span class="description-title">Team</span></div>
-            </div><!-- End Section Title -->
-
-            <div class="container">
-
-                <div class="row gy-5">
-
-                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                        <div class="member">
-                            <div class="pic"><img src="assets/img/team/team-1.jpg" class="img-fluid"
-                                    alt=""></div>
-                            <div class="member-info">
-                                <h4>Walter White</h4>
-                                <span>Chief Executive Officer</span>
-                                <div class="social">
-                                    <a href=""><i class="bi bi-twitter-x"></i></a>
-                                    <a href=""><i class="bi bi-facebook"></i></a>
-                                    <a href=""><i class="bi bi-instagram"></i></a>
-                                    <a href=""><i class="bi bi-linkedin"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- End Team Member -->
-
-                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                        <div class="member">
-                            <div class="pic"><img src="assets/img/team/team-2.jpg" class="img-fluid"
-                                    alt=""></div>
-                            <div class="member-info">
-                                <h4>Sarah Jhonson</h4>
-                                <span>Product Manager</span>
-                                <div class="social">
-                                    <a href=""><i class="bi bi-twitter-x"></i></a>
-                                    <a href=""><i class="bi bi-facebook"></i></a>
-                                    <a href=""><i class="bi bi-instagram"></i></a>
-                                    <a href=""><i class="bi bi-linkedin"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- End Team Member -->
-
-                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                        <div class="member">
-                            <div class="pic"><img src="assets/img/team/team-3.jpg" class="img-fluid"
-                                    alt=""></div>
-                            <div class="member-info">
-                                <h4>William Anderson</h4>
-                                <span>CTO</span>
-                                <div class="social">
-                                    <a href=""><i class="bi bi-twitter-x"></i></a>
-                                    <a href=""><i class="bi bi-facebook"></i></a>
-                                    <a href=""><i class="bi bi-instagram"></i></a>
-                                    <a href=""><i class="bi bi-linkedin"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- End Team Member -->
-
-                </div>
-
-            </div>
-
-        </section><!-- /Team Section -->
-
-        <!-- Pricing Section -->
-        <section id="pricing" class="pricing section">
-
-            <!-- Section Title -->
-            <div class="container section-title" data-aos="fade-up">
-                <h2>Pricing</h2>
-                <div><span>Check Our</span> <span class="description-title">Pricing</span></div>
-            </div><!-- End Section Title -->
-
-            <div class="container">
-
-                <div class="row gy-4">
-
-                    <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="100">
-                        <div class="pricing-item">
-                            <h3>Free Plan</h3>
-                            <p class="description">Ullam mollitia quasi nobis soluta in voluptatum et sint palora dex
-                                strater</p>
-                            <h4><sup>$</sup>0<span> / month</span></h4>
-                            <a href="#" class="cta-btn">Start a free trial</a>
-                            <p class="text-center small">No credit card required</p>
-                            <ul>
-                                <li><i class="bi bi-check"></i> <span>Quam adipiscing vitae proin</span></li>
-                                <li><i class="bi bi-check"></i> <span>Nec feugiat nisl pretium</span></li>
-                                <li><i class="bi bi-check"></i> <span>Nulla at volutpat diam uteera</span></li>
-                                <li class="na"><i class="bi bi-x"></i> <span>Pharetra massa massa ultricies</span>
-                                </li>
-                                <li class="na"><i class="bi bi-x"></i> <span>Massa ultricies mi quis
-                                        hendrerit</span></li>
-                                <li class="na"><i class="bi bi-x"></i> <span>Voluptate id voluptas qui sed aperiam
-                                        rerum</span></li>
-                                <li class="na"><i class="bi bi-x"></i> <span>Iure nihil dolores recusandae odit
-                                        voluptatibus</span></li>
-                            </ul>
-                        </div>
-                    </div><!-- End Pricing Item -->
-
-                    <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="200">
-                        <div class="pricing-item featured">
-                            <p class="popular">Popular</p>
-                            <h3>Business Plan</h3>
-                            <p class="description">Ullam mollitia quasi nobis soluta in voluptatum et sint palora dex
-                                strater</p>
-                            <h4><sup>$</sup>29<span> / month</span></h4>
-                            <a href="#" class="cta-btn">Start a free trial</a>
-                            <p class="text-center small">No credit card required</p>
-                            <ul>
-                                <li><i class="bi bi-check"></i> <span>Quam adipiscing vitae proin</span></li>
-                                <li><i class="bi bi-check"></i> <span>Nec feugiat nisl pretium</span></li>
-                                <li><i class="bi bi-check"></i> <span>Nulla at volutpat diam uteera</span></li>
-                                <li><i class="bi bi-check"></i> <span>Pharetra massa massa ultricies</span></li>
-                                <li><i class="bi bi-check"></i> <span>Massa ultricies mi quis hendrerit</span></li>
-                                <li><i class="bi bi-check"></i> <span>Voluptate id voluptas qui sed aperiam
-                                        rerum</span></li>
-                                <li class="na"><i class="bi bi-x"></i> <span>Iure nihil dolores recusandae odit
-                                        voluptatibus</span></li>
-                            </ul>
-                        </div>
-                    </div><!-- End Pricing Item -->
-
-                    <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="300">
-                        <div class="pricing-item">
-                            <h3>Developer Plan</h3>
-                            <p class="description">Ullam mollitia quasi nobis soluta in voluptatum et sint palora dex
-                                strater</p>
-                            <h4><sup>$</sup>49<span> / month</span></h4>
-                            <a href="#" class="cta-btn">Start a free trial</a>
-                            <p class="text-center small">No credit card required</p>
-                            <ul>
-                                <li><i class="bi bi-check"></i> <span>Quam adipiscing vitae proin</span></li>
-                                <li><i class="bi bi-check"></i> <span>Nec feugiat nisl pretium</span></li>
-                                <li><i class="bi bi-check"></i> <span>Nulla at volutpat diam uteera</span></li>
-                                <li><i class="bi bi-check"></i> <span>Pharetra massa massa ultricies</span></li>
-                                <li><i class="bi bi-check"></i> <span>Massa ultricies mi quis hendrerit</span></li>
-                                <li><i class="bi bi-check"></i> <span>Voluptate id voluptas qui sed aperiam
-                                        rerum</span></li>
-                                <li><i class="bi bi-check"></i> <span>Iure nihil dolores recusandae odit
-                                        voluptatibus</span></li>
-                            </ul>
-                        </div>
-                    </div><!-- End Pricing Item -->
-
-                </div>
-
-            </div>
-
-        </section><!-- /Pricing Section -->
-
-        <!-- Faq Section -->
-        <section id="faq" class="faq section light-background">
-
-            <div class="container-fluid">
-
-                <div class="row gy-4">
-
-                    <div class="col-lg-7 d-flex flex-column justify-content-center order-2 order-lg-1">
-
-                        <div class="content px-xl-5" data-aos="fade-up" data-aos-delay="100">
-                            <h3><span>Frequently Asked </span><strong>Questions</strong></h3>
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua. Duis aute irure dolor in reprehenderit
-                            </p>
-                        </div>
-
-                        <div class="faq-container px-xl-5" data-aos="fade-up" data-aos-delay="200">
-
-                            <div class="faq-item faq-active">
-                                <i class="faq-icon bi bi-question-circle"></i>
-                                <h3>Non consectetur a erat nam at lectus urna duis?</h3>
-                                <div class="faq-content">
-                                    <p>Feugiat pretium nibh ipsum consequat. Tempus iaculis urna id volutpat lacus
-                                        laoreet non curabitur gravida. Venenatis lectus magna fringilla urna porttitor
-                                        rhoncus dolor purus non.</p>
-                                </div>
-                                <i class="faq-toggle bi bi-chevron-right"></i>
-                            </div><!-- End Faq item-->
-
-                            <div class="faq-item">
-                                <i class="faq-icon bi bi-question-circle"></i>
-                                <h3>Feugiat scelerisque varius morbi enim nunc faucibus a pellentesque?</h3>
-                                <div class="faq-content">
-                                    <p>Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id
-                                        interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus
-                                        scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim.
-                                        Mauris ultrices eros in cursus turpis massa tincidunt dui.</p>
-                                </div>
-                                <i class="faq-toggle bi bi-chevron-right"></i>
-                            </div><!-- End Faq item-->
-
-                            <div class="faq-item">
-                                <i class="faq-icon bi bi-question-circle"></i>
-                                <h3>Dolor sit amet consectetur adipiscing elit pellentesque?</h3>
-                                <div class="faq-content">
-                                    <p>Eleifend mi in nulla posuere sollicitudin aliquam ultrices sagittis orci.
-                                        Faucibus pulvinar elementum integer enim. Sem nulla pharetra diam sit amet nisl
-                                        suscipit. Rutrum tellus pellentesque eu tincidunt. Lectus urna duis convallis
-                                        convallis tellus. Urna molestie at elementum eu facilisis sed odio morbi quis
-                                    </p>
-                                </div>
-                                <i class="faq-toggle bi bi-chevron-right"></i>
-                            </div><!-- End Faq item-->
-
-                        </div>
-
+            <div class="swiper-slide">
+              <div class="testimonial-item">
+                <div class="row gy-4 justify-content-center">
+                  <div class="col-lg-6">
+                    <div class="testimonial-content">
+                      <p>
+                        <i class="bi bi-quote quote-icon-left"></i>
+                        <span>Export tempor illum tamen malis malis eram quae irure esse labore quem cillum quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat irure amet legam anim culpa.</span>
+                        <i class="bi bi-quote quote-icon-right"></i>
+                      </p>
+                      <h3>Sara Wilsson</h3>
+                      <h4>Designer</h4>
+                      <div class="stars">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                      </div>
                     </div>
+                  </div>
+                  <div class="col-lg-2 text-center">
+                    <img src="frontend/img/testimonials/testimonials-2.jpg" class="img-fluid testimonial-img" alt="">
+                  </div>
+                </div>
+              </div>
+            </div><!-- End testimonial item -->
 
-                    <div class="col-lg-5 order-1 order-lg-2">
-                        <img src="assets/img/faq.jpg" class="img-fluid" alt="" data-aos="zoom-in"
-                            data-aos-delay="100">
+            <div class="swiper-slide">
+              <div class="testimonial-item">
+                <div class="row gy-4 justify-content-center">
+                  <div class="col-lg-6">
+                    <div class="testimonial-content">
+                      <p>
+                        <i class="bi bi-quote quote-icon-left"></i>
+                        <span>Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla quem veniam duis minim tempor labore quem eram duis noster aute amet eram fore quis sint minim.</span>
+                        <i class="bi bi-quote quote-icon-right"></i>
+                      </p>
+                      <h3>Jena Karlis</h3>
+                      <h4>Store Owner</h4>
+                      <div class="stars">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                      </div>
                     </div>
+                  </div>
+                  <div class="col-lg-2 text-center">
+                    <img src="frontend/img/testimonials/testimonials-3.jpg" class="img-fluid testimonial-img" alt="">
+                  </div>
                 </div>
+              </div>
+            </div><!-- End testimonial item -->
 
-            </div>
-
-        </section><!-- /Faq Section -->
-
-        <!-- Contact Section -->
-        <section id="contact" class="contact section">
-
-            <!-- Section Title -->
-            <div class="container section-title" data-aos="fade-up">
-                <h2>Contact</h2>
-                <div><span>Check Our</span> <span class="description-title">Contact</span></div>
-            </div><!-- End Section Title -->
-
-            <div class="container" data-aos="fade" data-aos-delay="100">
-
-                <div class="row gy-4">
-
-                    <div class="col-lg-4">
-                        <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="200">
-                            <i class="bi bi-geo-alt flex-shrink-0"></i>
-                            <div>
-                                <h3>Address</h3>
-                                <p>A108 Adam Street, New York, NY 535022</p>
-                            </div>
-                        </div><!-- End Info Item -->
-
-                        <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
-                            <i class="bi bi-telephone flex-shrink-0"></i>
-                            <div>
-                                <h3>Call Us</h3>
-                                <p>+1 5589 55488 55</p>
-                            </div>
-                        </div><!-- End Info Item -->
-
-                        <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
-                            <i class="bi bi-envelope flex-shrink-0"></i>
-                            <div>
-                                <h3>Email Us</h3>
-                                <p>info@example.com</p>
-                            </div>
-                        </div><!-- End Info Item -->
-
+            <div class="swiper-slide">
+              <div class="testimonial-item">
+                <div class="row gy-4 justify-content-center">
+                  <div class="col-lg-6">
+                    <div class="testimonial-content">
+                      <p>
+                        <i class="bi bi-quote quote-icon-left"></i>
+                        <span>Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos export minim fugiat minim velit minim dolor enim duis veniam ipsum anim magna sunt elit fore quem dolore labore illum veniam.</span>
+                        <i class="bi bi-quote quote-icon-right"></i>
+                      </p>
+                      <h3>John Larson</h3>
+                      <h4>Entrepreneur</h4>
+                      <div class="stars">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                      </div>
                     </div>
-
-                    <div class="col-lg-8">
-                        <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up"
-                            data-aos-delay="200">
-                            <div class="row gy-4">
-
-                                <div class="col-md-6">
-                                    <input type="text" name="name" class="form-control"
-                                        placeholder="Your Name" required="">
-                                </div>
-
-                                <div class="col-md-6 ">
-                                    <input type="email" class="form-control" name="email"
-                                        placeholder="Your Email" required="">
-                                </div>
-
-                                <div class="col-md-12">
-                                    <input type="text" class="form-control" name="subject" placeholder="Subject"
-                                        required="">
-                                </div>
-
-                                <div class="col-md-12">
-                                    <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
-                                </div>
-
-                                <div class="col-md-12 text-center">
-                                    <div class="loading">Loading</div>
-                                    <div class="error-message"></div>
-                                    <div class="sent-message">Your message has been sent. Thank you!</div>
-
-                                    <button type="submit">Send Message</button>
-                                </div>
-
-                            </div>
-                        </form>
-                    </div><!-- End Contact Form -->
-
+                  </div>
+                  <div class="col-lg-2 text-center">
+                    <img src="frontend/img/testimonials/testimonials-4.jpg" class="img-fluid testimonial-img" alt="">
+                  </div>
                 </div>
+              </div>
+            </div><!-- End testimonial item -->
 
-            </div>
-
-        </section><!-- /Contact Section -->
-
-    </main>
-
-    <footer id="footer" class="footer dark-background">
-
-        <div class="container footer-top">
-            <div class="row gy-4">
-                <div class="col-lg-4 col-md-6 footer-about">
-                    <a href="index.html" class="logo d-flex align-items-center">
-                        <span class="sitename">Bootslander</span>
-                    </a>
-                    <div class="footer-contact pt-3">
-                        <p>A108 Adam Street</p>
-                        <p>New York, NY 535022</p>
-                        <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-                        <p><strong>Email:</strong> <span>info@example.com</span></p>
-                    </div>
-                    <div class="social-links d-flex mt-4">
-                        <a href=""><i class="bi bi-twitter-x"></i></a>
-                        <a href=""><i class="bi bi-facebook"></i></a>
-                        <a href=""><i class="bi bi-instagram"></i></a>
-                        <a href=""><i class="bi bi-linkedin"></i></a>
-                    </div>
-                </div>
-
-                <div class="col-lg-2 col-md-3 footer-links">
-                    <h4>Useful Links</h4>
-                    <ul>
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#">About us</a></li>
-                        <li><a href="#">Services</a></li>
-                        <li><a href="#">Terms of service</a></li>
-                        <li><a href="#">Privacy policy</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-2 col-md-3 footer-links">
-                    <h4>Our Services</h4>
-                    <ul>
-                        <li><a href="#">Web Design</a></li>
-                        <li><a href="#">Web Development</a></li>
-                        <li><a href="#">Product Management</a></li>
-                        <li><a href="#">Marketing</a></li>
-                        <li><a href="#">Graphic Design</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-4 col-md-12 footer-newsletter">
-                    <h4>Our Newsletter</h4>
-                    <p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
-                    <form action="forms/newsletter.php" method="post" class="php-email-form">
-                        <div class="newsletter-form"><input type="email" name="email"><input type="submit"
-                                value="Subscribe"></div>
-                        <div class="loading">Loading</div>
-                        <div class="error-message"></div>
-                        <div class="sent-message">Your subscription request has been sent. Thank you!</div>
-                    </form>
-                </div>
-
-            </div>
+          </div>
+          <div class="swiper-pagination"></div>
         </div>
 
-        <div class="container copyright text-center mt-4">
-            <p>© <span>Copyright</span> <strong class="px-1 sitename">Bootslander</strong> <span>All Rights
-                    Reserved</span></p>
-            <div class="credits">
-                <!-- All the links in the footer should remain intact. -->
-                <!-- You can delete the links only if you've purchased the pro version. -->
-                <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-                Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> Distributed By <a
-                    href="https://themewagon.com">ThemeWagon</a>
-            </div>
+      </div>
+
+    </section><!-- /Testimonials Section -->
+
+    <!-- Events Section -->
+    <section id="events" class="events section">
+
+      <div class="container-fluid" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="swiper init-swiper">
+          <script type="application/json" class="swiper-config">
+            {
+              "loop": true,
+              "speed": 600,
+              "autoplay": {
+                "delay": 5000
+              },
+              "slidesPerView": "auto",
+              "pagination": {
+                "el": ".swiper-pagination",
+                "type": "bullets",
+                "clickable": true
+              },
+              "breakpoints": {
+                "320": {
+                  "slidesPerView": 1,
+                  "spaceBetween": 40
+                },
+                "1200": {
+                  "slidesPerView": 3,
+                  "spaceBetween": 1
+                }
+              }
+            }
+          </script>
+          <div class="swiper-wrapper">
+
+            <div class="swiper-slide event-item d-flex flex-column justify-content-end" style="background-image: url(frontend/img/events-1.jpg)">
+              <h3>Custom Parties</h3>
+              <div class="price align-self-start">$99</div>
+              <p class="description">
+                Quo corporis voluptas ea ad. Consectetur inventore sapiente ipsum voluptas eos omnis facere. Enim facilis veritatis id est rem repudiandae nulla expedita quas.
+              </p>
+            </div><!-- End Event item -->
+
+            <div class="swiper-slide event-item d-flex flex-column justify-content-end" style="background-image: url(frontend/img/events-2.jpg)">
+              <h3>Private Parties</h3>
+              <div class="price align-self-start">$289</div>
+              <p class="description">
+                In delectus sint qui et enim. Et ab repudiandae inventore quaerat doloribus. Facere nemo vero est ut dolores ea assumenda et. Delectus saepe accusamus aspernatur.
+              </p>
+            </div><!-- End Event item -->
+
+            <div class="swiper-slide event-item d-flex flex-column justify-content-end" style="background-image: url(frontend/img/events-3.jpg)">
+              <h3>Birthday Parties</h3>
+              <div class="price align-self-start">$499</div>
+              <p class="description">
+                Laborum aperiam atque omnis minus omnis est qui assumenda quos. Quis id sit quibusdam. Esse quisquam ducimus officia ipsum ut quibusdam maxime. Non enim perspiciatis.
+              </p>
+            </div><!-- End Event item -->
+
+            <div class="swiper-slide event-item d-flex flex-column justify-content-end" style="background-image: url(frontend/img/events-4.jpg)">
+              <h3>Wedding Parties</h3>
+              <div class="price align-self-start">$899</div>
+              <p class="description">
+                Laborum aperiam atque omnis minus omnis est qui assumenda quos. Quis id sit quibusdam. Esse quisquam ducimus officia ipsum ut quibusdam maxime. Non enim perspiciatis.
+              </p>
+            </div><!-- End Event item -->
+
+          </div>
+          <div class="swiper-pagination"></div>
         </div>
 
-    </footer>
+      </div>
 
-    <!-- Scroll Top -->
-    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
-            class="bi bi-arrow-up-short"></i></a>
+    </section><!-- /Events Section -->
 
-    <!-- Preloader -->
-    <div id="preloader">
-        <div id="loader"></div>
+    <!-- Chefs Section -->
+    <section id="chefs" class="chefs section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>chefs</h2>
+        <p><span>Our</span> <span class="description-title">Proffesional Chefs<br></span></p>
+      </div><!-- End Section Title -->
+
+      <div class="container">
+
+        <div class="row gy-4">
+
+          <div class="col-lg-4 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="100">
+            <div class="team-member">
+              <div class="member-img">
+                <img src="frontend/img/chefs/chefs-1.jpg" class="img-fluid" alt="">
+                <div class="social">
+                  <a href=""><i class="bi bi-twitter-x"></i></a>
+                  <a href=""><i class="bi bi-facebook"></i></a>
+                  <a href=""><i class="bi bi-instagram"></i></a>
+                  <a href=""><i class="bi bi-linkedin"></i></a>
+                </div>
+              </div>
+              <div class="member-info">
+                <h4>Walter White</h4>
+                <span>Master Chef</span>
+                <p>Velit aut quia fugit et et. Dolorum ea voluptate vel tempore tenetur ipsa quae aut. Ipsum exercitationem iure minima enim corporis et voluptate.</p>
+              </div>
+            </div>
+          </div><!-- End Chef Team Member -->
+
+          <div class="col-lg-4 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="200">
+            <div class="team-member">
+              <div class="member-img">
+                <img src="frontend/img/chefs/chefs-2.jpg" class="img-fluid" alt="">
+                <div class="social">
+                  <a href=""><i class="bi bi-twitter-x"></i></a>
+                  <a href=""><i class="bi bi-facebook"></i></a>
+                  <a href=""><i class="bi bi-instagram"></i></a>
+                  <a href=""><i class="bi bi-linkedin"></i></a>
+                </div>
+              </div>
+              <div class="member-info">
+                <h4>Sarah Jhonson</h4>
+                <span>Patissier</span>
+                <p>Quo esse repellendus quia id. Est eum et accusantium pariatur fugit nihil minima suscipit corporis. Voluptate sed quas reiciendis animi neque sapiente.</p>
+              </div>
+            </div>
+          </div><!-- End Chef Team Member -->
+
+          <div class="col-lg-4 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="300">
+            <div class="team-member">
+              <div class="member-img">
+                <img src="frontend/img/chefs/chefs-3.jpg" class="img-fluid" alt="">
+                <div class="social">
+                  <a href=""><i class="bi bi-twitter-x"></i></a>
+                  <a href=""><i class="bi bi-facebook"></i></a>
+                  <a href=""><i class="bi bi-instagram"></i></a>
+                  <a href=""><i class="bi bi-linkedin"></i></a>
+                </div>
+              </div>
+              <div class="member-info">
+                <h4>William Anderson</h4>
+                <span>Cook</span>
+                <p>Vero omnis enim consequatur. Voluptas consectetur unde qui molestiae deserunt. Voluptates enim aut architecto porro aspernatur molestiae modi.</p>
+              </div>
+            </div>
+          </div><!-- End Chef Team Member -->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Chefs Section -->
+
+    <!-- Book A Table Section -->
+    <section id="book-a-table" class="book-a-table section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Book A Table</h2>
+        <p><span>Book Your</span> <span class="description-title">Stay With Us<br></span></p>
+      </div><!-- End Section Title -->
+
+      <div class="container">
+
+        <div class="row g-0" data-aos="fade-up" data-aos-delay="100">
+
+          <div class="col-lg-4 reservation-img" style="background-image: url(frontend/img/reservation.jpg);"></div>
+
+          <div class="col-lg-8 d-flex align-items-center reservation-form-bg" data-aos="fade-up" data-aos-delay="200">
+            <form action="forms/book-a-table.php" method="post" role="form" class="php-email-form">
+              <div class="row gy-4">
+                <div class="col-lg-4 col-md-6">
+                  <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required="">
+                </div>
+                <div class="col-lg-4 col-md-6">
+                  <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required="">
+                </div>
+                <div class="col-lg-4 col-md-6">
+                  <input type="text" class="form-control" name="phone" id="phone" placeholder="Your Phone" required="">
+                </div>
+                <div class="col-lg-4 col-md-6">
+                  <input type="date" name="date" class="form-control" id="date" placeholder="Date" required="">
+                </div>
+                <div class="col-lg-4 col-md-6">
+                  <input type="time" class="form-control" name="time" id="time" placeholder="Time" required="">
+                </div>
+                <div class="col-lg-4 col-md-6">
+                  <input type="number" class="form-control" name="people" id="people" placeholder="# of people" required="">
+                </div>
+              </div>
+
+              <div class="form-group mt-3">
+                <textarea class="form-control" name="message" rows="5" placeholder="Message"></textarea>
+              </div>
+
+              <div class="text-center mt-3">
+                <div class="loading">Loading</div>
+                <div class="error-message"></div>
+                <div class="sent-message">Your booking request was sent. We will call back or send an Email to confirm your reservation. Thank you!</div>
+                <button type="submit">Book a Table</button>
+              </div>
+            </form>
+          </div><!-- End Reservation Form -->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Book A Table Section -->
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery section light-background">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Gallery</h2>
+        <p><span>Check</span> <span class="description-title">Our Gallery</span></p>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="swiper init-swiper">
+          <script type="application/json" class="swiper-config">
+            {
+              "loop": true,
+              "speed": 600,
+              "autoplay": {
+                "delay": 5000
+              },
+              "slidesPerView": "auto",
+              "centeredSlides": true,
+              "pagination": {
+                "el": ".swiper-pagination",
+                "type": "bullets",
+                "clickable": true
+              },
+              "breakpoints": {
+                "320": {
+                  "slidesPerView": 1,
+                  "spaceBetween": 0
+                },
+                "768": {
+                  "slidesPerView": 3,
+                  "spaceBetween": 20
+                },
+                "1200": {
+                  "slidesPerView": 5,
+                  "spaceBetween": 20
+                }
+              }
+            }
+          </script>
+          <div class="swiper-wrapper align-items-center">
+            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery" href="frontend/img/gallery/gallery-1.jpg"><img src="frontend/img/gallery/gallery-1.jpg" class="img-fluid" alt=""></a></div>
+            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery" href="frontend/img/gallery/gallery-2.jpg"><img src="frontend/img/gallery/gallery-2.jpg" class="img-fluid" alt=""></a></div>
+            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery" href="frontend/img/gallery/gallery-3.jpg"><img src="frontend/img/gallery/gallery-3.jpg" class="img-fluid" alt=""></a></div>
+            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery" href="frontend/img/gallery/gallery-4.jpg"><img src="frontend/img/gallery/gallery-4.jpg" class="img-fluid" alt=""></a></div>
+            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery" href="frontend/img/gallery/gallery-5.jpg"><img src="frontend/img/gallery/gallery-5.jpg" class="img-fluid" alt=""></a></div>
+            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery" href="frontend/img/gallery/gallery-6.jpg"><img src="frontend/img/gallery/gallery-6.jpg" class="img-fluid" alt=""></a></div>
+            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery" href="frontend/img/gallery/gallery-7.jpg"><img src="frontend/img/gallery/gallery-7.jpg" class="img-fluid" alt=""></a></div>
+            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery" href="frontend/img/gallery/gallery-8.jpg"><img src="frontend/img/gallery/gallery-8.jpg" class="img-fluid" alt=""></a></div>
+          </div>
+          <div class="swiper-pagination"></div>
+        </div>
+
+      </div>
+
+    </section><!-- /Gallery Section -->
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Contact</h2>
+        <p><span>Need Help?</span> <span class="description-title">Contact Us</span></p>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="mb-5">
+          <iframe style="width: 100%; height: 400px;" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12097.433213460943!2d-74.0062269!3d40.7101282!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xb89d1fe6bc499443!2sDowntown+Conference+Center!5e0!3m2!1smk!2sbg!4v1539943755621" frameborder="0" allowfullscreen=""></iframe>
+        </div><!-- End Google Maps -->
+
+        <div class="row gy-4">
+
+          <div class="col-md-6">
+            <div class="info-item d-flex align-items-center" data-aos="fade-up" data-aos-delay="200">
+              <i class="icon bi bi-geo-alt flex-shrink-0"></i>
+              <div>
+                <h3>Address</h3>
+                <p>A108 Adam Street, New York, NY 535022</p>
+              </div>
+            </div>
+          </div><!-- End Info Item -->
+
+          <div class="col-md-6">
+            <div class="info-item d-flex align-items-center" data-aos="fade-up" data-aos-delay="300">
+              <i class="icon bi bi-telephone flex-shrink-0"></i>
+              <div>
+                <h3>Call Us</h3>
+                <p>+1 5589 55488 55</p>
+              </div>
+            </div>
+          </div><!-- End Info Item -->
+
+          <div class="col-md-6">
+            <div class="info-item d-flex align-items-center" data-aos="fade-up" data-aos-delay="400">
+              <i class="icon bi bi-envelope flex-shrink-0"></i>
+              <div>
+                <h3>Email Us</h3>
+                <p>info@example.com</p>
+              </div>
+            </div>
+          </div><!-- End Info Item -->
+
+          <div class="col-md-6">
+            <div class="info-item d-flex align-items-center" data-aos="fade-up" data-aos-delay="500">
+              <i class="icon bi bi-clock flex-shrink-0"></i>
+              <div>
+                <h3>Opening Hours<br></h3>
+                <p><strong>Mon-Sat:</strong> 11AM - 23PM; <strong>Sunday:</strong> Closed</p>
+              </div>
+            </div>
+          </div><!-- End Info Item -->
+
+        </div>
+
+        <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="600">
+          <div class="row gy-4">
+
+            <div class="col-md-6">
+              <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
+            </div>
+
+            <div class="col-md-6 ">
+              <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
+            </div>
+
+            <div class="col-md-12">
+              <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
+            </div>
+
+            <div class="col-md-12">
+              <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
+            </div>
+
+            <div class="col-md-12 text-center">
+              <div class="loading">Loading</div>
+              <div class="error-message"></div>
+              <div class="sent-message">Your message has been sent. Thank you!</div>
+
+              <button type="submit">Send Message</button>
+            </div>
+
+          </div>
+        </form><!-- End Contact Form -->
+
+      </div>
+
+    </section><!-- /Contact Section -->
+
+  </main>
+
+  <footer id="footer" class="footer dark-background">
+
+    <div class="container">
+      <div class="row gy-3">
+        <div class="col-lg-3 col-md-6 d-flex">
+          <i class="bi bi-geo-alt icon"></i>
+          <div class="address">
+            <h4>Address</h4>
+            <p>A108 Adam Street</p>
+            <p>New York, NY 535022</p>
+            <p></p>
+          </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6 d-flex">
+          <i class="bi bi-telephone icon"></i>
+          <div>
+            <h4>Contact</h4>
+            <p>
+              <strong>Phone:</strong> <span>+1 5589 55488 55</span><br>
+              <strong>Email:</strong> <span>info@example.com</span><br>
+            </p>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 d-flex">
+          <i class="bi bi-clock icon"></i>
+          <div>
+            <h4>Opening Hours</h4>
+            <p>
+              <strong>Mon-Sat:</strong> <span>11AM - 23PM</span><br>
+              <strong>Sunday</strong>: <span>Closed</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <h4>Follow Us</h4>
+          <div class="social-links d-flex">
+            <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
+            <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+
+      </div>
     </div>
 
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Yummy</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+        <!-- All the links in the footer should remain intact. -->
+        <!-- You can delete the links only if you've purchased the pro version. -->
+        <!-- Licensing information: https://bootstrapmade.com/license/ -->
+        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
+        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> Distributed by <a href="https://themewagon.com">ThemeWagon</a>
+      </div>
+    </div>
 
-    <!-- Vendor JS Files -->
-    <script src="{{ asset('frontend/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('frontend/assets/vendor/php-email-form/validate.js') }}"></script>
-    <script src="{{ asset('frontend/assets/vendor/aos/aos.js') }}"></script>
-    <script src="{{ asset('frontend/assets/vendor/glightbox/js/glightbox.min.js') }}"></script>
-    <script src="{{ asset('frontend/assets/vendor/purecounter/purecounter_vanilla.js') }}"></script>
-    <script src="{{ asset('frontend/assets/vendor/swiper/swiper-bundle.min.js') }}"></script>
+  </footer>
 
-    <!-- Main JS File -->
-    <script src="{{ asset('frontend/assets/js/main.js') }}"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7503392728334197"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script>
-        const loginLink = document.getElementById('loginLink');
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-        loginLink.addEventListener('click', (event) => {
-            event.preventDefault();
+  <!-- Preloader -->
+  <div id="preloader"></div>
 
-            // Show SweetAlert2 spinner
-            Swal.fire({
-                title: 'Logging in...',
-                html: 'Please wait...',
-                allowEscapeKey: false,
-                allowOutsideClick: false,
-                showConfirmButton: false,
-                willOpen: () => {
-                    Swal.showLoading();
-                }
-            });
+  <!-- Vendor JS Files -->
+  <script src="frontend/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="frontend/vendor/php-email-form/validate.js"></script>
+  <script src="frontend/vendor/aos/aos.js"></script>
+  <script src="frontend/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="frontend/vendor/purecounter/purecounter_vanilla.js"></script>
+  <script src="frontend/vendor/swiper/swiper-bundle.min.js"></script>
 
-            // Simulate login process (replace with actual login logic)
-            setTimeout(() => {
-                Swal.close();
+  <!-- Main JS File -->
+  <script src="frontend/js/main.js"></script>
 
-                // Check if Toastr is available and show success notification
-                if (typeof toastr !== 'undefined') {
-                    toastr.success('Login successful!', 'Welcome!');
-                } else {
-                    console.error('Toastr library not found. Please include it in your HTML.');
-                }
-
-                // Redirect to the desired page after successful login
-                window.location.href = "/login/form";
-            }, 2000); // Simulate a 2-second login delay
-        });
-    </script>
 </body>
 
 </html>
