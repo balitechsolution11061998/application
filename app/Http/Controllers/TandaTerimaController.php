@@ -23,7 +23,7 @@ class TandaTerimaController extends Controller
     public function storeFakturPajak(Request $request)
     {
         $data = $request->input('resValidateFakturPm');
-    
+        dd($data);
         // Flatten the main transaction details
         $transactionDetailData = [
             'kdJenisTransaksi' => $data['kdJenisTransaksi']['#text'],
