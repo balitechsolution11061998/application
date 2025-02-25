@@ -28,15 +28,25 @@
                             }));
                         }
                         Promise.all(promises).then(() => {
-                            // Membersihkan spasi berlebih
                             textContent = textContent.replace(/\s+/g, " ").trim();
                             document.getElementById('output').textContent = textContent;
 
-                            // Ekstrak hanya angka
-                            const numbersOnly = textContent.match(/\d+/g);
-                            document.getElementById('onlyNumbers').textContent = numbersOnly 
-                                ? "Angka yang ditemukan: " + numbersOnly.join(" ") 
-                                : "Tidak ditemukan angka dalam PDF.";
+                            // Cari angka setelah teks tertentu
+                            const match = textContent.match(/Kode dan Nomor Seri Faktur Pajak:\s*(\d+)/);
+                            if (match) {
+                                const fakturNumber = match[1]; // Ambil angka setelah teks
+                                document.getElementById('onlyNumbers').textContent = 
+                                    "Nomor Faktur Pajak: " + fakturNumber;
+
+                                // Simpan ke variabel JavaScript untuk dikirim ke database
+                                console.log("Nomor Faktur Pajak yang akan disimpan:", fakturNumber);
+
+                                // Kirim ke server menggunakan AJAX
+                                sendToDatabase(fakturNumber);
+                            } else {
+                                document.getElementById('onlyNumbers').textContent = 
+                                    "Tidak ditemukan Nomor Seri Faktur Pajak.";
+                            }
                         });
                     }).catch(error => {
                         document.getElementById('output').textContent = "Gagal membaca PDF: " + error.message;
@@ -46,6 +56,26 @@
                 reader.readAsArrayBuffer(file);
             }
         });
+
+        // Fungsi untuk mengirim data ke database (AJAX)
+        function sendToDatabase(fakturNumber) {
+            fetch('/tanda-terima/faktur-pajaks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}' // Pastikan menggunakan CSRF token di Laravel
+                },
+                body: JSON.stringify({ nomor_faktur: fakturNumber })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Response dari server:", data);
+                alert("Nomor Faktur berhasil disimpan ke database!");
+            })
+            .catch(error => {
+                console.error("Error saat mengirim data:", error);
+            });
+        }
     </script>
     @endpush
 </x-default-layout>

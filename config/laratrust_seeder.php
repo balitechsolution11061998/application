@@ -33,6 +33,7 @@ return [
             'permissions' => 's',
             'profile' => 's',
             'tanda-terima' => 's',
+            'menu' => 's',
         ],
         'superadminektp' => [
             'data-kependudukan' => 's',

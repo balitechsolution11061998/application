@@ -13,24 +13,30 @@ class LoginController extends Controller
 {
     public function login(Request $request)
     {
-        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
-            // successfull authentication
-            $user = User::find(Auth::user()->id);
-
-            $user_token['token'] = $user->createToken('appToken')->accessToken;
-
+        $request->validate([
+            'login' => 'required', // Can be either email or username
+            'password' => 'required',
+        ]);
+    
+        // Check if input is an email or username
+        $fieldType = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+    
+        if (Auth::attempt([$fieldType => $request->login, 'password' => $request->password])) {
+            $user = Auth::user();
+            $token = $user->createToken('appToken')->accessToken;
+    
             return response()->json([
                 'success' => true,
-                'token' => $user_token,
+                'token' => $token,
                 'user' => $user,
             ], 200);
         } else {
-            // failure to authenticate
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to authenticate.',
             ], 401);
         }
     }
+    
 
 }

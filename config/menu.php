@@ -142,6 +142,18 @@ return [
             'iconPath'       => 4,                                // Path for the icon (if applicable)
         ],
 
+        [
+            'label'          => 'Menu',                        // Menu label for Members
+            'type'           => 'item',                           // Type (item represents a clickable menu option)
+            'permission'     => ['show-menu','menu-show'],                               // Permissions required to view this item
+            'permissionType' => 'gate',                           // Permission type (gate or policy)
+            'icon'           => 'fas',                            // Font Awesome Solid icons (FA class)
+            'iconName'       => 'fa-users',                       // Updated icon for the members section
+            'route'          => 'menu.index',                  // Route for the item members index page
+            'active'         => ['menu.*'],                    // Define conditions when this item is active (e.g., all item members routes)
+            'iconPath'       => 4,                                // Path for the icon (if applicable)
+        ],
+
         // Pages section heading
         [
             'label' => 'Pages',
