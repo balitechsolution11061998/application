@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Mail;
-
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -20,7 +19,7 @@ class SendOtpMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Your OTP Code')
+        return $this->subject('OTP')
                     ->view('emails.otp')
                     ->with(['otp' => $this->otp]);
     }

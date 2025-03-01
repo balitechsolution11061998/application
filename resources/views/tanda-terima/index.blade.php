@@ -1,81 +1,94 @@
 <x-default-layout>
-    <input type="file" id="pdfFile" />
-    <pre id="output">Teks akan muncul di sini...</pre>
-    <pre id="onlyNumbers">Angka akan muncul di sini...</pre>
+    @section('title')
+        Tanda Terima
+    @endsection
 
+    @section('breadcrumbs')
+        {{ Breadcrumbs::render('tanda-terima') }}
+    @endsection
+    @push('styles')
+        @foreach (getGlobalAssets('css') as $path)
+            {!! sprintf('<link rel="stylesheet" href="%s">', asset($path)) !!}
+        @endforeach
+        @foreach (getVendors('css') as $path)
+            {!! sprintf('<link rel="stylesheet" href="%s">', asset($path)) !!}
+        @endforeach
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+    @endpush
+        <!--begin::Card-->
+        <div class="card row">
+            <!--begin::Card header-->
+            <div class="card-title">
+                <!--begin::Search-->
+                <div class="d-flex align-items-center position-relative my-1 me-5">
+                    <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                    <input type="text" data-kt-permissions-table-filter="search" class="form-control form-control-solid w-250px ps-13" id="frmSearchTandaTerima" placeholder="Search Tanda Terima" />
+                </div>
+                <!--end::Search-->
+            </div>
+            @php $tandaTerimaCreate = Auth::user()->can('tandaterima-create'); @endphp
+            @if($tandaTerimaCreate)
+            <div class="col-md-6">
+                <a href="{{ route('tanda-terima.create') }}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus"></i> Tanda Terima
+                </a>
+
+            </div>
+            @endif
+            <!--end::Card header-->
+            <!--begin::Card body-->
+            <div class="card-body py-4">
+                <!--begin::Table-->
+                <table id="tandaterimaTable" class="table table-striped table-hover rounded">
+                    <thead>
+                        <tr>
+                            <th>...</th>
+                            <th>Receipt No</th>
+                            <th>Queue No</th>
+                            <th>Supplier</th>
+                            <th>Supplier Name</th>
+                            <th>TOP</th>
+                            <th>Date</th>
+                            <th>Due Date</th>
+                            <th>Total</th>
+                            <th>Received By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+
+                <!--end::Table-->
+            </div>
+
+            <!--end::Card body-->
+        </div>
+        <!--end::Card-->
+    @include('modals.modal')
+    <!--end::Row-->
     @push('scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-    <script>
-        document.getElementById('pdfFile').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function() {
-                    const typedarray = new Uint8Array(this.result);
-                    document.getElementById('output').textContent = "Sedang memproses PDF...";
-                    document.getElementById('onlyNumbers').textContent = "Sedang mengekstrak angka...";
+    @foreach (getGlobalAssets() as $path)
+        {!! sprintf('<script src="%s"></script>', asset($path)) !!}
+    @endforeach
+    @foreach (getVendors('js') as $path)
+            {!! sprintf('<script src="%s"></script>', asset($path)) !!}
+    @endforeach
+    <script src="{{asset('js/jquery.fancybox.min.js')}}"></script>
 
-                    pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-                        let textContent = "";
-                        let promises = [];
-                        for (let i = 1; i <= pdf.numPages; i++) {
-                            promises.push(pdf.getPage(i).then(page => {
-                                return page.getTextContent().then(text => {
-                                    text.items.forEach(item => {
-                                        textContent += item.str + " ";
-                                    });
-                                });
-                            }));
-                        }
-                        Promise.all(promises).then(() => {
-                            textContent = textContent.replace(/\s+/g, " ").trim();
-                            document.getElementById('output').textContent = textContent;
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.0.0/dist/jsQR.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xml2js/0.4.23/xml2js.min.js"></script>
+    <script src="{{asset('js/tandaterima.js')}}"></script>
+    <script src="{{asset('js/formatRupiah.js')}}"></script>
+    <script src="{{asset('js/formatDate.js')}}"></script>
+    <script src="{{asset('js/formatDate.js')}}"></script>
 
-                            // Cari angka setelah teks tertentu
-                            const match = textContent.match(/Kode dan Nomor Seri Faktur Pajak:\s*(\d+)/);
-                            if (match) {
-                                const fakturNumber = match[1]; // Ambil angka setelah teks
-                                document.getElementById('onlyNumbers').textContent = 
-                                    "Nomor Faktur Pajak: " + fakturNumber;
-
-                                // Simpan ke variabel JavaScript untuk dikirim ke database
-                                console.log("Nomor Faktur Pajak yang akan disimpan:", fakturNumber);
-
-                                // Kirim ke server menggunakan AJAX
-                                sendToDatabase(fakturNumber);
-                            } else {
-                                document.getElementById('onlyNumbers').textContent = 
-                                    "Tidak ditemukan Nomor Seri Faktur Pajak.";
-                            }
-                        });
-                    }).catch(error => {
-                        document.getElementById('output').textContent = "Gagal membaca PDF: " + error.message;
-                        document.getElementById('onlyNumbers').textContent = "Error.";
-                    });
-                };
-                reader.readAsArrayBuffer(file);
-            }
-        });
-
-        // Fungsi untuk mengirim data ke database (AJAX)
-        function sendToDatabase(fakturNumber) {
-            fetch('/tanda-terima/faktur-pajaks', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}' // Pastikan menggunakan CSRF token di Laravel
-                },
-                body: JSON.stringify({ nomor_faktur: fakturNumber })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Response dari server:", data);
-                alert("Nomor Faktur berhasil disimpan ke database!");
-            })
-            .catch(error => {
-                console.error("Error saat mengirim data:", error);
-            });
-        }
-    </script>
     @endpush
 </x-default-layout>
