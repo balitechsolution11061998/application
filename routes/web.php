@@ -37,12 +37,13 @@ use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\TpsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TandaTerimaController;
+use App\Http\Controllers\TitleController;
 use App\Models\ItemSupplier;
 use Illuminate\Support\Facades\Route;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
 // Web Routes
-Route::get('/', function(){
+Route::get('/bayuportofolio', function(){
     return view('welcomepage');
 });
 // Authentication Routes
@@ -270,6 +271,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('data-kependudukan/import', [DataKependudukanController::class, 'import'])->name('data-kependudukan.import');
     Route::post('data-kependudukan/import', [DataKependudukanController::class, 'importStore'])->name('data-kependudukan.import.store');
     Route::post('/data-kependudukan/bulk-store', [DataKependudukanController::class, 'bulkStore'])->name('data-kependudukan.bulkStore');
+    Route::resource('titles', TitleController::class);
 });
 Route::post('/generate', [OpenAIController::class, 'generate']);
 

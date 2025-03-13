@@ -85,6 +85,10 @@ Breadcrumbs::for('roles.create', function (BreadcrumbTrail $trail) {
     $trail->parent('roles.index'); // Set the parent breadcrumb to roles.index
     $trail->push('Create Role', route('roles.create')); // Add the current breadcrumb
 });
+
+Breadcrumbs::for('tanda-terima', function (BreadcrumbTrail $trail) {
+    $trail->push('Tanda Terima', route('tanda-terima.index'));
+});
 // Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
 //     $trail->push('Dashboard', route('example.dashboard.default'));
 // });

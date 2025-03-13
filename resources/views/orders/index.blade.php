@@ -230,7 +230,7 @@
                         const progressText = document.getElementById('progressText');
 
                         // Step 1: Sync data from API with progress tracking
-                        axios.get('https://supplier.m-mart.co.id/api/po/getData?filterDate=' + syncDate, {
+                        axios.get('https://supplier1.m-mart.co.id:4433/api/po/getData?filterDate=' + syncDate, {
                                 onDownloadProgress: function(progressEvent) {
                                     if (progressEvent.lengthComputable) {
                                         const percentCompleted = Math.round((progressEvent.loaded *

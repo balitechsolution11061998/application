@@ -30,15 +30,15 @@
                 </div>
                 <!--end::Search-->
             </div>
-            @php $tandaTerimaCreate = Auth::user()->can('tandaterima-create'); @endphp
-            @if($tandaTerimaCreate)
+            <!-- @php $tandaTerimaCreate = Auth::user()->can('tandaterima-create'); @endphp -->
+            <!-- @if($tandaTerimaCreate) -->
             <div class="col-md-6">
                 <a href="{{ route('tanda-terima.create') }}" class="btn btn-sm btn-primary">
                     <i class="fas fa-plus"></i> Tanda Terima
                 </a>
 
             </div>
-            @endif
+            <!-- @endif -->
             <!--end::Card header-->
             <!--begin::Card body-->
             <div class="card-body py-4">
@@ -70,7 +70,6 @@
             <!--end::Card body-->
         </div>
         <!--end::Card-->
-    @include('modals.modal')
     <!--end::Row-->
     @push('scripts')
     @foreach (getGlobalAssets() as $path)

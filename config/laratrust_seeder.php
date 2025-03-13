@@ -34,6 +34,7 @@ return [
             'profile' => 's',
             'tanda-terima' => 's',
             'menu' => 's',
+            'titles' => 's',
         ],
         'superadminektp' => [
             'data-kependudukan' => 's',

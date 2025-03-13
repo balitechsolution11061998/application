@@ -9,16 +9,7 @@
                 @if(count($menu->children))
                     <ul>
                         @foreach ($menu->children as $child)
-                            <li class="{{ count($child->children) ? 'dropdown' : '' }}">
-                                <a href="{{ $child->url ?? '#' }}" class="menu-link" data-url="{{ $child->url }}">{{ $child->name }}</a>
-                                @if(count($child->children))
-                                    <ul>
-                                        @foreach ($child->children as $subchild)
-                                            <li><a href="{{ $subchild->url ?? '#' }}" class="menu-link" data-url="{{ $subchild->url }}">{{ $subchild->name }}</a></li>
-                                        @endforeach
-                                    </ul>
-                                @endif
-                            </li>
+                            @include('components.menu-item', ['menu' => $child])
                         @endforeach
                     </ul>
                 @endif
