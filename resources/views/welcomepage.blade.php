@@ -223,6 +223,7 @@
           data-aos-duration="800"
           data-aos-delay="200">
           <!-- Skills Section -->
+          <img src="/img/background/logo_api.svg" style="width:100%;height:300px;" alt="">
           <h3
             class="mb-4 text-2xl font-semibold text-dark dark:text-white lg:pt-10 lg:text-3xl">
             My Skills
@@ -247,7 +248,7 @@
               data-aos-duration="500"
               data-aos-delay="100">
               <img
-                src="/img/background/html.png"
+                src="/img/background/css-3.png"
                 alt="CSS3"
                 class="mr-2 h-5 w-5" />
               CSS3
@@ -260,7 +261,7 @@
               data-aos-duration="500"
               data-aos-delay="200">
               <img
-                src="assets/icons/javascript.png"
+                src="/img/background/js-file.png"
                 alt="JavaScript"
                 class="mr-2 h-5 w-5" />
               JavaScript
@@ -273,7 +274,7 @@
               data-aos-duration="500"
               data-aos-delay="300">
               <img
-                src="assets/icons/react.png"
+                src="/img/background/physics.png"
                 alt="React.js"
                 class="mr-2 h-5 w-5" />
               React.js
@@ -286,7 +287,7 @@
               data-aos-duration="500"
               data-aos-delay="400">
               <img
-                src="assets/icons/nodejs.png"
+                src="/img/background/node-js.png"
                 alt="Node.js"
                 class="mr-2 h-5 w-5" />
               Node.js
@@ -325,10 +326,10 @@
               data-aos-duration="500"
               data-aos-delay="700">
               <img
-                src="assets/icons/git.png"
+                src="/img/background/gitlab.png"
                 alt="Git & GitHub"
                 class="mr-2 h-5 w-5" />
-              Git & GitHub
+              Gitlab
             </div>
           </div>
 
