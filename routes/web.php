@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\Route;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
 // Web Routes
-Route::get('/bayuportofolio', function(){
+Route::get('/', function(){
     return view('welcomepage');
 });
 // Authentication Routes
