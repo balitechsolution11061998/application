@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\StoreController;
 use App\Http\Controllers\Api\ItemSupplierController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\SkillController;
 use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CostChangeController;
@@ -36,6 +37,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
 
+Route::apiResource('skills', SkillController::class);
 
 
 Route::post('/pr/store', [PurchaseRequisitionController::class, 'store']);
