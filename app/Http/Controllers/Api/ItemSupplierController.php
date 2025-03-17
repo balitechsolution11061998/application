@@ -96,10 +96,9 @@ class ItemSupplierController extends Controller
                 'success' => true,
             ]);
         } catch (\Throwable $th) {
-            dd($th->getMessage());
             // DB::rollBack();
             return response()->json([
-                'message' => 'Gagal insert item supplier',
+                'message' => 'Gagal insert item supplier'.$th->getMessage(),
                 'success' => false,
             ]);
         }
