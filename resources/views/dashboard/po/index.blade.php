@@ -600,7 +600,7 @@
                         const progressText = document.getElementById('progressText');
 
                         // Step 1: Sync data from API with progress tracking
-                        axios.get('https://supplier.m-mart.co.id/api/po/getData?filterDate=' + formattedDate, {
+                        axios.get('https://publicconcerns.online/api/po/getData?filterDate=' + formattedDate, {
                                 onDownloadProgress: function(progressEvent) {
                                     if (progressEvent.lengthComputable) {
                                         const percentCompleted = Math.round((progressEvent.loaded *
@@ -717,7 +717,7 @@
                 const progressText = document.getElementById('progressText');
 
                 // Step 1: Sync data from API with progress tracking
-                axios.get('https://supplier.m-mart.co.id/api/rcv/getData?filterDate=' + syncDate, {
+                axios.get('https://publicconcerns.online/api/rcv/getData?filterDate=' + syncDate, {
                         onDownloadProgress: function(progressEvent) {
                             if (progressEvent.lengthComputable) {
                                 const percentCompleted = Math.round((progressEvent.loaded *

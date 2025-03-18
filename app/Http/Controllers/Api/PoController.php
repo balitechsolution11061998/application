@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\DiffCostPo;
+use App\Models\OrdHead;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,40 @@ use Spatie\Activitylog\Models\Activity; // Import the Activity model
 class PoController extends Controller
 {
 
+    public function getData(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            $approval_date = $request->filterDate;
+
+            $orders = [];
+            $count = 0; // Initialize a counter for the successfully loaded records
+
+            // Use chunking to process data in smaller parts
+            OrdHead::with(['ordDetail', 'store', 'suppliers'])->where('approval_date', $approval_date)
+                ->chunk(100, function ($chunk) use (&$orders, &$count) {
+                    foreach ($chunk as $order) {
+                        $orders[] = $order;
+                        $count++; // Increment the counter for each successfully loaded record
+                    }
+                });
+
+            return response()->json([
+                'title' => 'Sync PO Successfully',
+                'message' => 'Data Order Found',
+                'data' => $orders,
+                'count' => $count, // Include the count in the response
+                'success' => true
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'title' => 'Error',
+                'message' => 'Failed to load data order',
+                'error' => $e->getMessage(),
+                'success' => false
+            ], 500);
+        }
+    }
     public function store(Request $request)
     {
         $successCount = 0;
