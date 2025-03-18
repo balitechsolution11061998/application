@@ -24,7 +24,7 @@ class PoController extends Controller
             $count = 0; // Initialize a counter for the successfully loaded records
 
             // Use chunking to process data in smaller parts
-            OrdHead::with(['ordDetail', 'store', 'suppliers'])->where('approval_date', $approval_date)
+            OrdHead::with(['ordsku', 'stores', 'suppliers'])->where('approval_date', $approval_date)
                 ->chunk(100, function ($chunk) use (&$orders, &$count) {
                     foreach ($chunk as $order) {
                         $orders[] = $order;
