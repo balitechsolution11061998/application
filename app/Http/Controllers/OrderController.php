@@ -227,14 +227,14 @@ class OrderController extends Controller
             $data = $this->prepareOrderData($orderDetails, $orderItems);
 
             // Log system usage
-            SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderData');
+            // SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderData');
 
             // Return the view with data
             return view('frontend.po.show', compact('data'));
         } catch (\Exception $e) {
             dd($e->getMessage());
             // Log system usage in case of an error
-            SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderDataError');
+            // SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderDataError');
 
             // Log the exception details for debugging
             activity()
@@ -653,13 +653,13 @@ class OrderController extends Controller
             $data = $this->prepareOrderData($orderDetails, $orderItems);
 
             // Log system usage
-            SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderData');
+            // SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderData');
 
             // Return the view with data
             return view('orders.show', compact('data'));
         } catch (\Exception $e) {
             // Log system usage in case of an error
-            SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderDataError');
+            // SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderDataError');
 
             // Log the exception details for debugging
             activity()
@@ -894,7 +894,7 @@ class OrderController extends Controller
                         ->log('Fetched order data'); // Custom log message
                 }
 
-                SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderData');
+                // SystemUsageHelper::logUsage($startTime, $startMemory, now(), 'orderData');
             }
         }
     }

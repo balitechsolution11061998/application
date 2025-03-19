@@ -79,6 +79,7 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             /* Light separator line */
         }
+        
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 

@@ -67,7 +67,7 @@ class SendMessagePo implements ShouldQueue
                 ->log('Failed to send Purchase Order email');
         } finally {
             // Log the system usage regardless of success or failure
-            SystemUsageHelper::logUsage($startTime, $startMemory);
+            // SystemUsageHelper::logUsage($startTime, $startMemory);
         }
     }
 }

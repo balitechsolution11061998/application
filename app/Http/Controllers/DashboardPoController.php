@@ -6,11 +6,13 @@ use App\Models\OrdHead;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class DashboardPoController extends Controller
 {
     public function index()
     {
+        addJavascriptFile('/js/dashboard/po/index.js');
         return view('dashboard.po.index');
     }
 
@@ -169,6 +171,38 @@ class DashboardPoController extends Controller
         }
     }
 
+    public function followUp(Request $request)
+    {
+        // Query to fetch data with optimized columns and conditions
+        $query = OrdHead::select(
+                    'order_no',
+                    'approval_date',
+                    'not_after_date',
+                    'status'
+                )
+                ->whereNotIn('status', ['Completed','Incompleted','Reject','Expired']);
+
+        // Use DataTables with server-side processing
+        return DataTables::of($query)
+            ->addColumn('days_since_approval', function($row) {
+                // Calculate days since approval with fallback logic
+                $daysAgo = 4; // Start with 4 days ago
+                while ($daysAgo >= 0) {
+                    $targetDate = now()->subDays($daysAgo)->toDateString();
+                    if ($row->approval_date == $targetDate) {
+                        return $daysAgo . ' hari yang lalu';
+                    }
+                    $daysAgo--; // Decrement to check for the previous day
+                }
+                return 'Lebih dari 4 hari yang lalu'; // Fallback if no match is found
+            })
+            ->addColumn('action', function($row) {
+                // Add action column
+                return '<a href="#" class="btn btn-sm btn-primary">View</a>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
 
     public function getPOCountPerDate(Request $request)
     {

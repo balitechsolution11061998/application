@@ -27,19 +27,22 @@
 
     <!--begin::Global Stylesheets Bundle(used by all pages)-->
     @foreach (getGlobalAssets('css') as $path)
-        {!! sprintf('<link rel="stylesheet" href="%s">', asset($path)) !!}
+    {!! sprintf('
+    <link rel="stylesheet" href="%s">', asset($path)) !!}
     @endforeach
     <!--end::Global Stylesheets Bundle-->
 
     <!--begin::Vendor Stylesheets(used by this page)-->
     @foreach (getVendors('css') as $path)
-        {!! sprintf('<link rel="stylesheet" href="%s">', asset($path)) !!}
+    {!! sprintf('
+    <link rel="stylesheet" href="%s">', asset($path)) !!}
     @endforeach
     <!--end::Vendor Stylesheets-->
 
     <!--begin::Custom Stylesheets(optional)-->
     @foreach (getCustomCss() as $path)
-        {!! sprintf('<link rel="stylesheet" href="%s">', asset($path)) !!}
+    {!! sprintf('
+    <link rel="stylesheet" href="%s">', asset($path)) !!}
     @endforeach
     <!--end::Custom Stylesheets-->
 
@@ -85,6 +88,45 @@
             color: white;
             /* White text for cancel button */
         }
+
+        .card-label {
+            font-family: 'Arial', sans-serif;
+            /* Ganti dengan font yang diinginkan */
+            font-weight: bold;
+            /* Ketebalan font */
+            font-size: 1.5rem;
+            /* Ukuran font */
+            color: #ffffff;
+            /* Warna teks (putih) */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            /* Efek bayangan teks */
+            letter-spacing: 1px;
+            /* Jarak antar huruf */
+        }
+
+        .custom-font-effect {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            letter-spacing: 1px;
+        }
+
+        .custom-large-text {
+            font-size: 2.5rem;
+            /* Sesuaikan ukuran sesuai kebutuhan */
+        }
+
+        .progress {
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #e9ecef;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: width 0.5s ease-in-out;
+        }
     </style>
 </head>
 <!--end::Head-->
@@ -101,15 +143,15 @@
 
     <!--begin::Javascript-->
     @foreach (getGlobalAssets() as $path)
-        {!! sprintf('<script src="%s"></script>', asset($path)) !!}
+    {!! sprintf('<script src="%s"></script>', asset($path)) !!}
     @endforeach
 
     @foreach (getVendors('js') as $path)
-        {!! sprintf('<script src="%s"></script>', asset($path)) !!}
+    {!! sprintf('<script src="%s"></script>', asset($path)) !!}
     @endforeach
 
     @foreach (getCustomJs() as $path)
-        {!! sprintf('<script src="%s"></script>', asset($path)) !!}
+    {!! sprintf('<script src="%s"></script>', asset($path)) !!}
     @endforeach
 
     <script>
@@ -119,7 +161,7 @@
     @stack('scripts')
 
     <script>
-    if ('serviceWorker' in navigator) {
+        if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
                     console.log('ServiceWorker registration successful with scope: ', registration.scope);
