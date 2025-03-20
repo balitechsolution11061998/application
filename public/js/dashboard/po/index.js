@@ -437,7 +437,7 @@ function fetchDataCountPerRegion() {
                     legend.data.setAll(series.dataItems);
 
                     // Adjust chart width to match container
-                    chart.set("width", $("#kt_amcharts_3").width()); // Corrected line
+                    chart.set("width", $("#kt_amcharts_3").width());
                 },
                 error: function (error) {
                     console.error('Error fetching data:', error);
@@ -463,6 +463,7 @@ function fetchDataCountPerRegion() {
         setInterval(fetchDataAndUpdateChart, 60000); // Refresh every 60 seconds
     });
 }
+
 
 
 

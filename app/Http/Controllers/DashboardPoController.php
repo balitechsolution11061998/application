@@ -278,7 +278,7 @@ class DashboardPoController extends Controller
             // Query to count POs per region
             $poCounts = DB::table('ordhead')
                 ->join('store', 'ordhead.ship_to', '=', 'store.store')
-                ->select('region', DB::raw('COUNT(order_no) as total_count'))
+                ->select('region.name as region', DB::raw('COUNT(order_no) as total_count'))
                 ->groupBy('region')
                 ->get();
     
