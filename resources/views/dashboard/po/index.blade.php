@@ -468,41 +468,22 @@
                     <!--end::Col-->
                     <!--begin::Col-->
                     <div class="col-xxl-4">
+
                         <!--begin::Engage widget 1-->
                         <div class="card h-md-100" dir="ltr">
                             <!--begin::Body-->
                             <div class="card-body d-flex flex-column flex-center">
-                                <!--begin::Heading-->
-                                <div class="mb-2">
-                                    <!--begin::Title-->
-                                    <h1 class="fw-semibold text-gray-800 text-center lh-lg">Try out our
-                                        <br />new
-                                        <span class="fw-bolder">Invoice Manager</span>
-                                    </h1>
-                                    <!--end::Title-->
-                                    <!--begin::Illustration-->
-                                    <div class="py-10 text-center">
-                                        <img src="assets/media/svg/illustrations/easy/2.svg" class="theme-light-show w-200px" alt="" />
-                                        <img src="assets/media/svg/illustrations/easy/2-dark.svg" class="theme-dark-show w-200px" alt="" />
-                                    </div>
-                                    <!--end::Illustration-->
-                                </div>
-                                <!--end::Heading-->
-                                <!--begin::Links-->
-                                <div class="text-center mb-1">
-                                    <!--begin::Link-->
-                                    <a class="btn btn-sm btn-primary me-2" data-bs-target="#kt_modal_create_account" data-bs-toggle="modal">Try Now</a>
-                                    <!--end::Link-->
-                                    <!--begin::Link-->
-                                    <a class="btn btn-sm btn-light" href="apps/ecommerce/sales/listing.html">Learn More</a>
-                                    <!--end::Link-->
-                                </div>
-                                <!--end::Links-->
+                            <div id="kt_amcharts_3" style="width: 100%; height: 400px;"></div>
+
                             </div>
                             <!--end::Body-->
                         </div>
                         <!--end::Engage widget 1-->
+
+                        <!--begin::Chart Container-->
+                        <!--end::Chart Container-->
                     </div>
+
                     <!--end::Col-->
                 </div>
                 <!--end::Row-->
@@ -526,7 +507,7 @@
                                                 <th>Nomor PO</th>
                                                 <th>Approval Date</th>
                                                 <th>xpired Date</th>
-                                                <th>Tanggal Hari</th>
+                                                <th>Days</th>
                                                 <th>Status</th>
                                                 <th>Tindakan</th>
 

@@ -374,9 +374,102 @@ function renderPOFollowUpTable() {
     });
 }
 
+function fetchDataCountPerRegion() {
+    am5.ready(function () {
+        // Create root element
+        var root = am5.Root.new("kt_amcharts_3");
+
+        // Set themes
+        root.setThemes([
+            am5themes_Animated.new(root)
+        ]);
+
+        // Create chart
+        var chart = root.container.children.push(am5percent.PieChart.new(root, {
+            layout: root.verticalLayout
+        }));
+
+        // Create series
+        var series = chart.series.push(am5percent.PieSeries.new(root, {
+            alignLabels: true,
+            calculateAggregates: true,
+            valueField: "value",
+            categoryField: "category"
+        }));
+
+        series.slices.template.setAll({
+            strokeWidth: 3,
+            stroke: am5.color(0xffffff)
+        });
+
+        series.labelsContainer.set("paddingTop", 30);
+
+        // Set up adapters for variable slice radius
+        series.slices.template.adapters.add("radius", function (radius, target) {
+            var dataItem = target.dataItem;
+            var high = series.getPrivate("valueHigh");
+
+            if (dataItem) {
+                var value = target.dataItem.get("valueWorking", 0);
+                return radius * value / high;
+            }
+            return radius;
+        });
+
+        // Function to fetch data via AJAX and update chart
+        function fetchDataAndUpdateChart() {
+            $.ajax({
+                url: '/dashboard-po/purchase-orders/count-per-region', // Replace with your API endpoint
+                method: 'GET',
+                success: function (response) {
+                    // Transform response data to match chart's expected format
+                    var chartData = response.map(function(item) {
+                        return {
+                            category: item.region,
+                            value: item.total_count
+                        };
+                    });
+
+                    series.data.setAll(chartData);
+                    console.log(chartData, 'chartData');
+
+                    // Update legend
+                    legend.data.setAll(series.dataItems);
+
+                    // Adjust chart width if necessary
+                    chart.set("width", $("#kt_amcharts_3").width()); // Corrected line
+                },
+                error: function (error) {
+                    console.error('Error fetching data:', error);
+                }
+            });
+        }
+
+        // Create legend
+        var legend = chart.children.push(am5.Legend.new(root, {
+            centerX: am5.p50,
+            x: am5.p50,
+            marginTop: 15,
+            marginBottom: 15
+        }));
+
+        // Initial data fetch and chart setup
+        fetchDataAndUpdateChart();
+
+        // Play initial series animation
+        series.appear(1000, 100);
+
+        // Optionally, set up a timer or event to refresh data periodically
+        setInterval(fetchDataAndUpdateChart, 60000); // Refresh every 60 seconds
+    });
+}
+
+
+
 // Render tabel saat halaman dimuat
 document.addEventListener("DOMContentLoaded", () => {
     renderPOFollowUpTable();
+    fetchDataCountPerRegion();
 });
 
 

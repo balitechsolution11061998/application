@@ -12,10 +12,13 @@ class DashboardPoController extends Controller
 {
     public function index()
     {
+        // Add custom JavaScript file
         addJavascriptFile('/js/dashboard/po/index.js');
+    
+        // Add AMCharts library files 
+        // Return the view
         return view('dashboard.po.index');
     }
-
     public function fetchDataPerStatus(Request $request)
     {
         // Start time for performance measurement
@@ -268,89 +271,37 @@ class DashboardPoController extends Controller
             return response()->json(['error' => 'Failed to fetch PO count per date'], 500);
         }
     }
-    public function getPOCountPerStore(Request $request)
+
+    public function getPOCountPerRegion(Request $request)
     {
-        // Get the selected store IDs from the request
-        $selectedStores = $request->input('stores', []);
-
-        // Ensure $selectedStores is an array
-        if (!is_array($selectedStores)) {
-            $selectedStores = [$selectedStores]; // Convert to array if it's a single string
-        }
-
-        // Convert selected store IDs from strings to integers
-        $selectedStores = array_map('intval', $selectedStores);
-
-        // Get the start and end dates from the request
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-
-        // Fetch purchase orders grouped by ship_to and status
         try {
-            // First, get the total count of purchase orders without any filtering
-            $totalCountQuery = OrdHead::select(DB::raw('count(*) as total_count'));
-
-            // Get the total count result
-            $totalCountResult = $totalCountQuery->first();
-            $totalCount = $totalCountResult->total_count; // Access the total_count property
-
-            // Now, fetch the counts per store and status
-            $query = OrdHead::select(
-                    'ordhead.ship_to',
-                    'store.store_name', // Include store name from the stores table
-                    'ordhead.status', // Include status in the selection
-                    DB::raw('count(*) as count')
-                )
-                ->join('store', 'ordhead.ship_to', '=', 'store.store') // Join with the stores table
-                ->groupBy('ordhead.ship_to', 'store.store_name', 'ordhead.status') // Group by ship_to, store_name, and status
-                ->orderBy('store.store_name', 'asc') // Order by store_name
-                ->orderBy('ordhead.status', 'asc'); // Order by status
-
-
-
-            // Apply date filtering if both start and end dates are provided
-            if ($startDate && $endDate) {
-                $query->whereBetween('ordhead.approval_date', [$startDate, $endDate]); // Adjust the column name as necessary
-                          // Apply store filtering if selected
-                if (!empty($selectedStores)) {
-                    $query->whereIn('ordhead.ship_to', $selectedStores);
-                } else {
-                    // Optionally, you can add a condition to filter for a specific store if needed
-                    $query->where('ordhead.ship_to', 40); // Replace 40 with the actual identifier for the store you want to fetch
-                }
-            }
-
-            $data = $query->get();
-
-            // Prepare the response
-            $categories = [];
-            $counts = [];
-            $percentages = [];
-
-            // Structure the response to include counts and percentages per store and status
-            foreach ($data as $item) {
-                $categories[] = $item->store_name . ' - ' . $item->status; // Category without count
-                $counts[] = $item->count; // Get the counts
-                $percentages[] = $totalCount > 0 ? ($item->count / $totalCount) * 100 : 0; // Calculate percentage
-            }
-
-            return response()->json([
-                'categories' => $categories,
-                'counts' => $counts,
-                'percentages' => $percentages, // Include percentages in the response
-            ]);
+            // Query to count POs per region
+            $poCounts = DB::table('ordhead')
+                ->join('store', 'ordhead.ship_to', '=', 'store.store')
+                ->select('region', DB::raw('COUNT(order_no) as total_count'))
+                ->groupBy('region')
+                ->get();
+    
+            // Calculate total count of POs
+            $totalCount = $poCounts->sum('total_count');
+    
+            // Format response with percentage calculation
+            $response = $poCounts->map(function ($item) use ($totalCount) {
+                return [
+                    'region' => $item->region,
+                    'total_count' => $item->total_count,
+                    'percentage' => $totalCount > 0 ? ($item->total_count / $totalCount) * 100 : 0
+                ];
+            });
+    
+            // Return JSON response
+            return response()->json($response);
         } catch (\Exception $e) {
-            // Log the error using Spatie Activity Log
-            activity()
-                ->performedOn(new OrdHead())
-                ->log('Error fetching PO count per store: ' . $e->getMessage(), [
-                    'error' => $e->getMessage()
-                ]);
-
-            // Return an error response
-            return response()->json(['error' => 'Failed to fetch PO count per store'], 500);
+            // Handle any errors that may occur
+            return response()->json(['error' => 'An error occurred while fetching data: ' . $e->getMessage()], 500);
         }
     }
+    
 
 
 

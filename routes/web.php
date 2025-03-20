@@ -115,6 +115,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/fetchDataPerStatus', [DashboardPoController::class, 'fetchDataPerStatus'])->name('progress');
         Route::get('/purchase-orders/count-per-date', [DashboardPoController::class, 'getPOCountPerDate'])->name('getPOCountPerDate');
         Route::get('/purchase-orders/followUp', [DashboardPoController::class, 'followUp'])->name('followUp');
+        Route::get('/purchase-orders/count-per-region', [DashboardPoController::class, 'getPOCountPerRegion'])->name('getPOCountPerRegion');
 
     });
 
