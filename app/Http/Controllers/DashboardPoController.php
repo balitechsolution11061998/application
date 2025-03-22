@@ -275,27 +275,49 @@ class DashboardPoController extends Controller
     public function getPOCountPerRegion(Request $request)
     {
         try {
-            // Query to count POs per region
+            // Query to count POs per region and status
             $poCounts = DB::table('ordhead')
                 ->join('store', 'ordhead.ship_to', '=', 'store.store')
-                ->select('region.name as region', DB::raw('COUNT(order_no) as total_count'))
-                ->groupBy('region')
+                ->join('region','region.id','store.region')
+                ->select(
+                    'region.name as region', // Ambil kolom region
+                    'ordhead.status', // Ambil kolom status
+                    DB::raw('COUNT(ordhead.order_no) as total_count') // Hitung jumlah PO
+                )
+                ->groupBy('region.name', 'ordhead.status') // Group by region dan status
                 ->get();
     
-            // Calculate total count of POs
-            $totalCount = $poCounts->sum('total_count');
+            // Format response
+            $response = [];
+            foreach ($poCounts as $item) {
+                $region = $item->region;
+                $status = $item->status;
+                $totalCount = $item->total_count;
     
-            // Format response with percentage calculation
-            $response = $poCounts->map(function ($item) use ($totalCount) {
-                return [
-                    'region' => $item->region,
-                    'total_count' => $item->total_count,
-                    'percentage' => $totalCount > 0 ? ($item->total_count / $totalCount) * 100 : 0
-                ];
-            });
+                // Jika region belum ada di response, tambahkan
+                if (!isset($response[$region])) {
+                    $response[$region] = [
+                        'region' => $region,
+                        'total_count' => 0,
+                        'statuses' => []
+                    ];
+                }
+    
+                // Tambahkan status dan jumlah ke region
+                $response[$region]['statuses'][$status] = $totalCount;
+                $response[$region]['total_count'] += $totalCount;
+            }
+    
+            // Hitung persentase per region
+            $totalCountAllRegions = array_sum(array_column($response, 'total_count'));
+            foreach ($response as &$regionData) {
+                $regionData['percentage'] = $totalCountAllRegions > 0 
+                    ? ($regionData['total_count'] / $totalCountAllRegions) * 100 
+                    : 0;
+            }
     
             // Return JSON response
-            return response()->json($response);
+            return response()->json(array_values($response));
         } catch (\Exception $e) {
             // Handle any errors that may occur
             return response()->json(['error' => 'An error occurred while fetching data: ' . $e->getMessage()], 500);

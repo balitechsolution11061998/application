@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\SkillController;
 use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CostChangeController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseRequisitionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -68,3 +69,5 @@ Route::prefix('rcv')->group(function () {
     Route::get('/getData', [RcvController::class, 'getData']);
 });
 Route::post('/cost-change/store', [CostChangeController::class, 'store']);
+
+Route::apiResource('products', ProductController::class);

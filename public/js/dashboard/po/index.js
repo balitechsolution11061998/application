@@ -386,7 +386,8 @@ function fetchDataCountPerRegion() {
 
         // Create chart
         var chart = root.container.children.push(am5percent.PieChart.new(root, {
-            layout: root.verticalLayout
+            layout: root.verticalLayout,
+            innerRadius: am5.percent(40) // Membuat donut chart
         }));
 
         // Create series
@@ -394,27 +395,34 @@ function fetchDataCountPerRegion() {
             alignLabels: true,
             calculateAggregates: true,
             valueField: "value",
-            categoryField: "category"
+            categoryField: "category",
+            fillField: "color" // Menambahkan field untuk warna kustom
         }));
 
+        // Set up slice appearance
         series.slices.template.setAll({
-            strokeWidth: 3,
-            stroke: am5.color(0xffffff)
+            strokeWidth: 2,
+            stroke: am5.color(0xffffff), // Warna stroke slice (putih)
+            fillOpacity: 0.9,
+            templateField: "sliceSettings" // Menggunakan pengaturan kustom per slice
         });
 
-        series.labelsContainer.set("paddingTop", 30);
-
-        // Set up adapters for variable slice radius
-        series.slices.template.adapters.add("radius", function (radius, target) {
-            var dataItem = target.dataItem;
-            var high = series.getPrivate("valueHigh");
-
-            if (dataItem) {
-                var value = target.dataItem.get("valueWorking", 0);
-                return radius * value / high;
-            }
-            return radius;
+        // Add hover state
+        series.slices.template.states.create("hover", {
+            fillOpacity: 1,
+            scale: 1.05 // Membesar saat hover
         });
+
+        // Add tooltip
+        series.slices.template.set("tooltip", am5.Tooltip.new(root, {
+            labelText: "[bold]{category}[/]\nTotal: {value}\n{statusInfo}",
+            background: am5.RoundedRectangle.new(root, {
+                fill: am5.color(0xffffff), // Background tooltip (putih)
+                stroke: am5.color(0xcccccc), // Warna stroke tooltip (abu-abu)
+                strokeWidth: 1
+            }),
+            labelFill: am5.color(0x333333) // Warna teks tooltip (abu-abu gelap)
+        }));
 
         // Function to fetch data via AJAX and update chart
         function fetchDataAndUpdateChart() {
@@ -422,16 +430,52 @@ function fetchDataCountPerRegion() {
                 url: '/dashboard-po/purchase-orders/count-per-region', // Replace with your API endpoint
                 method: 'GET',
                 success: function (response) {
+                    // Palet warna kustom (tanpa hitam)
+                    var colorPalette = [
+                        am5.color("#FF6F61"), // Coral
+                        am5.color("#6B5B95"), // Ultra Violet
+                        am5.color("#88B04B"), // Greenery
+                        am5.color("#F7CAC9"), // Rose Quartz
+                        am5.color("#92A8D1"), // Serenity
+                        am5.color("#955251"), // Marsala
+                        am5.color("#B565A7"), // Radiant Orchid
+                        am5.color("#009B77"), // Emerald
+                        am5.color("#DD4124"), // Tangerine Tango
+                        am5.color("#D65076") // Honeysuckle
+                    ];
+
+                    console.log("Color Palette:", colorPalette); // Debugging
+
                     // Transform response data to match chart's expected format
-                    var chartData = response.map(function(item) {
+                    var chartData = response.map(function(item, index) {
+                        // Format status info for tooltip
+                        var statusInfo = Object.entries(item.statuses)
+                            .map(([status, count]) => `${status}: ${count}`)
+                            .join("\n");
+
+                        var color = colorPalette[index % colorPalette.length];
+                        console.log(`Region: ${item.region}, Color: ${color}`); // Debugging
+
                         return {
                             category: item.region,
-                            value: item.total_count
+                            value: item.total_count,
+                            statusInfo: statusInfo,
+                            color: color, // Menggunakan warna dari palet
+                            sliceSettings: {
+                                fill: am5.Gradient.new(root, {
+                                    stops: [
+                                        { color: color, opacity: 1 },
+                                        { color: am5.color(0xffffff), opacity: 0.3 } // Gradient ke putih
+                                    ],
+                                    rotation: 90
+                                })
+                            }
                         };
                     });
 
+                    console.log("Chart Data:", chartData); // Debugging
+
                     series.data.setAll(chartData);
-                    console.log(chartData, 'chartData');
 
                     // Update legend
                     legend.data.setAll(series.dataItems);
@@ -450,7 +494,10 @@ function fetchDataCountPerRegion() {
             centerX: am5.p50,
             x: am5.p50,
             marginTop: 15,
-            marginBottom: 15
+            marginBottom: 15,
+            fill: am5.color(0xffffff), // Background legend (putih)
+            stroke: am5.color(0xcccccc), // Warna stroke legend (abu-abu)
+            strokeWidth: 1
         }));
 
         // Initial data fetch and chart setup
@@ -463,11 +510,6 @@ function fetchDataCountPerRegion() {
         setInterval(fetchDataAndUpdateChart, 60000); // Refresh every 60 seconds
     });
 }
-
-
-
-
-
 // Render tabel saat halaman dimuat
 document.addEventListener("DOMContentLoaded", () => {
     renderPOFollowUpTable();
