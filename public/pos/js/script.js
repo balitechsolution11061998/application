@@ -14,18 +14,72 @@ function initApp() {
     isShowModalReceipt: false,
     receiptNo: null,
     receiptDate: null,
+    isLoading: false,
+    isLoggedIn: false,
+    showUserModal:false,
+    username: "", // Username input
+    password: "", // Password input
+    user: {      // Tambahkan state user
+      name: "",  // Nama pengguna
+      role: ""   // Peran pengguna
+    },
+    // Login function
+    login() {
+      if (!this.username || !this.password) {
+        alert("Username dan password harus diisi!");
+        return;
+      }
+
+      // Contoh validasi (ganti dengan logika autentikasi yang sebenarnya)
+      if (this.username === "admin" && this.password === "password") {
+        this.isLoggedIn = true;
+        this.user.name = "Admin"; // Set nama pengguna
+        this.user.role = "Admin"; // Set peran pengguna
+        localStorage.setItem("isLoggedIn", true); // Simpan status login
+      } else {
+        alert("Username atau password salah!");
+      }
+    },
+
+    // Logout function
+    logout() {
+      this.isLoggedIn = false;
+      this.username = "";
+      this.password = "";
+      this.user.name = ""; // Reset nama pengguna
+      this.user.role = ""; // Reset peran pengguna
+      localStorage.removeItem("isLoggedIn"); // Hapus status login
+    },
+
 
     // Inisialisasi database (ambil data dari API)
     async initDatabase() {
       try {
-        const productsFromAPI = await this.fetchProductsFromAPI(); // Ambil data dari API
-        this.products = productsFromAPI; // Simpan data ke state aplikasi
-        console.log("Products loaded from API:", this.products); // Log data untuk memastikan
+        this.isLoading = true; // Set global loading state
+        const productsFromAPI = await this.fetchProductsFromAPI();
+
+        // Tambahkan state isLoading untuk setiap produk
+        this.products = productsFromAPI.map(product => ({
+          ...product,
+          isLoading: true, // Set loading state untuk setiap produk
+        }));
+
+        console.log("Products loaded from API:", this.products);
       } catch (error) {
         console.error("Failed to load products from API:", error);
-        this.products = []; // Set products ke array kosong jika terjadi error
+        this.products = [];
+      } finally {
+        this.isLoading = false; // Sembunyikan global loading state
       }
     },
+
+
+
+    // Fungsi untuk menyembunyikan spinner setelah gambar selesai dimuat
+    handleImageLoad(product) {
+      product.isLoading = false; // Sembunyikan spinner untuk produk ini
+    },
+
 
     // Fungsi untuk mengambil data dari API
     async fetchProductsFromAPI() {
@@ -76,22 +130,49 @@ function initApp() {
     },
 
     // Fungsi untuk menambahkan produk ke keranjang
+    // addToCart(product) {
+    //   const index = this.findCartIndex(product);
+    //   if (index === -1) {
+    //     this.cart.push({
+    //       productId: product.id,
+    //       image: product.image,
+    //       name: product.name,
+    //       price: product.price,
+    //       option: product.option,
+    //       qty: 1,
+    //     });
+    //   } else {
+    //     this.cart[index].qty += 1;
+    //   }
+    //   this.beep();
+    //   this.updateChange();
+    // },
     addToCart(product) {
       const index = this.findCartIndex(product);
-      if (index === -1) {
-        this.cart.push({
-          productId: product.id,
-          image: product.image,
-          name: product.name,
-          price: product.price,
-          option: product.option,
-          qty: 1,
-        });
-      } else {
-        this.cart[index].qty += 1;
-      }
-      this.beep();
-      this.updateChange();
+
+      // Tampilkan spinner untuk produk yang sedang diproses
+      product.isLoading = true;
+
+      // Simulasikan proses loading (opsional)
+      setTimeout(() => {
+        if (index === -1) {
+          this.cart.push({
+            productId: product.id,
+            image: product.image,
+            name: product.name,
+            price: product.price,
+            option: product.option,
+            qty: 1,
+          });
+        } else {
+          this.cart[index].qty += 1;
+        }
+
+        // Sembunyikan spinner setelah selesai
+        product.isLoading = false;
+        this.beep();
+        this.updateChange();
+      }, 500); // Simulasi loading selama 500ms
     },
 
     // Fungsi untuk mencari index produk di keranjang
@@ -100,19 +181,42 @@ function initApp() {
     },
 
     // Fungsi untuk menambah/mengurangi jumlah produk di keranjang
+    // addQty(item, qty) {
+    //   const index = this.cart.findIndex((i) => i.productId === item.productId);
+    //   if (index === -1) return;
+
+    //   const afterAdd = item.qty + qty;
+    //   if (afterAdd === 0) {
+    //     this.cart.splice(index, 1);
+    //     this.clearSound();
+    //   } else {
+    //     this.cart[index].qty = afterAdd;
+    //     this.beep();
+    //   }
+    //   this.updateChange();
+    // },
     addQty(item, qty) {
       const index = this.cart.findIndex((i) => i.productId === item.productId);
       if (index === -1) return;
 
-      const afterAdd = item.qty + qty;
-      if (afterAdd === 0) {
-        this.cart.splice(index, 1);
-        this.clearSound();
-      } else {
-        this.cart[index].qty = afterAdd;
-        this.beep();
-      }
-      this.updateChange();
+      // Tampilkan spinner
+      item.isLoading = true;
+
+      // Simulasikan proses loading (opsional)
+      setTimeout(() => {
+        const afterAdd = item.qty + qty;
+        if (afterAdd === 0) {
+          this.cart.splice(index, 1);
+          this.clearSound();
+        } else {
+          this.cart[index].qty = afterAdd;
+          this.beep();
+        }
+
+        // Sembunyikan spinner setelah selesai
+        item.isLoading = false;
+        this.updateChange();
+      }, 500); // Simulasi loading selama 500ms
     },
 
     // Fungsi untuk menambah uang tunai
@@ -166,7 +270,7 @@ function initApp() {
 
     // Fungsi untuk memformat tanggal
     dateFormat(date) {
-      const formatter = new Intl.DateTimeFormat('id', { dateStyle: 'short', timeStyle: 'short'});
+      const formatter = new Intl.DateTimeFormat('id', { dateStyle: 'short', timeStyle: 'short' });
       return formatter.format(date);
     },
 
@@ -208,7 +312,7 @@ function initApp() {
       const sound = new Audio();
       sound.src = src;
       sound.play();
-      sound.onended = () => delete(sound);
+      sound.onended = () => delete (sound);
     },
 
     // Fungsi untuk mencetak struk dan melanjutkan
