@@ -46,6 +46,7 @@ use Telegram\Bot\Laravel\Facades\Telegram;
 Route::get('/', function(){
     return view('welcomepage');
 });
+
 // Authentication Routes
 
 
