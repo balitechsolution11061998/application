@@ -23,6 +23,9 @@ function initApp() {
       name: "",  // Nama pengguna
       role: ""   // Peran pengguna
     },
+    logoutTimer: null, // Timer untuk auto logout
+    inactivityDuration: 5 * 60 * 1000, // 5 menit dalam milidetik
+
     // Login function
     login() {
       if (!this.username || !this.password) {
@@ -36,6 +39,7 @@ function initApp() {
         this.user.name = "Admin"; // Set nama pengguna
         this.user.role = "Admin"; // Set peran pengguna
         localStorage.setItem("isLoggedIn", true); // Simpan status login
+        this.resetLogoutTimer(); // Reset timer setelah login
       } else {
         alert("Username atau password salah!");
       }
@@ -49,8 +53,48 @@ function initApp() {
       this.user.name = ""; // Reset nama pengguna
       this.user.role = ""; // Reset peran pengguna
       localStorage.removeItem("isLoggedIn"); // Hapus status login
+      localStorage.removeItem("user"); // Hapus data user
+      clearTimeout(this.logoutTimer); // Hentikan timer logout
     },
 
+    resetLogoutTimer() {
+      // Hentikan timer yang sedang berjalan
+      clearTimeout(this.logoutTimer);
+    
+      // Mulai timer baru
+      this.logoutTimer = setTimeout(() => {
+        // Tampilkan SweetAlert spinner dengan hitungan mundur
+        let timeLeft = 5; // Waktu hitungan mundur (dalam detik)
+        const swalInstance = Swal.fire({
+          title: 'Anda akan logout otomatis!',
+          html: `Sesi Anda akan berakhir dalam <strong>${timeLeft}</strong> detik.`,
+          timer: timeLeft * 1000, // Waktu dalam milidetik
+          timerProgressBar: true,
+          didOpen: () => {
+            Swal.showLoading(); // Tampilkan spinner
+            const timerInterval = setInterval(() => {
+              timeLeft -= 1;
+              swalInstance.update({
+                html: `Sesi Anda akan berakhir dalam <strong>${timeLeft}</strong> detik.`,
+              });
+              if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+              }
+            }, 1000);
+          },
+          willClose: () => {
+            // Hentikan timer jika pengguna menutup SweetAlert secara manual
+            clearTimeout(this.logoutTimer);
+          },
+        });
+    
+        // Setelah waktu habis, jalankan fungsi logout
+        swalInstance.then(() => {
+          this.logout(); // Panggil fungsi logout
+          Swal.fire('Anda telah logout!', 'Sesi Anda telah berakhir karena tidak ada aktivitas.', 'info');
+        });
+      }, this.inactivityDuration); // Waktu inaktivitas sebelum menampilkan SweetAlert
+    },
 
     // Inisialisasi database (ambil data dari API)
     async initDatabase() {
@@ -261,6 +305,7 @@ function initApp() {
       this.isShowModalReceipt = true;
       this.receiptNo = `TWPOS-KS-${Math.round(time.getTime() / 1000)}`;
       this.receiptDate = this.dateFormat(time);
+      this.resetLogoutTimer(); // Reset timer setelah ada aktivitas
     },
 
     // Fungsi untuk menutup modal struk

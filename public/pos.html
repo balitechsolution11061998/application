@@ -12,6 +12,7 @@
   <script src="https://unpkg.com/idb/build/iife/index-min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.2/dist/alpine.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script src="/pos/js/script.js"></script>
   <style>
@@ -240,7 +241,7 @@
                         <p class="text-sm text-blue-gray-500">
                           <i class="fas fa-barcode mr-2"></i> <!-- Ikon untuk Barcode -->
                           <span class="font-medium">Barcode:</span>
-                          <span x-text="product.barcode || 'N/A'"></span>
+                          <span x-text="product.upc || 'N/A'"></span>
                         </p>
                       </div>
 
