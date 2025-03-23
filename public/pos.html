@@ -108,14 +108,47 @@
             </li>
 
             <!-- Tombol untuk Menampilkan Modal User di dalam <li> -->
-            <li>
-              <button x-on:click="isLoading = true; showUserModal = true; isLoading = false"
-                class="flex items-center w-full focus:outline-none">
-                <span class="flex items-center justify-center text-cyan-100 hover:bg-cyan-400 h-12 w-12 rounded-2xl">
-                  <i class="fas fa-user-circle fa-lg"></i> <!-- Ikon user dari Font Awesome -->
-                </span>
-              </button>
-            </li>
+              <div x-data="{ showUserModal: false, user: { name: 'John Doe', role: 'Admin' } }">
+                <!-- Button to trigger the modal -->
+                <li>
+                  <button x-on:click="isLoading = true; showUserModal = true; isLoading = false"
+                          class="flex items-center w-full focus:outline-none">
+                    <span class="flex items-center justify-center text-cyan-100 hover:bg-cyan-400 h-12 w-12 rounded-2xl">
+                      <i class="fas fa-user-circle fa-lg"></i> <!-- Ikon user dari Font Awesome -->
+                    </span>
+                  </button>
+                </li>
+              
+                <!-- Modal -->
+                <div x-show="showUserModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                  <div class="bg-white rounded-lg p-6 w-96 transform transition-all duration-300 scale-95" 
+                       x-bind:class="{ 'scale-100': showUserModal }">
+                    <div class="flex justify-between items-center mb-4">
+                      <h3 class="text-xl font-semibold text-cyan-700">User Information</h3>
+                      <button x-on:click="showUserModal = false" 
+                              class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                        <i class="fas fa-times"></i> <!-- Ikon close dari Font Awesome -->
+                      </button>
+                    </div>
+                    <div class="space-y-4">
+                      <div class="flex items-center space-x-3">
+                        <i class="fas fa-user text-cyan-500"></i> <!-- Ikon user -->
+                        <div>
+                          <span class="font-semibold">Name:</span>
+                          <span x-text="user.name" class="text-blue-gray-700"></span>
+                        </div>
+                      </div>
+                      <div class="flex items-center space-x-3">
+                        <i class="fas fa-id-badge text-cyan-500"></i> <!-- Ikon role -->
+                        <div>
+                          <span class="font-semibold">Role:</span>
+                          <span x-text="user.role" class="text-sm bg-cyan-100 px-2 py-1 rounded-full text-cyan-700"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
           </ul>
         </div>
       </div>
@@ -269,34 +302,7 @@
               </div>
 
               <!-- Modal untuk Menampilkan Informasi User -->
-              <div x-show="showUserModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                <div class="bg-white rounded-lg p-6 w-96 transform transition-all duration-300 scale-95" 
-                     x-bind:class="{ 'scale-100': showUserModal }">
-                  <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-semibold text-cyan-700">User Information</h3>
-                    <button x-on:click="showUserModal = false" 
-                            class="text-gray-500 hover:text-gray-700 focus:outline-none">
-                      <i class="fas fa-times"></i> <!-- Ikon close dari Font Awesome -->
-                    </button>
-                  </div>
-                  <div class="space-y-4">
-                    <div class="flex items-center space-x-3">
-                      <i class="fas fa-user text-cyan-500"></i> <!-- Ikon user -->
-                      <div>
-                        <span class="font-semibold">Name:</span>
-                        <span x-text="user.name" class="text-blue-gray-700"></span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                      <i class="fas fa-id-badge text-cyan-500"></i> <!-- Ikon role -->
-                      <div>
-                        <span class="font-semibold">Role:</span>
-                        <span x-text="user.role" class="text-sm bg-cyan-100 px-2 py-1 rounded-full text-cyan-700"></span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+     
 
               <div class="flex-1 w-full px-4 overflow-auto">
                 <template x-for="item in cart" :key="item.productId">

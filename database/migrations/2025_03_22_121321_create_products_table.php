@@ -16,7 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->integer('price');
             $table->string('image');
-            $table->json('options')->nullable(); // Kolom options bisa null
+            $table->string('sku')->unique()->index();
+            $table->string('upc')->nullable()->index();
+            $table->text('description')->nullable(); // Deskripsi produk
+            $table->json('options')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +28,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('product_items', function (Blueprint $table) {
+            $table->dropForeign(['product_id']);
+        });
         Schema::dropIfExists('products');
     }
 };
