@@ -28,9 +28,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('product_items', function (Blueprint $table) {
-            $table->dropForeign(['product_id']);
-        });
+        if (Schema::hasTable('product_items')) {
+            Schema::table('product_items', function (Blueprint $table) {
+                // Hapus foreign key jika ada
+                $table->dropForeign(['product_id']);
+            });
+        }
         Schema::dropIfExists('products');
     }
 };
