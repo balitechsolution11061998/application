@@ -14,7 +14,7 @@ class ProductSeeder extends Seeder
     public function run()
     {
         // Hapus semua data yang ada di tabel products
-        Product::truncate();
+        // Product::truncate();
 
         $products = [
             [
