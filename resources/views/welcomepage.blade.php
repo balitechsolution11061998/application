@@ -1,750 +1,2231 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Portfolio Bayu Sulaksana</title>
-
-  <!-- AOS -->
-  <link rel="stylesheet" href="/assets/css/aon/aos.css" />
-
-  <!-- CSS Style -->
-  <link href="dist/css/final.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
-
-  <style>
-    .progress-bar {
-      width: 0%;
-      animation-fill-mode: forwards;
-    }
-
-    @keyframes progressBarAnimation {
-      from {
-        width: 0%;
-      }
-
-      to {
-        width: var(--progress-width);
-      }
-    }
-
-    /* Modal Animation */
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
-    }
-
-    #cvModal {
-      animation: fadeIn 0.3s ease-in-out;
-    }
-
-    /* Modal Animation */
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .animate-modal {
-      animation: fadeIn 0.3s ease-in-out forwards;
-    }
-
-    /* Progress Bar Animation */
-    @keyframes progressBarAnimation {
-      from {
-        width: 0;
-      }
-
-      to {
-        width: var(--progress-width);
-      }
-    }
-
-    .progress-bar {
-      animation: progressBarAnimation 1.5s ease-in-out forwards;
-    }
-  </style>
-
-  <!-- Script Darkmode -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexTech - Futuristic Tech Blog</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
   <script>
-    if (
-      localStorage.theme === 'dark' ||
-      (!('theme' in localStorage) &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          animation: {
+            'fade-in': 'fadeIn 0.8s ease-in-out',
+            'slide-up': 'slideUp 0.6s ease-out',
+            'float': 'float 6s ease-in-out infinite',
+            'gradient-x': 'gradientX 8s ease infinite',
+            'gradient-y': 'gradientY 8s ease infinite',
+            'pulse-slow': 'pulse 5s infinite cubic-bezier(0.4, 0, 0.6, 1)',
+            'marquee': 'marquee 60s linear infinite',
+            'marquee-reverse': 'marquee 60s linear infinite reverse',
+            'wave': 'wave 2s linear infinite',
+            'hologram': 'hologram 3s linear infinite',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': {
+                opacity: '0'
+              },
+              '100%': {
+                opacity: '1'
+              },
+            },
+            slideUp: {
+              '0%': {
+                transform: 'translateY(30px)',
+                opacity: '0'
+              },
+              '100%': {
+                transform: 'translateY(0)',
+                opacity: '1'
+              },
+            },
+            float: {
+              '0%, 100%': {
+                transform: 'translateY(0)'
+              },
+              '50%': {
+                transform: 'translateY(-20px)'
+              },
+            },
+            gradientX: {
+              '0%, 100%': {
+                'background-position': '0% 50%'
+              },
+              '50%': {
+                'background-position': '100% 50%'
+              },
+            },
+            gradientY: {
+              '0%, 100%': {
+                'background-position': '50% 0%'
+              },
+              '50%': {
+                'background-position': '50% 100%'
+              },
+            },
+            marquee: {
+              '0%': {
+                transform: 'translateX(0)'
+              },
+              '100%': {
+                transform: 'translateX(-50%)'
+              },
+            },
+            wave: {
+              '0%': {
+                transform: 'rotate(0deg)'
+              },
+              '10%': {
+                transform: 'rotate(14deg)'
+              },
+              '20%': {
+                transform: 'rotate(-8deg)'
+              },
+              '30%': {
+                transform: 'rotate(14deg)'
+              },
+              '40%': {
+                transform: 'rotate(-4deg)'
+              },
+              '50%': {
+                transform: 'rotate(10deg)'
+              },
+              '60%': {
+                transform: 'rotate(0deg)'
+              },
+              '100%': {
+                transform: 'rotate(0deg)'
+              },
+            },
+            hologram: {
+              '0%': {
+                opacity: 0.3
+              },
+              '50%': {
+                opacity: 0.8
+              },
+              '100%': {
+                opacity: 0.3
+              },
+            }
+          }
+        }
+      }
     }
   </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      transition: background-color 0.5s ease;
+    }
+
+    body.dark {
+      background-color: #0f172a;
+    }
+
+    .loading-spinner {
+      animation: spin 1.5s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .gradient-text {
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      background-image: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+      background-size: 300% 300%;
+      animation: gradientX 6s ease infinite;
+    }
+
+    .glow {
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+    }
+
+    .glow:hover {
+      box-shadow: 0 0 25px rgba(59, 130, 246, 0.7);
+    }
+
+    .tech-card {
+      perspective: 1000px;
+    }
+
+    .tech-card-inner {
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .tech-card:hover .tech-card-inner {
+      transform: rotateY(10deg) rotateX(5deg);
+    }
+
+    .parallax-bg {
+      background-attachment: fixed;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    .holographic-effect {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.1) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .holographic-effect::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(to bottom right,
+          rgba(255, 255, 255, 0) 45%,
+          rgba(255, 255, 255, 0.1) 50%,
+          rgba(255, 255, 255, 0) 55%);
+      transform: rotate(30deg);
+      animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+      0% {
+        transform: translateX(-100%) rotate(30deg);
+      }
+
+      100% {
+        transform: translateX(100%) rotate(30deg);
+      }
+    }
+
+    .title-font {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .neon-text {
+      text-shadow: 0 0 5px rgba(59, 130, 246, 0.8),
+        0 0 10px rgba(59, 130, 246, 0.6),
+        0 0 15px rgba(59, 130, 246, 0.4);
+    }
+
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      animation: float-particle linear infinite;
+    }
+
+    @keyframes float-particle {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      90% {
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(-100vh) translateX(20px);
+        opacity: 0;
+      }
+    }
+
+    /* 3D Sphere Canvas */
+    #techSphere {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      opacity: 0.3;
+    }
+
+    /* AI Assistant */
+    .ai-assistant {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 100;
+      transition: all 0.3s ease;
+    }
+
+    .ai-assistant-button {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.5);
+      transition: all 0.3s ease;
+    }
+
+    .ai-assistant-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 15px 30px rgba(59, 130, 246, 0.7);
+    }
+
+    .ai-assistant-chat {
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      width: 350px;
+      max-height: 500px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      transform: scale(0);
+      transform-origin: bottom right;
+      transition: all 0.3s ease;
+      opacity: 0;
+    }
+
+    .ai-assistant.active .ai-assistant-chat {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    /* Dark mode styles */
+    .dark .ai-assistant-chat {
+      background: #1e293b;
+      color: white;
+    }
+
+    /* Podcast player */
+    .podcast-player {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .dark .podcast-player {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+    }
+
+    /* Holographic effect for cards */
+    .hologram-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hologram-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.8), transparent);
+      animation: hologram 3s linear infinite;
+    }
+
+    /* Voice search */
+    .voice-search.active {
+      animation: wave 2s linear infinite;
+    }
+
+    /* Theme switcher */
+    .theme-switcher {
+      position: relative;
+      width: 60px;
+      height: 30px;
+      border-radius: 15px;
+      background: #e2e8f0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .dark .theme-switcher {
+      background: #334155;
+    }
+
+    .theme-switcher-toggle {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .dark .theme-switcher-toggle {
+      transform: translateX(30px);
+      background: #0f172a;
+    }
+
+    /* Tech news ticker */
+    .ticker-container {
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .ticker-item {
+      display: inline-block;
+      padding-right: 40px;
+      position: relative;
+    }
+
+    .ticker-item::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 15px;
+      width: 6px;
+      height: 6px;
+      background: currentColor;
+      border-radius: 50%;
+      transform: translateY(-50%);
+    }
+
+    /* Job board cards */
+    .job-card {
+      transition: all 0.3s ease;
+      border: 1px solid #e2e8f0;
+    }
+
+    .dark .job-card {
+      border-color: #334155;
+    }
+
+    .job-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .dark .job-card:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Event calendar */
+    .event-day {
+      transition: all 0.3s ease;
+    }
+
+    .event-day:hover {
+      transform: scale(1.05);
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: relative;
+    }
+
+    .tooltip-text {
+      visibility: hidden;
+      width: 200px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .ai-assistant-chat {
+        width: 300px;
+        max-height: 400px;
+      }
+
+      #techSphere {
+        opacity: 0.2;
+      }
+    }
+    /* Add this to your stylesheet */
+.code-editor-container {
+  position: relative;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid rgba(55, 65, 81, 0.5);
+  background-color: rgba(17, 24, 39, 0.8);
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: rgba(31, 41, 55, 0.8);
+}
+
+#codeEditor, #challengeEditor {
+  width: 100%;
+  min-height: 200px;
+  padding: 1rem;
+  font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #e5e7eb;
+  background-color: rgba(17, 24, 39, 0.8);
+  border: none;
+  resize: none;
+  outline: none;
+  tab-size: 2;
+  white-space: pre;
+}
+
+#codeEditor:focus, #challengeEditor:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+.run-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.run-button:hover {
+  background-color: rgba(59, 130, 246, 0.3);
+}
+
+/* For line numbers if needed */
+.code-editor-container.with-line-numbers {
+  position: relative;
+}
+
+.code-editor-container.with-line-numbers textarea {
+  padding-left: 3.5rem;
+}
+
+.line-numbers {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 2.5rem;
+  padding: 1rem 0.5rem;
+  text-align: right;
+  font-family: monospace;
+  color: #6b7280;
+  background-color: rgba(31, 41, 55, 0.5);
+  border-right: 1px solid rgba(55, 65, 81, 0.5);
+  user-select: none;
+}
+  </style>
 </head>
 
-<body>
-  <!-- Header Start -->
-  <header
-    class="absolute left-0 top-0 z-10 flex w-full items-center bg-transparent">
-    <div class="container">
-      <div class="relative flex items-center justify-between">
-        <div class="px-4">
-          <a href="#home" class="block py-6 text-lg font-bold text-primary">Bayu Sulaksana
-          </a>
-        </div>
-        <div class="flex items-center px-4">
-          <button
-            id="hamburger"
-            name="hamburger"
-            type="button"
-            class="absolute right-4 block lg:hidden">
-            <span
-              class="hamburger-line origin-top-left transition duration-300 ease-in-out"></span>
-            <span
-              class="hamburger-line transition duration-300 ease-in-out"></span>
-            <span
-              class="hamburger-line origin-bottom-left transition duration-300 ease-in-out"></span>
-          </button>
+<body class="antialiased">
+  <!-- Loading Screen with Futuristic Animation -->
+  <div id="loading" class="fixed inset-0 bg-gray-900 z-50 flex flex-col items-center justify-center transition-all duration-1000">
+    <div class="relative">
+      <div class="absolute inset-0 rounded-full bg-blue-600 opacity-20 blur-lg animate-pulse-slow"></div>
+      <div class="loading-spinner text-6xl text-blue-400 relative">
+        <i class="fas fa-atom"></i>
+      </div>
+    </div>
+    <h2 class="text-3xl font-bold text-white mt-8 title-font neon-text animate-pulse">NexTech</h2>
+    <p class="text-blue-200 mt-4 animate-pulse">Initializing next-gen experience...</p>
 
-          <nav
-            id="nav-menu"
-            class="absolute right-4 top-full hidden w-full max-w-[250px] rounded-lg bg-white py-5 shadow-lg dark:bg-dark dark:shadow-slate-500 lg:static lg:block lg:max-w-full lg:rounded-none lg:bg-transparent lg:shadow-none lg:dark:bg-transparent">
-            <ul class="block lg:flex">
-              <li class="group">
-                <a
-                  href="#home"
-                  class="mx-8 flex py-2 text-base font-semibold text-dark group-hover:text-primary dark:text-white">Home</a>
-              </li>
-              <li class="group">
-                <a
-                  href="#about"
-                  class="mx-8 flex py-2 text-base font-semibold text-dark group-hover:text-primary dark:text-white">About Me</a>
-              </li>
-              <li class="group">
-                <a
-                  href="#portfolio"
-                  class="mx-8 flex py-2 text-base font-semibold text-dark group-hover:text-primary dark:text-white">Portfolio</a>
-              </li>
-              <li class="group">
-                <a
-                  href="#clients"
-                  class="mx-8 flex py-2 text-base font-semibold text-dark group-hover:text-primary dark:text-white">Clients</a>
-              </li>
-              <li class="group">
-                <a
-                  href="#blog"
-                  class="mx-8 flex py-2 text-base font-semibold text-dark group-hover:text-primary dark:text-white">Blog</a>
-              </li>
-              <li class="group">
-                <a
-                  href="#contact"
-                  class="mx-8 flex py-2 text-base font-semibold text-dark group-hover:text-primary dark:text-white">Contact</a>
-              </li>
-              <li class="mt-3 flex items-center pl-8 lg:mt-0">
-                <div class="flex">
-                  <span class="mr-2 text-sm text-slate-500 dark:text-white">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="20"
-                      viewBox="0 96 960 960"
-                      width="20"
-                      class="fill-current">
-                      <path
-                        d="M480 696q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm-.226 72Q400 768 344 711.774t-56-136Q288 496 344.226 440t136-56Q560 384 616 440.226t56 136Q672 656 615.774 712t-136 56ZM84 612q-15.3 0-25.65-10.289Q48 591.421 48 576.211 48 561 58.35 550.5 68.7 540 84 540h96q15.3 0 25.65 10.289 10.35 10.29 10.35 25.5Q216 591 205.65 601.5 195.3 612 180 612H84Zm696 0q-15.3 0-25.65-10.289-10.35-10.29-10.35-25.5Q744 561 754.35 550.5 764.7 540 780 540h96q15.3 0 25.65 10.289 10.35 10.29 10.35 25.5Q912 591 901.65 601.5 891.3 612 876 612h-96ZM480.211 312Q465 312 454.5 301.65 444 291.3 444 276v-96q0-15.3 10.289-25.65 10.29-10.35 25.5-10.35Q495 144 505.5 154.35 516 164.7 516 180v96q0 15.3-10.289 25.65-10.29 10.35-25.5 10.35Zm0 696Q465 1008 454.5 997.65 444 987.3 444 972v-96q0-15.3 10.289-25.65 10.29-10.35 25.5-10.35Q495 840 505.5 850.35 516 860.7 516 876v96q0 15.3-10.289 25.65-10.29 10.35-25.5 10.35ZM242 389l-50-51q-11-10-11-24.5t11-25.5q10.435-11 25.217-11Q232 277 242 288l51 50q11 10.941 11 25.529 0 14.589-11 25.53Q283 400 268 400t-26-11Zm476 475-51-50q-11-10.667-11-25.333Q656 774 667 763q10-11 25-11t26 11l50 51q11 10 11 24.5T768.478 864Q757 875 743 875q-14 0-25-11Zm-51.059-475Q656 379 656 364t11-26l51-50q11-11 25-10.5t25 10.543Q779 299 779 313t-11 25l-50 51q-10.941 11-25.529 11-14.589 0-25.53-11ZM192 864q-11-10.435-11-25.217Q181 824 192 814l50-51q10.667-10 25.333-10Q282 753 293 763q11 11 10.542 25.667Q303.083 803.333 293 814l-51 50q-10 11-24.5 11T192 864Zm288-288Z" />
-                    </svg>
-                  </span>
-                  <input type="checkbox" class="hidden" id="dark-toggle" />
-                  <label for="dark-toggle">
-                    <div
-                      class="flex h-5 w-9 cursor-pointer items-center rounded-full bg-slate-500 p-1">
-                      <div
-                        class="toggle-circle h-4 w-4 rounded-full bg-white transition duration-300 ease-in-out"></div>
-                    </div>
-                  </label>
-                  <span class="ml-2 text-sm text-slate-500 dark:text-white">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="20"
-                      viewBox="0 96 960 960"
-                      width="20"
-                      class="fill-current">
-                      <path
-                        d="M479.961 912Q340 912 242 814t-98-238q0-140 97.93-238t237.831-98q13.057 0 25.648 1T531 244q-39 29-62 72t-23 92q0 85 58.5 143.5T648 610q49 0 92-23t72-62q2 13 3 25.591 1 12.591 1 25.648 0 139.901-98.039 237.831-98.04 97.93-238 97.93Zm.039-72q82 0 148.776-47.074Q695.553 745.853 727 670q-20 5-39.667 8.5Q667.667 682 648 682q-113.858 0-193.929-80.071T374 408q0-19.667 3.5-39.333Q381 349 386 329q-75.853 31.447-122.926 98.224Q216 494 216 576q0 110 77 187t187 77Zm-14-250Z" />
-                    </svg>
-                  </span>
-                </div>
-              </li>
-            </ul>
-          </nav>
+    <!-- Floating particles -->
+    <div class="particles">
+      <!-- Particles will be generated by JS -->
+    </div>
+  </div>
+
+  <!-- 3D Tech Sphere Background -->
+  <canvas id="techSphere"></canvas>
+
+  <!-- Futuristic Navigation -->
+  <header class="bg-gray-900/90 backdrop-blur-md sticky top-0 z-40 border-b border-gray-800 shadow-lg animate-fade-in dark:bg-gray-900/80">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <div class="holographic-effect rounded-full p-2 glow">
+          <i class="fas fa-brain text-2xl text-blue-400"></i>
         </div>
+        <h1 class="text-2xl font-bold text-white title-font">Nex<span class="gradient-text">Tech</span></h1>
+      </div>
+
+      <nav class="hidden lg:flex space-x-1">
+        <a href="#" class="px-4 py-2 rounded-md text-blue-400 font-medium hover:bg-gray-800/50 hover:text-white transition-all flex items-center group dark:hover:bg-gray-800">
+          <span class="mr-2">Home</span>
+          <i class="fas fa-home text-sm opacity-0 group-hover:opacity-100 transition-opacity"></i>
+        </a>
+        <a href="#articles" class="px-4 py-2 rounded-md text-gray-300 font-medium hover:bg-gray-800/50 hover:text-white transition-all flex items-center group dark:hover:bg-gray-800">
+          <span class="mr-2">Articles</span>
+          <i class="fas fa-newspaper text-sm opacity-0 group-hover:opacity-100 transition-opacity"></i>
+        </a>
+        <a href="#tutorials" class="px-4 py-2 rounded-md text-gray-300 font-medium hover:bg-gray-800/50 hover:text-white transition-all flex items-center group dark:hover:bg-gray-800">
+          <span class="mr-2">Tutorials</span>
+          <i class="fas fa-graduation-cap text-sm opacity-0 group-hover:opacity-100 transition-opacity"></i>
+        </a>
+        <a href="#reviews" class="px-4 py-2 rounded-md text-gray-300 font-medium hover:bg-gray-800/50 hover:text-white transition-all flex items-center group dark:hover:bg-gray-800">
+          <span class="mr-2">Reviews</span>
+          <i class="fas fa-star text-sm opacity-0 group-hover:opacity-100 transition-opacity"></i>
+        </a>
+        <a href="#about" class="px-4 py-2 rounded-md text-gray-300 font-medium hover:bg-gray-800/50 hover:text-white transition-all flex items-center group dark:hover:bg-gray-800">
+          <span class="mr-2">About</span>
+          <i class="fas fa-info-circle text-sm opacity-0 group-hover:opacity-100 transition-opacity"></i>
+        </a>
+      </nav>
+
+      <div class="flex items-center space-x-4">
+        <button id="themeToggle" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors dark:bg-gray-700 dark:hover:bg-gray-600">
+          <i class="fas fa-moon text-yellow-400 dark:hidden"></i>
+          <i class="fas fa-sun text-yellow-300 hidden dark:block"></i>
+        </button>
+        <button class="lg:hidden text-gray-300 hover:text-white transition-colors">
+          <i class="fas fa-bars text-xl"></i>
+        </button>
+        <button class="hidden md:flex items-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2.5 rounded-full hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg glow hover:shadow-xl">
+          <i class="fas fa-user-astronaut mr-2"></i>
+          <span>Join Community</span>
+        </button>
       </div>
     </div>
   </header>
-  <!-- Header End -->
 
-  <!-- Hero Section Start -->
-  <section id="home" class="pt-36 dark:bg-dark">
-    <div class="container">
-      <div class="flex flex-wrap">
-        <div class="w-full self-center px-4 lg:w-1/2">
-          <h1
-            class="text-base font-semibold text-primary md:text-xl"
-            data-aos="fade-right"
-            data-aos-duration="1500">
-            Hello Everyone 👋, I'm
-            <span
-              class="mt-1 block text-4xl font-bold text-dark dark:text-white lg:text-5xl">Bayu Sulaksana</span>
-          </h1>
-          <h2
-            class="mb-5 mt-3 text-lg font-medium text-dark dark:text-white lg:text-2xl"
-            data-aos="fade-right"
-            data-aos-duration="1500"
-            data-aos-delay="300">
-            Full stack Web Developer
-          </h2>
-          <p
-            class="my-quotes md:text-md mb-10 font-medium italic leading-relaxed text-secondary">
-            "The best way to predict the future is to create it." – Peter Drucker
-          </p>
-          <a
-            href="#"
-            class="rounded-full bg-primary px-8 py-3 text-base font-semibold text-white transition duration-300 ease-in-out hover:opacity-80 hover:shadow-lg">Contact Me</a>
+  <!-- Futuristic Hero Section with Parallax -->
+  <section class="relative overflow-hidden bg-gray-900 text-white py-24">
+    <!-- Animated gradient background -->
+    <div class="absolute inset-0 bg-gradient-to-r from-blue-900/30 via-purple-900/30 to-pink-900/30 animate-gradient-x"></div>
+
+    <!-- Floating tech elements -->
+    <div class="absolute top-20 left-10 w-16 h-16 rounded-full bg-blue-500/20 blur-xl animate-float"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-24 h-24 rounded-full bg-purple-500/20 blur-xl animate-float" style="animation-delay: 2s;"></div>
+    <div class="absolute top-1/3 right-20 w-20 h-20 rounded-full bg-pink-500/20 blur-xl animate-float" style="animation-delay: 4s;"></div>
+
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="max-w-4xl mx-auto text-center animate-slide-up">
+        <span class="inline-block bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm mb-6 text-blue-300 border border-blue-400/30 animate-fade-in">
+          <i class="fas fa-bolt mr-1"></i> TRENDING: AI Revolution 2023
+        </span>
+        <h2 class="text-4xl md:text-6xl font-bold mb-6 leading-tight title-font">
+          Explore The <span class="gradient-text">Future</span> of Technology
+        </h2>
+        <p class="text-xl md:text-2xl mb-10 opacity-90 max-w-3xl mx-auto">
+          Discover cutting-edge innovations, in-depth tutorials, and expert analysis on AI, Web3, Quantum Computing and beyond.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-xl mx-auto">
+          <div class="relative flex-grow">
+            <input type="text" placeholder="Search futuristic tech..."
+              class="w-full px-6 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 pr-14 bg-white/90 backdrop-blur-sm dark:bg-gray-800/90 dark:text-white">
+            <button id="voiceSearch" class="absolute right-12 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600 transition-colors dark:hover:text-blue-400">
+              <i class="fas fa-microphone"></i>
+            </button>
+            <button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600 transition-colors dark:hover:text-blue-400">
+              <i class="fas fa-search-plus text-lg"></i>
+            </button>
+          </div>
+          <button class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:from-blue-600 hover:to-blue-700 transition-all shadow-lg glow flex items-center justify-center whitespace-nowrap">
+            <i class="fas fa-rocket mr-2"></i> Explore Now
+          </button>
         </div>
-        <div class="w-full self-end px-4 lg:w-1/2">
-          <div
-            class="relative mt-10 lg:right-0 lg:mt-9"
-            data-aos="zoom-in"
-            data-aos-duration="1500">
-            <img
-              src="/img/background/background.png"
-              alt="Bayu Sulaksana"
-              class="relative z-10 mx-auto max-w-full" />
-            <span
-              class="absolute -bottom-20 left-1/2 -translate-x-1/2 md:-bottom-6 md:scale-125">
-              <svg
-                width="400"
-                height="400"
-                viewBox="0 0 200 200"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  fill="#14b8a6"
-                  d="M52.2,-62.6C66.5,-50.3,76,-32.7,73.6,-17.2C71.3,-1.8,57.1,11.5,46.3,23.7C35.6,35.9,28.4,47,18.8,49.5C9.3,52,-2.6,45.8,-15.9,41.8C-29.2,37.8,-44,35.9,-52.5,27.3C-61,18.8,-63.3,3.6,-63.7,-14.2C-64.2,-32.1,-62.8,-52.6,-51.9,-65.6C-40.9,-78.5,-20.5,-83.8,-0.7,-82.9C19,-82,38,-74.9,52.2,-62.6Z"
-                  transform="translate(100 100) scale(1.1)" />
-              </svg>
-            </span>
+        <div id="voiceStatus" class="mt-2 text-blue-300 hidden">
+          <i class="fas fa-circle-notch fa-spin mr-2"></i>
+          <span>Listening...</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Categories -->
+  <section class="container mx-auto px-4 py-16">
+    <div class="text-center mb-16 animate-fade-in">
+      <span class="text-blue-500 font-medium">TECH DOMAINS</span>
+      <h3 class="text-3xl md:text-4xl font-bold mt-2 mb-4 title-font">Explore <span class="gradient-text">Cutting-Edge</span> Fields</h3>
+      <p class="text-gray-600 max-w-2xl mx-auto dark:text-gray-400">Dive into the most revolutionary technology categories shaping our future</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- AI Category -->
+      <div class="tech-card group">
+        <div class="tech-card-inner h-full bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 border border-gray-200/50 dark:from-blue-900/20 dark:to-indigo-900/20 dark:border-gray-700/50">
+          <div class="relative h-40 overflow-hidden">
+            <img src="https://source.unsplash.com/random/600x400/?ai,neural" alt="AI"
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-blue-900/60 to-transparent"></div>
+            <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-md">
+              <i class="fas fa-arrow-up mr-1"></i> +32%
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4 dark:bg-blue-900/30">
+                <i class="fas fa-robot text-2xl text-blue-600 dark:text-blue-400"></i>
+              </div>
+              <h4 class="text-xl font-bold text-gray-800 dark:text-white">Artificial Intelligence</h4>
+            </div>
+            <p class="text-gray-600 mb-5 dark:text-gray-400">Explore the latest in machine learning, neural networks and AI applications.</p>
+            <a href="#" class="text-blue-600 font-medium hover:underline inline-flex items-center dark:text-blue-400">
+              Discover AI <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Web3 Category -->
+      <div class="tech-card group">
+        <div class="tech-card-inner h-full bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 border border-gray-200/50 dark:from-purple-900/20 dark:to-pink-900/20 dark:border-gray-700/50">
+          <div class="relative h-40 overflow-hidden">
+            <img src="https://source.unsplash.com/random/600x400/?blockchain,crypto" alt="Web3"
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-purple-900/60 to-transparent"></div>
+            <div class="absolute top-4 right-4 bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-md">
+              <i class="fas fa-bolt mr-1"></i> Trending
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4 dark:bg-purple-900/30">
+                <i class="fas fa-cube text-2xl text-purple-600 dark:text-purple-400"></i>
+              </div>
+              <h4 class="text-xl font-bold text-gray-800 dark:text-white">Web3 & Blockchain</h4>
+            </div>
+            <p class="text-gray-600 mb-5 dark:text-gray-400">Dive into decentralized apps, smart contracts and the future of the internet.</p>
+            <a href="#" class="text-purple-600 font-medium hover:underline inline-flex items-center dark:text-purple-400">
+              Explore Web3 <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quantum Category -->
+      <div class="tech-card group">
+        <div class="tech-card-inner h-full bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 border border-gray-200/50 dark:from-cyan-900/20 dark:to-blue-900/20 dark:border-gray-700/50">
+          <div class="relative h-40 overflow-hidden">
+            <img src="https://source.unsplash.com/random/600x400/?quantum,physics" alt="Quantum"
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-cyan-900/60 to-transparent"></div>
+            <div class="absolute top-4 right-4 bg-cyan-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-md">
+              <i class="fas fa-atom mr-1"></i> Emerging
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 rounded-full bg-cyan-100 flex items-center justify-center mr-4 dark:bg-cyan-900/30">
+                <i class="fas fa-atom text-2xl text-cyan-600 dark:text-cyan-400"></i>
+              </div>
+              <h4 class="text-xl font-bold text-gray-800 dark:text-white">Quantum Computing</h4>
+            </div>
+            <p class="text-gray-600 mb-5 dark:text-gray-400">Discover the next frontier in computational power and its applications.</p>
+            <a href="#" class="text-cyan-600 font-medium hover:underline inline-flex items-center dark:text-cyan-400">
+              Learn Quantum <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- IoT Category -->
+      <div class="tech-card group">
+        <div class="tech-card-inner h-full bg-gradient-to-br from-green-50 to-teal-50 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 border border-gray-200/50 dark:from-green-900/20 dark:to-teal-900/20 dark:border-gray-700/50">
+          <div class="relative h-40 overflow-hidden">
+            <img src="https://source.unsplash.com/random/600x400/?iot,smartcity" alt="IoT"
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-green-900/60 to-transparent"></div>
+            <div class="absolute top-4 right-4 bg-green-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-md">
+              <i class="fas fa-network-wired mr-1"></i> Growing
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4 dark:bg-green-900/30">
+                <i class="fas fa-satellite-dish text-2xl text-green-600 dark:text-green-400"></i>
+              </div>
+              <h4 class="text-xl font-bold text-gray-800 dark:text-white">IoT & Smart Tech</h4>
+            </div>
+            <p class="text-gray-600 mb-5 dark:text-gray-400">Connect with the world of smart devices and interconnected systems.</p>
+            <a href="#" class="text-green-600 font-medium hover:underline inline-flex items-center dark:text-green-400">
+              Connect IoT <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+            </a>
           </div>
         </div>
       </div>
     </div>
   </section>
-  <!-- Hero Section End -->
 
-  <!-- About Section Start -->
-  <section id="about" class="pb-32 pt-36 dark:bg-dark">
-    <div class="container">
-      <!-- Modal Toggle Button -->
-      <button class="px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        Lihat CV
+  <!-- Featured Articles -->
+  <section id="articles" class="bg-gray-50 py-16 dark:bg-gray-900/50">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center mb-12 animate-fade-in">
+        <div>
+          <span class="text-blue-500 font-medium">FEATURED CONTENT</span>
+          <h3 class="text-3xl md:text-4xl font-bold mt-2 title-font">Latest <span class="gradient-text">Tech Insights</span></h3>
+        </div>
+        <a href="#" class="mt-4 md:mt-0 inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors dark:text-blue-400 dark:hover:text-blue-300">
+          View All Articles <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Featured Article -->
+        <div class="lg:col-span-2 animate-slide-up">
+          <div class="group relative h-full rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/30 to-transparent z-10"></div>
+            <img src="https://source.unsplash.com/random/1200x800/?ai,future" alt="Featured Article"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+            <div class="absolute bottom-0 left-0 p-8 z-20 w-full">
+              <div class="flex items-center text-sm text-white/80 mb-3">
+                <span class="bg-blue-600/90 text-white px-3 py-1 rounded-full mr-3">AI</span>
+                <span><i class="far fa-clock mr-1"></i> March 25, 2023</span>
+                <span class="ml-3"><i class="far fa-eye mr-1"></i> 5.2K</span>
+              </div>
+              <h4 class="text-2xl md:text-3xl font-bold text-white mb-4 group-hover:text-blue-300 transition-colors">
+                How AI Will Transform Every Industry in the Next Decade
+              </h4>
+              <p class="text-white/90 mb-5">An in-depth analysis of AI's disruptive potential across sectors from healthcare to finance.</p>
+              <div class="flex items-center">
+                <div class="flex -space-x-2 mr-4">
+                  <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Author"
+                    class="w-10 h-10 rounded-full border-2 border-white/80">
+                  <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Co-author"
+                    class="w-10 h-10 rounded-full border-2 border-white/80">
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-white">By Sarah Johnson & Mark Chen</p>
+                  <p class="text-xs text-white/70">AI Researchers</p>
+                </div>
+                <a href="#" class="ml-auto text-white hover:text-blue-300 font-medium inline-flex items-center transition-colors">
+                  Read More <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Side Featured Articles -->
+        <div class="space-y-6">
+          <!-- Article 1 -->
+          <div class="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 animate-slide-up dark:bg-gray-800" style="animation-delay: 0.1s">
+            <div class="relative h-40 overflow-hidden">
+              <img src="https://source.unsplash.com/random/600x400/?metaverse" alt="Metaverse"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent"></div>
+              <span class="absolute top-3 left-3 bg-purple-600 text-white px-2 py-0.5 rounded text-xs font-bold">
+                Web3
+              </span>
+            </div>
+            <div class="p-5">
+              <h4 class="text-lg font-bold mb-2 text-gray-800 group-hover:text-blue-600 transition-colors dark:text-white dark:group-hover:text-blue-400">
+                Building the Metaverse: Challenges and Opportunities
+              </h4>
+              <p class="text-gray-600 text-sm mb-4 dark:text-gray-400">Exploring the technical hurdles and business potential of the next internet evolution.</p>
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-500 dark:text-gray-400"><i class="far fa-clock mr-1"></i> 8 min read</span>
+                <a href="#" class="text-blue-600 text-sm hover:underline inline-flex items-center dark:text-blue-400">
+                  Read <i class="fas fa-arrow-right ml-1 text-xs transition-transform group-hover:translate-x-1"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Article 2 -->
+          <div class="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 animate-slide-up dark:bg-gray-800" style="animation-delay: 0.2s">
+            <div class="relative h-40 overflow-hidden">
+              <img src="https://source.unsplash.com/random/600x400/?quantum,computer" alt="Quantum"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent"></div>
+              <span class="absolute top-3 left-3 bg-cyan-600 text-white px-2 py-0.5 rounded text-xs font-bold">
+                Quantum
+              </span>
+            </div>
+            <div class="p-5">
+              <h4 class="text-lg font-bold mb-2 text-gray-800 group-hover:text-blue-600 transition-colors dark:text-white dark:group-hover:text-blue-400">
+                Quantum Supremacy: What It Means for Cryptography
+              </h4>
+              <p class="text-gray-600 text-sm mb-4 dark:text-gray-400">How quantum computers will break current encryption and what comes next.</p>
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-500 dark:text-gray-400"><i class="far fa-clock mr-1"></i> 6 min read</span>
+                <a href="#" class="text-blue-600 text-sm hover:underline inline-flex items-center dark:text-blue-400">
+                  Read <i class="fas fa-arrow-right ml-1 text-xs transition-transform group-hover:translate-x-1"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Article 3 -->
+          <div class="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 animate-slide-up dark:bg-gray-800" style="animation-delay: 0.3s">
+            <div class="relative h-40 overflow-hidden">
+              <img src="https://source.unsplash.com/random/600x400/?robot,humanoid" alt="Robotics"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent"></div>
+              <span class="absolute top-3 left-3 bg-red-600 text-white px-2 py-0.5 rounded text-xs font-bold">
+                Robotics
+              </span>
+            </div>
+            <div class="p-5">
+              <h4 class="text-lg font-bold mb-2 text-gray-800 group-hover:text-blue-600 transition-colors dark:text-white dark:group-hover:text-blue-400">
+                Humanoid Robots in Daily Life: Closer Than We Think
+              </h4>
+              <p class="text-gray-600 text-sm mb-4 dark:text-gray-400">Examining the rapid advancements in bipedal robotics and AI integration.</p>
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-500 dark:text-gray-400"><i class="far fa-clock mr-1"></i> 7 min read</span>
+                <a href="#" class="text-blue-600 text-sm hover:underline inline-flex items-center dark:text-blue-400">
+                  Read <i class="fas fa-arrow-right ml-1 text-xs transition-transform group-hover:translate-x-1"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech Podcast Section -->
+  <section class="container mx-auto px-4 py-16">
+    <div class="text-center mb-16 animate-fade-in">
+      <span class="text-blue-500 font-medium">TECH PODCAST</span>
+      <h3 class="text-3xl md:text-4xl font-bold mt-2 mb-4 title-font">Listen to <span class="gradient-text">Tech Talks</span></h3>
+      <p class="text-gray-600 max-w-2xl mx-auto dark:text-gray-400">Dive deeper with our exclusive interviews with industry leaders and innovators</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Podcast 1 -->
+      <div class="podcast-player p-6 rounded-2xl shadow-lg animate-slide-up">
+        <div class="flex items-center mb-6">
+          <div class="w-16 h-16 rounded-lg overflow-hidden mr-4">
+            <img src="https://source.unsplash.com/random/300x300/?ai" alt="AI Podcast" class="w-full h-full object-cover">
+          </div>
+          <div>
+            <span class="text-xs font-semibold text-blue-600 dark:text-blue-400">EPISODE 42</span>
+            <h4 class="text-lg font-bold text-gray-800 dark:text-white">The Future of Generative AI</h4>
+          </div>
+        </div>
+        <p class="text-gray-600 mb-6 dark:text-gray-400">Interview with Dr. Lisa Zhang about the ethical implications of generative AI models.</p>
+        <audio controls class="w-full mb-4">
+          <source src="#" type="audio/mpeg">
+          Your browser does not support the audio element.
+        </audio>
+        <div class="flex justify-between items-center text-sm">
+          <span class="text-gray-500 dark:text-gray-400"><i class="far fa-clock mr-1"></i> 58 min</span>
+          <div class="flex space-x-3">
+            <a href="#" class="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400"><i class="fas fa-share-alt"></i></a>
+            <a href="#" class="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400"><i class="far fa-bookmark"></i></a>
+            <a href="#" class="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400"><i class="fas fa-download"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Podcast 2 -->
+      <div class="podcast-player p-6 rounded-2xl shadow-lg animate-slide-up" style="animation-delay: 0.1s">
+        <div class="flex items-center mb-6">
+          <div class="w-16 h-16 rounded-lg overflow-hidden mr-4">
+            <img src="https://source.unsplash.com/random/300x300/?blockchain" alt="Blockchain Podcast" class="w-full h-full object-cover">
+          </div>
+          <div>
+            <span class="text-xs font-semibold text-purple-600 dark:text-purple-400">EPISODE 41</span>
+            <h4 class="text-lg font-bold text-gray-800 dark:text-white">Web3: Hype vs Reality</h4>
+          </div>
+        </div>
+        <p class="text-gray-600 mb-6 dark:text-gray-400">Discussion with blockchain pioneer Mark Thompson about practical Web3 applications.</p>
+        <audio controls class="w-full mb-4">
+          <source src="#" type="audio/mpeg">
+          Your browser does not support the audio element.
+        </audio>
+        <div class="flex justify-between items-center text-sm">
+          <span class="text-gray-500 dark:text-gray-400"><i class="far fa-clock mr-1"></i> 1h 12min</span>
+          <div class="flex space-x-3">
+            <a href="#" class="text-gray-500 hover:text-purple-600 dark:hover:text-purple-400"><i class="fas fa-share-alt"></i></a>
+            <a href="#" class="text-gray-500 hover:text-purple-600 dark:hover:text-purple-400"><i class="far fa-bookmark"></i></a>
+            <a href="#" class="text-gray-500 hover:text-purple-600 dark:hover:text-purple-400"><i class="fas fa-download"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Podcast 3 -->
+      <div class="podcast-player p-6 rounded-2xl shadow-lg animate-slide-up" style="animation-delay: 0.2s">
+        <div class="flex items-center mb-6">
+          <div class="w-16 h-16 rounded-lg overflow-hidden mr-4">
+            <img src="https://source.unsplash.com/random/300x300/?quantum" alt="Quantum Podcast" class="w-full h-full object-cover">
+          </div>
+          <div>
+            <span class="text-xs font-semibold text-cyan-600 dark:text-cyan-400">EPISODE 40</span>
+            <h4 class="text-lg font-bold text-gray-800 dark:text-white">Quantum Computing Breakthroughs</h4>
+          </div>
+        </div>
+        <p class="text-gray-600 mb-6 dark:text-gray-400">Dr. Emily Wilson explains recent quantum supremacy achievements and what's next.</p>
+        <audio controls class="w-full mb-4">
+          <source src="#" type="audio/mpeg">
+          Your browser does not support the audio element.
+        </audio>
+        <div class="flex justify-between items-center text-sm">
+          <span class="text-gray-500 dark:text-gray-400"><i class="far fa-clock mr-1"></i> 45 min</span>
+          <div class="flex space-x-3">
+            <a href="#" class="text-gray-500 hover:text-cyan-600 dark:hover:text-cyan-400"><i class="fas fa-share-alt"></i></a>
+            <a href="#" class="text-gray-500 hover:text-cyan-600 dark:hover:text-cyan-400"><i class="far fa-bookmark"></i></a>
+            <a href="#" class="text-gray-500 hover:text-cyan-600 dark:hover:text-cyan-400"><i class="fas fa-download"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-12">
+      <button class="bg-white border-2 border-blue-500 text-blue-600 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition-colors shadow-md hover:shadow-lg inline-flex items-center group dark:bg-gray-800 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700">
+        <span>View All Episodes</span>
+        <i class="fas fa-arrow-right ml-3 group-hover:translate-x-1 transition-transform"></i>
       </button>
-      <div class="flex flex-wrap items-center">
-        <!-- Left Column: About Me Content -->
+    </div>
+  </section>
 
-        <div
-          class="mb-10 w-full px-4 lg:w-1/2"
-          data-aos="fade-right"
-          data-aos-duration="800">
-          <h4 class="mb-3 text-lg font-bold uppercase text-primary animate-fade-in">
-            Tentang Saya
-          </h4>
-          <h2
-            class="mb-5 text-3xl font-bold text-dark dark:text-white lg:text-4xl animate-fade-in">
-            I Wayan Bayu Sulaksana
-          </h2>
-          <h3 class="mb-6 text-xl font-semibold text-primary animate-fade-in delay-100">
-            Full Stack Programmer | Tech Enthusiast
-          </h3>
-          <p
-            class="mb-6 text-base font-medium text-secondary lg:text-lg animate-fade-in delay-200">
-            Halo! Saya **I Wayan Bayu Sulaksana**, seorang Full Stack Programmer dengan passion yang besar dalam menciptakan solusi teknologi yang inovatif dan efisien. Saya memiliki pengalaman dalam mengembangkan aplikasi web yang responsif, skalabel, dan ramah pengguna, mulai dari front-end hingga back-end.
-          </p>
-          <p
-            class="mb-6 text-base font-medium text-secondary lg:text-lg animate-fade-in delay-300">
-            Saya menguasai teknologi seperti **HTML5**, **CSS3**, **JavaScript**, **React.js**, **Node.js**, dan **MongoDB**. Saya senang menggabungkan kreativitas dengan keterampilan teknis untuk menghidupkan ide-ide menjadi kenyataan. Baik itu membangun antarmuka pengguna yang menarik atau mengoptimalkan kinerja server, saya selalu bersemangat untuk menyelesaikan tantangan teknis yang kompleks.
-          </p>
-          <p
-            class="mb-6 text-base font-medium text-secondary lg:text-lg animate-fade-in delay-400">
-            Saya percaya bahwa kolaborasi adalah kunci kesuksesan. Mari bekerja sama untuk mewujudkan visi Anda dan menciptakan sesuatu yang luar biasa!
-          </p>
-          <a
-            href="#contact"
-            class="inline-block rounded-lg bg-primary px-8 py-3 text-white transition duration-300 hover:bg-primary-dark animate-fade-in delay-500">
-            Hubungi Saya
-          </a>
+  <!-- Developer Tools Showcase -->
+  <section class="bg-gray-100 py-16 dark:bg-gray-800/50">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16 animate-fade-in">
+        <span class="text-blue-500 font-medium">DEVELOPER RESOURCES</span>
+        <h3 class="text-3xl md:text-4xl font-bold mt-2 mb-4 title-font">Essential <span class="gradient-text">Tech Tools</span></h3>
+        <p class="text-gray-600 max-w-2xl mx-auto dark:text-gray-400">Curated collection of frameworks, libraries and tools for modern developers</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Tool 1 -->
+        <div class="hologram-card bg-white rounded-xl shadow-md overflow-hidden dark:bg-gray-800">
+          <div class="p-5">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mr-4 dark:bg-blue-900/30">
+                <i class="fab fa-react text-2xl text-blue-600 dark:text-blue-400"></i>
+              </div>
+              <h4 class="text-lg font-bold text-gray-800 dark:text-white">React 18</h4>
+            </div>
+            <p class="text-gray-600 text-sm mb-4 dark:text-gray-400">The latest version of Facebook's popular JavaScript library for building user interfaces.</p>
+            <div class="flex justify-between items-center">
+              <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded dark:bg-blue-900/30 dark:text-blue-400">Frontend</span>
+              <a href="#" class="text-blue-600 text-sm hover:underline inline-flex items-center dark:text-blue-400">
+                Explore <i class="fas fa-arrow-right ml-1 text-xs"></i>
+              </a>
+            </div>
+          </div>
         </div>
 
-        <!-- Right Column: Skills Section -->
-        <div class="w-full px-4 lg:w-1/2">
-          <h3 class="mb-4 text-2xl font-semibold text-dark dark:text-white lg:pt-10 lg:text-3xl animate-fade-in delay-100">
-            Keahlian Saya
-          </h3>
-          <div class="mb-12">
-            <!-- HTML5 Progress Bar -->
-            <div class="mb-4 animate-fade-in delay-200">
-              <div class="flex justify-between mb-1">
-                <span class="text-sm font-medium text-primary">HTML5</span>
-                <span class="text-sm font-medium text-primary">100%</span>
+        <!-- Tool 2 -->
+        <div class="hologram-card bg-white rounded-xl shadow-md overflow-hidden dark:bg-gray-800">
+          <div class="p-5">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center mr-4 dark:bg-green-900/30">
+                <i class="fab fa-node-js text-2xl text-green-600 dark:text-green-400"></i>
               </div>
-              <div class="w-full bg-primary/10 rounded-full h-2.5">
-                <div
-                  class="bg-primary h-2.5 rounded-full progress-bar"
-                  style="--progress-width: 100%; animation: progressBarAnimation 1.5s ease-in-out forwards;"></div>
-              </div>
+              <h4 class="text-lg font-bold text-gray-800 dark:text-white">Node.js 20</h4>
             </div>
+            <p class="text-gray-600 text-sm mb-4 dark:text-gray-400">JavaScript runtime built on Chrome's V8 engine for building scalable network applications.</p>
+            <div class="flex justify-between items-center">
+              <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded dark:bg-green-900/30 dark:text-green-400">Backend</span>
+              <a href="#" class="text-green-600 text-sm hover:underline inline-flex items-center dark:text-green-400">
+                Explore <i class="fas fa-arrow-right ml-1 text-xs"></i>
+              </a>
+            </div>
+          </div>
+        </div>
 
-            <!-- CSS3 Progress Bar -->
-            <div class="mb-4 animate-fade-in delay-300">
-              <div class="flex justify-between mb-1">
-                <span class="text-sm font-medium text-primary">CSS3</span>
-                <span class="text-sm font-medium text-primary">100%</span>
+        <!-- Tool 3 -->
+        <div class="hologram-card bg-white rounded-xl shadow-md overflow-hidden dark:bg-gray-800">
+          <div class="p-5">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center mr-4 dark:bg-purple-900/30">
+                <i class="fas fa-cube text-2xl text-purple-600 dark:text-purple-400"></i>
               </div>
-              <div class="w-full bg-primary/10 rounded-full h-2.5">
-                <div
-                  class="bg-primary h-2.5 rounded-full progress-bar"
-                  style="--progress-width: 100%; animation: progressBarAnimation 1.5s ease-in-out forwards;"></div>
-              </div>
+              <h4 class="text-lg font-bold text-gray-800 dark:text-white">Solidity 0.8</h4>
             </div>
+            <p class="text-gray-600 text-sm mb-4 dark:text-gray-400">Contract-oriented programming language for writing smart contracts on Ethereum.</p>
+            <div class="flex justify-between items-center">
+              <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded dark:bg-purple-900/30 dark:text-purple-400">Blockchain</span>
+              <a href="#" class="text-purple-600 text-sm hover:underline inline-flex items-center dark:text-purple-400">
+                Explore <i class="fas fa-arrow-right ml-1 text-xs"></i>
+              </a>
+            </div>
+          </div>
+        </div>
 
-            <!-- JavaScript Progress Bar -->
-            <div class="mb-4 animate-fade-in delay-400">
-              <div class="flex justify-between mb-1">
-                <span class="text-sm font-medium text-primary">JavaScript</span>
-                <span class="text-sm font-medium text-primary">100%</span>
+        <!-- Tool 4 -->
+        <div class="hologram-card bg-white rounded-xl shadow-md overflow-hidden dark:bg-gray-800">
+          <div class="p-5">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center mr-4 dark:bg-red-900/30">
+                <i class="fas fa-robot text-2xl text-red-600 dark:text-red-400"></i>
               </div>
-              <div class="w-full bg-primary/10 rounded-full h-2.5">
-                <div
-                  class="bg-primary h-2.5 rounded-full progress-bar"
-                  style="--progress-width: 100%; animation: progressBarAnimation 1.5s ease-in-out forwards;"></div>
-              </div>
+              <h4 class="text-lg font-bold text-gray-800 dark:text-white">TensorFlow 2.0</h4>
             </div>
+            <p class="text-gray-600 text-sm mb-4 dark:text-gray-400">End-to-end open source platform for machine learning with comprehensive tools.</p>
+            <div class="flex justify-between items-center">
+              <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded dark:bg-red-900/30 dark:text-red-400">AI/ML</span>
+              <a href="#" class="text-red-600 text-sm hover:underline inline-flex items-center dark:text-red-400">
+                Explore <i class="fas fa-arrow-right ml-1 text-xs"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
 
-            <!-- React.js Progress Bar -->
-            <div class="mb-4 animate-fade-in delay-500">
-              <div class="flex justify-between mb-1">
-                <span class="text-sm font-medium text-primary">React.js</span>
-                <span class="text-sm font-medium text-primary">100%</span>
-              </div>
-              <div class="w-full bg-primary/10 rounded-full h-2.5">
-                <div class="bg-primary h-2.5 rounded-full" style="width: 100%"></div>
-              </div>
-            </div>
+      <div class="text-center mt-12">
+        <button class="bg-white border-2 border-blue-500 text-blue-600 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition-colors shadow-md hover:shadow-lg inline-flex items-center group dark:bg-gray-800 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700">
+          <span>View All Tools</span>
+          <i class="fas fa-arrow-right ml-3 group-hover:translate-x-1 transition-transform"></i>
+        </button>
+      </div>
+    </div>
+  </section>
 
-            <!-- Node.js Progress Bar -->
-            <div class="mb-4 animate-fade-in delay-600">
-              <div class="flex justify-between mb-1">
-                <span class="text-sm font-medium text-primary">Node.js</span>
-                <span class="text-sm font-medium text-primary">100%</span>
-              </div>
-              <div class="w-full bg-primary/10 rounded-full h-2.5">
-                <div class="bg-primary h-2.5 rounded-full" style="width: 100%"></div>
-              </div>
-            </div>
+  <!-- Tech Job Board -->
+  <section class="container mx-auto px-4 py-16">
+    <div class="text-center mb-16 animate-fade-in">
+      <span class="text-blue-500 font-medium">CAREER OPPORTUNITIES</span>
+      <h3 class="text-3xl md:text-4xl font-bold mt-2 mb-4 title-font">Tech <span class="gradient-text">Job Board</span></h3>
+      <p class="text-gray-600 max-w-2xl mx-auto dark:text-gray-400">Find your next career opportunity in cutting-edge technology companies</p>
+    </div>
 
-            <!-- MongoDB Progress Bar -->
-            <div class="mb-4 animate-fade-in delay-700">
-              <div class="flex justify-between mb-1">
-                <span class="text-sm font-medium text-primary">MongoDB</span>
-                <span class="text-sm font-medium text-primary">100%</span>
-              </div>
-              <div class="w-full bg-primary/10 rounded-full h-2.5">
-                <div class="bg-primary h-2.5 rounded-full" style="width: 100%"></div>
-              </div>
-            </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Job 1 -->
+      <div class="job-card bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 dark:bg-gray-800">
+        <div class="flex items-start mb-4">
+          <div class="w-16 h-16 rounded-lg overflow-hidden mr-4">
+            <img src="https://source.unsplash.com/random/300x300/?tech,company" alt="Company" class="w-full h-full object-cover">
+          </div>
+          <div>
+            <h4 class="text-xl font-bold text-gray-800 dark:text-white">Senior AI Engineer</h4>
+            <p class="text-gray-600 dark:text-gray-400">QuantumLeap AI • San Francisco, CA • Remote</p>
+          </div>
+          <span class="ml-auto bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full dark:bg-blue-900/30 dark:text-blue-400">$150K-$200K</span>
+        </div>
+        <p class="text-gray-600 mb-4 dark:text-gray-400">We're looking for an experienced AI engineer to lead our machine learning initiatives and develop next-gen AI models.</p>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded dark:bg-gray-700 dark:text-gray-300">Python</span>
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded dark:bg-gray-700 dark:text-gray-300">TensorFlow</span>
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded dark:bg-gray-700 dark:text-gray-300">PyTorch</span>
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded dark:bg-gray-700 dark:text-gray-300">NLP</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-xs text-gray-500 dark:text-gray-400">Posted 2 days ago</span>
+          <button class="text-blue-600 text-sm font-medium hover:underline inline-flex items-center dark:text-blue-400">
+            Apply Now <i class="fas fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+      </div>
 
-            <!-- Express.js Progress Bar -->
-            <div class="mb-4 animate-fade-in delay-800">
-              <div class="flex justify-between mb-1">
-                <span class="text-sm font-medium text-primary">Express.js</span>
-                <span class="text-sm font-medium text-primary">100%</span>
-              </div>
-              <div class="w-full bg-primary/10 rounded-full h-2.5">
-                <div class="bg-primary h-2.5 rounded-full" style="width: 100%"></div>
-              </div>
-            </div>
+      <!-- Job 2 -->
+      <div class="job-card bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 dark:bg-gray-800">
+        <div class="flex items-start mb-4">
+          <div class="w-16 h-16 rounded-lg overflow-hidden mr-4">
+            <img src="https://source.unsplash.com/random/300x300/?blockchain,company" alt="Company" class="w-full h-full object-cover">
+          </div>
+          <div>
+            <h4 class="text-xl font-bold text-gray-800 dark:text-white">Blockchain Developer</h4>
+            <p class="text-gray-600 dark:text-gray-400">ChainFuture • New York, NY • Hybrid</p>
+          </div>
+          <span class="ml-auto bg-purple-100 text-purple-800 text-xs px-3 py-1 rounded-full dark:bg-purple-900/30 dark:text-purple-400">$130K-$180K</span>
+        </div>
+        <p class="text-gray-600 mb-4 dark:text-gray-400">Join our team to build decentralized applications and smart contracts on Ethereum and other blockchain platforms.</p>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded dark:bg-gray-700 dark:text-gray-300">Solidity</span>
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded dark:bg-gray-700 dark:text-gray-300">Rust</span>
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded dark:bg-gray-700 dark:text-gray-300">Web3.js</span>
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded dark:bg-gray-700 dark:text-gray-300">Ethereum</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-xs text-gray-500 dark:text-gray-400">Posted 1 week ago</span>
+          <button class="text-purple-600 text-sm font-medium hover:underline inline-flex items-center dark:text-purple-400">
+            Apply Now <i class="fas fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+      </div>
 
-            <!-- Git & GitHub Progress Bar -->
-            <div class="mb-4 animate-fade-in delay-900">
-              <div class="flex justify-between mb-1">
-                <span class="text-sm font-medium text-primary">Git & GitHub</span>
-                <span class="text-sm font-medium text-primary">100%</span>
+      <!-- Job 3 -->
+      <div class="job-card bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 dark:bg-gray-800">
+        <div class="flex items-start mb-4">
+          <div class="w-16 h-16 rounded-lg overflow-hidden mr-4">
+            <img src="https://source.unsplash.com/random/300x300/?quantum,company" alt="Company" class="w-full h-full object-cover">
+          </div>
+          <div>
+            <h4 class="text-xl font-bold text-gray-800 dark:text-white">Quantum Software Engineer</h4>
+            <p class="text-gray-600 dark:text-gray-400">QubitTech • Boston, MA • On-site</p>
+          </div>
+          <span class="ml-auto bg-cyan-100 text-cyan-800 text-xs px-3 py-1 rounded-full dark:bg-cyan-900/30 dark:text-cyan-400">$160K-$220K</span>
+        </div>
+        <p class="text-gray-600 mb-4 dark:text-gray-400">Develop quantum algorithms and software for our quantum computing platform using Qiskit and Cirq.</p>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded dark:bg-gray-700 dark:text-gray-300">Python</span>
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded dark:bg-gray-700 dark:text-gray-300">Qiskit</span>
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded dark:bg-gray-700 dark:text-gray-300">Quantum Physics</span>
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded dark:bg-gray-700 dark:text-gray-300">Linear Algebra</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-xs text-gray-500 dark:text-gray-400">Posted 3 days ago</span>
+          <button class="text-cyan-600 text-sm font-medium hover:underline inline-flex items-center dark:text-cyan-400">
+            Apply Now <i class="fas fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Job 4 -->
+      <div class="job-card bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 dark:bg-gray-800">
+        <div class="flex items-start mb-4">
+          <div class="w-16 h-16 rounded-lg overflow-hidden mr-4">
+            <img src="https://source.unsplash.com/random/300x300/?robotics,company" alt="Company" class="w-full h-full object-cover">
+          </div>
+          <div>
+            <h4 class="text-xl font-bold text-gray-800 dark:text-white">Robotics Engineer</h4>
+            <p class="text-gray-600 dark:text-gray-400">AutoBotics • Seattle, WA • On-site</p>
+          </div>
+          <span class="ml-auto bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full dark:bg-green-900/30 dark:text-green-400">$140K-$190K</span>
+        </div>
+        <p class="text-gray-600 mb-4 dark:text-gray-400">Design and implement control systems for our next generation of autonomous robotic platforms.</p>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded dark:bg-gray-700 dark:text-gray-300">C++</span>
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded dark:bg-gray-700 dark:text-gray-300">ROS</span>
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded dark:bg-gray-700 dark:text-gray-300">Computer Vision</span>
+          <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded dark:bg-gray-700 dark:text-gray-300">Machine Learning</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-xs text-gray-500 dark:text-gray-400">Posted 5 days ago</span>
+          <button class="text-green-600 text-sm font-medium hover:underline inline-flex items-center dark:text-green-400">
+            Apply Now <i class="fas fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-12">
+      <button class="bg-white border-2 border-blue-500 text-blue-600 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition-colors shadow-md hover:shadow-lg inline-flex items-center group dark:bg-gray-800 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700">
+        <span>View All Jobs</span>
+        <i class="fas fa-arrow-right ml-3 group-hover:translate-x-1 transition-transform"></i>
+      </button>
+    </div>
+  </section>
+
+  <!-- Tech Events Calendar -->
+  <section class="bg-gray-50 py-16 dark:bg-gray-900/50">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16 animate-fade-in">
+        <span class="text-blue-500 font-medium">UPCOMING EVENTS</span>
+        <h3 class="text-3xl md:text-4xl font-bold mt-2 mb-4 title-font">Tech <span class="gradient-text">Events Calendar</span></h3>
+        <p class="text-gray-600 max-w-2xl mx-auto dark:text-gray-400">Stay updated with the most important tech conferences, meetups and webinars</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Event 1 -->
+        <div class="event-day bg-white rounded-xl shadow-md overflow-hidden dark:bg-gray-800">
+          <div class="bg-blue-600 text-white text-center py-3">
+            <h4 class="font-bold text-lg">June 15-17, 2023</h4>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4 dark:bg-blue-900/30">
+                <i class="fas fa-robot text-blue-600 dark:text-blue-400"></i>
               </div>
-              <div class="w-full bg-primary/10 rounded-full h-2.5">
-                <div class="bg-primary h-2.5 rounded-full" style="width: 100%"></div>
-              </div>
+              <h4 class="text-lg font-bold text-gray-800 dark:text-white">AI Summit 2023</h4>
             </div>
+            <p class="text-gray-600 mb-4 dark:text-gray-400">The premier conference on artificial intelligence and machine learning innovations.</p>
+            <div class="flex items-center text-sm text-gray-500 mb-4 dark:text-gray-400">
+              <i class="fas fa-map-marker-alt mr-2"></i>
+              <span>San Francisco, CA & Online</span>
+            </div>
+            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-colors">
+              Register Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Event 2 -->
+        <div class="event-day bg-white rounded-xl shadow-md overflow-hidden dark:bg-gray-800">
+          <div class="bg-purple-600 text-white text-center py-3">
+            <h4 class="font-bold text-lg">July 8-10, 2023</h4>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4 dark:bg-purple-900/30">
+                <i class="fas fa-cube text-purple-600 dark:text-purple-400"></i>
+              </div>
+              <h4 class="text-lg font-bold text-gray-800 dark:text-white">Web3 Conference</h4>
+            </div>
+            <p class="text-gray-600 mb-4 dark:text-gray-400">Exploring the future of decentralized web, blockchain and digital ownership.</p>
+            <div class="flex items-center text-sm text-gray-500 mb-4 dark:text-gray-400">
+              <i class="fas fa-map-marker-alt mr-2"></i>
+              <span>Virtual Event</span>
+            </div>
+            <button class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-medium transition-colors">
+              Register Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Event 3 -->
+        <div class="event-day bg-white rounded-xl shadow-md overflow-hidden dark:bg-gray-800">
+          <div class="bg-cyan-600 text-white text-center py-3">
+            <h4 class="font-bold text-lg">August 22-24, 2023</h4>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 rounded-full bg-cyan-100 flex items-center justify-center mr-4 dark:bg-cyan-900/30">
+                <i class="fas fa-atom text-cyan-600 dark:text-cyan-400"></i>
+              </div>
+              <h4 class="text-lg font-bold text-gray-800 dark:text-white">Quantum Tech Expo</h4>
+            </div>
+            <p class="text-gray-600 mb-4 dark:text-gray-400">Showcasing breakthroughs in quantum computing, communication and cryptography.</p>
+            <div class="flex items-center text-sm text-gray-500 mb-4 dark:text-gray-400">
+              <i class="fas fa-map-marker-alt mr-2"></i>
+              <span>Boston, MA & Online</span>
+            </div>
+            <button class="w-full bg-cyan-600 hover:bg-cyan-700 text-white py-2 rounded-lg font-medium transition-colors">
+              Register Now
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-12">
+        <button class="bg-white border-2 border-blue-500 text-blue-600 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition-colors shadow-md hover:shadow-lg inline-flex items-center group dark:bg-gray-800 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700">
+          <span>View All Events</span>
+          <i class="fas fa-arrow-right ml-3 group-hover:translate-x-1 transition-transform"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Futuristic CTA -->
+  <section class="relative overflow-hidden py-20 bg-gradient-to-br from-gray-900 to-blue-900/80 text-white">
+    <!-- Animated background elements -->
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20">
+      <div class="absolute top-0 left-0 w-1 h-1 bg-white rounded-full" style="box-shadow: 0 0 20px 10px white;"></div>
+      <div class="absolute top-1/4 left-1/4 w-1 h-1 bg-white rounded-full" style="box-shadow: 0 0 30px 15px white;"></div>
+      <div class="absolute top-1/2 right-1/4 w-1 h-1 bg-white rounded-full" style="box-shadow: 0 0 25px 10px white;"></div>
+    </div>
+
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="max-w-4xl mx-auto text-center">
+        <div class="inline-block bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm mb-6 text-blue-300 border border-blue-400/30">
+          <i class="fas fa-gem mr-1"></i> EXCLUSIVE CONTENT
+        </div>
+        <h3 class="text-3xl md:text-5xl font-bold mb-6 leading-tight title-font">
+          Join Our <span class="gradient-text">Tech Community</span> Today
+        </h3>
+        <p class="text-xl mb-10 opacity-90 max-w-3xl mx-auto">
+          Get access to premium articles, exclusive tech reports, and connect with like-minded innovators.
+        </p>
+
+        <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-xl mx-auto">
+          <div class="relative flex-grow">
+            <input type="email" placeholder="Your email address"
+              class="w-full px-6 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 pr-14 bg-white/90 backdrop-blur-sm">
+          </div>
+          <button class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:from-blue-600 hover:to-blue-700 transition-all shadow-lg glow hover:shadow-xl flex items-center justify-center whitespace-nowrap">
+            <i class="fas fa-lock-open mr-2"></i> Get Access
+          </button>
+        </div>
+
+        <div class="mt-8 flex flex-wrap justify-center gap-4">
+          <div class="flex items-center">
+            <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center mr-2">
+              <i class="fas fa-check text-xs text-white"></i>
+            </div>
+            <span class="text-sm">Weekly Tech Briefings</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center mr-2">
+              <i class="fas fa-check text-xs text-white"></i>
+            </div>
+            <span class="text-sm">Exclusive Content</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center mr-2">
+              <i class="fas fa-check text-xs text-white"></i>
+            </div>
+            <span class="text-sm">Community Access</span>
           </div>
         </div>
       </div>
     </div>
   </section>
-  <!-- About Section End -->
 
-
-
-
-  <!-- Main Modal -->
-  <div
-    id="static-modal"
-    data-modal-backdrop="static"
-    tabindex="-1"
-    aria-hidden="true"
-    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-4 w-full max-w-2xl max-h-full">
-      <!-- Modal Content -->
-      <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
-        <!-- Modal Header -->
-        <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
-          <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-            Static modal
-          </h3>
-          <button
-            type="button"
-            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-            data-modal-hide="static-modal">
-            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-            </svg>
-            <span class="sr-only">Close modal</span>
-          </button>
+  <!-- Tech News Ticker -->
+  <div class="bg-gray-800 text-white py-3 overflow-hidden dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center">
+        <div class="bg-blue-600 text-white px-3 py-1 rounded mr-4 whitespace-nowrap flex items-center">
+          <i class="fas fa-bolt mr-2"></i> BREAKING
         </div>
-
-        <!-- Modal Body -->
-        <div class="p-4 md:p-5 space-y-4">
-          <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-            With less than a month to go before the European Union enacts new consumer privacy laws for its citizens, companies around the world are updating their terms of service agreements to comply.
-          </p>
-          <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-            The European Union’s General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is meant to ensure a common set of data rights in the European Union. It requires organizations to notify users as soon as possible of high-risk data breaches that could personally affect them.
-          </p>
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-          <button
-            data-modal-hide="static-modal"
-            type="button"
-            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-            I accept
-          </button>
-          <button
-            data-modal-hide="static-modal"
-            type="button"
-            class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-            Decline
-          </button>
+        <div class="ticker-container overflow-hidden">
+          <div class="animate-marquee whitespace-nowrap">
+            <span class="ticker-item">OpenAI announces GPT-5 with multimodal capabilities</span>
+            <span class="ticker-item">Quantum computer breaks encryption record with 128-qubit processor</span>
+            <span class="ticker-item">Apple reveals AR glasses for 2024 release with revolutionary interface</span>
+            <span class="ticker-item">Tesla humanoid robots enter production, first units shipping to factories</span>
+            <span class="ticker-item">Web3 internet protocol reaches 1M nodes, surpassing traditional CDNs</span>
+            <span class="ticker-item">Neuralink receives FDA approval for human trials of brain-computer interface</span>
+            <span class="ticker-item">Fusion energy breakthrough: Net energy gain sustained for 30 minutes</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Latest Tutorials -->
+  <section id="tutorials" class="container mx-auto px-4 py-16">
+    <div class="text-center mb-16 animate-fade-in">
+      <span class="text-blue-500 font-medium">LEARN FUTURE TECH</span>
+      <h3 class="text-3xl md:text-4xl font-bold mt-2 mb-4 title-font">Master <span class="gradient-text">Next-Gen</span> Skills</h3>
+      <p class="text-gray-600 max-w-2xl mx-auto dark:text-gray-400">Hands-on tutorials to help you stay ahead in the rapidly evolving tech landscape</p>
+    </div>
 
-
-
-  <!-- Footer Start -->
-  <footer class="bg-dark pb-12 pt-24">
-    <div class="container">
-      <div class="flex flex-wrap">
-        <div class="mb-12 w-full px-4 font-medium text-slate-300 md:w-1/3">
-          <h2 class="mb-5 text-4xl font-bold text-white">Mysterio</h2>
-          <h3 class="mb-2 text-2xl font-bold">Contact Us</h3>
-          <div class="flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="20"
-              viewBox="0 96 960 960"
-              width="20"
-              class="mr-2 fill-current py-0">
-              <path
-                d="M168 864q-29 0-50.5-21.5T96 792V360q0-29 21.5-50.5T168 288h624q30 0 51 21.5t21 50.5v432q0 29-21 50.5T792 864H168Zm312-240 312-179v-85L480 539 168 360v85l312 179Z" />
-            </svg>
-            <p class="py-0">mysterio6567@gmail.com</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Tutorial 1 -->
+      <div class="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden animate-slide-up dark:bg-gray-800">
+        <div class="relative h-48 overflow-hidden">
+          <img src="https://source.unsplash.com/random/600x400/?coding,blockchain" alt="Blockchain Tutorial"
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+          <div class="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
+          <div class="absolute bottom-4 left-4">
+            <span class="bg-purple-600 text-white px-2 py-1 rounded text-xs font-bold">ADVANCED</span>
           </div>
-          <div class="flex items-start">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="20"
-              viewBox="0 96 960 960"
-              width="20"
-              class="mr-2 fill-current py-0">
-              <path
-                d="M480.124 578Q514 578 538 553.876t24-58Q562 462 537.876 438t-58-24Q446 414 422 438.124t-24 58Q398 530 422.124 554t58 24ZM480 976Q319 837 239.5 721T160 504.2q0-151.2 96-239.7T480 176q128 0 224 88.5t96 239.7Q800 605 720.5 721 641 837 480 976Z" />
-            </svg>
-            <p class="py-0">Jl. Imam Bonjol No. 9999, Denpasar, Bali</p>
+          <div class="absolute top-4 right-4 bg-white/90 text-purple-600 w-12 h-12 rounded-full flex items-center justify-center shadow-md dark:bg-gray-900/90">
+            <i class="fas fa-code text-xl"></i>
           </div>
         </div>
-        <div class="mb-12 w-full px-4 md:w-1/3">
-          <h3 class="mb-5 text-xl font-semibold text-white">Categori</h3>
-          <ul class="text-slate-300">
-            <li>
-              <a
-                href="#"
-                class="mb-3 inline-block text-base hover:text-primary">Programming
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                class="mb-3 inline-block text-base hover:text-primary">Technology
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                class="mb-3 inline-block text-base hover:text-primary">Lifestyle
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div class="mb-12 w-full px-4 md:w-1/3">
-          <h3 class="mb-5 text-xl font-semibold text-white">Link</h3>
-          <ul class="text-slate-300">
-            <li>
-              <a
-                href="#home"
-                class="mb-3 inline-block text-base hover:text-primary">Home
-              </a>
-            </li>
-            <li>
-              <a
-                href="#about"
-                class="mb-3 inline-block text-base hover:text-primary">About Me
-              </a>
-            </li>
-            <li>
-              <a
-                href="#portfolio"
-                class="mb-3 inline-block text-base hover:text-primary">Portfolio
-              </a>
-            </li>
-            <li>
-              <a
-                href="#clients"
-                class="mb-3 inline-block text-base hover:text-primary">Clients
-              </a>
-            </li>
-            <li>
-              <a
-                href="#blog"
-                class="mb-3 inline-block text-base hover:text-primary">Blog
-              </a>
-            </li>
-            <li>
-              <a
-                href="#contact"
-                class="mb-3 inline-block text-base hover:text-primary">Contact
-              </a>
-            </li>
-          </ul>
+        <div class="p-6">
+          <div class="flex items-center text-sm text-gray-500 mb-3 dark:text-gray-400">
+            <span><i class="far fa-clock mr-1"></i> 45 min</span>
+            <span class="mx-2">•</span>
+            <span><i class="fas fa-signal mr-1"></i> Intermediate</span>
+          </div>
+          <h4 class="text-xl font-bold mb-3 text-gray-800 group-hover:text-blue-600 transition-colors dark:text-white dark:group-hover:text-blue-400">
+            Building a DApp with Solidity and React
+          </h4>
+          <p class="text-gray-600 mb-5 dark:text-gray-400">Step-by-step guide to creating your first decentralized application on Ethereum.</p>
+          <div class="flex justify-between items-center">
+            <div class="flex items-center">
+              <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Instructor"
+                class="w-8 h-8 rounded-full mr-2">
+              <span class="text-sm font-medium dark:text-gray-300">Alex Chen</span>
+            </div>
+            <a href="#" class="text-blue-600 hover:underline inline-flex items-center dark:text-blue-400">
+              Start <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+            </a>
+          </div>
         </div>
       </div>
-      <div class="w-full border-t border-slate-700 pt-10">
-        <div class="mb-5 flex items-center justify-center">
-          <!-- Youtube -->
-          <a
-            href="#"
-            target="_blank"
-            class="mr-3 flex h-9 w-9 items-center justify-center rounded-full border border-slate-300 text-slate-300 hover:border-primary hover:bg-primary hover:text-white">
-            <svg
-              role="img"
-              width="20"
-              class="fill-current"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg">
-              <title>YouTube</title>
-              <path
-                d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-            </svg>
-          </a>
 
-          <!-- Instagram -->
-          <a
-            href="#"
-            target="_blank"
-            class="mr-3 flex h-9 w-9 items-center justify-center rounded-full border border-slate-300 text-slate-300 hover:border-primary hover:bg-primary hover:text-white">
-            <svg
-              role="img"
-              width="20"
-              class="fill-current"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg">
-              <title>Instagram</title>
-              <path
-                d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z" />
-            </svg>
-          </a>
-
-          <!-- Twitter -->
-          <a
-            href="#"
-            target="_blank"
-            class="mr-3 flex h-9 w-9 items-center justify-center rounded-full border border-slate-300 text-slate-300 hover:border-primary hover:bg-primary hover:text-white">
-            <svg
-              role="img"
-              width="20"
-              class="fill-current"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg">
-              <title>Twitter</title>
-              <path
-                d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
-            </svg>
-          </a>
-
-          <!-- Tiktok -->
-          <a
-            href="#"
-            target="_blank"
-            class="mr-3 flex h-9 w-9 items-center justify-center rounded-full border border-slate-300 text-slate-300 hover:border-primary hover:bg-primary hover:text-white">
-            <svg
-              role="img"
-              width="20"
-              class="fill-current"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg">
-              <title>TikTok</title>
-              <path
-                d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
-            </svg>
-          </a>
-
-          <!-- LinkedIn -->
-          <a
-            href="#"
-            target="_blank"
-            class="mr-3 flex h-9 w-9 items-center justify-center rounded-full border border-slate-300 text-slate-300 hover:border-primary hover:bg-primary hover:text-white">
-            <svg
-              role="img"
-              width="20"
-              class="fill-current"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg">
-              <title>LinkedIn</title>
-              <path
-                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-            </svg>
-          </a>
-
-          <!-- Github -->
-          <a
-            href="#"
-            target="_blank"
-            class="mr-3 flex h-9 w-9 items-center justify-center rounded-full border border-slate-300 text-slate-300 hover:border-primary hover:bg-primary hover:text-white">
-            <svg
-              role="img"
-              width="20"
-              class="fill-current"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg">
-              <title>GitHub</title>
-              <path
-                d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
-            </svg>
-          </a>
+      <!-- Tutorial 2 -->
+      <div class="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden animate-slide-up dark:bg-gray-800" style="animation-delay: 0.1s">
+        <div class="relative h-48 overflow-hidden">
+          <img src="https://source.unsplash.com/random/600x400/?machine,learning" alt="ML Tutorial"
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+          <div class="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
+          <div class="absolute bottom-4 left-4">
+            <span class="bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold">PYTHON</span>
+          </div>
+          <div class="absolute top-4 right-4 bg-white/90 text-blue-600 w-12 h-12 rounded-full flex items-center justify-center shadow-md dark:bg-gray-900/90">
+            <i class="fas fa-brain text-xl"></i>
+          </div>
         </div>
-        <p class="text-center text-xs font-medium text-slate-500">
-          Created with
-          <span class="text-pink-500">❤</span> by
-          <a
-            href="https://github.com/rioarya01"
-            target="_blank"
-            class="font-bold text-primary">Rio Arya Bawesi </a>, using
-          <a
-            href="https://tailwindcss.com/"
-            target="_blank"
-            class="font-bold text-sky-500">
-            Tailwind CSS </a>.
-        </p>
+        <div class="p-6">
+          <div class="flex items-center text-sm text-gray-500 mb-3 dark:text-gray-400">
+            <span><i class="far fa-clock mr-1"></i> 1h 15min</span>
+            <span class="mx-2">•</span>
+            <span><i class="fas fa-signal mr-1"></i> Beginner</span>
+          </div>
+          <h4 class="text-xl font-bold mb-3 text-gray-800 group-hover:text-blue-600 transition-colors dark:text-white dark:group-hover:text-blue-400">
+            Introduction to TensorFlow 2.0
+          </h4>
+          <p class="text-gray-600 mb-5 dark:text-gray-400">Learn the fundamentals of deep learning with Google's powerful ML framework.</p>
+          <div class="flex justify-between items-center">
+            <div class="flex items-center">
+              <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Instructor"
+                class="w-8 h-8 rounded-full mr-2">
+              <span class="text-sm font-medium dark:text-gray-300">Priya Patel</span>
+            </div>
+            <a href="#" class="text-blue-600 hover:underline inline-flex items-center dark:text-blue-400">
+              Start <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tutorial 3 -->
+      <div class="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 overflow-hidden animate-slide-up dark:bg-gray-800" style="animation-delay: 0.2s">
+        <div class="relative h-48 overflow-hidden">
+          <img src="https://source.unsplash.com/random/600x400/?quantum,physics" alt="Quantum Tutorial"
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+          <div class="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
+          <div class="absolute bottom-4 left-4">
+            <span class="bg-cyan-600 text-white px-2 py-1 rounded text-xs font-bold">NEW</span>
+          </div>
+          <div class="absolute top-4 right-4 bg-white/90 text-cyan-600 w-12 h-12 rounded-full flex items-center justify-center shadow-md dark:bg-gray-900/90">
+            <i class="fas fa-atom text-xl"></i>
+          </div>
+        </div>
+        <div class="p-6">
+          <div class="flex items-center text-sm text-gray-500 mb-3 dark:text-gray-400">
+            <span><i class="far fa-clock mr-1"></i> 2h 30min</span>
+            <span class="mx-2">•</span>
+            <span><i class="fas fa-signal mr-1"></i> Advanced</span>
+          </div>
+          <h4 class="text-xl font-bold mb-3 text-gray-800 group-hover:text-blue-600 transition-colors dark:text-white dark:group-hover:text-blue-400">
+            Quantum Programming with Qiskit
+          </h4>
+          <p class="text-gray-600 mb-5 dark:text-gray-400">Hands-on introduction to quantum algorithms and IBM's quantum computing platform.</p>
+          <div class="flex justify-between items-center">
+            <div class="flex items-center">
+              <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Instructor"
+                class="w-8 h-8 rounded-full mr-2">
+              <span class="text-sm font-medium dark:text-gray-300">Dr. James Wilson</span>
+            </div>
+            <a href="#" class="text-blue-600 hover:underline inline-flex items-center dark:text-blue-400">
+              Start <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-12">
+      <button class="bg-white border-2 border-blue-500 text-blue-600 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition-colors shadow-md hover:shadow-lg inline-flex items-center group dark:bg-gray-800 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-gray-700">
+        <span>View All Tutorials</span>
+        <i class="fas fa-arrow-right ml-3 group-hover:translate-x-1 transition-transform"></i>
+      </button>
+    </div>
+  </section>
+
+  <!-- Coding Tutorials Section -->
+  <section id="coding-tutorials" class="container mx-auto px-4 py-16 relative overflow-hidden">
+    <!-- Animated background elements -->
+    <div class="absolute top-0 left-0 w-full h-full pointer-events-none">
+      <div class="absolute top-20 left-10 w-16 h-16 rounded-full bg-blue-500/10 blur-xl animate-float"></div>
+      <div class="absolute bottom-1/4 right-1/4 w-24 h-24 rounded-full bg-purple-500/10 blur-xl animate-float" style="animation-delay: 2s;"></div>
+    </div>
+
+    <div class="text-center mb-16 animate-fade-in relative z-10">
+      <span class="inline-block bg-blue-500/10 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm mb-6 text-blue-300 border border-blue-400/30 animate-pulse">
+        <i class="fas fa-code mr-1"></i> HANDS-ON LEARNING
+      </span>
+      <h3 class="text-4xl md:text-5xl font-bold mb-6 leading-tight title-font">
+        Interactive <span class="gradient-text">Coding Tutorials</span>
+      </h3>
+      <p class="text-xl md:text-2xl mb-10 opacity-90 max-w-3xl mx-auto dark:text-gray-300">
+        Learn by doing with our immersive coding experience. Type, run, and see results instantly!
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 relative z-10">
+      <!-- Tutorial Sidebar - Futuristic Glass Panel -->
+      <div class="lg:col-span-1">
+        <div class="bg-white/5 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden border border-gray-800/50 dark:border-gray-700/30 holographic-effect">
+          <div class="p-6 border-b border-gray-800/30 dark:border-gray-700/20">
+            <h4 class="text-xl font-bold text-white flex items-center">
+              <i class="fas fa-map mr-3 text-blue-400"></i> Tutorial Paths
+            </h4>
+          </div>
+
+          <div class="p-4 space-y-2">
+            <div class="sidebar-item active group">
+              <div class="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-blue-600/20 to-blue-600/10 border border-blue-500/20">
+                <span class="font-medium text-white">Getting Started with JavaScript</span>
+                <span class="challenge-badge bg-blue-600/80 text-blue-100">5 Challenges</span>
+              </div>
+              <div class="absolute inset-0 -z-10 bg-blue-600/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </div>
+
+            <div class="sidebar-item group">
+              <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-800/30 dark:hover:bg-gray-700/30 transition-colors border border-transparent hover:border-gray-700/20">
+                <span class="font-medium text-gray-300 group-hover:text-white">Python for Beginners</span>
+                <span class="challenge-badge bg-green-600/80 text-green-100">7 Challenges</span>
+              </div>
+            </div>
+
+            <div class="sidebar-item group">
+              <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-800/30 dark:hover:bg-gray-700/30 transition-colors border border-transparent hover:border-gray-700/20">
+                <span class="font-medium text-gray-300 group-hover:text-white">Web Development</span>
+                <span class="challenge-badge bg-purple-600/80 text-purple-100">8 Challenges</span>
+              </div>
+            </div>
+
+            <div class="sidebar-item group">
+              <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-800/30 dark:hover:bg-gray-700/30 transition-colors border border-transparent hover:border-gray-700/20">
+                <span class="font-medium text-gray-300 group-hover:text-white">Blockchain Basics</span>
+                <span class="challenge-badge bg-yellow-600/80 text-yellow-100">4 Challenges</span>
+              </div>
+            </div>
+
+            <div class="sidebar-item group">
+              <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-800/30 dark:hover:bg-gray-700/30 transition-colors border border-transparent hover:border-gray-700/20">
+                <span class="font-medium text-gray-300 group-hover:text-white">Machine Learning</span>
+                <span class="challenge-badge bg-red-600/80 text-red-100">6 Challenges</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6 border-t border-gray-800/30 dark:border-gray-700/20">
+            <h4 class="text-xl font-bold text-white flex items-center mb-4">
+              <i class="fas fa-bolt mr-3 text-purple-400"></i> Quick Challenges
+            </h4>
+            <div class="space-y-2">
+              <div class="sidebar-item group">
+                <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-800/30 dark:hover:bg-gray-700/30 transition-colors">
+                  <span class="font-medium text-gray-300 group-hover:text-white">FizzBuzz</span>
+                  <span class="difficulty-badge difficulty-beginner">Beginner</span>
+                </div>
+              </div>
+
+              <div class="sidebar-item group">
+                <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-800/30 dark:hover:bg-gray-700/30 transition-colors">
+                  <span class="font-medium text-gray-300 group-hover:text-white">Palindrome Checker</span>
+                  <span class="difficulty-badge difficulty-beginner">Beginner</span>
+                </div>
+              </div>
+
+              <div class="sidebar-item group">
+                <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-800/30 dark:hover:bg-gray-700/30 transition-colors">
+                  <span class="font-medium text-gray-300 group-hover:text-white">Caesar Cipher</span>
+                  <span class="difficulty-badge difficulty-intermediate">Intermediate</span>
+                </div>
+              </div>
+
+              <div class="sidebar-item group">
+                <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-800/30 dark:hover:bg-gray-700/30 transition-colors">
+                  <span class="font-medium text-gray-300 group-hover:text-white">Binary Search</span>
+                  <span class="difficulty-badge difficulty-intermediate">Intermediate</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tutorial Content - Futuristic Terminal Style -->
+      <div class="lg:col-span-3">
+        <div class="bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden border border-gray-800/50 dark:border-gray-700/30">
+          <div class="p-6 border-b border-gray-800/30 dark:border-gray-700/20">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-2xl font-bold text-white flex items-center">
+                  <i class="fas fa-terminal mr-3 text-blue-400 animate-pulse"></i>
+                  <span>Getting Started with JavaScript</span>
+                </h4>
+                <div class="flex items-center mt-2">
+                  <span class="text-sm text-blue-300 mr-3">
+                    <i class="fas fa-map-marker-alt mr-1"></i> Tutorial 1 of 5
+                  </span>
+                  <span class="difficulty-badge difficulty-beginner">
+                    <i class="fas fa-star mr-1"></i> Beginner
+                  </span>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2">
+                <button class="px-3 py-1 rounded-full bg-blue-600/20 text-blue-300 border border-blue-500/30 hover:bg-blue-600/30 transition-colors text-sm">
+                  <i class="fas fa-bookmark mr-1"></i> Save
+                </button>
+                <button class="px-3 py-1 rounded-full bg-purple-600/20 text-purple-300 border border-purple-500/30 hover:bg-purple-600/30 transition-colors text-sm">
+                  <i class="fas fa-share-alt mr-1"></i> Share
+                </button>
+              </div>
+            </div>
+
+            <div class="tutorial-progress mt-4">
+              <div class="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
+                <div class="progress-bar h-full bg-gradient-to-r from-blue-500 to-blue-600" style="width: 20%"></div>
+              </div>
+              <div class="text-xs text-gray-400 mt-1 text-right">20% completed</div>
+            </div>
+          </div>
+
+          <div class="p-6">
+            <div class="tutorial-step mb-8">
+              <div class="flex items-start mb-6">
+                <div class="bg-blue-600/10 border border-blue-500/20 rounded-lg p-3 mr-4">
+                  <span class="text-blue-400 font-bold text-2xl">1</span>
+                </div>
+                <div>
+                  <h5 class="text-xl font-bold text-white mb-2">Variables and Data Types</h5>
+                  <p class="text-gray-300">
+                    JavaScript variables are containers for storing data values. In this tutorial, you'll learn how to declare variables and work with different data types.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Futuristic Code Editor -->
+              <div class="code-editor-container mb-6 glow-effect hover:glow-effect-lg transition-all duration-300">
+                <div class="editor-header bg-gray-800 border-b border-gray-700/50">
+                  <div class="flex items-center">
+                    <div class="flex space-x-2 mr-4">
+                      <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                      <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                      <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                    </div>
+                    <span class="text-gray-300 font-mono text-sm">script.js</span>
+                  </div>
+                  <div class="editor-actions">
+                    <button class="run-button glow-blue" onclick="runCode()">
+                      <i class="fas fa-play mr-2"></i> Run Code
+                      <span class="ml-2 text-xs opacity-80">(Ctrl+Enter)</span>
+                    </button>
+                  </div>
+                </div>
+                <textarea id="codeEditor">// Declaring variables
+let message = "Hello, World!";
+const PI = 3.14159;
+var count = 10;
+
+// Different data types
+let isActive = true; // boolean
+let price = 19.99; // number
+let name = "Alice"; // string
+let fruits = ["apple", "banana", "orange"]; // array
+let person = { firstName: "John", age: 30 }; // object
+
+// Try declaring your own variables below:
+console.log(message);</textarea>
+              </div>
+
+              <div class="output-container bg-gray-800 rounded-lg border border-gray-700/50" id="output">
+                <div class="output-header bg-gray-800/80 border-b border-gray-700/50 px-4 py-2 text-gray-300 text-sm font-mono">
+                  <i class="fas fa-chevron-right text-blue-400 mr-2"></i> Output
+                </div>
+                <div class="p-4 text-gray-200 font-mono text-sm min-h-[100px]">
+                  <!-- Output will appear here -->
+                </div>
+              </div>
+
+              <div class="bg-blue-900/20 rounded-xl p-4 mt-6 border border-blue-800/30">
+                <div class="flex">
+                  <div class="mr-3 text-blue-400 text-xl">
+                    <i class="fas fa-lightbulb"></i>
+                  </div>
+                  <div>
+                    <h6 class="font-semibold text-blue-300 mb-1">Pro Tip</h6>
+                    <p class="text-blue-200 text-sm">
+                      Use <code class="bg-blue-900/50 px-1.5 py-0.5 rounded">let</code> for variables that will change, and <code class="bg-blue-900/50 px-1.5 py-0.5 rounded">const</code> for variables that won't change. Avoid using <code class="bg-blue-900/50 px-1.5 py-0.5 rounded">var</code> in modern JavaScript.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Challenge Section -->
+            <div class="tutorial-step">
+              <div class="flex items-start mb-6">
+                <div class="bg-purple-600/10 border border-purple-500/20 rounded-lg p-3 mr-4">
+                  <span class="text-purple-400 font-bold text-2xl">2</span>
+                </div>
+                <div>
+                  <h5 class="text-xl font-bold text-white mb-2">Challenge: Variable Practice</h5>
+                  <p class="text-gray-300">
+                    Now it's your turn! Complete the following tasks by declaring variables in the editor:
+                  </p>
+                </div>
+              </div>
+
+              <div class="bg-gray-800/50 rounded-xl p-5 mb-6 border border-gray-700/30">
+                <ol class="list-decimal pl-5 space-y-3 text-gray-300">
+                  <li class="pl-2">Declare a constant called <code class="bg-gray-700/80 px-1.5 py-0.5 rounded border border-gray-600/50">TAX_RATE</code> with value 0.07</li>
+                  <li class="pl-2">Declare a variable called <code class="bg-gray-700/80 px-1.5 py-0.5 rounded border border-gray-600/50">price</code> with value 25</li>
+                  <li class="pl-2">Calculate the total price with tax and store it in a variable called <code class="bg-gray-700/80 px-1.5 py-0.5 rounded border border-gray-600/50">total</code></li>
+                  <li class="pl-2">Create a string variable called <code class="bg-gray-700/80 px-1.5 py-0.5 rounded border border-gray-600/50">receipt</code> that combines text and variables like: "Total with tax: $[total]"</li>
+                </ol>
+              </div>
+
+              <div class="code-editor-container mb-6 glow-effect hover:glow-effect-lg transition-all duration-300">
+                <div class="editor-header bg-gray-800 border-b border-gray-700/50">
+                  <div class="flex items-center">
+                    <div class="flex space-x-2 mr-4">
+                      <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                      <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                      <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                    </div>
+                    <span class="text-gray-300 font-mono text-sm">challenge.js</span>
+                  </div>
+                  <div class="editor-actions">
+                    <button class="run-button glow-blue mr-2" onclick="runChallenge()">
+                      <i class="fas fa-play mr-2"></i> Run Code
+                    </button>
+                    <button class="run-button glow-green" onclick="checkSolution()">
+                      <i class="fas fa-check mr-2"></i> Check Solution
+                    </button>
+                  </div>
+                </div>
+                <textarea id="challengeEditor">// Complete the challenge here</textarea>
+              </div>
+
+              <div class="output-container bg-gray-800 rounded-lg border border-gray-700/50" id="challengeOutput">
+                <div class="output-header bg-gray-800/80 border-b border-gray-700/50 px-4 py-2 text-gray-300 text-sm font-mono">
+                  <i class="fas fa-chevron-right text-purple-400 mr-2"></i> Challenge Results
+                </div>
+                <div class="p-4 text-gray-200 font-mono text-sm min-h-[100px]">
+                  <!-- Challenge output will appear here -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation -->
+          <div class="p-6 border-t border-gray-800/30 dark:border-gray-700/20">
+            <div class="flex justify-between">
+              <button class="px-5 py-2.5 rounded-lg bg-gray-800 hover:bg-gray-700/80 text-gray-300 hover:text-white transition-colors border border-gray-700/50 flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Previous Lesson
+              </button>
+              <button class="px-5 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white transition-all shadow-lg glow flex items-center">
+                Next Challenge <i class="fas fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Assistant -->
+  <div class="ai-assistant">
+    <div class="ai-assistant-chat">
+      <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4">
+        <div class="flex items-center">
+          <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-3">
+            <i class="fas fa-robot"></i>
+          </div>
+          <div>
+            <h4 class="font-bold">NexTech AI Assistant</h4>
+            <p class="text-xs opacity-80">Ask me anything about technology</p>
+          </div>
+          <button class="ml-auto text-white/70 hover:text-white">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <div class="p-4 h-80 overflow-y-auto">
+        <div class="flex mb-4">
+          <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3 dark:bg-blue-900/30">
+            <i class="fas fa-user text-blue-600 dark:text-blue-400"></i>
+          </div>
+          <div class="bg-gray-100 rounded-lg p-3 max-w-xs dark:bg-gray-700">
+            <p class="text-sm dark:text-gray-300">What's the latest in quantum computing?</p>
+          </div>
+        </div>
+        <div class="flex justify-end mb-4">
+          <div class="bg-blue-600 text-white rounded-lg p-3 max-w-xs">
+            <p class="text-sm">The latest breakthrough in quantum computing is IBM's 433-qubit Osprey processor, announced in November 2022. This represents a significant step toward practical quantum advantage.</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center ml-3">
+            <i class="fas fa-robot text-white"></i>
+          </div>
+        </div>
+        <div class="text-center text-xs text-gray-500 my-4 dark:text-gray-400">
+          <span>Today</span>
+        </div>
+      </div>
+      <div class="border-t p-4 dark:border-gray-700">
+        <div class="relative">
+          <input type="text" placeholder="Ask about any tech topic..."
+            class="w-full px-4 py-3 rounded-full bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 pr-12 dark:bg-gray-700 dark:text-white">
+          <button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600 dark:hover:text-blue-400">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="ai-assistant-button tooltip">
+      <i class="fas fa-robot text-2xl text-white"></i>
+      <span class="tooltip-text">AI Assistant</span>
+    </div>
+  </div>
+
+  <!-- Futuristic Footer -->
+  <footer class="bg-gray-900 text-gray-300 pt-16 pb-8">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div>
+          <div class="flex items-center space-x-3 mb-6">
+            <div class="holographic-effect rounded-full p-2 glow">
+              <i class="fas fa-brain text-2xl text-blue-400"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-white title-font">Nex<span class="gradient-text">Tech</span></h2>
+          </div>
+          <p class="mb-6">Exploring the frontier of technology and innovation to shape a better future.</p>
+          <div class="flex space-x-4">
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-800 hover:bg-blue-600 flex items-center justify-center text-gray-300 hover:text-white transition-colors glow">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-800 hover:bg-blue-700 flex items-center justify-center text-gray-300 hover:text-white transition-colors glow">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-800 hover:bg-pink-600 flex items-center justify-center text-gray-300 hover:text-white transition-colors glow">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-800 hover:bg-red-600 flex items-center justify-center text-gray-300 hover:text-white transition-colors glow">
+              <i class="fab fa-youtube"></i>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-6">Explore</h4>
+          <ul class="space-y-3">
+            <li><a href="#" class="hover:text-blue-400 transition-colors flex items-center">
+                <i class="fas fa-chevron-right text-xs mr-2 text-blue-400"></i> AI Research
+              </a></li>
+            <li><a href="#" class="hover:text-blue-400 transition-colors flex items-center">
+                <i class="fas fa-chevron-right text-xs mr-2 text-blue-400"></i> Web3 Development
+              </a></li>
+            <li><a href="#" class="hover:text-blue-400 transition-colors flex items-center">
+                <i class="fas fa-chevron-right text-xs mr-2 text-blue-400"></i> Quantum Computing
+              </a></li>
+            <li><a href="#" class="hover:text-blue-400 transition-colors flex items-center">
+                <i class="fas fa-chevron-right text-xs mr-2 text-blue-400"></i> Robotics
+              </a></li>
+            <li><a href="#" class="hover:text-blue-400 transition-colors flex items-center">
+                <i class="fas fa-chevron-right text-xs mr-2 text-blue-400"></i> Space Tech
+              </a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-6">Company</h4>
+          <ul class="space-y-3">
+            <li><a href="#" class="hover:text-blue-400 transition-colors flex items-center">
+                <i class="fas fa-chevron-right text-xs mr-2 text-blue-400"></i> About Us
+              </a></li>
+            <li><a href="#" class="hover:text-blue-400 transition-colors flex items-center">
+                <i class="fas fa-chevron-right text-xs mr-2 text-blue-400"></i> Our Team
+              </a></li>
+            <li><a href="#" class="hover:text-blue-400 transition-colors flex items-center">
+                <i class="fas fa-chevron-right text-xs mr-2 text-blue-400"></i> Careers
+              </a></li>
+            <li><a href="#" class="hover:text-blue-400 transition-colors flex items-center">
+                <i class="fas fa-chevron-right text-xs mr-2 text-blue-400"></i> Contact
+              </a></li>
+            <li><a href="#" class="hover:text-blue-400 transition-colors flex items-center">
+                <i class="fas fa-chevron-right text-xs mr-2 text-blue-400"></i> Partners
+              </a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-6">Newsletter</h4>
+          <p class="mb-4">Subscribe to get the latest tech news and insights delivered to your inbox.</p>
+          <form class="space-y-3">
+            <input type="email" placeholder="Your email" class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:border-blue-500">
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center">
+              <i class="fas fa-paper-plane mr-2"></i> Subscribe
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <p>© 2023 NexTech. All rights reserved.</p>
+        <div class="flex space-x-6 mt-4 md:mt-0">
+          <a href="#" class="text-sm hover:text-blue-400 transition-colors">Privacy Policy</a>
+          <a href="#" class="text-sm hover:text-blue-400 transition-colors">Terms of Service</a>
+          <a href="#" class="text-sm hover:text-blue-400 transition-colors">Cookies</a>
+        </div>
       </div>
     </div>
   </footer>
-  <!-- Footer End -->
 
-  <!-- Back to top Start -->
-  <a
-    href="#home"
-    class="fixed bottom-4 right-4 z-[9999] hidden h-14 w-14 items-center justify-center rounded-full bg-primary p-4 hover:animate-pulse"
-    id="to-top">
-    <span class="mt-2 block h-5 w-5 rotate-45 border-l-2 border-t-2"></span>
-  </a>
-  <!-- Back to top End -->
-
-  <script src="dist/js/script.js"></script>
-  <script src="/assets/js/custom/aon/aos.js"></script>
-  <script>
-    AOS.init();
-  </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/TextPlugin.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+  <!-- Back to Top Button -->
+  <button id="backToTop" class="fixed bottom-8 right-8 w-12 h-12 rounded-full bg-blue-600 text-white shadow-xl hover:bg-blue-700 transition-colors flex items-center justify-center opacity-0 invisible transition-all duration-300 z-30">
+    <i class="fas fa-arrow-up"></i>
+  </button>
 
   <script>
-    gsap.registerPlugin(ScrollTrigger);
-
-    // Animate the "About Me" heading
-    gsap.from('.animate-fade-in', {
-      opacity: 0,
-      y: 20,
-      duration: 1,
-      scrollTrigger: {
-        trigger: '#about',
-        start: 'top 80%',
-      },
-    });
-  </script>
-  <script>
-    const progressBars = document.querySelectorAll('.progress-bar');
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.style.animation = `progressBarAnimation 1.5s ease-in-out forwards`;
-          }
-        });
-      }, {
-        threshold: 0.5
+    // Loading screen animation
+    window.addEventListener('load', function() {
+      // Create particles
+      const particlesContainer = document.querySelector('.particles');
+      for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        particle.style.width = `${Math.random() * 5 + 2}px`;
+        particle.style.height = particle.style.width;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
+        particle.style.animationDelay = `${Math.random() * 5}s`;
+        particlesContainer.appendChild(particle);
       }
-    );
 
-    progressBars.forEach((bar) => observer.observe(bar));
-    // Buka Modal
-    function openCVModal() {
-      const modal = document.getElementById("cvModal");
-      modal.classList.remove("hidden");
+      // Hide loading screen
+      setTimeout(() => {
+        const loading = document.getElementById('loading');
+        loading.style.opacity = '0';
+        setTimeout(() => {
+          loading.style.display = 'none';
+        }, 1000);
+      }, 1500);
+    });
+
+    // Back to top button
+    const backToTopButton = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      if (window.pageYOffset > 300) {
+        backToTopButton.style.opacity = '1';
+        backToTopButton.style.visibility = 'visible';
+      } else {
+        backToTopButton.style.opacity = '0';
+        backToTopButton.style.visibility = 'hidden';
+      }
+    });
+
+    backToTopButton.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    // Marquee animation for news ticker
+    const marquee = document.querySelector('.animate-marquee');
+    if (marquee) {
+      const marqueeContent = marquee.innerHTML;
+      marquee.innerHTML = marqueeContent + marqueeContent;
+
+      // Calculate duration based on content width
+      const width = marquee.scrollWidth / 2;
+      const duration = width / 50; // pixels per second
+      marquee.style.animationDuration = `${duration}s`;
     }
 
-    // Tutup Modal
-    function closeCVModal() {
-      const modal = document.getElementById("cvModal");
-      modal.classList.add("hidden");
+    // Card hover effects
+    document.querySelectorAll('.tech-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const angleY = (x - centerX) / 20;
+        const angleX = (centerY - y) / 20;
+
+        card.querySelector('.tech-card-inner').style.transform = `rotateY(${angleY}deg) rotateX(${angleX}deg)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.querySelector('.tech-card-inner').style.transform = 'rotateY(0) rotateX(0)';
+      });
+    });
+
+    // AI Assistant toggle
+    const aiAssistant = document.querySelector('.ai-assistant');
+    const aiAssistantButton = document.querySelector('.ai-assistant-button');
+
+    aiAssistantButton.addEventListener('click', () => {
+      aiAssistant.classList.toggle('active');
+    });
+
+    // Voice search
+    const voiceSearch = document.getElementById('voiceSearch');
+    const voiceStatus = document.getElementById('voiceStatus');
+
+    if ('webkitSpeechRecognition' in window) {
+      const recognition = new webkitSpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      voiceSearch.addEventListener('click', () => {
+        recognition.start();
+        voiceStatus.classList.remove('hidden');
+      });
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        document.querySelector('input[type="text"]').value = transcript;
+        voiceStatus.classList.add('hidden');
+        // Here you would typically trigger the search
+        console.log('Searching for:', transcript);
+      };
+
+      recognition.onerror = (event) => {
+        voiceStatus.classList.add('hidden');
+        console.error('Voice recognition error', event.error);
+      };
+    } else {
+      voiceSearch.style.display = 'none';
     }
 
-    // Event Listener untuk Tombol Close
-    document.getElementById("closeModal").addEventListener("click", closeCVModal);
+    // Dark mode toggle
+    const themeToggle = document.getElementById('themeToggle');
 
-    // Event Listener untuk Tombol "Lihat CV" (Opsional)
-    // Misalnya, tambahkan tombol di bagian "About Me" untuk membuka modal
-    document.getElementById("lihatCV").addEventListener("click", openCVModal);
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+
+      // Save preference to localStorage
+      const isDark = document.body.classList.contains('dark');
+      localStorage.setItem('darkMode', isDark);
+    });
+
+    // Check for saved theme preference
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.body.classList.add('dark');
+    }
+
+    // 3D Tech Sphere
+    function initTechSphere() {
+      const canvas = document.getElementById('techSphere');
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: true
+      });
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 5;
+
+      // Add ambient light
+      const ambientLight = new THREE.AmbientLight(0x404040);
+      scene.add(ambientLight);
+
+      // Add directional light
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+      directionalLight.position.set(1, 1, 1);
+      scene.add(directionalLight);
+
+      // Create sphere geometry
+      const geometry = new THREE.SphereGeometry(2, 32, 32);
+
+      // Load tech texture
+      const textureLoader = new THREE.TextureLoader();
+      const texture = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+
+      // Create material with wireframe effect
+      const material = new THREE.MeshPhongMaterial({
+        map: texture,
+        transparent: true,
+        opacity: 0.7,
+        wireframe: false,
+        emissive: 0x1a3d7c,
+        emissiveIntensity: 0.2,
+        specular: 0x111111,
+        shininess: 30
+      });
+
+      const sphere = new THREE.Mesh(geometry, material);
+      scene.add(sphere);
+
+      // Add orbit controls
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableZoom = false;
+      controls.enablePan = false;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.5;
+
+      // Handle window resize
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      window.addEventListener('resize', onWindowResize, false);
+
+      // Animation loop
+      function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        sphere.rotation.y += 0.002;
+        renderer.render(scene, camera);
+      }
+
+      // Start animation
+      animate();
+
+      // Set initial size
+      onWindowResize();
+    }
+
+    // Initialize 3D sphere when page loads
+    initTechSphere();
+
+    function runCode() {
+  const code = document.getElementById('codeEditor').value;
+  const outputDiv = document.querySelector('#output div:last-child');
+  
+  try {
+    // Clear previous output
+    outputDiv.innerHTML = '';
+    
+    // Capture console.log output
+    const originalConsoleLog = console.log;
+    let output = '';
+    console.log = function(message) {
+      output += message + '\n';
+      originalConsoleLog.apply(console, arguments);
+    };
+    
+    // Execute the code
+    new Function(code)();
+    
+    // Restore console.log
+    console.log = originalConsoleLog;
+    
+    // Display output
+    outputDiv.textContent = output || 'Code executed successfully (no output)';
+  } catch (error) {
+    outputDiv.textContent = 'Error: ' + error.message;
+    outputDiv.style.color = '#ef4444';
+  }
+}
+
+function runChallenge() {
+  // Similar to runCode but for challenge editor
+  const code = document.getElementById('challengeEditor').value;
+  const outputDiv = document.querySelector('#challengeOutput div:last-child');
+  
+  try {
+    outputDiv.innerHTML = '';
+    const originalConsoleLog = console.log;
+    let output = '';
+    console.log = function(message) {
+      output += message + '\n';
+      originalConsoleLog.apply(console, arguments);
+    };
+    
+    new Function(code)();
+    console.log = originalConsoleLog;
+    outputDiv.textContent = output || 'Challenge code executed (no output)';
+  } catch (error) {
+    outputDiv.textContent = 'Error: ' + error.message;
+    outputDiv.style.color = '#ef4444';
+  }
+}
+
+function checkSolution() {
+  // Add your solution checking logic here
+  const outputDiv = document.querySelector('#challengeOutput div:last-child');
+  outputDiv.textContent = 'Solution checking not yet implemented';
+}
   </script>
 </body>
 

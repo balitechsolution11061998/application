@@ -29,25 +29,55 @@ function initApp() {
     // Login function
     async login() {
       if (!this.username || !this.password) {
-        alert("Username dan password harus diisi!");
+        toastr.warning("Username dan password harus diisi!"); // Ganti alert dengan toastr
         return;
       }
+    
+      // Tampilkan pertanyaan konfirmasi
+      const result = await Swal.fire({
+        title: 'Apakah Anda yakin?',
+        text: 'Anda akan login dengan username dan password yang dimasukkan.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Login',
+        cancelButtonText: 'Batal',
+      });
+    
+      // Jika pengguna memilih "Batal", hentikan proses
+      if (result.isDismissed) {
+        return;
+      }
+    
+      // Tampilkan spinner loading
+      Swal.fire({
+        title: 'Sedang memproses...',
+        text: 'Harap tunggu sebentar.',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading(); // Tampilkan spinner
+        },
+      });
     
       try {
         // Kirim request ke API login
         const response = await fetch('https://publicconcerns.online/api/login', {
           method: 'POST',
           headers: {
+            'Authorization': `Bearer h5OWU9tevljQWdTBzcwjmnJznI3yS4I05aXokboT`,
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
           },
           body: JSON.stringify({
-            username: this.username, // Gunakan username atau email
+            login: this.username, // Gunakan username atau email
             password: this.password,
           }),
         });
     
         // Tangani response
         const data = await response.json();
+    
+        // Tutup spinner
+        Swal.close();
     
         if (response.ok) {
           // Jika login berhasil
@@ -57,39 +87,22 @@ function initApp() {
           localStorage.setItem("isLoggedIn", true); // Simpan status login
           localStorage.setItem("access_token", data.access_token); // Simpan access token
           this.resetLogoutTimer(); // Reset timer setelah login
+    
+          // Tampilkan Toastr sukses
+          toastr.success('Login Berhasil! Selamat datang kembali!');
         } else {
           // Jika login gagal
-          alert(data.message || "Login gagal. Periksa username dan password Anda.");
+          toastr.error(data.message || "Login gagal. Periksa username dan password Anda.");
         }
       } catch (error) {
         console.error("Error during login:", error);
-        alert("Terjadi kesalahan saat login. Silakan coba lagi.");
+    
+        // Tampilkan Toastr error
+        toastr.error('Terjadi kesalahan saat login. Silakan coba lagi.');
       }
     },
 
-    async fetchProtectedData() {
-      const accessToken = localStorage.getItem("access_token");
-    
-      try {
-        const response = await fetch('https://publicconcerns.online/api/protected-route', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-          },
-        });
-    
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Protected data:", data);
-        } else {
-          const data = await response.json();
-          alert(data.message || "Gagal mengambil data.");
-        }
-      } catch (error) {
-        console.error("Error fetching protected data:", error);
-        alert("Terjadi kesalahan. Silakan coba lagi.");
-      }
-    },
+
 
     // Logout function
     logout() {

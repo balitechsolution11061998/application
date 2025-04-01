@@ -430,21 +430,24 @@ function fetchDataCountPerRegion() {
                 url: '/dashboard-po/purchase-orders/count-per-region', // Replace with your API endpoint
                 method: 'GET',
                 success: function (response) {
-                    // Palet warna kustom (tanpa hitam)
+                    // Enhanced color palette - vibrant and diverse
                     var colorPalette = [
-                        am5.color("#FF6F61"), // Coral
-                        am5.color("#6B5B95"), // Ultra Violet
-                        am5.color("#88B04B"), // Greenery
-                        am5.color("#F7CAC9"), // Rose Quartz
-                        am5.color("#92A8D1"), // Serenity
-                        am5.color("#955251"), // Marsala
-                        am5.color("#B565A7"), // Radiant Orchid
-                        am5.color("#009B77"), // Emerald
-                        am5.color("#DD4124"), // Tangerine Tango
-                        am5.color("#D65076") // Honeysuckle
+                        am5.color("#4E79A7"), // Soft blue
+                        am5.color("#F28E2B"), // Orange
+                        am5.color("#E15759"), // Red
+                        am5.color("#76B7B2"), // Teal
+                        am5.color("#59A14F"), // Green
+                        am5.color("#EDC948"), // Yellow
+                        am5.color("#B07AA1"), // Purple
+                        am5.color("#FF9DA7"), // Pink
+                        am5.color("#9C755F"), // Brown
+                        am5.color("#BAB0AC"), // Gray
+                        am5.color("#1F77B4"), // Strong blue
+                        am5.color("#FF7F0E"), // Strong orange
+                        am5.color("#2CA02C"), // Strong green
+                        am5.color("#D62728"), // Strong red
+                        am5.color("#9467BD")  // Strong purple
                     ];
-
-                    console.log("Color Palette:", colorPalette); // Debugging
 
                     // Transform response data to match chart's expected format
                     var chartData = response.map(function(item, index) {
@@ -453,14 +456,14 @@ function fetchDataCountPerRegion() {
                             .map(([status, count]) => `${status}: ${count}`)
                             .join("\n");
 
+                        // Use modulo to cycle through colors if there are more regions than colors
                         var color = colorPalette[index % colorPalette.length];
-                        console.log(`Region: ${item.region}, Color: ${color}`); // Debugging
-
+                        
                         return {
                             category: item.region,
                             value: item.total_count,
                             statusInfo: statusInfo,
-                            color: color, // Menggunakan warna dari palet
+                            color: color,
                             sliceSettings: {
                                 fill: am5.Gradient.new(root, {
                                     stops: [
@@ -472,8 +475,6 @@ function fetchDataCountPerRegion() {
                             }
                         };
                     });
-
-                    console.log("Chart Data:", chartData); // Debugging
 
                     series.data.setAll(chartData);
 
@@ -510,6 +511,7 @@ function fetchDataCountPerRegion() {
         setInterval(fetchDataAndUpdateChart, 60000); // Refresh every 60 seconds
     });
 }
+
 // Render tabel saat halaman dimuat
 document.addEventListener("DOMContentLoaded", () => {
     renderPOFollowUpTable();

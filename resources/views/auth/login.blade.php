@@ -28,8 +28,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.min.css">
 
     <!-- Toastr -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" integrity="sha512-odMaAWbtgxCmk0FrUNdOxDfbsVo/C2knh51xgkmzyD5dVq8f1HYbeCBmF6LyoR8uOeywp+gr2AFp2JFbMiH2jA==" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="{{asset('assets/css/toastr/toastr.css')}}">
 
     <style>
         body {
@@ -100,6 +99,24 @@
         .hover\:scale-105:hover {
             transform: scale(1.05);
         }
+
+        /* For the modal scrollable content */
+        .max-h-96 {
+            max-height: 24rem;
+        }
+
+        /* For the modal transition */
+        .modal-transition {
+            transition: all 0.3s ease-out;
+        }
+        @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+.hover\:animate-pulse:hover {
+    animation: pulse 1.5s infinite;
+}
     </style>
 
 </head>
@@ -147,9 +164,9 @@
                             class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                             placeholder="Enter your username or email" required autofocus>
                         @error('login')
-                            <p class="mt-2 text-sm text-red-600">
-                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                            </p>
+                        <p class="mt-2 text-sm text-red-600">
+                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        </p>
                         @enderror
                     </div>
                 </div>
@@ -169,9 +186,9 @@
                             <i class="fas fa-eye text-gray-400"></i>
                         </button>
                         @error('password')
-                            <p class="mt-2 text-sm text-red-600">
-                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                            </p>
+                        <p class="mt-2 text-sm text-red-600">
+                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        </p>
                         @enderror
                     </div>
                 </div>
@@ -182,9 +199,29 @@
                     <label for="remember" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Remember
                         Me</label>
                 </div>
-
+                <div class="max-w-md mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <input
+                            type="checkbox"
+                            name="terms"
+                            id="terms"
+                            class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition-all duration-200 ease-in-out cursor-pointer"
+                            required>
+                        <label
+                            for="terms"
+                            class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer select-none hover:text-gray-900 dark:hover:text-gray-100 transition-colors duration-200">
+                            I agree to the
+                            <a
+                                href="#"
+                                class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500 font-semibold underline underline-offset-2 transition-colors duration-200"
+                                id="showTerms">
+                                Terms and Conditions
+                            </a>
+                        </label>
+                    </div>
+                </div>
                 <div class="mb-4">
-                    <button type="button" id="loginButton"
+                    <button type="submit" id="loginButton"
                         class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 transition duration-300 ease-in-out">
                         <i class="fas fa-sign-in-alt"></i> Login
                     </button>
@@ -199,25 +236,58 @@
                 </div>
 
                 @if (Route::has('password.request'))
-                    <div class="text-center">
-                        <a href="{{ route('password.request') }}"
-                            class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">Forgot
-                            Your Password?</a>
-                    </div>
+                <div class="text-center">
+                    <a href="{{ route('password.request') }}"
+                        class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">Forgot
+                        Your Password?</a>
+                </div>
                 @endif
 
                 @if (Route::has('register'))
-                    <div class="text-center mt-4">
-                        <span class="text-sm text-gray-500 dark:text-gray-400">Don't have an account?</span>
-                        <a href="{{ route('register') }}"
-                            class="text-blue-600 hover:text-blue-700 dark :text-blue-400 dark:hover:text-blue-500">Register
-                            Here</a>
-                    </div>
+                <div class="text-center mt-4">
+                    <span class="text-sm text-gray-500 dark:text-gray-400">Don't have an account?</span>
+                    <a href="{{ route('register') }}"
+                        class="text-blue-600 hover:text-blue-700 dark :text-blue-400 dark:hover:text-blue-500">Register
+                        Here</a>
+                </div>
                 @endif
+
+
             </form>
+            <!-- Terms Modal -->
+
         </div>
     </div>
+    <!-- Terms Modal -->
+    <div id="termsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white dark:bg-gray-800">
+            <div class="mt-3 text-left">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100 mb-4">Terms and Conditions</h3>
 
+                <div class="mt-2 px-4 py-2 max-h-96 overflow-y-auto text-sm text-gray-500 dark:text-gray-300">
+                    <!-- Your terms content here -->
+                    <h4 class="font-bold mb-2">1. Acceptance of Terms</h4>
+                    <p class="mb-4">By accessing this website, you agree to be bound by these Terms and Conditions.</p>
+
+                    <h4 class="font-bold mb-2">2. User Responsibilities</h4>
+                    <p class="mb-4">You agree not to use the service for any unlawful purpose or in any way that might harm the service.</p>
+
+                    <h4 class="font-bold mb-2">3. Privacy Policy</h4>
+                    <p class="mb-4">Your data will be handled according to our Privacy Policy.</p>
+
+                    <h4 class="font-bold mb-2">4. Changes to Terms</h4>
+                    <p>We may modify these terms at any time without notice.</p>
+                </div>
+
+                <div class="items-center px-4 py-3">
+                    <button id="acceptTerms"
+                        class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                        I Accept
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -241,8 +311,33 @@
             this.querySelector('i').classList.toggle('fa-eye-slash');
         });
 
-        // Function to handle login button click and Enter key press
+        // Update your handleLogin function to include form validation
         function handleLogin() {
+            // Get form values
+            const login = $('#login').val().trim();
+
+            const password = $('#password').val().trim();
+            const termsChecked = $('#terms').is(':checked');
+
+            // Validate form fields
+            if (!login) {
+                toastr.error("Please enter your email or username", "Error");
+                $('#login').focus();
+                return;
+            }
+
+            if (!password) {
+                toastr.error("Please enter your password", "Error");
+                $('#password').focus();
+                return;
+            }
+
+            if (!termsChecked) {
+                toastr.error("You must accept the Terms and Conditions to proceed", "Error");
+                return;
+            }
+
+            // Show loading indicator
             Swal.fire({
                 title: 'Logging in...',
                 html: '<i class="fas fa-spinner fa-spin"></i> Please wait while we log you in.',
@@ -252,26 +347,35 @@
                 }
             });
 
+            // Submit via AJAX
             $.ajax({
                 url: $('#loginForm').attr('action'),
                 type: 'POST',
                 data: $('#loginForm').serialize(),
                 success: function(response) {
-                    Swal.close(); // Close the loading spinner
-                    toastr.success(response.message, "Success");
-                    // Redirect if needed
+                    Swal.close();
                     if (response.success) {
-                        window.location.href = response.redirect; // Redirect to the specified URL
+                        toastr.success(response.message, "Success");
+                        window.location.href = response.redirect;
+                    } else {
+                        toastr.error(response.message || "Login failed", "Error");
                     }
                 },
                 error: function(xhr) {
-                    Swal.close(); // Close the loading spinner
-                    console.log(xhr, 'xhr error');
+                    Swal.close();
                     if (xhr.status === 401) {
                         toastr.error("Invalid username, email, or password.", "Error");
+                    } else if (xhr.status === 422) {
+                        const errors = xhr.responseJSON.errors;
+                        for (const field in errors) {
+                            toastr.error(errors[field][0], "Error");
+                        }
+                    } else if (xhr.status === 500) {
+                        toastr.error("Server error. Please try again later.", "Error");
                     } else {
                         toastr.error("An unexpected error occurred.", "Error");
                     }
+                    console.error(xhr); // For debugging
                 }
             });
         }
@@ -338,6 +442,30 @@
                 themeToggle.querySelector('i').classList.remove('fa-sun');
                 themeToggle.querySelector('i').classList.add('fa-moon');
             }
+        });
+        // Add this to your script section
+        document.getElementById('showTerms').addEventListener('click', function(e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Terms and Conditions',
+                html: `
+            <div class="text-left">
+                <h3 class="font-bold mb-2">1. Acceptance of Terms</h3>
+                <p class="mb-4">By accessing this website, you agree to be bound by these Terms and Conditions.</p>
+                
+                <h3 class="font-bold mb-2">2. User Responsibilities</h3>
+                <p class="mb-4">You agree not to use the service for any unlawful purpose or in any way that might harm the service.</p>
+                
+                <h3 class="font-bold mb-2">3. Privacy Policy</h3>
+                <p class="mb-4">Your data will be handled according to our Privacy Policy.</p>
+                
+                <h3 class="font-bold mb-2">4. Changes to Terms</h3>
+                <p>We may modify these terms at any time without notice.</p>
+            </div>
+        `,
+                confirmButtonText: 'I Understand',
+                width: '800px'
+            });
         });
     </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7503392728334197"

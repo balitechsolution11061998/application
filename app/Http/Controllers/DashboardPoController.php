@@ -26,7 +26,7 @@ class DashboardPoController extends Controller
         $memoryBefore = memory_get_usage();
 
         // Enable query logging
-        DB::enableQueryLog();
+        DB::enableQueryLog();  
 
         try {
             $startDate = $request->input('start_date');
@@ -43,9 +43,10 @@ class DashboardPoController extends Controller
             $selectedStores = array_map('intval', $selectedStores);
 
             // Initialize query for progress
-            $progressQuery = OrdHead::where('status', 'progress');
+            $progressQuery = DB::table('ordhead')->where('status', 'progress');
 
             if (!empty($startDate) && !empty($endDate)) {
+                dd('masuk sini');
                 $progressQuery->whereBetween('approval_date', [$startDate, $endDate]);
                 if (!empty($selectedStores)) {
                     $progressQuery->whereIn('ship_to', $selectedStores);
@@ -54,6 +55,7 @@ class DashboardPoController extends Controller
             }
 
             $progressCount = $progressQuery->count();
+            dd($progressCount);
 
             // First, get the total count of purchase orders without any filtering
             $totalCountQuery = OrdHead::select(DB::raw('count(*) as total_count'));

@@ -6,6 +6,7 @@
     @section('breadcrumbs')
     {{ Breadcrumbs::render('orders') }}
     @endsection
+    
 
     <!--begin::Content wrapper-->
     <div class="d-flex flex-column flex-column-fluid">
