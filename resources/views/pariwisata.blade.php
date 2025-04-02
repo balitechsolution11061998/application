@@ -66,6 +66,19 @@
         .wave-shape .shape-fill {
             fill: #FFFFFF;
         }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -82,8 +95,10 @@
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#home" class="text-gray-800 hover:text-blue-500 font-medium">Beranda</a>
                     <a href="#activities" class="text-gray-800 hover:text-blue-500 font-medium">Aktivitas</a>
+                    <a href="#about" class="text-gray-800 hover:text-blue-500 font-medium">Tentang Kami</a>
                     <a href="#gallery" class="text-gray-800 hover:text-blue-500 font-medium">Galeri</a>
                     <a href="#testimonials" class="text-gray-800 hover:text-blue-500 font-medium">Testimoni</a>
+                    <a href="#faq" class="text-gray-800 hover:text-blue-500 font-medium">FAQ</a>
                     <a href="#contact" class="text-gray-800 hover:text-blue-500 font-medium">Kontak</a>
                 </div>
                 <div class="md:hidden">
@@ -97,8 +112,10 @@
         <div class="mobile-menu hidden md:hidden bg-white pb-4 px-4">
             <a href="#home" class="block py-2 text-gray-800 hover:text-blue-500">Beranda</a>
             <a href="#activities" class="block py-2 text-gray-800 hover:text-blue-500">Aktivitas</a>
+            <a href="#about" class="block py-2 text-gray-800 hover:text-blue-500">Tentang Kami</a>
             <a href="#gallery" class="block py-2 text-gray-800 hover:text-blue-500">Galeri</a>
             <a href="#testimonials" class="block py-2 text-gray-800 hover:text-blue-500">Testimoni</a>
+            <a href="#faq" class="block py-2 text-gray-800 hover:text-blue-500">FAQ</a>
             <a href="#contact" class="block py-2 text-gray-800 hover:text-blue-500">Kontak</a>
         </div>
     </nav>
@@ -124,16 +141,30 @@
         </div>
     </section>
 
+    <!-- Video Section -->
+    <section class="py-16 bg-white">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Pengalaman Tanjung Benoa</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Lihat keseruan yang menanti Anda di Tanjung Benoa</p>
+                <div class="w-20 h-1 bg-blue-500 mx-auto mt-4"></div>
+            </div>
+            <div class="video-container rounded-xl shadow-2xl overflow-hidden">
+                <iframe src="https://www.youtube.com/embed/example" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
+
     <!-- Stats Section -->
     <section class="py-16 bg-white">
         <div class="max-w-6xl mx-auto px-4 md:px-10 lg:px-20">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                 <div class="p-6">
-                    <div class="text-4xl font-bold text-blue-600 mb-2">10+</div>
+                    <div class="text-4xl font-bold text-blue-600 mb-2">15+</div>
                     <div class="text-gray-600">Jenis Aktivitas</div>
                 </div>
                 <div class="p-6">
-                    <div class="text-4xl font-bold text-blue-600 mb-2">15.000+</div>
+                    <div class="text-4xl font-bold text-blue-600 mb-2">25.000+</div>
                     <div class="text-gray-600">Pengunjung/Tahun</div>
                 </div>
                 <div class="p-6">
@@ -148,30 +179,79 @@
         </div>
     </section>
 
+    <!-- About Us Section -->
+    <section id="about" class="py-16 px-4 md:px-10 lg:px-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Tentang Tanjung Benoa Adventure</h2>
+                <div class="w-20 h-1 bg-blue-500 mx-auto"></div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Pengalaman Tak Terlupakan di Bali</h3>
+                    <p class="text-gray-600 mb-4">Tanjung Benoa Adventure adalah penyedia wisata air terkemuka di Bali yang telah beroperasi sejak 2010. Kami mengkhususkan diri dalam menyediakan pengalaman wisata air yang aman, menyenangkan, dan tak terlupakan bagi seluruh keluarga.</p>
+                    <p class="text-gray-600 mb-6">Dengan tim profesional yang berpengalaman dan peralatan standar internasional, kami berkomitmen untuk memberikan pelayanan terbaik dengan harga yang kompetitif.</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Tim instruktur bersertifikat</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Peralatan terbaru dan terawat</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Lokasi strategis di Tanjung Benoa</span>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Fasilitas lengkap dan nyaman</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Tanjung Benoa Team" class="w-full rounded-xl shadow-lg">
+                    <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-lg shadow-md hidden md:block">
+                        <div class="flex items-center">
+                            <div class="bg-blue-100 p-3 rounded-full mr-3">
+                                <i class="fas fa-award text-blue-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <div class="text-blue-600 font-bold">Bali Tourism Award</div>
+                                <div class="text-gray-600 text-sm">Penyedia Wisata Air Terbaik 2022</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Why Choose Us -->
-    <section class="py-16 px-4 md:px-10 lg:px-20 bg-gray-50">
+    <section class="py-16 px-4 md:px-10 lg:px-20 bg-white">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Mengapa Memilih Kami?</h2>
                 <div class="w-20 h-1 bg-blue-500 mx-auto"></div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="bg-white p-8 rounded-xl shadow-md activity-card text-center">
+                <div class="bg-white p-8 rounded-xl shadow-md activity-card text-center border border-gray-100">
                     <div class="text-blue-500 text-4xl mb-4"><i class="fas fa-shield-alt"></i></div>
                     <h3 class="text-xl font-semibold mb-3 text-gray-800">Keamanan Terjamin</h3>
                     <p class="text-gray-600">Peralatan standar internasional dengan instruktur bersertifikat untuk pengalaman yang aman dan nyaman.</p>
                 </div>
-                <div class="bg-white p-8 rounded-xl shadow-md activity-card text-center">
+                <div class="bg-white p-8 rounded-xl shadow-md activity-card text-center border border-gray-100">
                     <div class="text-blue-500 text-4xl mb-4"><i class="fas fa-tags"></i></div>
                     <h3 class="text-xl font-semibold mb-3 text-gray-800">Harga Terbaik</h3>
                     <p class="text-gray-600">Harga kompetitif dengan kualitas pelayanan premium. Garansi harga terbaik untuk paket wisata kami.</p>
                 </div>
-                <div class="bg-white p-8 rounded-xl shadow-md activity-card text-center">
+                <div class="bg-white p-8 rounded-xl shadow-md activity-card text-center border border-gray-100">
                     <div class="text-blue-500 text-4xl mb-4"><i class="fas fa-clock"></i></div>
                     <h3 class="text-xl font-semibold mb-3 text-gray-800">Fleksibel</h3>
                     <p class="text-gray-600">Jadwal fleksibel dengan sistem booking online yang mudah. Bebas pilih waktu sesuai keinginan Anda.</p>
                 </div>
-                <div class="bg-white p-8 rounded-xl shadow-md activity-card text-center">
+                <div class="bg-white p-8 rounded-xl shadow-md activity-card text-center border border-gray-100">
                     <div class="text-blue-500 text-4xl mb-4"><i class="fas fa-camera"></i></div>
                     <h3 class="text-xl font-semibold mb-3 text-gray-800">Foto Profesional</h3>
                     <p class="text-gray-600">Dapatkan foto profesional dari setiap aktivitas Anda secara gratis sebagai kenang-kenangan.</p>
@@ -181,7 +261,7 @@
     </section>
 
     <!-- Activities Section -->
-    <section id="activities" class="py-16 px-4 md:px-10 lg:px-20 bg-white">
+    <section id="activities" class="py-16 px-4 md:px-10 lg:px-20 bg-gray-50">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Paket Wisata Tanjung Benoa</h2>
@@ -305,50 +385,335 @@
                     </div>
                 </div>
                 
-                <!-- Other tabs content would go here -->
-            </div>
-            
-            <!-- Package Deal -->
-            <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl shadow-2xl overflow-hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-2">
-                    <div class="p-8 md:p-12 text-white">
-                        <h3 class="text-2xl font-bold mb-4">Paket Kombo Hemat</h3>
-                        <p class="mb-6">Nikmati berbagai aktivitas dengan harga lebih hemat dalam satu paket lengkap!</p>
-                        <ul class="mb-8 space-y-3">
-                            <li class="flex items-start">
-                                <i class="fas fa-check-circle text-yellow-300 mt-1 mr-3"></i>
-                                <span>Banana Boat + Parasailing + Jet Ski</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-check-circle text-yellow-300 mt-1 mr-3"></i>
-                                <span>Hemat hingga Rp 150.000</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-check-circle text-yellow-300 mt-1 mr-3"></i>
-                                <span>Gratis minuman segar</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-check-circle text-yellow-300 mt-1 mr-3"></i>
-                                <span>Foto profesional semua aktivitas</span>
-                            </li>
-                        </ul>
-                        <div class="flex items-center mb-6">
-                            <span class="text-4xl font-bold">Rp 600.000</span>
-                            <span class="ml-2 text-blue-100">/orang</span>
-                            <span class="ml-4 px-3 py-1 bg-white text-blue-600 rounded-full text-sm font-bold">Hemat 20%</span>
+                <!-- Snorkeling Tab Content -->
+                <div id="snorkeling" class="tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Snorkeling Trip -->
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden activity-card">
+                            <div class="relative">
+                                <img src="https://images.unsplash.com/photo-1505118380757-91f5f5632de0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Snorkeling Trip" class="w-full h-56 object-cover">
+                                <div class="absolute top-4 right-4 bg-blue-500 text-white font-bold px-3 py-1 rounded-full text-sm">TERBAIK</div>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">Snorkeling Trip</h3>
+                                <p class="text-gray-600 mb-4">Jelajahi keindahan bawah laut Tanjung Benoa dengan terumbu karang dan ikan warna-warni.</p>
+                                <ul class="mb-6 space-y-2 text-gray-600">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>Durasi: 2 jam</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>3 spot snorkeling</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>Termasuk alat snorkeling</span>
+                                    </li>
+                                </ul>
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <span class="text-2xl font-bold text-blue-600 price-tag">Rp 300.000</span>
+                                        <span class="text-gray-500 text-sm">/orang</span>
+                                    </div>
+                                    <button class="book-button bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300 transform hover:scale-105" data-activity="Snorkeling Trip" data-price="300000">
+                                        <i class="fas fa-shopping-cart mr-2"></i> Pesan
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <button class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105 flex items-center justify-center" data-activity="Paket Kombo 3 Aktivitas" data-price="600000">
-                            <i class="fas fa-gift mr-2"></i> Pesan Paket Hemat
-                        </button>
+                        
+                        <!-- Private Snorkeling -->
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden activity-card">
+                            <div class="relative">
+                                <img src="https://images.unsplash.com/photo-1560272564-c83b66b1ad12?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Private Snorkeling" class="w-full h-56 object-cover">
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">Private Snorkeling</h3>
+                                <p class="text-gray-600 mb-4">Pengalaman snorkeling eksklusif dengan boat pribadi dan guide profesional.</p>
+                                <ul class="mb-6 space-y-2 text-gray-600">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>Durasi: 3 jam</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>Maksimal 6 orang</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>Termasuk makan siang</span>
+                                    </li>
+                                </ul>
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <span class="text-2xl font-bold text-blue-600 price-tag">Rp 2.000.000</span>
+                                        <span class="text-gray-500 text-sm">/grup</span>
+                                    </div>
+                                    <button class="book-button bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300 transform hover:scale-105" data-activity="Private Snorkeling" data-price="2000000">
+                                        <i class="fas fa-shopping-cart mr-2"></i> Pesan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Turtle Snorkeling -->
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden activity-card">
+                            <img src="https://images.unsplash.com/photo-1560272564-c83b66b1ad12?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Turtle Snorkeling" class="w-full h-56 object-cover">
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">Turtle Snorkeling</h3>
+                                <p class="text-gray-600 mb-4">Temui penyu laut di habitat aslinya dengan paket snorkeling khusus ini.</p>
+                                <ul class="mb-6 space-y-2 text-gray-600">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>Durasi: 2.5 jam</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>Spot khusus penyu</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>Termasuk transport hotel</span>
+                                    </li>
+                                </ul>
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <span class="text-2xl font-bold text-blue-600 price-tag">Rp 450.000</span>
+                                        <span class="text-gray-500 text-sm">/orang</span>
+                                    </div>
+                                    <button class="book-button bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300 transform hover:scale-105" data-activity="Turtle Snorkeling" data-price="450000">
+                                        <i class="fas fa-shopping-cart mr-2"></i> Pesan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="hidden lg:block bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                </div>
+                
+                <!-- Cruise Tab Content -->
+                <div id="cruise" class="tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Sunset Cruise -->
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden activity-card">
+                            <div class="relative">
+                                <img src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Sunset Cruise" class="w-full h-56 object-cover">
+                                <div class="absolute top-4 right-4 bg-purple-500 text-white font-bold px-3 py-1 rounded-full text-sm">ROMANTIS</div>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">Sunset Cruise</h3>
+                                <p class="text-gray-600 mb-4">Nikmati matahari terbenam yang spektakuler dari atas kapal dengan minuman menyegarkan.</p>
+                                <ul class="mb-6 space-y-2 text-gray-600">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>Durasi: 1.5 jam</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>Termasuk minuman</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>Live musik akustik</span>
+                                    </li>
+                                </ul>
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <span class="text-2xl font-bold text-blue-600 price-tag">Rp 400.000</span>
+                                        <span class="text-gray-500 text-sm">/orang</span>
+                                    </div>
+                                    <button class="book-button bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300 transform hover:scale-105" data-activity="Sunset Cruise" data-price="400000">
+                                        <i class="fas fa-shopping-cart mr-2"></i> Pesan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Dinner Cruise -->
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden activity-card">
+                            <div class="relative">
+                                <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Dinner Cruise" class="w-full h-56 object-cover">
+                                <div class="absolute top-4 right-4 bg-pink-500 text-white font-bold px-3 py-1 rounded-full text-sm">MEWAH</div>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">Dinner Cruise</h3>
+                                <p class="text-gray-600 mb-4">Makan malam mewah di atas kapal dengan pemandangan pantai Bali yang memukau.</p>
+                                <ul class="mb-6 space-y-2 text-gray-600">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>Durasi: 2 jam</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>5 course dinner</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>Termasuk minuman</span>
+                                    </li>
+                                </ul>
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <span class="text-2xl font-bold text-blue-600 price-tag">Rp 750.000</span>
+                                        <span class="text-gray-500 text-sm">/orang</span>
+                                    </div>
+                                    <button class="book-button bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300 transform hover:scale-105" data-activity="Dinner Cruise" data-price="750000">
+                                        <i class="fas fa-shopping-cart mr-2"></i> Pesan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Private Charter -->
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden activity-card">
+                            <img src="https://images.unsplash.com/photo-1505118380757-91f5f5632de0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Private Charter" class="w-full h-56 object-cover">
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">Private Charter</h3>
+                                <p class="text-gray-600 mb-4">Kapal pribadi untuk kelompok Anda dengan kru profesional dan fasilitas lengkap.</p>
+                                <ul class="mb-6 space-y-2 text-gray-600">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>Durasi: 4 jam</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>Maksimal 10 orang</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                        <span>Termasuk snorkeling</span>
+                                    </li>
+                                </ul>
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <span class="text-2xl font-bold text-blue-600 price-tag">Rp 5.000.000</span>
+                                        <span class="text-gray-500 text-sm">/kapal</span>
+                                    </div>
+                                    <button class="book-button bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300 transform hover:scale-105" data-activity="Private Charter" data-price="5000000">
+                                        <i class="fas fa-shopping-cart mr-2"></i> Pesan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Package Deal -->
+                <div id="combo" class="tab-content hidden">
+                    <div class="grid grid-cols-1 gap-8">
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl shadow-2xl overflow-hidden">
+                            <div class="grid grid-cols-1 lg:grid-cols-2">
+                                <div class="p-8 md:p-12 text-white">
+                                    <h3 class="text-2xl font-bold mb-4">Paket Kombo Hemat</h3>
+                                    <p class="mb-6">Nikmati berbagai aktivitas dengan harga lebih hemat dalam satu paket lengkap!</p>
+                                    <ul class="mb-8 space-y-3">
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check-circle text-yellow-300 mt-1 mr-3"></i>
+                                            <span>Banana Boat + Parasailing + Jet Ski</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check-circle text-yellow-300 mt-1 mr-3"></i>
+                                            <span>Hemat hingga Rp 150.000</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check-circle text-yellow-300 mt-1 mr-3"></i>
+                                            <span>Gratis minuman segar</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check-circle text-yellow-300 mt-1 mr-3"></i>
+                                            <span>Foto profesional semua aktivitas</span>
+                                        </li>
+                                    </ul>
+                                    <div class="flex items-center mb-6">
+                                        <span class="text-4xl font-bold">Rp 600.000</span>
+                                        <span class="ml-2 text-blue-100">/orang</span>
+                                        <span class="ml-4 px-3 py-1 bg-white text-blue-600 rounded-full text-sm font-bold">Hemat 20%</span>
+                                    </div>
+                                    <button class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105 flex items-center justify-center" data-activity="Paket Kombo 3 Aktivitas" data-price="600000">
+                                        <i class="fas fa-gift mr-2"></i> Pesan Paket Hemat
+                                    </button>
+                                </div>
+                                <div class="hidden lg:block bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="bg-white rounded-xl shadow-lg overflow-hidden activity-card">
+                                <div class="relative">
+                                    <img src="https://images.unsplash.com/photo-1505118380757-91f5f5632de0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Family Package" class="w-full h-56 object-cover">
+                                    <div class="absolute top-4 right-4 bg-green-500 text-white font-bold px-3 py-1 rounded-full text-sm">KELUARGA</div>
+                                </div>
+                                <div class="p-6">
+                                    <h3 class="text-xl font-bold text-gray-800 mb-2">Paket Keluarga</h3>
+                                    <p class="text-gray-600 mb-4">Paket khusus untuk keluarga dengan aktivitas yang cocok untuk semua usia.</p>
+                                    <ul class="mb-6 space-y-2 text-gray-600">
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                            <span>Banana Boat + Snorkeling</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                            <span>Untuk 2 dewasa & 2 anak</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                            <span>Termasuk makan siang</span>
+                                        </li>
+                                    </ul>
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <span class="text-2xl font-bold text-blue-600 price-tag">Rp 1.200.000</span>
+                                            <span class="text-gray-500 text-sm">/keluarga</span>
+                                        </div>
+                                        <button class="book-button bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300 transform hover:scale-105" data-activity="Paket Keluarga" data-price="1200000">
+                                            <i class="fas fa-shopping-cart mr-2"></i> Pesan
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white rounded-xl shadow-lg overflow-hidden activity-card">
+                                <div class="relative">
+                                    <img src="https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Adventure Package" class="w-full h-56 object-cover">
+                                    <div class="absolute top-4 right-4 bg-red-500 text-white font-bold px-3 py-1 rounded-full text-sm">PETUALANGAN</div>
+                                </div>
+                                <div class="p-6">
+                                    <h3 class="text-xl font-bold text-gray-800 mb-2">Paket Petualangan</h3>
+                                    <p class="text-gray-600 mb-4">Untuk pencari adrenalin dengan aktivitas air yang menantang.</p>
+                                    <ul class="mb-6 space-y-2 text-gray-600">
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                            <span>Parasailing + Flyboard</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                            <span>Termasuk video aksi</span>
+                                        </li>
+                                        <li class="flex items-start">
+                                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                            <span>Instruktur pribadi</span>
+                                        </li>
+                                    </ul>
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <span class="text-2xl font-bold text-blue-600 price-tag">Rp 850.000</span>
+                                            <span class="text-gray-500 text-sm">/orang</span>
+                                        </div>
+                                        <button class="book-button bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300 transform hover:scale-105" data-activity="Paket Petualangan" data-price="850000">
+                                            <i class="fas fa-shopping-cart mr-2"></i> Pesan
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Gallery Section -->
-    <section id="gallery" class="py-16 px-4 md:px-10 lg:px-20 bg-gray-50">
+    <section id="gallery" class="py-16 px-4 md:px-10 lg:px-20 bg-white">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Galeri Kegiatan</h2>
@@ -392,7 +757,7 @@
     </section>
 
     <!-- Testimonials Section -->
-    <section id="testimonials" class="py-16 px-4 md:px-10 lg:px-20 bg-white">
+    <section id="testimonials" class="py-16 px-4 md:px-10 lg:px-20 bg-gray-50">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Apa Kata Mereka?</h2>
@@ -401,7 +766,7 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-gray-50 p-8 rounded-xl shadow-md">
+                <div class="bg-white p-8 rounded-xl shadow-md">
                     <div class="flex items-center mb-6">
                         <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Andi Saputra" class="w-16 h-16 rounded-full object-cover border-4 border-blue-100">
                         <div class="ml-4">
@@ -421,7 +786,7 @@
                     </div>
                 </div>
                 
-                <div class="bg-gray-50 p-8 rounded-xl shadow-md">
+                <div class="bg-white p-8 rounded-xl shadow-md">
                     <div class="flex items-center mb-6">
                         <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Siti Dewi" class="w-16 h-16 rounded-full object-cover border-4 border-blue-100">
                         <div class="ml-4">
@@ -441,7 +806,7 @@
                     </div>
                 </div>
                 
-                <div class="bg-gray-50 p-8 rounded-xl shadow-md">
+                <div class="bg-white p-8 rounded-xl shadow-md">
                     <div class="flex items-center mb-6">
                         <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Rudi Jatmiko" class="w-16 h-16 rounded-full object-cover border-4 border-blue-100">
                         <div class="ml-4">
@@ -507,7 +872,10 @@
                                 <option value="Banana Boat">Banana Boat (Rp 150.000/orang)</option>
                                 <option value="Parasailing">Parasailing (Rp 350.000/orang)</option>
                                 <option value="Jet Ski">Jet Ski (Rp 250.000/orang)</option>
+                                <option value="Snorkeling Trip">Snorkeling Trip (Rp 300.000/orang)</option>
+                                <option value="Sunset Cruise">Sunset Cruise (Rp 400.000/orang)</option>
                                 <option value="Paket Kombo 3 Aktivitas">Paket Kombo 3 Aktivitas (Rp 600.000/orang)</option>
+                                <option value="Paket Keluarga">Paket Keluarga (Rp 1.200.000/keluarga)</option>
                             </select>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
@@ -520,6 +888,10 @@
                                 <input type="number" id="participants" name="participants" min="1" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                             </div>
                         </div>
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Pesan Tambahan</label>
+                            <textarea id="message" name="message" rows="3" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105 mt-4">
                             <i class="fas fa-paper-plane mr-2"></i> Kirim Pesanan
                         </button>
@@ -530,7 +902,7 @@
     </section>
 
     <!-- FAQ Section -->
-    <section class="py-16 px-4 md:px-10 lg:px-20 bg-gray-50">
+    <section id="faq" class="py-16 px-4 md:px-10 lg:px-20 bg-white">
         <div class="max-w-4xl mx-auto">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Pertanyaan yang Sering Diajukan</h2>
@@ -538,44 +910,108 @@
             </div>
             
             <div class="space-y-4">
-                <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="bg-gray-50 p-6 rounded-xl shadow-md">
                     <button class="faq-button flex justify-between items-center w-full text-left font-semibold text-gray-800">
                         <span>Apa saja persyaratan untuk mengikuti aktivitas water sports?</span>
                         <i class="fas fa-chevron-down text-blue-500 transition-transform duration-300"></i>
                     </button>
                     <div class="faq-content hidden mt-4 text-gray-600">
-                        <p>Peserta minimal berusia 7 tahun dan dalam kondisi kesehatan yang baik. Untuk anak-anak di bawah 12 tahun wajib didampingi orang dewasa. Semua peserta akan diberikan pelampung dan peralatan keselamatan sesuai standar internasional.</p>
+                        <p>Peserta minimal berusia 7 tahun dan dalam kondisi kesehatan yang baik. Untuk anak-anak di bawah 12 tahun wajib didampingi orang dewasa. Semua peserta akan diberikan pelampung dan peralatan keselamatan sesuai standar internasional. Peserta dengan kondisi medis tertentu disarankan berkonsultasi dengan dokter sebelum berpartisipasi.</p>
                     </div>
                 </div>
                 
-                <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="bg-gray-50 p-6 rounded-xl shadow-md">
                     <button class="faq-button flex justify-between items-center w-full text-left font-semibold text-gray-800">
                         <span>Bagaimana jika cuaca buruk pada hari pemesanan?</span>
                         <i class="fas fa-chevron-down text-blue-500 transition-transform duration-300"></i>
                     </button>
                     <div class="faq-content hidden mt-4 text-gray-600">
-                        <p>Kami memantau kondisi cuaca secara real-time. Jika aktivitas harus dibatalkan karena cuaca buruk, Anda dapat memilih untuk reschedule di hari lain atau mendapatkan refund penuh. Keputusan pembatalan akan diinformasikan minimal 2 jam sebelumnya.</p>
+                        <p>Kami memantau kondisi cuaca secara real-time. Jika aktivitas harus dibatalkan karena cuaca buruk, Anda dapat memilih untuk reschedule di hari lain atau mendapatkan refund penuh. Keputusan pembatalan akan diinformasikan minimal 2 jam sebelumnya melalui WhatsApp atau telepon.</p>
                     </div>
                 </div>
                 
-                <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="bg-gray-50 p-6 rounded-xl shadow-md">
                     <button class="faq-button flex justify-between items-center w-full text-left font-semibold text-gray-800">
                         <span>Apakah ada fasilitas kamar mandi dan loker?</span>
                         <i class="fas fa-chevron-down text-blue-500 transition-transform duration-300"></i>
                     </button>
                     <div class="faq-content hidden mt-4 text-gray-600">
-                        <p>Ya, kami menyediakan fasilitas kamar mandi dengan shower, loker penyimpanan barang, dan ruang ganti yang nyaman. Anda juga bisa menggunakan kolam renang dan area bersantai di lokasi kami sebelum atau setelah aktivitas.</p>
+                        <p>Ya, kami menyediakan fasilitas kamar mandi dengan shower, loker penyimpanan barang, dan ruang ganti yang nyaman. Anda juga bisa menggunakan kolam renang dan area bersantai di lokasi kami sebelum atau setelah aktivitas. Loker dapat digunakan dengan deposit Rp 50.000 yang akan dikembalikan setelah kunci dikembalikan.</p>
                     </div>
                 </div>
                 
-                <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="bg-gray-50 p-6 rounded-xl shadow-md">
                     <button class="faq-button flex justify-between items-center w-full text-left font-semibold text-gray-800">
                         <span>Bagaimana cara pembayarannya?</span>
                         <i class="fas fa-chevron-down text-blue-500 transition-transform duration-300"></i>
                     </button>
                     <div class="faq-content hidden mt-4 text-gray-600">
-                        <p>Pembayaran dapat dilakukan melalui transfer bank (BCA, Mandiri, BRI), Dana, OVO, atau tunai di lokasi. Untuk pemesanan online, Anda hanya perlu membayar DP 20% untuk mengkonfirmasi booking, sisanya dibayar saat check-in di lokasi.</p>
+                        <p>Pembayaran dapat dilakukan melalui transfer bank (BCA, Mandiri, BRI), Dana, OVO, atau tunai di lokasi. Untuk pemesanan online, Anda hanya perlu membayar DP 20% untuk mengkonfirmasi booking, sisanya dibayar saat check-in di lokasi. Kami juga menerima pembayaran dengan kartu kredit (Visa/Mastercard) dengan tambahan biaya administrasi 3%.</p>
                     </div>
+                </div>
+                
+                <div class="bg-gray-50 p-6 rounded-xl shadow-md">
+                    <button class="faq-button flex justify-between items-center w-full text-left font-semibold text-gray-800">
+                        <span>Apakah tersedia transportasi dari hotel?</span>
+                        <i class="fas fa-chevron-down text-blue-500 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content hidden mt-4 text-gray-600">
+                        <p>Ya, kami menyediakan transportasi gratis dari hotel-hotel di area Kuta, Seminyak, Nusa Dua, dan Jimbaran. Untuk area lainnya mungkin dikenakan biaya tambahan. Silakan hubungi kami untuk informasi lebih lanjut mengenai jadwal penjemputan dan lokasi yang kami layani.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-6 rounded-xl shadow-md">
+                    <button class="faq-button flex justify-between items-center w-full text-left font-semibold text-gray-800">
+                        <span>Bagaimana kebijakan pembatalan?</span>
+                        <i class="fas fa-chevron-down text-blue-500 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content hidden mt-4 text-gray-600">
+                        <p>Anda dapat membatalkan pesanan tanpa biaya hingga 24 jam sebelum aktivitas. Pembatalan dalam waktu 24 jam akan dikenakan biaya 50% dari total harga. Jika tidak hadir tanpa pemberitahuan (no-show), tidak ada pengembalian dana. Untuk perubahan jadwal, silakan hubungi kami minimal 6 jam sebelum waktu aktivitas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Safety Section -->
+    <section class="py-16 px-4 md:px-10 lg:px-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Keamanan & Keselamatan</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Prioritas utama kami adalah keselamatan dan kenyamanan Anda</p>
+                <div class="w-20 h-1 bg-blue-500 mx-auto mt-4"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-md text-center">
+                    <div class="text-blue-500 text-4xl mb-4"><i class="fas fa-user-shield"></i></div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Instruktur Bersertifikat</h3>
+                    <p class="text-gray-600">Semua instruktur kami memiliki sertifikasi internasional dan pengalaman minimal 5 tahun di bidangnya.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-md text-center">
+                    <div class="text-blue-500 text-4xl mb-4"><i class="fas fa-first-aid"></i></div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Pertolongan Pertama</h3>
+                    <p class="text-gray-600">Tim medis stand-by di lokasi dengan perlengkapan P3K lengkap dan akses cepat ke rumah sakit terdekat.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-md text-center">
+                    <div class="text-blue-500 text-4xl mb-4"><i class="fas fa-life-ring"></i></div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Peralatan Standar</h3>
+                    <p class="text-gray-600">Semua peralatan kami memenuhi standar keselamatan internasional dan diperiksa secara rutin setiap hari.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-md text-center">
+                    <div class="text-blue-500 text-4xl mb-4"><i class="fas fa-swimmer"></i></div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Pelampung Wajib</h3>
+                    <p class="text-gray-600">Setiap peserta wajib mengenakan pelampung yang sesuai dengan standar keselamatan, tanpa terkecuali.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-md text-center">
+                    <div class="text-blue-500 text-4xl mb-4"><i class="fas fa-bell"></i></div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Prosedur Darurat</h3>
+                    <p class="text-gray-600">Tim kami terlatih dalam prosedur darurat dan evakuasi dengan simulasi rutin setiap bulan.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-md text-center">
+                    <div class="text-blue-500 text-4xl mb-4"><i class="fas fa-umbrella-beach"></i></div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-800">Area yang Aman</h3>
+                    <p class="text-gray-600">Kami memilih area aktivitas yang bebas dari arus kuat dan bahaya laut lainnya untuk kenyamanan Anda.</p>
                 </div>
             </div>
         </div>
@@ -646,6 +1082,83 @@
         </div>
     </section>
 
+    <!-- Blog Section -->
+    <section class="py-16 px-4 md:px-10 lg:px-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Tips & Artikel</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Informasi terbaru seputar wisata Tanjung Benoa</p>
+                <div class="w-20 h-1 bg-blue-500 mx-auto mt-4"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Blog 1" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="text-sm text-blue-600 font-semibold mb-2">15 Juni 2023 • 5 min read</div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">5 Aktivitas Air Terbaik di Tanjung Benoa untuk Keluarga</h3>
+                        <p class="text-gray-600 mb-4">Temukan pilihan aktivitas air yang aman dan menyenangkan untuk seluruh keluarga di Tanjung Benoa...</p>
+                        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">Baca Selengkapnya →</a>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1505118380757-91f5f5632de0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Blog 2" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="text-sm text-blue-600 font-semibold mb-2">2 Juni 2023 • 4 min read</div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">Panduan Lengkap Snorkeling di Tanjung Benoa untuk Pemula</h3>
+                        <p class="text-gray-600 mb-4">Tips dan trik untuk pengalaman snorkeling pertama yang tak terlupakan di perairan Tanjung Benoa...</p>
+                        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">Baca Selengkapnya →</a>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1512054502234-5c0c04b52cbb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Blog 3" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="text-sm text-blue-600 font-semibold mb-2">20 Mei 2023 • 6 min read</div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3">Waktu Terbaik untuk Mengunjungi Tanjung Benoa Berdasarkan Musim</h3>
+                        <p class="text-gray-600 mb-4">Ketahui musim terbaik untuk berbagai aktivitas air di Tanjung Benoa agar liburan Anda sempurna...</p>
+                        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">Baca Selengkapnya →</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="#" class="bg-white hover:bg-gray-100 text-blue-600 font-bold py-3 px-8 rounded-full border-2 border-blue-600 transition duration-300 inline-block transform hover:scale-105">
+                    <i class="fas fa-newspaper mr-2"></i> Lihat Semua Artikel
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partners Section -->
+    <section class="py-16 px-4 md:px-10 lg:px-20 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Bekerja Sama Dengan</h2>
+                <div class="w-20 h-1 bg-blue-500 mx-auto"></div>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 items-center">
+                <div class="flex justify-center p-4">
+                    <img src="https://via.placeholder.com/150x80?text=Hotel+Partner" alt="Hotel Partner" class="h-12 object-contain opacity-70 hover:opacity-100 transition duration-300">
+                </div>
+                <div class="flex justify-center p-4">
+                    <img src="https://via.placeholder.com/150x80?text=Tour+Agency" alt="Tour Agency" class="h-12 object-contain opacity-70 hover:opacity-100 transition duration-300">
+                </div>
+                <div class="flex justify-center p-4">
+                    <img src="https://via.placeholder.com/150x80?text=Traveloka" alt="Traveloka" class="h-12 object-contain opacity-70 hover:opacity-100 transition duration-300">
+                </div>
+                <div class="flex justify-center p-4">
+                    <img src="https://via.placeholder.com/150x80?text=Klook" alt="Klook" class="h-12 object-contain opacity-70 hover:opacity-100 transition duration-300">
+                </div>
+                <div class="flex justify-center p-4">
+                    <img src="https://via.placeholder.com/150x80?text=Bali+Gov" alt="Bali Government" class="h-12 object-contain opacity-70 hover:opacity-100 transition duration-300">
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Floating WhatsApp Button -->
     <a href="https://wa.me/6281234567890?text=Saya%20ingin%20bertanya%20tentang%20aktivitas%20di%20Tanjung%20Benoa" class="fixed bottom-8 right-8 bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center text-3xl shadow-xl floating-button z-50">
         <i class="fab fa-whatsapp"></i>
@@ -675,6 +1188,7 @@
                     <li><a href="#" class="text-gray-400 hover:text-white">Jet Ski</a></li>
                     <li><a href="#" class="text-gray-400 hover:text-white">Flyboard</a></li>
                     <li><a href="#" class="text-gray-400 hover:text-white">Snorkeling</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white">Sunset Cruise</a></li>
                 </ul>
             </div>
             <div>
@@ -682,6 +1196,7 @@
                 <ul class="space-y-2">
                     <li><a href="#home" class="text-gray-400 hover:text-white">Beranda</a></li>
                     <li><a href="#activities" class="text-gray-400 hover:text-white">Paket Wisata</a></li>
+                    <li><a href="#about" class="text-gray-400 hover:text-white">Tentang Kami</a></li>
                     <li><a href="#gallery" class="text-gray-400 hover:text-white">Galeri</a></li>
                     <li><a href="#testimonials" class="text-gray-400 hover:text-white">Testimoni</a></li>
                     <li><a href="#contact" class="text-gray-400 hover:text-white">Kontak</a></li>
@@ -774,6 +1289,14 @@
         
         mobileMenuButton.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Close mobile menu when clicking a link
+        const mobileMenuLinks = document.querySelectorAll('.mobile-menu a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
         });
         
         // Tab functionality
@@ -886,6 +1409,7 @@
             const activity = document.getElementById('activity').value;
             const date = document.getElementById('date').value;
             const participants = document.getElementById('participants').value;
+            const message = document.getElementById('message').value;
             
             // Format date
             const formattedDate = new Date(date).toLocaleDateString('id-ID', {
@@ -896,11 +1420,38 @@
             });
             
             // Create WhatsApp message
-            const whatsappMessage = `Halo, saya ${name} ingin memesan:\n\nAktivitas: ${activity}\nTanggal: ${formattedDate}\nJumlah Orang: ${participants}\n\nEmail: ${email}\nNo. HP: ${phone}\n\nMohon info lebih lanjut mengenai pembayaran. Terima kasih.`;
+            let whatsappMessage = `Halo, saya ${name} ingin memesan:\n\nAktivitas: ${activity}\nTanggal: ${formattedDate}\nJumlah Orang: ${participants}\n\nEmail: ${email}\nNo. HP: ${phone}`;
+            
+            if (message) {
+                whatsappMessage += `\n\nPesan Tambahan:\n${message}`;
+            }
+            
+            whatsappMessage += `\n\nMohon info lebih lanjut mengenai pembayaran. Terima kasih.`;
             
             // Redirect to WhatsApp
             window.location.href = `https://wa.me/6281234567890?text=${encodeURIComponent(whatsappMessage)}`;
         });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Set minimum date for booking form (today)
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').setAttribute('min', today);
     </script>
 </body>
 </html>
