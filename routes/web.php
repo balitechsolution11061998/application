@@ -47,6 +47,10 @@ Route::get('/', function(){
     return view('welcomepage');
 });
 
+Route::get('/pariwisata', function(){
+    return view('pariwisata');
+});
+
 // Authentication Routes
 
 
