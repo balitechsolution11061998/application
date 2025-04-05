@@ -2226,6 +2226,9 @@ function checkSolution() {
   const outputDiv = document.querySelector('#challengeOutput div:last-child');
   outputDiv.textContent = 'Solution checking not yet implemented';
 }
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7503392728334197"
+crossorigin="anonymous"></script>
   </script>
 </body>
 

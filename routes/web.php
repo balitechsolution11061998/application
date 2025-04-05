@@ -51,6 +51,22 @@ Route::get('/pariwisata', function(){
     return view('pariwisata');
 });
 
+Route::get('/universitas', function(){
+    return view('university');
+});
+
+Route::get('/software_kasir', function(){
+    return view('software_kasir');
+});
+
+Route::get('/absensi', function(){
+    return view('absensi');
+});
+
+Route::get('/cv', function(){
+    return view('cv');
+});
+
 // Authentication Routes
 
 
