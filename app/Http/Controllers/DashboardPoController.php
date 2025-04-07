@@ -55,7 +55,6 @@ class DashboardPoController extends Controller
             }
 
             $progressCount = $progressQuery->count();
-            dd($progressCount);
 
             // First, get the total count of purchase orders without any filtering
             $totalCountQuery = OrdHead::select(DB::raw('count(*) as total_count'));

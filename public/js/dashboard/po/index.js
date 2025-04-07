@@ -6,16 +6,21 @@ function startPolling() {
     // Panggil fungsi fetchDataCount dan fetchDataCountHistory terlebih dahulu
     fetchDataCount();
     fetchDataCountHistory();
+    fetchDataCountPerRegion();
 
     // Set interval untuk polling
     setInterval(() => {
         fetchDataCount(); // Ambil data status
         fetchDataCountHistory(); // Ambil data history
+        fetchDataCountPerRegion(); // Ambil data per region
     }, POLLING_INTERVAL);
 }
 
 // Panggil fungsi startPolling untuk memulai polling
-startPolling();
+document.addEventListener("DOMContentLoaded", function() {
+    startPolling();
+    renderPOFollowUpTable();
+});
 
 async function fetchDataCount() {
     try {
@@ -272,6 +277,7 @@ function animateValue(element, start, end, duration) {
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
 function renderPOFollowUpTable() {
     // Inisialisasi DataTables
     const dt = $("#po_followup").DataTable({
@@ -373,6 +379,8 @@ function renderPOFollowUpTable() {
         }
     });
 }
+
+let regionChart; // Variabel global untuk chart region
 
 function fetchDataCountPerRegion() {
     am5.ready(function () {
@@ -507,15 +515,7 @@ function fetchDataCountPerRegion() {
         // Play initial series animation
         series.appear(1000, 100);
 
-        // Optionally, set up a timer or event to refresh data periodically
-        setInterval(fetchDataAndUpdateChart, 60000); // Refresh every 60 seconds
+        // Store chart instance
+        regionChart = chart;
     });
 }
-
-// Render tabel saat halaman dimuat
-document.addEventListener("DOMContentLoaded", () => {
-    renderPOFollowUpTable();
-    fetchDataCountPerRegion();
-});
-
-

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Check if table exists before creating
+        // Create expenses table if it doesn't exist
         if (!Schema::hasTable('expenses')) {
             Schema::create('expenses', function (Blueprint $table) {
                 $table->id();
@@ -22,6 +22,9 @@ return new class extends Migration
                 $table->string('type'); // 'employee_bonus', 'maintenance', etc.
                 $table->foreignId('employee_id')->nullable()->constrained('employees')->onDelete('set null');
                 $table->timestamps();
+                
+                // Add index for better performance on common queries
+                $table->index(['date', 'type']);
             });
         }
 
@@ -33,6 +36,9 @@ return new class extends Migration
                 $table->foreignId('product_id')->constrained()->onDelete('cascade');
                 $table->integer('quantity')->default(1);
                 $table->timestamps();
+                
+                // Add composite unique index to prevent duplicate entries
+                $table->unique(['voucher_id', 'product_id']);
             });
         }
 
@@ -42,14 +48,17 @@ return new class extends Migration
                 $table->foreignId('voucher_id')->constrained()->onDelete('cascade');
                 $table->foreignId('expense_id')->constrained()->onDelete('cascade');
                 $table->timestamps();
+                
+                // Add composite unique index to prevent duplicate entries
+                $table->unique(['voucher_id', 'expense_id']);
             });
         }
 
         // Add column if it doesn't exist
-        if (Schema::hasTable('products') {
+        if (Schema::hasTable('products')) {
             Schema::table('products', function (Blueprint $table) {
                 if (!Schema::hasColumn('products', 'is_water_game')) {
-                    $table->boolean('is_water_game')->default(false);
+                    $table->boolean('is_water_game')->default(false)->after('description');
                 }
             });
         }
@@ -60,12 +69,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Drop pivot tables
+        // Drop pivot tables if they exist
         Schema::dropIfExists('voucher_expense');
         Schema::dropIfExists('voucher_product');
         
-        // Don't drop expenses table here as it might contain important data
-        // Just remove the column we added
+        // We don't drop the expenses table as it might contain important data
+        // Just remove the column we added with proper existence checks
         if (Schema::hasTable('products')) {
             Schema::table('products', function (Blueprint $table) {
                 if (Schema::hasColumn('products', 'is_water_game')) {

@@ -67,6 +67,10 @@ Route::get('/cv', function(){
     return view('cv');
 });
 
+Route::get('/ecommerce', function(){
+    return view('ecommerce');
+});
+
 // Authentication Routes
 
 

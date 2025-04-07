@@ -52,7 +52,6 @@ class OrderServiceImplement extends ServiceApi implements OrderService{
             try {
                 // Create or update the main order record
                 $ordHead = $this->mainRepository->updateOrCreate($orderData);
-
                 // Log the creation or update of the main order
                 activity()
                     ->causedBy(auth()->user())
