@@ -18,7 +18,7 @@ class ProductsSeeder extends Seeder
             throw new \Exception("INTERNAL company not found. Please seed companies first.");
         }
 
-        // Define regular products (no bonuses here)
+        // Define regular products
         $products = [
             [
                 'name' => 'Dive Fee', 
@@ -30,24 +30,21 @@ class ProductsSeeder extends Seeder
                 'price' => 20000, 
                 'sku' => 'DIV-ART'
             ],
-        ];
-
-        // Define bonuses (standalone, not connected to products)
-        $bonuses = [
+            // These will be products that have associated bonuses
             [
-                'name' => 'Bonus Banana',
-                'amount' => 2000,
-                'code' => 'BON-BANANO'
+                'name' => 'Bonus Banana Product',
+                'price' => 2000,
+                'sku' => 'PROD-BANANO'
             ],
             [
-                'name' => 'Bonus Tubbing',
-                'amount' => 3000,
-                'code' => 'BON-TUBBING'
+                'name' => 'Bonus Tubbing Product',
+                'price' => 3000,
+                'sku' => 'PROD-TUBBING'
             ],
             [
-                'name' => 'Bonus par Adv',
-                'amount' => 10000,
-                'code' => 'BON-Adv'
+                'name' => 'Bonus par Adv Product',
+                'price' => 10000,
+                'sku' => 'PROD-ADV'
             ],
         ];
 
@@ -73,9 +70,10 @@ class ProductsSeeder extends Seeder
             ],
         ];
 
-        // Seed regular products
+        // Seed products first
+        $createdProducts = [];
         foreach ($products as $productData) {
-            Product::create([
+            $product = Product::create([
                 'company_id' => $internalCompanyId,
                 'name' => $productData['name'],
                 'price' => $productData['price'],
@@ -86,20 +84,40 @@ class ProductsSeeder extends Seeder
                 'upc' => null,
                 'options' => null,
             ]);
+            $createdProducts[$productData['sku']] = $product;
         }
 
-        // Seed standalone bonuses
+        // Define bonuses that will link to products
+        $bonuses = [
+            [
+                'product_sku' => 'PROD-BANANO',
+                'name' => 'Bonus Banana',
+                'bonus_type' => 'monthly'
+            ],
+            [
+                'product_sku' => 'PROD-TUBBING',
+                'name' => 'Bonus Tubbing',
+                'bonus_type' => 'monthly'
+            ],
+            [
+                'product_sku' => 'PROD-ADV',
+                'name' => 'Bonus par Adv',
+                'bonus_type' => 'monthly'
+            ],
+        ];
+
+        // Seed bonuses linked to products
         foreach ($bonuses as $bonusData) {
-            Bonus::create([
-                'company_id' => $internalCompanyId,
-                'name' => $bonusData['name'],
-                'amount' => $bonusData['amount'],
-                'code' => $bonusData['code'],
-                'bonus_type' => 'monthly',
-                'valid_from' => now(),
-                'valid_to' => now()->addMonth(),
-                'is_active' => true,
-            ]);
+            if (isset($createdProducts[$bonusData['product_sku']])) {
+                Bonus::create([
+                    'product_id' => $createdProducts[$bonusData['product_sku']]->id,
+                    'name' => $bonusData['name'],
+                    'bonus_type' => $bonusData['bonus_type'],
+                    'valid_from' => now(),
+                    'valid_to' => now()->addMonth(),
+                    'is_active' => true,
+                ]);
+            }
         }
 
         // Seed expenses
