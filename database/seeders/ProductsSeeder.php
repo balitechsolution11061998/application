@@ -18,43 +18,40 @@ class ProductsSeeder extends Seeder
             throw new \Exception("INTERNAL company not found. Please seed companies first.");
         }
 
-        // Define products (regular products and products that will have bonuses)
+        // Define regular products (no bonuses here)
         $products = [
-            // Products that will have bonuses
-            [
-                'name' => 'Bonus Banana', 
-                'price' => 2000, 
-                'sku' => 'BON-BANANO',
-                'is_bonus' => true
-            ],
-            [
-                'name' => 'Bonus Tubbing', 
-                'price' => 3000, 
-                'sku' => 'BON-TUBBING',
-                'is_bonus' => true
-            ],
-            [
-                'name' => 'Bonus par Adv', 
-                'price' => 10000, 
-                'sku' => 'BON-Adv',
-                'is_bonus' => true
-            ],
-            // Regular products
             [
                 'name' => 'Dive Fee', 
                 'price' => 10000, 
-                'sku' => 'DIVE-FEE',
-                'is_bonus' => false
+                'sku' => 'DIVE-FEE'
             ],
             [
                 'name' => 'Diver Art', 
                 'price' => 20000, 
-                'sku' => 'DIV-ART',
-                'is_bonus' => false
+                'sku' => 'DIV-ART'
             ],
         ];
 
-        // Define expenses (separate from products)
+        // Define bonuses (standalone, not connected to products)
+        $bonuses = [
+            [
+                'name' => 'Bonus Banana',
+                'amount' => 2000,
+                'code' => 'BON-BANANO'
+            ],
+            [
+                'name' => 'Bonus Tubbing',
+                'amount' => 3000,
+                'code' => 'BON-TUBBING'
+            ],
+            [
+                'name' => 'Bonus par Adv',
+                'amount' => 10000,
+                'code' => 'BON-Adv'
+            ],
+        ];
+
+        // Define expenses
         $expenses = [
             [
                 'name' => 'Oper GBB', 
@@ -76,9 +73,9 @@ class ProductsSeeder extends Seeder
             ],
         ];
 
-        // Seed products and bonuses
+        // Seed regular products
         foreach ($products as $productData) {
-            $product = Product::create([
+            Product::create([
                 'company_id' => $internalCompanyId,
                 'name' => $productData['name'],
                 'price' => $productData['price'],
@@ -89,18 +86,20 @@ class ProductsSeeder extends Seeder
                 'upc' => null,
                 'options' => null,
             ]);
+        }
 
-            // Create bonus record if product is marked as bonus
-            if ($productData['is_bonus']) {
-                Bonus::create([
-                    'product_id' => $product->id,
-                    'name' => $productData['name'],
-                    'bonus_type' => 'monthly',
-                    'valid_from' => now(),
-                    'valid_to' => now()->addMonth(),
-                    'is_active' => true,
-                ]);
-            }
+        // Seed standalone bonuses
+        foreach ($bonuses as $bonusData) {
+            Bonus::create([
+                'company_id' => $internalCompanyId,
+                'name' => $bonusData['name'],
+                'amount' => $bonusData['amount'],
+                'code' => $bonusData['code'],
+                'bonus_type' => 'monthly',
+                'valid_from' => now(),
+                'valid_to' => now()->addMonth(),
+                'is_active' => true,
+            ]);
         }
 
         // Seed expenses
