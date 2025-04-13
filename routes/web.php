@@ -6,6 +6,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\DashboardDataKependudukanController;
 use App\Http\Controllers\DashboardPilkadaController;
 use App\Http\Controllers\DashboardPoController;
 use App\Http\Controllers\DashboardSystemController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OpenAIController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\PosController;
 use App\Http\Controllers\PriceChangeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProvinceController;
@@ -37,6 +39,8 @@ use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\TpsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TandaTerimaController;
+
+
 use App\Http\Controllers\TitleController;
 use App\Models\ItemSupplier;
 use Illuminate\Support\Facades\Route;
@@ -83,6 +87,7 @@ Route::controller(LoginController::class)->group(function () {
     Route::get('login/koperasi', 'showLoginFormKoperasi')->name('login.formKoperasi');
     Route::get('login/form', 'showLoginForm')->name('login.form');
     Route::post('login/prosesForm', 'login')->name('login.prosesForm');
+    Route::post('login/pos', 'loginPos')->name('login.loginPos');
     Route::post('logout', 'logout')->name('logout');
 });
 
@@ -142,6 +147,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/purchase-orders/followUp', [DashboardPoController::class, 'followUp'])->name('followUp');
         Route::get('/purchase-orders/count-per-region', [DashboardPoController::class, 'getPOCountPerRegion'])->name('getPOCountPerRegion');
 
+    });
+
+    Route::prefix('dashboard-kependudukan')->as('dashboard-kependudukan.')->group(function () {
+        Route::get('/', [DashboardDataKependudukanController::class, 'index'])->name('index');
     });
 
     // Role Management Routes
@@ -301,6 +310,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('titles', TitleController::class);
 });
 Route::post('/generate', [OpenAIController::class, 'generate']);
+Route::get('/poskasir', [PosController::class,'index'])->name('poskasir.index');
 
 // Documentation Route
 Route::get('/docs', fn() => view('docs.index'));

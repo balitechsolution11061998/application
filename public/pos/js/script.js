@@ -1,4 +1,42 @@
 function initApp() {
+  // Initialize toastr with safe fallback
+  window.safeToastr = {
+    success: (msg) => {
+      try {
+        if (typeof toastr !== 'undefined') toastr.success(msg);
+        else console.log('SUCCESS:', msg);
+      } catch (e) {
+        console.log('SUCCESS (fallback):', msg);
+      }
+    },
+    error: (msg) => {
+      try {
+        if (typeof toastr !== 'undefined') toastr.error(msg);
+        else console.error('ERROR:', msg);
+      } catch (e) {
+        console.error('ERROR (fallback):', msg);
+      }
+    },
+    warning: (msg) => {
+      try {
+        if (typeof toastr !== 'undefined') toastr.warning(msg);
+        else console.warn('WARNING:', msg);
+      } catch (e) {
+        console.warn('WARNING (fallback):', msg);
+      }
+    }
+  };
+
+  // Initialize toastr options if available
+  if (typeof toastr !== 'undefined') {
+    toastr.options = {
+      closeButton: true,
+      progressBar: true,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+      timeOut: 3000
+    };
+  }
   return {
     db: null,
     time: null,
@@ -16,7 +54,8 @@ function initApp() {
     receiptDate: null,
     isLoading: false,
     isLoggedIn: false,
-    showUserModal:false,
+    showUserModal: false,
+    showLogoutModal: false,
     username: "", // Username input
     password: "", // Password input
     user: {      // Tambahkan state user
@@ -25,83 +64,132 @@ function initApp() {
     },
     logoutTimer: null, // Timer untuk auto logout
     inactivityDuration: 5 * 60 * 1000, // 5 menit dalam milidetik
+    isLoggingIn: false,
+    persistSession: true, // New config option
+    sessionTimeout: 30 * 60 * 1000, // 30 minutes in milliseconds
+    lastActivity: null,
+    hasActiveSession() {
+      const authToken = localStorage.getItem('authToken');
+      const userData = localStorage.getItem('user');
+      return authToken && userData;
+    },
+    // Fungsi logout
+    requestLogout() {
+      this.showLogoutModal = true;
+    },
 
-    // Login function
-    async login() {
-      if (!this.username || !this.password) {
-        toastr.warning("Username dan password harus diisi!"); // Ganti alert dengan toastr
-        return;
-      }
-    
-      // Tampilkan pertanyaan konfirmasi
-      const result = await Swal.fire({
-        title: 'Apakah Anda yakin?',
-        text: 'Anda akan login dengan username dan password yang dimasukkan.',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Login',
-        cancelButtonText: 'Batal',
-      });
-    
-      // Jika pengguna memilih "Batal", hentikan proses
-      if (result.isDismissed) {
-        return;
-      }
-    
-      // Tampilkan spinner loading
-      Swal.fire({
-        title: 'Sedang memproses...',
-        text: 'Harap tunggu sebentar.',
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading(); // Tampilkan spinner
-        },
-      });
-    
-      try {
-        // Kirim request ke API login
-        const response = await fetch('https://publicconcerns.online/api/login', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer h5OWU9tevljQWdTBzcwjmnJznI3yS4I05aXokboT`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          body: JSON.stringify({
-            login: this.username, // Gunakan username atau email
-            password: this.password,
-          }),
-        });
-    
-        // Tangani response
-        const data = await response.json();
-    
-        // Tutup spinner
-        Swal.close();
-    
-        if (response.ok) {
-          // Jika login berhasil
-          this.isLoggedIn = true;
-          this.user.name = data.user.name; // Set nama pengguna dari response API
-          this.user.role = "User"; // Atau sesuaikan dengan role dari response API
-          localStorage.setItem("isLoggedIn", true); // Simpan status login
-          localStorage.setItem("access_token", data.access_token); // Simpan access token
-          this.resetLogoutTimer(); // Reset timer setelah login
-    
-          // Tampilkan Toastr sukses
-          toastr.success('Login Berhasil! Selamat datang kembali!');
-        } else {
-          // Jika login gagal
-          toastr.error(data.message || "Login gagal. Periksa username dan password Anda.");
-        }
-      } catch (error) {
-        console.error("Error during login:", error);
-    
-        // Tampilkan Toastr error
-        toastr.error('Terjadi kesalahan saat login. Silakan coba lagi.');
+    confirmLogout() {
+      // Hapus data session
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+
+      // Reset state
+      this.isLoggedIn = false;
+      this.user = null;
+      this.cart = [];
+      this.cash = 0;
+      this.change = 0;
+
+      this.showLogoutModal = false;
+
+      // Tampilkan notifikasi
+      toastr.success('Anda telah logout dari sistem');
+    },
+
+    // Add to your methods
+    checkSessionTimeout() {
+      if (!this.persistSession) return;
+
+      const now = new Date().getTime();
+      const timeLeft = this.lastActivity + this.sessionTimeout - now;
+
+      if (timeLeft <= 0) {
+        this.logout();
+        safeToastr.warning('Your session has expired due to inactivity');
+      } else if (timeLeft < 5 * 60 * 1000) { // Warn when 5 minutes left
+        const minutesLeft = Math.ceil(timeLeft / (60 * 1000));
+        safeToastr.info(`Session will expire in ${minutesLeft} minute(s)`);
       }
     },
 
+    updateActivity() {
+      this.lastActivity = new Date().getTime();
+      localStorage.setItem('lastActivity', this.lastActivity);
+    },
+
+    startActivityMonitor() {
+      // Check every minute
+      this.activityInterval = setInterval(() => this.checkSessionTimeout(), 60000);
+      
+      // Track user activity
+      ['click', 'mousemove', 'keypress'].forEach(event => {
+        document.addEventListener(event, () => this.updateActivity());
+      });
+    },
+
+    // Login function
+    async login() {
+      try {
+        this.isLoggingIn = true;
+
+        // Get CSRF token
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+        // Show loading state
+        this.isLoading = true;
+
+        const response = await fetch('/login/pos', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            login: this.username,
+            password: this.password,
+            _token: csrfToken
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          // Login successful
+          this.isLoggedIn = true;
+          this.user.name = data.user.name;
+          this.user.role = data.user.role;
+
+          // Store session data
+          localStorage.setItem('authToken', data.access_token || 'dummy-token');
+          localStorage.setItem('user', JSON.stringify(data.user));
+
+          // Show success message
+          safeToastr.success('Login successful! Welcome back!');
+
+          // Reset login form
+          this.username = '';
+          this.password = '';
+
+          // Start inactivity timer
+          this.resetLogoutTimer();
+
+          // Redirect if needed
+          if (data.redirect) {
+            window.location.href = data.redirect;
+          }
+        } else {
+          // Login failed
+          safeToastr.error(data.error || "Login failed. Please check your credentials.");
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        safeToastr.error('An error occurred during login. Please try again.');
+      } finally {
+        this.isLoading = false;
+        this.isLoggingIn = false;
+      }
+    },
 
 
     // Logout function
@@ -114,7 +202,7 @@ function initApp() {
       localStorage.removeItem("isLoggedIn"); // Hapus status login
       localStorage.removeItem("access_token"); // Hapus access token
       clearTimeout(this.logoutTimer); // Hentikan timer logout
-    
+
       // Tampilkan halaman login
       this.isLoading = false;
     },
@@ -122,7 +210,7 @@ function initApp() {
     resetLogoutTimer() {
       // Hentikan timer yang sedang berjalan
       clearTimeout(this.logoutTimer);
-    
+
       // Mulai timer baru
       this.logoutTimer = setTimeout(() => {
         // Tampilkan SweetAlert spinner dengan hitungan mundur
@@ -149,7 +237,7 @@ function initApp() {
             clearTimeout(this.logoutTimer);
           },
         });
-    
+
         // Setelah waktu habis, jalankan fungsi logout
         swalInstance.then(() => {
           this.logout(); // Panggil fungsi logout
@@ -179,6 +267,29 @@ function initApp() {
       }
     },
 
+    // Add this to your methods
+    checkSession() {
+      const authToken = localStorage.getItem('authToken');
+      const userData = localStorage.getItem('user');
+
+      if (authToken && userData) {
+        try {
+          this.isLoggedIn = true;
+          this.user = JSON.parse(userData);
+          this.resetLogoutTimer(); // Start inactivity timer
+        } catch (e) {
+          console.error("Error parsing user data:", e);
+          this.clearSession();
+        }
+      }
+    },
+
+    clearSession() {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+      this.isLoggedIn = false;
+      this.user = { name: '', role: '' };
+    },
 
 
     // Fungsi untuk menyembunyikan spinner setelah gambar selesai dimuat
@@ -190,16 +301,31 @@ function initApp() {
     // Fungsi untuk mengambil data dari API
     async fetchProductsFromAPI() {
       try {
-        const response = await fetch('https://publicconcerns.online/api/products'); // Sesuaikan dengan endpoint API Anda
+        // CORS Solution: Using proxy in development
+        const apiUrl = 'https://www.publicconcerns.online/api/products';
+
+        const response = await fetch(apiUrl, {
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+
         if (!response.ok) {
           throw new Error('Failed to fetch products from API');
         }
-        const data = await response.json(); // Data adalah array langsung
-        console.log(data); // Log data untuk memastikan struktur respons
-        return data; // Kembalikan data langsung
+
+        const data = await response.json();
+        console.log("Products loaded:", data);
+
+        // Add loading state for each product
+        return data.map(product => ({
+          ...product,
+          isLoading: true
+        }));
       } catch (error) {
         console.error('Error fetching products:', error);
-        return []; // Kembalikan array kosong jika terjadi error
+        this.showAnimatedToast('error', 'Gagal memuat produk', 'fas fa-exclamation-circle');
+        return [];
       }
     },
 

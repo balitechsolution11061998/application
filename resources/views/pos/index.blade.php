@@ -6,6 +6,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tailwind POS</title>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+
   <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/pos/css/style.css">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
@@ -13,9 +15,8 @@
   <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.2/dist/alpine.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
 
   <script src="/pos/js/script.js"></script>
 
@@ -36,7 +37,8 @@
   </style>
 </head>
 
-<body class="bg-blue-gray-50" x-data="initApp()" x-init="initDatabase()">
+<body class="bg-blue-gray-50" x-data="initApp()"
+  x-init="initDatabase(); checkSession(); startActivityMonitor();">
   <!-- Loading Spinner -->
   <div x-show="isLoading" class="fixed inset-0 flex justify-center items-center bg-white bg-opacity-90 z-50">
     <div class="text-center">
@@ -46,148 +48,148 @@
   </div>
 
   <!-- Login Form -->
-<!-- POS System Login Form -->
-<div x-show="!isLoading && !isLoggedIn && !hasActiveSession()" 
-     x-transition:enter="transition ease-out duration-300"
-     x-transition:enter-start="opacity-0 transform scale-95" 
-     x-transition:enter-end="opacity-100 transform scale-100"
-     x-transition:leave="transition ease-in duration-200" 
-     x-transition:leave-start="opacity-100 transform scale-100"
-     x-transition:leave-end="opacity-0 transform scale-95"
-     class="fixed inset-0 flex justify-center items-center bg-gray-100 z-50">
-  
-  <div class="w-full max-w-md mx-4">
-    <!-- POS-style card with clean business look -->
-    <div class="relative bg-white rounded-lg overflow-hidden shadow-xl border border-gray-200">
-      <!-- POS header stripe -->
-      <div class="bg-blue-600 py-3 px-6 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-        </svg>
-        <h2 class="text-xl font-bold text-white">POS System Login</h2>
-      </div>
-      
-      <!-- Main content -->
-      <div class="p-6">
-        <!-- Store branding -->
-        <div class="flex flex-col items-center mb-6">
-          <div class="w-16 h-16 bg-white border-2 border-blue-500 rounded-lg flex items-center justify-center shadow-sm mb-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
-          </div>
-          <h3 class="text-lg font-semibold text-gray-800">Store Name</h3>
-          <p class="text-sm text-gray-500">Version 3.2.1</p>
-        </div>
-        
-        <!-- Session notification -->
-        <div x-show="hasActiveSession()" class="mb-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 rounded flex items-start">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+  <!-- POS System Login Form -->
+  <div x-show="!isLoading && !isLoggedIn && !hasActiveSession()"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0 transform scale-95"
+    x-transition:enter-end="opacity-100 transform scale-100"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100 transform scale-100"
+    x-transition:leave-end="opacity-0 transform scale-95"
+    class="fixed inset-0 flex justify-center items-center bg-gray-100 z-50">
+
+    <div class="w-full max-w-md mx-4">
+      <!-- POS-style card with clean business look -->
+      <div class="relative bg-white rounded-lg overflow-hidden shadow-xl border border-gray-200">
+        <!-- POS header stripe -->
+        <div class="bg-blue-600 py-3 px-6 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
-          <div>
-            <p class="font-medium text-sm">Active session detected</p>
-            <p class="text-xs">Please logout from the current register first</p>
-          </div>
+          <h2 class="text-xl font-bold text-white">POS System Login</h2>
         </div>
-        
-        <!-- Login Form -->
-        <form x-on:submit.prevent="login" class="space-y-4">
-          <!-- Username Input -->
-          <div>
-            <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Employee ID</label>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                </svg>
-              </div>
-              <input id="username" type="text" x-model="username" placeholder="Enter your employee ID" required
-                class="w-full pl-10 pr-4 py-2.5 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors duration-200 placeholder-gray-400 bg-gray-50">
-            </div>
-          </div>
 
-          <!-- Password Input -->
-          <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">PIN</label>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                </svg>
-              </div>
-              <input id="password" type="password" x-model="password" placeholder="Enter your 4-digit PIN" required
-                class="w-full pl-10 pr-4 py-2.5 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors duration-200 placeholder-gray-400 bg-gray-50">
-            </div>
-          </div>
-
-          <!-- Register Selection -->
-          <div>
-            <label for="register" class="block text-sm font-medium text-gray-700 mb-1">Register</label>
-            <select id="register" class="w-full py-2.5 px-3 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-gray-50">
-              <option>Register 1</option>
-              <option>Register 2</option>
-              <option>Register 3</option>
-              <option>Register 4</option>
-            </select>
-          </div>
-
-          <!-- Submit Button -->
-          <button type="submit"
-            class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 mt-2">
-            <span class="flex items-center justify-center">
-              <span x-show="!isLoggingIn">Sign In to Register</span>
-              <span x-show="isLoggingIn">Processing...</span>
-              <svg x-show="isLoggingIn" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 animate-spin" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+        <!-- Main content -->
+        <div class="p-6">
+          <!-- Store branding -->
+          <div class="flex flex-col items-center mb-6">
+            <div class="w-16 h-16 bg-white border-2 border-blue-500 rounded-lg flex items-center justify-center shadow-sm mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
-            </span>
-          </button>
-        </form>
-        
-        <!-- Emergency buttons -->
-        <div class="mt-6 pt-4 border-t border-gray-200">
-          <div class="grid grid-cols-2 gap-3">
-            <button class="text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 py-2 px-3 rounded-md transition-colors duration-200">
-              Manager Override
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800">Store Name</h3>
+            <p class="text-sm text-gray-500">Version 3.2.1</p>
+          </div>
+
+          <!-- Session notification -->
+          <div x-show="hasActiveSession()" class="mb-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 rounded flex items-start">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+            <div>
+              <p class="font-medium text-sm">Active session detected</p>
+              <p class="text-xs">Please logout from the current register first</p>
+            </div>
+          </div>
+
+          <!-- Login Form -->
+          <form x-on:submit.prevent="login" class="space-y-4">
+            <!-- Username Input -->
+            <div>
+              <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Employee ID</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <input id="username" type="text" x-model="username" placeholder="Enter your employee ID" required
+                  class="w-full pl-10 pr-4 py-2.5 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors duration-200 placeholder-gray-400 bg-gray-50">
+              </div>
+            </div>
+
+            <!-- Password Input -->
+            <div>
+              <label for="password" class="block text-sm font-medium text-gray-700 mb-1">PIN</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <input id="password" type="password" x-model="password" placeholder="Enter your 4-digit PIN" required
+                  class="w-full pl-10 pr-4 py-2.5 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors duration-200 placeholder-gray-400 bg-gray-50">
+              </div>
+            </div>
+
+            <!-- Register Selection -->
+            <div>
+              <label for="register" class="block text-sm font-medium text-gray-700 mb-1">Register</label>
+              <select id="register" class="w-full py-2.5 px-3 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-gray-50">
+                <option>Register 1</option>
+                <option>Register 2</option>
+                <option>Register 3</option>
+                <option>Register 4</option>
+              </select>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit"
+              class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 mt-2">
+              <span class="flex items-center justify-center">
+                <span x-show="!isLoggingIn">Sign In to Register</span>
+                <span x-show="isLoggingIn">Processing...</span>
+                <svg x-show="isLoggingIn" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 animate-spin" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                </svg>
+              </span>
             </button>
-            <button class="text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 py-2 px-3 rounded-md transition-colors duration-200">
-              Shift Change
-            </button>
+          </form>
+
+          <!-- Emergency buttons -->
+          <div class="mt-6 pt-4 border-t border-gray-200">
+            <div class="grid grid-cols-2 gap-3">
+              <button class="text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 py-2 px-3 rounded-md transition-colors duration-200">
+                Manager Override
+              </button>
+              <button class="text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 py-2 px-3 rounded-md transition-colors duration-200">
+                Shift Change
+              </button>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="mt-6 text-center text-xs text-gray-500">
+            <p>© 2023 POS System v3.2.1</p>
+            <p class="mt-1">For technical support, call (555) 123-4567</p>
           </div>
         </div>
-        
-        <!-- Footer -->
-        <div class="mt-6 text-center text-xs text-gray-500">
-          <p>© 2023 POS System v3.2.1</p>
-          <p class="mt-1">For technical support, call (555) 123-4567</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tambahkan modal konfirmasi logout -->
+  <div x-show="showLogoutModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white rounded-lg p-6 w-96">
+      <div class="text-center">
+        <i class="fas fa-sign-out-alt text-3xl text-cyan-500 mb-4"></i>
+        <h3 class="text-xl font-semibold mb-2">Konfirmasi Logout</h3>
+        <p class="mb-6">Apakah Anda yakin ingin logout dari sistem?</p>
+
+        <div class="flex justify-center space-x-4">
+          <button @click="confirmLogout()"
+            class="px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600">
+            Ya, Logout
+          </button>
+          <button @click="showLogoutModal = false"
+            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+            Batal
+          </button>
         </div>
       </div>
     </div>
   </div>
-</div>
-
-<!-- Tambahkan modal konfirmasi logout -->
-<div x-show="showLogoutModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-  <div class="bg-white rounded-lg p-6 w-96">
-    <div class="text-center">
-      <i class="fas fa-sign-out-alt text-3xl text-cyan-500 mb-4"></i>
-      <h3 class="text-xl font-semibold mb-2">Konfirmasi Logout</h3>
-      <p class="mb-6">Apakah Anda yakin ingin logout dari sistem?</p>
-      
-      <div class="flex justify-center space-x-4">
-        <button @click="confirmLogout()" 
-                class="px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600">
-          Ya, Logout
-        </button>
-        <button @click="showLogoutModal = false" 
-                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
-          Batal
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 
   <div x-show="isLoggedIn">
     <!-- Header dengan tombol logout dan informasi pengguna -->
@@ -204,7 +206,7 @@
             </svg>
           </a>
           <ul class="flex flex-col space-y-2 mt-12">
-            <!-- Item menu lainnya -->
+            <!-- Existing menu items -->
             <li>
               <a href="#" class="flex items-center">
                 <span class="flex items-center justify-center text-cyan-100 hover:bg-cyan-400 h-12 w-12 rounded-2xl">
@@ -217,54 +219,28 @@
               </a>
             </li>
 
-            <!-- Tombol untuk Menampilkan Modal User di dalam <li> -->
-            <div x-data="{ showUserModal: false, user: { name: 'John Doe', role: 'Admin' } }">
-              <!-- Button to trigger the modal -->
-              <li>
-                <button x-on:click="isLoading = true; showUserModal = true; isLoading = false"
-                  class="flex items-center w-full focus:outline-none">
-                  <span class="flex items-center justify-center text-cyan-100 hover:bg-cyan-400 h-12 w-12 rounded-2xl">
-                    <i class="fas fa-user-circle fa-lg"></i> <!-- Ikon user dari Font Awesome -->
-                  </span>
-                </button>
-              </li>
+            <!-- User Modal Button -->
+            <li>
+              <button x-on:click="isLoading = true; showUserModal = true; isLoading = false"
+                class="flex items-center w-full focus:outline-none">
+                <span class="flex items-center justify-center text-cyan-100 hover:bg-cyan-400 h-12 w-12 rounded-2xl">
+                  <i class="fas fa-user-circle fa-lg"></i>
+                </span>
+              </button>
+            </li>
 
-              <!-- Modal -->
-              <div x-show="showUserModal"
-                class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                <div class="bg-white rounded-lg p-6 w-96 transform transition-all duration-300 scale-95"
-                  x-bind:class="{ 'scale-100': showUserModal }">
-                  <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-semibold text-cyan-700">User Information</h3>
-                    <button x-on:click="showUserModal = false"
-                      class="text-gray-500 hover:text-gray-700 focus:outline-none">
-                      <i class="fas fa-times"></i> <!-- Ikon close dari Font Awesome -->
-                    </button>
-                  </div>
-                  <div class="space-y-4">
-                    <div class="flex items-center space-x-3">
-                      <i class="fas fa-user text-cyan-500"></i> <!-- Ikon user -->
-                      <div>
-                        <span class="font-semibold">Name:</span>
-                        <span x-text="user.name" class="text-blue-gray-700"></span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                      <i class="fas fa-id-badge text-cyan-500"></i> <!-- Ikon role -->
-                      <div>
-                        <span class="font-semibold">Role:</span>
-                        <span x-text="user.role"
-                          class="text-sm bg-cyan-100 px-2 py-1 rounded-full text-cyan-700"></span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <!-- Logout Button -->
+            <li>
+              <button x-on:click="requestLogout()"
+                class="flex items-center w-full focus:outline-none">
+                <span class="flex items-center justify-center text-cyan-100 hover:bg-red-400 h-12 w-12 rounded-2xl">
+                  <i class="fas fa-sign-out-alt fa-lg"></i>
+                </span>
+              </button>
+            </li>
           </ul>
         </div>
       </div>
-
       <!-- page content -->
       <div class="flex-grow flex">
         <!-- store menu -->
@@ -688,7 +664,15 @@
 
   <div id="print-area" class="print-area"></div>
   <script>
-
+    if (typeof toastr !== 'undefined') {
+      toastr.options = {
+        closeButton: true,
+        progressBar: true,
+        positionClass: 'toast-top-right',
+        preventDuplicates: true,
+        timeOut: 5000
+      };
+    }
   </script>
 </body>
 

@@ -20,6 +20,11 @@ Breadcrumbs::for('rooms', function (BreadcrumbTrail $trail) {
     $trail->push('Rooms', route('rooms.index'));
 });
 
+
+Breadcrumbs::for('kependudukan', function (BreadcrumbTrail $trail) {
+    $trail->push('Kependudukan', route('dashboard-kependudukan.index'));
+});
+
 Breadcrumbs::for('permissions', function (BreadcrumbTrail $trail) {
     $trail->push('Permissions', route('permissions.index'));
 });

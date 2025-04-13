@@ -86,6 +86,65 @@ class LoginController extends Controller
         }
     }
 
+    public function loginPos(Request $request)
+    {
+        $startTime = microtime(true);
+        $memoryBefore = memory_get_usage();
+
+        try {
+            // Validate login credentials
+            $this->loginService->validateLogin($request);
+
+            // Attempt to log in the user
+            $user = $this->loginService->attemptLogin($request);
+
+            if ($user) {
+                // Set user as logged in
+                $this->setUserLoggedIn($user, true);
+                $this->loginService->logEvent($user, 'success', $request);
+
+                $ipAddress = $request->ip();
+                $address = $this->getAddressFromIp($ipAddress);
+
+                // Log activity for successful login
+                $this->logActivity('Login successful', $user, 'login', $request, $startTime, $memoryBefore);
+                $this->logSystemUsage($request, 'login', $startTime, $memoryBefore);
+
+                // Dispatch the UserLoggedIn event
+                event(new UserLoggedIn($user, $address, $ipAddress));
+
+                // Return JSON response with redirect information
+                return response()->json([
+                    'success' => true,
+                    'redirect' => $this->determineRedirectPath($user),
+                    'user' => [
+                        'name' => $user->name,
+                        'role' => $user->role // Make sure your user model has a role attribute
+                    ],
+                ]);
+            }
+
+            // Log failed login attempt
+            $this->loginService->logFailedLogin($request);
+            $this->logActivity('Failed login attempt', null, 'login', $request, $startTime, $memoryBefore);
+            $this->logSystemUsage($request, 'login', $startTime, $memoryBefore);
+
+            return response()->json(['error' => 'Invalid credentials'], 401);
+        } catch (\Exception $e) {
+            $this->loginService->logError($request, $e->getMessage());
+            $this->logActivity('Login error: ' . $e->getMessage(), null, 'login', $request, $startTime, $memoryBefore);
+            $this->logSystemUsage($request, 'login', $startTime, $memoryBefore);
+
+            return response()->json(['error' => 'An error occurred during the login process. Please try again.'.$e->getMessage()], 500);
+        }
+    }
+
+    protected function determineRedirectPath($user)
+    {
+            return route('poskasir.index');
+     
+    }
+
 
 
     protected function redirectUser($user)
