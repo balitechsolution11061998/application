@@ -24,7 +24,7 @@ return new class extends Migration
             $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-            
+
             $table->index(['company_id', 'is_active']);
         });
 
@@ -41,22 +41,24 @@ return new class extends Migration
             $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-            
+
             $table->index(['company_id', 'is_active']);
             $table->index(['category', 'company_id']);
         });
 
         // Create bonuses table (connected to products)
+        // Update the bonuses table schema
         Schema::create('bonuses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
             $table->string('name');
             $table->enum('bonus_type', ['monthly', 'quarterly', 'annual', 'special']);
+            $table->integer('amount'); // Add this line for the amount column
             $table->date('valid_from');
             $table->date('valid_to');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
-            
+
             $table->index(['product_id', 'is_active']);
             $table->index(['valid_from', 'valid_to']);
         });
@@ -70,15 +72,15 @@ return new class extends Migration
         Schema::table('bonuses', function (Blueprint $table) {
             $table->dropForeign(['product_id']);
         });
-        
+
         Schema::table('expenses', function (Blueprint $table) {
             $table->dropForeign(['company_id']);
         });
-        
+
         Schema::table('products', function (Blueprint $table) {
             $table->dropForeign(['company_id']);
         });
-        
+
         Schema::dropIfExists('bonuses');
         Schema::dropIfExists('expenses');
         Schema::dropIfExists('products');

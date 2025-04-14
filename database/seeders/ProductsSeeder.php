@@ -22,29 +22,84 @@ class ProductsSeeder extends Seeder
         $products = [
             [
                 'name' => 'Dive Fee', 
-                'price' => 10000, 
+                'price' => 20000, 
                 'sku' => 'DIVE-FEE'
             ],
             [
-                'name' => 'Diver Art', 
-                'price' => 20000, 
-                'sku' => 'DIV-ART'
-            ],
-            // These will be products that have associated bonuses
-            [
-                'name' => 'Bonus Banana Product',
-                'price' => 2000,
-                'sku' => 'PROD-BANANO'
+                'name' => 'Oper GBB', 
+                'price' => 200000, 
+                'sku' => 'OPER-GBB'
             ],
             [
-                'name' => 'Bonus Tubbing Product',
-                'price' => 3000,
-                'sku' => 'PROD-TUBBING'
+                'name' => 'Janggolan Dalam', 
+                'price' => 125000, 
+                'sku' => 'JANGGOLAN-DALAM'
             ],
             [
-                'name' => 'Bonus par Adv Product',
-                'price' => 10000,
-                'sku' => 'PROD-ADV'
+                'name' => 'Janggolan Dalam Up', 
+                'price' => 15000, 
+                'sku' => 'JANGGOLAN DALAM UP'
+            ],
+            [
+                'name' => 'Janggolan Luar 2x DV', 
+                'price' => 200000, 
+                'sku' => 'JANGGOLAN LUAR 2x DV'
+            ],
+            [
+                'name' => 'Janggolan Luar 3x DV', 
+                'price' => 325000, 
+                'sku' => 'JANGGOLAN LUAR 3x DV'
+            ],
+            [
+                'name' => 'Janggolan Luar Up', 
+                'price' => 25000, 
+                'sku' => 'JANGGOLAN-LUAR-UP'
+            ],
+            [
+                'name' => 'Oper Jet Ski', 
+                'price' => 100000, 
+                'sku' => 'OPER-JET-SKI'
+            ],
+            [
+                'name' => 'Oper Jet Ski Lepas Kecil', 
+                'price' => 400000, 
+                'sku' => 'OPER-JET-SKI-LEPAS-KECIL'
+            ],
+            [
+                'name' => 'Oper Jet Ski Lepas Besar', 
+                'price' => 500000, 
+                'sku' => 'OPER-JET-SKI-LEPAS-BESAR'
+            ],
+            [
+                'name' => 'Oper Par Adv', 
+                'price' => 125000, 
+                'sku' => 'OPER-PAR-ADV'
+            ],
+            [
+                'name' => 'Oper Fly Fish', 
+                'price' => 100000, 
+                'sku' => 'OPER-FLY-FISH'
+            ],
+            [
+                'name' => 'Oper Sea Walker', 
+                'price' => 150000, 
+                'sku' => 'OPER-SEA-WALKER'
+            ],
+            [
+                'name' => 'Oper Fly Board', 
+                'price' => 275000, 
+                'sku' => 'OPER-FLY-BOARD'
+            ],
+            // Add the products that will have bonuses
+            [
+                'name' => 'Banana Boat Ride', 
+                'price' => 175000, 
+                'sku' => 'BANANA-BOAT'
+            ],
+            [
+                'name' => 'Tubbing Ride', 
+                'price' => 150000, 
+                'sku' => 'TUBBING'
             ],
         ];
 
@@ -87,22 +142,25 @@ class ProductsSeeder extends Seeder
             $createdProducts[$productData['sku']] = $product;
         }
 
-        // Define bonuses that will link to products
+        // Define bonuses that will link to existing products
         $bonuses = [
             [
-                'product_sku' => 'PROD-BANANO',
-                'name' => 'Bonus Banana',
-                'bonus_type' => 'monthly'
+                'product_sku' => 'BANANA-BOAT', // This must match an existing product SKU
+                'name' => 'Bonus Banana Boat',
+                'bonus_type' => 'monthly',
+                'amount' => 100000,
             ],
             [
-                'product_sku' => 'PROD-TUBBING',
+                'product_sku' => 'TUBBING', // This must match an existing product SKU
                 'name' => 'Bonus Tubbing',
-                'bonus_type' => 'monthly'
+                'bonus_type' => 'monthly',
+                'amount' => 150000,
             ],
             [
-                'product_sku' => 'PROD-ADV',
-                'name' => 'Bonus par Adv',
-                'bonus_type' => 'monthly'
+                'product_sku' => 'OPER-PAR-ADV', // This must match an existing product SKU
+                'name' => 'Bonus Par Adv',
+                'bonus_type' => 'monthly',
+                'amount' => 125000,
             ],
         ];
 
@@ -113,10 +171,13 @@ class ProductsSeeder extends Seeder
                     'product_id' => $createdProducts[$bonusData['product_sku']]->id,
                     'name' => $bonusData['name'],
                     'bonus_type' => $bonusData['bonus_type'],
+                    'amount' => $bonusData['amount'],
                     'valid_from' => now(),
                     'valid_to' => now()->addMonth(),
                     'is_active' => true,
                 ]);
+            } else {
+                throw new \Exception("Product with SKU {$bonusData['product_sku']} not found for bonus creation.");
             }
         }
 
