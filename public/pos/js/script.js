@@ -87,13 +87,23 @@ function initApp() {
     },
     
     confirmDate() {
-      if (this.transactionDate) {
-        this.useCustomDate = true;
-        safeToastr.success('Transaction date set successfully');
-        this.showDateModal = false;
-      } else {
-        safeToastr.error('Please select a valid date');
+      if (!this.transactionDate) {
+        safeToastr.error('Please select a valid date and time');
+        return;
       }
+      
+      const selectedDate = new Date(this.transactionDate);
+      const now = new Date();
+      
+      // Validate date is not in the future
+      if (selectedDate > now) {
+        safeToastr.error('Transaction date cannot be in the future');
+        return;
+      }
+      
+      this.useCustomDate = true;
+      safeToastr.success('Transaction date set successfully');
+      this.showDateModal = false;
     },
     
     useCurrentDate() {
@@ -523,10 +533,12 @@ function initApp() {
 
     // Fungsi untuk submit transaksi
     submit() {
-        // Show date setting modal if not already set
-      if (!this.useCustomDate) {
-        this.showDateSetting();
-        return;
+  
+        // Check if date is not set
+      if (!this.useCustomDate && !this.transactionDate) {
+        safeToastr.error('Please select a transaction date first');
+        this.showDateSetting(); // Open date modal
+        return; // Exit the function
       }
 
       const time = this.getTransactionDate();

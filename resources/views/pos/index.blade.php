@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tailwind POS</title>
+  <title>Taman Sari POS</title>
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
@@ -34,22 +34,34 @@
     .fa-spinner {
       animation: spin 1s linear infinite;
     }
-    /* Animasi untuk tombol date */
-.fa-calendar-alt {
-  transition: transform 0.3s ease;
-}
-button:hover .fa-calendar-alt {
-  transform: scale(1.1);
-}
 
-/* Untuk floating button */
-.fixed.floating-btn {
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-}
-.fixed.floating-btn:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-  transform: translateY(-2px);
+    /* Animasi untuk tombol date */
+    .fa-calendar-alt {
+      transition: transform 0.3s ease;
+    }
+
+    button:hover .fa-calendar-alt {
+      transform: scale(1.1);
+    }
+
+    /* Untuk floating button */
+    .fixed.floating-btn {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .fixed.floating-btn:hover {
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      transform: translateY(-2px);
+    }
+    @media print {
+    #receipt-content {
+        font-size: 12px !important;
+        padding: 8px !important;
+    }
+    #receipt-content img {
+        max-height: 48px !important;
+    }
 }
   </style>
 </head>
@@ -246,32 +258,32 @@ button:hover .fa-calendar-alt {
   </div>
 
   <!-- Date Setting Modal -->
-<div x-show="showDateModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-  <div class="bg-white rounded-lg p-6 w-96">
-    <div class="text-center">
-      <i class="fas fa-calendar-alt text-3xl text-cyan-500 mb-4"></i>
-      <h3 class="text-xl font-semibold mb-2">Set Transaction Date</h3>
-      <p class="mb-4">Please set the date for this transaction</p>
-      
-      <div class="mb-4">
-        <label for="transactionDate" class="block text-sm font-medium text-gray-700 mb-1">Transaction Date</label>
-        <input type="datetime-local" id="transactionDate" x-model="transactionDate" 
-               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500">
-      </div>
+  <div x-show="showDateModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white rounded-lg p-6 w-96">
+      <div class="text-center">
+        <i class="fas fa-calendar-alt text-3xl text-cyan-500 mb-4"></i>
+        <h3 class="text-xl font-semibold mb-2">Set Transaction Date</h3>
+        <p class="mb-4">Please set the date for this transaction</p>
 
-      <div class="flex justify-center space-x-4">
-        <button @click="confirmDate()"
-          class="px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600">
-          Confirm Date
-        </button>
-        <button @click="useCurrentDate()"
-          class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
-          Use Current Date
-        </button>
+        <div class="mb-4">
+          <label for="transactionDate" class="block text-sm font-medium text-gray-700 mb-1">Transaction Date</label>
+          <input type="datetime-local" id="transactionDate" x-model="transactionDate"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500">
+        </div>
+
+        <div class="flex justify-center space-x-4">
+          <button @click="confirmDate()"
+            class="px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600">
+            Confirm Date
+          </button>
+          <button @click="useCurrentDate()"
+            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+            Use Current Date
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
   <div x-show="isLoggedIn">
     <!-- Header dengan tombol logout dan informasi pengguna -->
@@ -600,11 +612,16 @@ button:hover .fa-calendar-alt {
                 CLEAR
               </button>
               <!-- Tombol Submit dengan Ikon -->
-              <button class="text-white rounded-2xl text-lg w-full py-3 focus:outline-none" x-bind:class="{
-                'bg-cyan-500 hover:bg-cyan-600': submitable(),
-                'bg-blue-gray-200': !submitable()
-              }" :disabled="!submitable()" x-on:click="submit()">
-                <i class="fas fa-check-circle mr-2"></i> <!-- Ikon untuk Submit -->
+              <button class="text-white rounded-2xl text-lg w-full py-3 focus:outline-none"
+                x-bind:class="{
+                    'bg-cyan-500 hover:bg-cyan-600': submitable(),
+                    'bg-blue-gray-200': !submitable(),
+                    'ring-2 ring-red-500': !useCustomDate && cart.length > 0
+                  }"
+                :disabled="!submitable()"
+                x-on:click="submit()"
+                title="!useCustomDate ? 'Please set transaction date first' : ''">
+                <i class="fas fa-check-circle mr-2"></i>
                 SUBMIT
               </button>
             </div>
@@ -668,7 +685,7 @@ button:hover .fa-calendar-alt {
       </div>
 
       <!-- modal receipt -->
-      <div x-show="isShowModalReceipt"
+      <!-- <div x-show="isShowModalReceipt"
         class="fixed w-full h-screen left-0 top-0 z-10 flex flex-wrap justify-center content-center p-24">
         <div x-show="isShowModalReceipt" class="fixed glass w-full h-screen left-0 top-0 z-0"
           x-on:click="closeModalReceipt()" x-transition:enter="transition ease-out duration-100"
@@ -737,6 +754,87 @@ button:hover .fa-calendar-alt {
           <div class="p-4 w-full">
             <button class="bg-cyan-500 text-white text-lg px-4 py-3 rounded-2xl w-full focus:outline-none"
               x-on:click="printAndProceed()">PROCEED</button>
+          </div>
+        </div>
+      </div> -->
+      <div x-show="isShowModalReceipt"
+        class="fixed w-full h-screen left-0 top-0 z-10 flex flex-wrap justify-center content-center p-24">
+        <div x-show="isShowModalReceipt" class="fixed glass w-full h-screen left-0 top-0 z-0"
+          x-on:click="closeModalReceipt()" x-transition:enter="transition ease-out duration-100"
+          x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+          x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100"
+          x-transition:leave-end="opacity-0"></div>
+        <div x-show="isShowModalReceipt" class="w-96 rounded-3xl bg-white shadow-xl overflow-hidden z-10"
+          x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 transform scale-90"
+          x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-100"
+          x-transition:leave-start="opacity-100 transform scale-100"
+          x-transition:leave-end="opacity-0 transform scale-90">
+          <div id="receipt-content" class="text-left w-full text-sm p-6 overflow-auto">
+            <div class="text-center">
+              <!-- Updated logo and header -->
+              <img src="/img/logo/logotamansari.jpeg" alt="Taman Sari Watersport" class="mb-3 w-16 h-16 mx-auto rounded-full object-cover border-2 border-cyan-500">
+              <h2 class="text-xl font-semibold">TAMAN SARI WATERSORT</h2>
+              <p class="text-sm">POS Tanjung Benoa</p>
+              <p class="text-xs mt-1">Jl. Pratama, Tanjung Benoa, Bali</p>
+            </div>
+            <div class="flex mt-4 text-xs">
+              <div class="flex-grow">No: <span x-text="receiptNo"></span></div>
+              <div x-text="receiptDate"></div>
+            </div>
+            <hr class="my-2 border-dashed">
+            <div>
+              <table class="w-full text-xs">
+                <thead>
+                  <tr class="border-b">
+                    <th class="py-1 w-1/12 text-center">#</th>
+                    <th class="py-1 text-left">Item</th>
+                    <th class="py-1 w-2/12 text-center">Qty</th>
+                    <th class="py-1 w-3/12 text-right">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="(item, index) in cart" :key="item">
+                    <tr class="border-b border-gray-100">
+                      <td class="py-2 text-center" x-text="index+1"></td>
+                      <td class="py-2 text-left">
+                        <span x-text="item.name"></span>
+                        <br />
+                        <small class="text-gray-500" x-text="priceFormat(item.price)"></small>
+                      </td>
+                      <td class="py-2 text-center" x-text="item.qty"></td>
+                      <td class="py-2 text-right" x-text="priceFormat(item.qty * item.price)"></td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+            <hr class="my-2 border-dashed">
+            <div>
+              <div class="flex font-semibold">
+                <div class="flex-grow">TOTAL</div>
+                <div x-text="priceFormat(getTotalPrice())"></div>
+              </div>
+              <div class="flex text-xs font-semibold">
+                <div class="flex-grow">PAY AMOUNT</div>
+                <div x-text="priceFormat(cash)"></div>
+              </div>
+              <hr class="my-2 border-dashed">
+              <div class="flex text-xs font-semibold">
+                <div class="flex-grow">CHANGE</div>
+                <div x-text="priceFormat(change)"></div>
+              </div>
+            </div>
+            <!-- Added thank you message -->
+            <div class="text-center mt-4 text-xs text-gray-500">
+              <p>Terima kasih telah berbelanja</p>
+              <p>di Taman Sari Watersport</p>
+            </div>
+          </div>
+          <div class="p-4 w-full bg-gray-50">
+            <button class="bg-cyan-500 text-white text-lg px-4 py-3 rounded-2xl w-full focus:outline-none hover:bg-cyan-600 transition-colors"
+              x-on:click="printAndProceed()">
+              <i class="fas fa-print mr-2"></i> CETAK & PROSES
+            </button>
           </div>
         </div>
       </div>
