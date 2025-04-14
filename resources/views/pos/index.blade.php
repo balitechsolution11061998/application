@@ -34,6 +34,23 @@
     .fa-spinner {
       animation: spin 1s linear infinite;
     }
+    /* Animasi untuk tombol date */
+.fa-calendar-alt {
+  transition: transform 0.3s ease;
+}
+button:hover .fa-calendar-alt {
+  transform: scale(1.1);
+}
+
+/* Untuk floating button */
+.fixed.floating-btn {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+.fixed.floating-btn:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+}
   </style>
 </head>
 
@@ -44,6 +61,43 @@
     <div class="text-center">
       <i class="fas fa-spinner fa-spin fa-3x text-cyan-500"></i>
       <p class="mt-4 text-gray-700">Logging in...</p>
+    </div>
+  </div>
+
+  <!-- Main Loading Spinner with Logo -->
+  <div x-show="isLoading" class="fixed inset-0 flex justify-center items-center bg-white bg-opacity-90 z-50">
+    <div class="text-center">
+      <!-- Logo with spinning container -->
+      <div class="relative h-24 w-24 mx-auto mb-4">
+        <!-- Outer spinning ring -->
+        <div class="absolute inset-0 border-4 border-t-cyan-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+
+        <!-- Your logo centered -->
+        <div class="absolute inset-4 flex items-center justify-center">
+          <img src="/img/logo/logotamansari.jpeg" alt="Logo" class="h-16 w-16 object-contain">
+        </div>
+      </div>
+
+      <!-- Loading text -->
+      <p class="text-lg font-medium text-gray-700">Loading System...</p>
+      <p class="text-sm text-gray-500 mt-1">Please wait a moment</p>
+    </div>
+  </div>
+
+  <!-- Product Loading Spinner (shown during product loading) -->
+  <div x-show="products.length === 0 && !isLoading" class="fixed inset-0 flex justify-center items-center bg-white bg-opacity-75 z-40">
+    <div class="text-center">
+      <!-- Spinning logo (smaller version) -->
+      <div class="relative h-16 w-16 mx-auto mb-3">
+        <div class="absolute inset-0 border-4 border-t-cyan-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+        <div class="absolute inset-2 flex items-center justify-center">
+          <img src="/img/logo/logotamansari.jpeg" alt="Logo" class="h-10 w-10 object-contain">
+        </div>
+      </div>
+
+      <!-- Loading text -->
+      <p class="text-gray-700">Loading products...</p>
+      <p class="text-xs text-gray-500 mt-1">Fetching product data</p>
     </div>
   </div>
 
@@ -190,6 +244,34 @@
       </div>
     </div>
   </div>
+
+  <!-- Date Setting Modal -->
+<div x-show="showDateModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+  <div class="bg-white rounded-lg p-6 w-96">
+    <div class="text-center">
+      <i class="fas fa-calendar-alt text-3xl text-cyan-500 mb-4"></i>
+      <h3 class="text-xl font-semibold mb-2">Set Transaction Date</h3>
+      <p class="mb-4">Please set the date for this transaction</p>
+      
+      <div class="mb-4">
+        <label for="transactionDate" class="block text-sm font-medium text-gray-700 mb-1">Transaction Date</label>
+        <input type="datetime-local" id="transactionDate" x-model="transactionDate" 
+               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500">
+      </div>
+
+      <div class="flex justify-center space-x-4">
+        <button @click="confirmDate()"
+          class="px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600">
+          Confirm Date
+        </button>
+        <button @click="useCurrentDate()"
+          class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+          Use Current Date
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
   <div x-show="isLoggedIn">
     <!-- Header dengan tombol logout dan informasi pengguna -->
@@ -373,6 +455,7 @@
                     x-text="getItemsCount()"></div>
                 </div>
                 <div class="flex-grow px-8 text-right text-lg py-4 relative">
+
                   <!-- trash button -->
                   <button x-on:click="clear()" class="text-blue-gray-300 hover:text-pink-500 focus:outline-none mr-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24"
@@ -508,6 +591,7 @@
                     d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
                 </svg>
               </div>
+
               <!-- Tombol Clear dengan Ikon -->
               <button
                 class="text-white rounded-2xl text-lg w-full py-3 focus:outline-none bg-red-500 hover:bg-red-600 mb-3"
@@ -659,7 +743,14 @@
     </div>
     <!-- end of noprint-area -->
   </div>
-
+  <!-- Tambahkan sebelum penutup </body> -->
+  <div class="fixed bottom-20 right-20 z-30" x-show="isLoggedIn">
+    <button x-on:click="showDateSetting()"
+      class="bg-purple-500 text-white p-4 rounded-full shadow-lg hover:bg-purple-600 focus:outline-none"
+      title="Set Transaction Date">
+      <i class="fas fa-calendar-alt fa-lg"></i>
+    </button>
+  </div>
   <div id="print-area" class="print-area"></div>
   <script>
     if (typeof toastr !== 'undefined') {

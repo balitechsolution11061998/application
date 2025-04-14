@@ -68,10 +68,42 @@ function initApp() {
     persistSession: true, // New config option
     sessionTimeout: 30 * 60 * 1000, // 30 minutes in milliseconds
     lastActivity: null,
+    // ... existing properties ...
+    showDateModal: false,
+    transactionDate: null,
+    useCustomDate: false,
+    // ... rest of your code ...
     hasActiveSession() {
       const authToken = localStorage.getItem('authToken');
       const userData = localStorage.getItem('user');
       return authToken && userData;
+    },
+    showDateSetting() {
+      // Set default to current date/time
+      const now = new Date();
+      // Format for datetime-local input (YYYY-MM-DDTHH:MM)
+      this.transactionDate = now.toISOString().slice(0, 16);
+      this.showDateModal = true;
+    },
+    
+    confirmDate() {
+      if (this.transactionDate) {
+        this.useCustomDate = true;
+        safeToastr.success('Transaction date set successfully');
+        this.showDateModal = false;
+      } else {
+        safeToastr.error('Please select a valid date');
+      }
+    },
+    
+    useCurrentDate() {
+      this.useCustomDate = false;
+      safeToastr.info('Using current date/time');
+      this.showDateModal = false;
+    },
+    
+    getTransactionDate() {
+      return this.useCustomDate ? new Date(this.transactionDate) : new Date();
     },
     // Fungsi logout
     requestLogout() {
@@ -82,18 +114,18 @@ function initApp() {
       // Hapus data session
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
-
-      // Reset state
+    
+      // Reset state properly - maintain object structure
       this.isLoggedIn = false;
-      this.user = null;
+      this.user = { name: '', role: '' }; // Don't set to null
       this.cart = [];
       this.cash = 0;
       this.change = 0;
-
+    
       this.showLogoutModal = false;
-
-      // Tampilkan notifikasi
-      toastr.success('Anda telah logout dari sistem');
+    
+      // Use safeToastr instead of direct toastr
+      safeToastr.success('Anda telah logout dari sistem');
     },
 
     // Add to your methods
@@ -120,7 +152,7 @@ function initApp() {
     startActivityMonitor() {
       // Check every minute
       this.activityInterval = setInterval(() => this.checkSessionTimeout(), 60000);
-      
+
       // Track user activity
       ['click', 'mousemove', 'keypress'].forEach(event => {
         document.addEventListener(event, () => this.updateActivity());
@@ -194,6 +226,7 @@ function initApp() {
 
     // Logout function
     logout() {
+      console.log('logout');
       this.isLoggedIn = false;
       this.username = "";
       this.password = "";
@@ -241,6 +274,7 @@ function initApp() {
         // Setelah waktu habis, jalankan fungsi logout
         swalInstance.then(() => {
           this.logout(); // Panggil fungsi logout
+          this.confirmLogout();
           Swal.fire('Anda telah logout!', 'Sesi Anda telah berakhir karena tidak ada aktivitas.', 'info');
         });
       }, this.inactivityDuration); // Waktu inaktivitas sebelum menampilkan SweetAlert
@@ -489,11 +523,17 @@ function initApp() {
 
     // Fungsi untuk submit transaksi
     submit() {
-      const time = new Date();
+        // Show date setting modal if not already set
+      if (!this.useCustomDate) {
+        this.showDateSetting();
+        return;
+      }
+
+      const time = this.getTransactionDate();
       this.isShowModalReceipt = true;
       this.receiptNo = `TWPOS-KS-${Math.round(time.getTime() / 1000)}`;
       this.receiptDate = this.dateFormat(time);
-      this.resetLogoutTimer(); // Reset timer setelah ada aktivitas
+      this.resetLogoutTimer();
     },
 
     // Fungsi untuk menutup modal struk
