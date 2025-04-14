@@ -40,47 +40,56 @@ class ProductsSeeder extends Seeder
             [
                 'name' => 'Janggolan Dalam Up', 
                 'price' => 15000, 
-                'sku' => 'JANGGOLAN DALAM UP'
+                'sku' => 'JANGGOLAN DALAM UP',
+                'image' => '/img/pos/janggolan-dalam.jpg'
             ],
             [
                 'name' => 'Janggolan Luar 2x DV', 
                 'price' => 200000, 
-                'sku' => 'JANGGOLAN LUAR 2x DV'
+                'sku' => 'JANGGOLAN LUAR 2x DV',
+                'image' => '/img/pos/janggolan-dalam.jpg'
             ],
             [
                 'name' => 'Janggolan Luar 3x DV', 
                 'price' => 325000, 
-                'sku' => 'JANGGOLAN LUAR 3x DV'
+                'sku' => 'JANGGOLAN LUAR 3x DV',
+                'image' => '/img/pos/janggolan-dalam.jpg'
             ],
             [
                 'name' => 'Janggolan Luar Up', 
                 'price' => 25000, 
-                'sku' => 'JANGGOLAN-LUAR-UP'
+                'sku' => 'JANGGOLAN-LUAR-UP',
+                'image' => '/img/pos/janggolan-dalam.jpg'
             ],
             [
                 'name' => 'Oper Jet Ski', 
                 'price' => 100000, 
-                'sku' => 'OPER-JET-SKI'
+                'sku' => 'OPER-JET-SKI',
+                'image' => '/img/pos/jetski.jpeg'
             ],
             [
                 'name' => 'Oper Jet Ski Lepas Kecil', 
                 'price' => 400000, 
-                'sku' => 'OPER-JET-SKI-LEPAS-KECIL'
+                'sku' => 'OPER-JET-SKI-LEPAS-KECIL',
+                'image' => '/img/pos/jetski.jpeg'
             ],
             [
                 'name' => 'Oper Jet Ski Lepas Besar', 
                 'price' => 500000, 
-                'sku' => 'OPER-JET-SKI-LEPAS-BESAR'
+                'sku' => 'OPER-JET-SKI-LEPAS-BESAR',
+                'image' => '/img/pos/jetski.jpeg'
             ],
             [
                 'name' => 'Oper Par Adv', 
                 'price' => 125000, 
-                'sku' => 'OPER-PAR-ADV'
+                'sku' => 'OPER-PAR-ADV',
+                'image' => '/img/pos/adventur.jpeg'
             ],
             [
                 'name' => 'Oper Fly Fish', 
                 'price' => 100000, 
-                'sku' => 'OPER-FLY-FISH'
+                'sku' => 'OPER-FLY-FISH',
+                'image' => '/img/pos/flyfish.webp'
             ],
             [
                 'name' => 'Oper Sea Walker', 
