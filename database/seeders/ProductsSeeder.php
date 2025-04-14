@@ -136,7 +136,7 @@ class ProductsSeeder extends Seeder
                 'sku' => $productData['sku'],
                 'is_active' => true,
                 'description' => $productData['name'],
-                'image' => $productData['image'] ? $productData['image'] : '',
+                'image' => isset($productData['image']) ? $productData['image'] : '',
                 'upc' => null,
                 'options' => null,
             ]);
