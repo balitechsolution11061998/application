@@ -33,7 +33,8 @@ class ProductsSeeder extends Seeder
             [
                 'name' => 'Janggolan Dalam', 
                 'price' => 125000, 
-                'sku' => 'JANGGOLAN-DALAM'
+                'sku' => 'JANGGOLAN-DALAM',
+                'image' => '/img/pos/janggolan-dalam.jpg'
             ],
             [
                 'name' => 'Janggolan Dalam Up', 
