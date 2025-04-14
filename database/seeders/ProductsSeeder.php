@@ -23,7 +23,8 @@ class ProductsSeeder extends Seeder
             [
                 'name' => 'Dive Fee', 
                 'price' => 20000, 
-                'sku' => 'DIVE-FEE'
+                'sku' => 'DIVE-FEE',
+                'image' => '/img/pos/dive.jpeg'
             ],
             [
                 'name' => 'Oper GBB', 
