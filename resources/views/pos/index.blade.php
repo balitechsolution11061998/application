@@ -54,15 +54,36 @@
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
       transform: translateY(-2px);
     }
+
     @media print {
-    #receipt-content {
+      #receipt-content {
         font-size: 12px !important;
         padding: 8px !important;
-    }
-    #receipt-content img {
+      }
+
+      #receipt-content img {
         max-height: 48px !important;
+      }
     }
-}
+
+    /* Add to your existing style tag */
+    .login-card {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      transition: all 0.3s ease;
+    }
+
+    .login-card:hover {
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      transform: translateY(-2px);
+    }
+
+    .input-field {
+      transition: all 0.2s ease;
+    }
+
+    .input-field:focus {
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.3);
+    }
   </style>
 </head>
 
@@ -114,7 +135,6 @@
   </div>
 
   <!-- Login Form -->
-  <!-- POS System Login Form -->
   <div x-show="!isLoading && !isLoggedIn && !hasActiveSession()"
     x-transition:enter="transition ease-out duration-300"
     x-transition:enter-start="opacity-0 transform scale-95"
@@ -122,34 +142,36 @@
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="opacity-100 transform scale-100"
     x-transition:leave-end="opacity-0 transform scale-95"
-    class="fixed inset-0 flex justify-center items-center bg-gray-100 z-50">
+    class="fixed inset-0 flex justify-center items-center bg-gradient-to-br from-blue-50 to-cyan-50 z-50">
 
     <div class="w-full max-w-md mx-4">
-      <!-- POS-style card with clean business look -->
-      <div class="relative bg-white rounded-lg overflow-hidden shadow-xl border border-gray-200">
-        <!-- POS header stripe -->
-        <div class="bg-blue-600 py-3 px-6 flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-          </svg>
-          <h2 class="text-xl font-bold text-white">POS System Login</h2>
+      <!-- Modern card design with glass morphism effect -->
+      <div class="relative bg-white/90 backdrop-blur-sm rounded-xl overflow-hidden shadow-2xl border border-white/20">
+        <!-- Header with beautiful gradient and logo -->
+        <div class="bg-gradient-to-r from-cyan-600 to-blue-700 py-6 px-8 flex flex-col items-center justify-center relative overflow-hidden">
+          <!-- Decorative elements -->
+          <div class="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/20 rounded-full"></div>
+          <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-cyan-400/20 rounded-full"></div>
+
+          <!-- Logo and title -->
+          <div class="relative z-10 flex flex-col items-center">
+            <div class="bg-white p-2 rounded-full shadow-lg mb-4">
+              <img src="/img/logo/logotamansari.jpeg" alt="Taman Sari Watersport"
+                class="h-16 w-16 rounded-full object-cover border-4 border-white/20">
+            </div>
+            <h2 class="text-2xl font-bold text-white text-center">
+              <span class="block">TAMAN SARI</span>
+              <span class="block text-cyan-200">WATERSPORT</span>
+            </h2>
+            <p class="text-sm text-cyan-100 mt-1">Point of Sale System</p>
+          </div>
         </div>
 
         <!-- Main content -->
-        <div class="p-6">
-          <!-- Store branding -->
-          <div class="flex flex-col items-center mb-6">
-            <div class="w-16 h-16 bg-white border-2 border-blue-500 rounded-lg flex items-center justify-center shadow-sm mb-3">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-            </div>
-            <h3 class="text-lg font-semibold text-gray-800">Store Name</h3>
-            <p class="text-sm text-gray-500">Version 3.2.1</p>
-          </div>
-
+        <div class="p-8">
           <!-- Session notification -->
-          <div x-show="hasActiveSession()" class="mb-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 rounded flex items-start">
+          <div x-show="hasActiveSession()"
+            class="mb-6 p-3 bg-yellow-50/80 border-l-4 border-yellow-400 text-yellow-700 rounded-lg flex items-start backdrop-blur-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
             </svg>
@@ -160,39 +182,40 @@
           </div>
 
           <!-- Login Form -->
-          <form x-on:submit.prevent="login" class="space-y-4">
+          <form x-on:submit.prevent="login" class="space-y-5">
             <!-- Username Input -->
-            <div>
-              <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Employee ID</label>
-              <div class="relative">
+            <div class="space-y-1">
+              <label for="username" class="block text-sm font-medium text-gray-700">Employee ID</label>
+              <div class="relative rounded-lg shadow-sm">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                   </svg>
                 </div>
                 <input id="username" type="text" x-model="username" placeholder="Enter your employee ID" required
-                  class="w-full pl-10 pr-4 py-2.5 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors duration-200 placeholder-gray-400 bg-gray-50">
+                  class="input-field w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200/50 transition-all duration-200 placeholder-gray-400 bg-white/80 backdrop-blur-sm">
               </div>
             </div>
 
             <!-- Password Input -->
-            <div>
-              <label for="password" class="block text-sm font-medium text-gray-700 mb-1">PIN</label>
-              <div class="relative">
+            <div class="space-y-1">
+              <label for="password" class="block text-sm font-medium text-gray-700">PIN</label>
+              <div class="relative rounded-lg shadow-sm">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
                   </svg>
                 </div>
                 <input id="password" type="password" x-model="password" placeholder="Enter your 4-digit PIN" required
-                  class="w-full pl-10 pr-4 py-2.5 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors duration-200 placeholder-gray-400 bg-gray-50">
+                  class="input-field w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200/50 transition-all duration-200 placeholder-gray-400 bg-white/80 backdrop-blur-sm">
               </div>
             </div>
 
             <!-- Register Selection -->
-            <div>
-              <label for="register" class="block text-sm font-medium text-gray-700 mb-1">Register</label>
-              <select id="register" class="w-full py-2.5 px-3 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-gray-50">
+            <div class="space-y-1">
+              <label for="register" class="block text-sm font-medium text-gray-700">Register</label>
+              <select id="register"
+                class="input-field w-full py-3 px-4 rounded-lg border border-gray-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200/50 bg-white/80 backdrop-blur-sm shadow-sm">
                 <option>Register 1</option>
                 <option>Register 2</option>
                 <option>Register 3</option>
@@ -202,24 +225,27 @@
 
             <!-- Submit Button -->
             <button type="submit"
-              class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 mt-2">
-              <span class="flex items-center justify-center">
+              class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white py-3.5 px-4 rounded-lg font-semibold hover:from-cyan-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:ring-offset-2 transition-all duration-200 mt-2 shadow-lg hover:shadow-cyan-500/20 relative overflow-hidden group">
+              <span class="relative z-10 flex items-center justify-center">
                 <span x-show="!isLoggingIn">Sign In to Register</span>
                 <span x-show="isLoggingIn">Processing...</span>
                 <svg x-show="isLoggingIn" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 animate-spin" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
                 </svg>
               </span>
+              <span class="absolute inset-0 bg-gradient-to-r from-cyan-700/20 to-blue-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
             </button>
           </form>
 
           <!-- Emergency buttons -->
-          <div class="mt-6 pt-4 border-t border-gray-200">
+          <div class="mt-6 pt-5 border-t border-gray-200/50">
             <div class="grid grid-cols-2 gap-3">
-              <button class="text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 py-2 px-3 rounded-md transition-colors duration-200">
+              <button class="text-sm text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 py-2.5 px-3 rounded-lg transition-all duration-200 flex items-center justify-center border border-gray-200/50 hover:border-cyan-200 bg-white/50 backdrop-blur-sm shadow-sm">
+                <i class="fas fa-user-shield mr-2 text-cyan-600"></i>
                 Manager Override
               </button>
-              <button class="text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 py-2 px-3 rounded-md transition-colors duration-200">
+              <button class="text-sm text-blue-700 hover:text-blue-800 hover:bg-blue-50 py-2.5 px-3 rounded-lg transition-all duration-200 flex items-center justify-center border border-gray-200/50 hover:border-blue-200 bg-white/50 backdrop-blur-sm shadow-sm">
+                <i class="fas fa-exchange-alt mr-2 text-blue-600"></i>
                 Shift Change
               </button>
             </div>
@@ -227,14 +253,19 @@
 
           <!-- Footer -->
           <div class="mt-6 text-center text-xs text-gray-500">
-            <p>© 2023 POS System v3.2.1</p>
-            <p class="mt-1">For technical support, call (555) 123-4567</p>
+            <p>© 2023 Taman Sari Watersport - Tanjung Benoa, Bali</p>
+            <p class="mt-1 flex items-center justify-center">
+              <i class="fas fa-phone-alt mr-1.5"></i>
+              <span>+62 361 1234567</span>
+              <span class="mx-2">•</span>
+              <i class="fas fa-envelope mr-1.5"></i>
+              <span>support@tamansari-watersport.com</span>
+            </p>
           </div>
         </div>
       </div>
     </div>
   </div>
-
   <!-- Tambahkan modal konfirmasi logout -->
   <div x-show="showLogoutModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
     <div class="bg-white rounded-lg p-6 w-96">
