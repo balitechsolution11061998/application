@@ -16,7 +16,6 @@ class PoController extends Controller
 
     public function getData(Request $request)
     {
-        return $request->all();
         try {
             $user = Auth::user();
             $approval_date = $request->filterDate;
