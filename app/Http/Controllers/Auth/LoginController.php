@@ -141,7 +141,7 @@ class LoginController extends Controller
 
     protected function determineRedirectPath($user)
     {
-            return route('poskasir.index');
+            return route('dashboard.pos');
      
     }
 

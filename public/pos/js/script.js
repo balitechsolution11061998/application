@@ -170,7 +170,10 @@ function initApp() {
     },
 
     // Login function
-    async login() {
+    async login(event) {
+      if(event){
+        event.preventDefault();
+      }
       try {
         this.isLoggingIn = true;
 
@@ -195,7 +198,7 @@ function initApp() {
         });
 
         const data = await response.json();
-
+        console.log(data,'data');
         if (response.ok && data.success) {
           // Login successful
           this.isLoggedIn = true;

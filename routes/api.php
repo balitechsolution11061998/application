@@ -51,11 +51,13 @@ Route::prefix('stores')->group(function () {
     Route::get('/get', [StoreController::class, 'get']);
 });
 
+Route::post('/po/store', [PoController::class, 'store']);
+
 // Purchase Order (PO) Routes
-Route::prefix('po')->group(function () {
-    Route::post('/store', [PoController::class, 'store']);
-    Route::get('/getData', [PoController::class, 'getData']);
-});
+// Route::prefix('po')->group(function () {
+//     Route::post('/store', [PoController::class, 'store']);
+//     Route::get('/getData', [PoController::class, 'getData']);
+// });
 
 // Item Supplier Routes
 Route::post('/itemsupplier/store', [ItemSupplierController::class, 'store']);

@@ -39,6 +39,7 @@ use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\TpsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TandaTerimaController;
+use App\Http\Controllers\DashboardController;
 
 
 use App\Http\Controllers\TitleController;
@@ -98,6 +99,9 @@ Route::get('/koperasi', fn() => view('koperasi'));
 
 // Grouping Authenticated Routes
 Route::group(['middleware' => ['auth']], function () {
+    Route::get('/dashboard-pos', [DashboardController::class, 'dashboardPos'])->name('dashboard.pos');
+
+
     Route::post('/import-database', [HomeController::class, 'importDatabase'])->name('import.database');
 
     Route::prefix('/home')->name('home.')->group(function () {
@@ -310,7 +314,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('titles', TitleController::class);
 });
 Route::post('/generate', [OpenAIController::class, 'generate']);
-Route::get('/poskasir', [PosController::class,'index'])->name('poskasir.index');
+Route::get('/loginPos', [PosController::class,'index'])->name('poskasir.index');
 
 // Documentation Route
 Route::get('/docs', fn() => view('docs.index'));
