@@ -17,7 +17,7 @@ class PoController extends Controller
     public function getData(Request $request)
     {
         $user = Auth::user();
-        
+
         activity()
             ->on(new OrdHead())
             ->by($user)
@@ -35,7 +35,7 @@ class PoController extends Controller
                     foreach ($chunk as $order) {
                         $orders[] = $order;
                         $count++;
-                        
+
                         // Log each order retrieval
                         activity()
                             ->on($order)
@@ -57,10 +57,9 @@ class PoController extends Controller
                 'count' => $count,
                 'success' => true
             ]);
-
         } catch (\Exception $e) {
             $errorMessage = substr($e->getMessage(), 0, 200);
-            
+
             activity()
                 ->on(new OrdHead())
                 ->by($user)
@@ -95,7 +94,7 @@ class PoController extends Controller
         DB::beginTransaction();
 
         try {
-            $requestData = $request->all();
+            $requestData = $this->validateAndCleanPoData($request->all());
             $chunkSize = 1000;
 
             // Log temp table clearing
@@ -124,7 +123,6 @@ class PoController extends Controller
                             'chunk_size' => count($chunk)
                         ])
                         ->log('Successfully processed chunk ' . ($chunkIndex + 1));
-
                 } catch (\Exception $e) {
                     $errorMessage = substr($e->getMessage(), 0, 200);
 
@@ -153,7 +151,7 @@ class PoController extends Controller
 
             foreach ($datas as $orderNo => $data) {
                 $firstItem = $data->first();
-                
+
                 try {
                     // Log start of order processing
                     activity()
@@ -184,7 +182,6 @@ class PoController extends Controller
                             'status' => $historyMessage
                         ])
                         ->log('Completed processing for order: ' . $orderNo);
-
                 } catch (\Exception $e) {
                     $failCount++;
                     $errorMessage = substr($e->getMessage(), 0, 200);
@@ -202,7 +199,7 @@ class PoController extends Controller
                             'error' => $errorMessage
                         ])
                         ->log('Failed to process order: ' . $orderNo);
-                    
+
                     continue;
                 }
 
@@ -226,7 +223,6 @@ class PoController extends Controller
                     'fail_count' => $failCount
                 ])
                 ->log('Successfully completed batch processing');
-
         } catch (\Exception $e) {
             DB::rollBack();
             $failCount = $totalPo;
@@ -262,7 +258,42 @@ class PoController extends Controller
             'different_count' => count($errors),
         ]);
     }
-    
+
+    protected function validateAndCleanPoData(array $data): array
+    {
+        return array_map(function ($item) {
+            // Set default values for required fields
+            $item['approval_date'] = $this->ensureDate($item['approval_date'] ?? null);
+            $item['approval_id'] = $item['approval_id'] ?? 'SYSTEM';
+
+            // Ensure other required fields have values
+            $item['written_date'] = $this->ensureDate($item['written_date'] ?? null);
+            $item['not_before_date'] = $this->ensureDate($item['not_before_date'] ?? null);
+            $item['not_after_date'] = $this->ensureDate($item['not_after_date'] ?? null);
+
+            return $item;
+        }, $data);
+    }
+
+    protected function ensureDate($date): string
+    {
+        if (empty($date)) {
+            return now()->toDateString();
+        }
+
+        // If it's already a proper date string
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            return $date;
+        }
+
+        // Try to parse various date formats
+        try {
+            return \Carbon\Carbon::parse($date)->toDateString();
+        } catch (\Exception $e) {
+            return now()->toDateString();
+        }
+    }
+
     // Helper method to find cost differences
     protected function findCostDifferences($data, $orderNo)
     {
@@ -277,23 +308,23 @@ class PoController extends Controller
                 'a.unit_cost as cost_po',
                 'b.unit_cost as cost_supplier'
             )
-            ->join('item_supplier as b', function($join) {
+            ->join('item_supplier as b', function ($join) {
                 $join->on('a.supplier', '=', 'b.supplier')
-                     ->on('a.sku', '=', 'b.sku');
+                    ->on('a.sku', '=', 'b.sku');
             })
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->whereRaw('FLOOR(a.unit_cost * 100) / 100 != FLOOR(b.unit_cost * 100) / 100')
-                      ->orWhereNull('b.unit_cost');
+                    ->orWhereNull('b.unit_cost');
             })
             ->where('a.order_no', $orderNo)
             ->get();
     }
-    
+
     // Helper method to process order header
     protected function processOrderHeader($data, $firstItem)
     {
         $status = $this->determineOrderStatus($firstItem);
-        
+
         $dataOrder = [
             "order_no" => $firstItem->order_no,
             "ship_to" => $firstItem->ship_to,
@@ -316,12 +347,12 @@ class PoController extends Controller
             "buyer" => $firstItem->buyer,
             "status" => $status,
         ];
-    
+
         // First try to find existing record
         $existingRecord = DB::table('ordhead')
             ->where('order_no', $firstItem->order_no)
             ->first();
-    
+
         if ($existingRecord) {
             DB::table('ordhead')
                 ->where('id', $existingRecord->id)
@@ -331,7 +362,7 @@ class PoController extends Controller
             return DB::table('ordhead')->insertGetId($dataOrder);
         }
     }
-    
+
     // Helper method to determine order status
     protected function determineOrderStatus($item)
     {
@@ -342,7 +373,7 @@ class PoController extends Controller
         }
         return 'Progress';
     }
-    
+
     // Helper method to process order items
     protected function processOrderItems($data, $ordheadId, $supplier)
     {
@@ -351,7 +382,7 @@ class PoController extends Controller
                 ->where('supplier', $supplier)
                 ->where('sku', $detail->sku)
                 ->first();
-    
+
             $ordSkuData = [
                 "ordhead_id" => $ordheadId,
                 "order_no" => $detail->order_no,
@@ -363,7 +394,7 @@ class PoController extends Controller
                 "unit_retail" => $detail->unit_retail,
                 "vat_cost" => $detail->vat_cost,
                 "luxury_cost" => $detail->luxury_cost,
-                "qty_ordered" => ($itemSupplier && $itemSupplier->unit_cost != $detail->unit_cost) 
+                "qty_ordered" => ($itemSupplier && $itemSupplier->unit_cost != $detail->unit_cost)
                     ? 0 : $detail->qty_ordered,
                 "qty_received" => $detail->qty_received,
                 "unit_discount" => $detail->unit_discount,
@@ -372,7 +403,7 @@ class PoController extends Controller
                 "supp_pack_size" => $detail->supp_pack_size,
                 "permanent_disc_pct" => $detail->permanent_disc_pct,
             ];
-    
+
             DB::table('ordsku')->updateOrInsert(
                 [
                     "order_no" => $detail->order_no,
@@ -383,7 +414,7 @@ class PoController extends Controller
             );
         }
     }
-    
+
     // Helper method to handle price differences
     protected function handlePriceDifferences($diffCost, $user, $firstItem, &$errors)
     {
@@ -393,7 +424,7 @@ class PoController extends Controller
                 ->where('supplier', $detail->supplier)
                 ->where('sku', $detail->sku)
                 ->delete();
-    
+
             // Create new difference record
             DiffCostPo::create([
                 'order_no' => $detail->order_no,
@@ -404,7 +435,7 @@ class PoController extends Controller
                 'cost_po' => $detail->cost_po,
                 'cost_supplier' => $detail->cost_supplier,
             ]);
-    
+
             $errors[] = [
                 'supplier' => $firstItem->supplier,
                 'sup_name' => $detail->sup_name,
@@ -415,7 +446,7 @@ class PoController extends Controller
                 'cost_supplier' => $detail->cost_supplier,
                 'cost_po' => $detail->cost_po,
             ];
-    
+
             // Log price difference activity
             activity()
                 ->on(new DiffCostPo())
