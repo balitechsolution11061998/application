@@ -127,7 +127,6 @@ class PoController extends Controller
 
                 } catch (\Exception $e) {
                     $errorMessage = substr($e->getMessage(), 0, 200);
-                    Log::error("Chunk $chunkIndex insertion failed: " . $errorMessage);
 
                     activity()
                         ->on(new DiffCostPo())
