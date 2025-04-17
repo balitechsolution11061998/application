@@ -133,7 +133,7 @@ function initApp() {
       this.change = 0;
     
       this.showLogoutModal = false;
-    
+      this.logout();
       // Use safeToastr instead of direct toastr
       safeToastr.success('Anda telah logout dari sistem');
     },
@@ -239,7 +239,6 @@ function initApp() {
 
     // Logout function
     logout() {
-      console.log('logout');
       this.isLoggedIn = false;
       this.username = "";
       this.password = "";

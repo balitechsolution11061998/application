@@ -1,488 +1,788 @@
 @extends('pos.index')
 
 @section('content')
-<div x-show="isLoggedIn" class="hide-print">
-    <!-- Enhanced Header with Quick Stats -->
-    <header class="bg-gradient-to-r from-cyan-600 to-blue-600 shadow-lg text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center">
-                        <img src="/img/logo/logotamansari.jpeg" alt="Logo" class="h-10 w-10 rounded-full mr-3 border-2 border-white">
-                        <h1 class="text-xl font-bold">TAMAN SARI POS</h1>
-                    </div>
-                    <div class="hidden md:flex space-x-6">
-                        <button @click="activeTab = 'pos'" class="px-3 py-1 rounded-lg transition-all" 
-                                :class="{'bg-white text-cyan-600 shadow-md': activeTab === 'pos', 'hover:bg-cyan-700': activeTab !== 'pos'}">
-                            <i class="fas fa-cash-register mr-2"></i> POS
-                        </button>
-                        <button @click="activeTab = 'products'" class="px-3 py-1 rounded-lg transition-all"
-                                :class="{'bg-white text-cyan-600 shadow-md': activeTab === 'products', 'hover:bg-cyan-700': activeTab !== 'products'}">
-                            <i class="fas fa-boxes mr-2"></i> Products
-                        </button>
-                        <button @click="activeTab = 'reports'" class="px-3 py-1 rounded-lg transition-all"
-                                :class="{'bg-white text-cyan-600 shadow-md': activeTab === 'reports', 'hover:bg-cyan-700': activeTab !== 'reports'}">
-                            <i class="fas fa-chart-bar mr-2"></i> Reports
-                        </button>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Glassmorphism Header with Floating Elements -->
+    <div class="mb-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl shadow-2xl p-8 text-white relative overflow-hidden transform transition-all hover:scale-[1.01] duration-300 group">
+        <!-- Floating bubbles -->
+        <div class="absolute -top-20 -right-20 w-64 h-64 bg-purple-500/20 rounded-full group-hover:scale-110 transition-transform duration-500"></div>
+        <div class="absolute bottom-0 left-10 w-32 h-32 bg-indigo-500/20 rounded-full group-hover:scale-125 transition-transform duration-700"></div>
+        <div class="absolute top-1/4 left-1/4 w-16 h-16 bg-white/10 rounded-full group-hover:translate-x-10 transition-transform duration-1000"></div>
+        
+        <div class="relative z-10">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex-1">
+                    <h1 class="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-purple-200">Dashboard Overview</h1>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+                            <i class="fas fa-calendar-day mr-2 text-purple-200"></i>
+                            <span class="font-medium">{{ date('l, F j, Y') }}</span>
+                        </div>
+                        <div class="flex items-center bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+                            <i class="fas fa-clock mr-2 text-purple-200"></i>
+                            <span class="font-medium">{{ date('h:i A') }}</span>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="flex items-center space-x-4">
-                    <!-- Quick Stats -->
-                    <div class="hidden md:flex space-x-4">
-                        <div class="text-center px-3 py-1 bg-white bg-opacity-20 rounded-lg">
-                            <div class="text-xs opacity-80">Today's Sales</div>
-                            <div class="font-bold">Rp <span x-text="numberFormat(3450000)"></span></div>
-                        </div>
-                        <div class="text-center px-3 py-1 bg-white bg-opacity-20 rounded-lg">
-                            <div class="text-xs opacity-80">Transactions</div>
-                            <div class="font-bold" x-text="24"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- User Profile -->
-                    <div class="relative group">
-                        <button class="flex items-center space-x-2 focus:outline-none">
-                            <span class="text-sm font-medium">{{ Auth::user()->name }}</span>
-                            <img class="h-8 w-8 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=ffffff&color=0D8ABC" alt="">
-                        </button>
-                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">
-                                <i class="fas fa-user-circle mr-2"></i> Profile
-                            </a>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">
-                                <i class="fas fa-cog mr-2"></i> Settings
-                            </a>
-                            <a href="#" @click.prevent="logout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">
-                                <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                            </a>
-                        </div>
-                    </div>
+                <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm shadow-lg transform group-hover:rotate-6 transition-transform duration-500">
+                    <i class="fas fa-chart-pie text-4xl text-purple-100"></i>
                 </div>
             </div>
-        </div>
-    </header>
-
-    <!-- Mobile Tabs -->
-    <div class="md:hidden bg-white shadow-sm">
-        <div class="flex justify-around">
-            <button @click="activeTab = 'pos'" class="py-3 px-4 text-center"
-                    :class="{'text-cyan-600 border-b-2 border-cyan-600': activeTab === 'pos', 'text-gray-500': activeTab !== 'pos'}">
-                <i class="fas fa-cash-register block text-xl mb-1"></i>
-                <span class="text-xs">POS</span>
-            </button>
-            <button @click="activeTab = 'products'" class="py-3 px-4 text-center"
-                    :class="{'text-cyan-600 border-b-2 border-cyan-600': activeTab === 'products', 'text-gray-500': activeTab !== 'products'}">
-                <i class="fas fa-boxes block text-xl mb-1"></i>
-                <span class="text-xs">Products</span>
-            </button>
-            <button @click="activeTab = 'reports'" class="py-3 px-4 text-center"
-                    :class="{'text-cyan-600 border-b-2 border-cyan-600': activeTab === 'reports', 'text-gray-500': activeTab !== 'reports'}">
-                <i class="fas fa-chart-bar block text-xl mb-1"></i>
-                <span class="text-xs">Reports</span>
-            </button>
+            
+            <!-- Mini Stats with Glow Hover -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm shadow-md hover:shadow-purple-500/30 transition-all duration-300 hover:bg-white/15">
+                    <p class="text-sm text-purple-100">Monthly Target</p>
+                    <p class="text-2xl font-bold">85%</p>
+                    <div class="w-full h-1.5 bg-white/20 rounded-full mt-2 overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full" style="width: 85%"></div>
+                    </div>
+                </div>
+                <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm shadow-md hover:shadow-purple-500/30 transition-all duration-300 hover:bg-white/15">
+                    <p class="text-sm text-purple-100">Customer Rating</p>
+                    <p class="text-2xl font-bold">4.8</p>
+                    <div class="flex mt-1 space-x-0.5">
+                        <i class="fas fa-star text-yellow-300 text-xs"></i>
+                        <i class="fas fa-star text-yellow-300 text-xs"></i>
+                        <i class="fas fa-star text-yellow-300 text-xs"></i>
+                        <i class="fas fa-star text-yellow-300 text-xs"></i>
+                        <i class="fas fa-star-half-alt text-yellow-300 text-xs"></i>
+                    </div>
+                </div>
+                <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm shadow-md hover:shadow-purple-500/30 transition-all duration-300 hover:bg-white/15">
+                    <p class="text-sm text-purple-100">Active Products</p>
+                    <p class="text-2xl font-bold" x-text="products.length"></p>
+                    <p class="text-xs mt-1 text-purple-200 flex items-center">
+                        <span class="bg-white/10 px-1 rounded mr-1">+5</span> this week
+                    </p>
+                </div>
+                <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm shadow-md hover:shadow-purple-500/30 transition-all duration-300 hover:bg-white/15">
+                    <p class="text-sm text-purple-100">New Customers</p>
+                    <p class="text-2xl font-bold">12</p>
+                    <p class="text-xs mt-1 text-purple-200 flex items-center">
+                        <span class="bg-white/10 px-1 rounded mr-1">3</span> active now
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Main Content Area -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <!-- POS Interface (Default View) -->
-        <div x-show="activeTab === 'pos'" x-transition>
-            <div class="flex flex-col lg:flex-row gap-6">
-                <!-- Product Search and Grid -->
-                <div class="flex-1 bg-white rounded-xl shadow-md overflow-hidden">
-                    <div class="p-4 bg-gradient-to-r from-blue-50 to-cyan-50">
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-search text-gray-400"></i>
-                            </div>
-                            <input type="text" x-model="keyword"
-                                   class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-lg"
-                                   placeholder="Search products...">
-                        </div>
+    <!-- Enhanced Stats Cards with Floating Icons -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Today's Sales Card -->
+        <div class="bg-gradient-to-br from-white to-indigo-50 rounded-2xl shadow-lg p-6 group hover:transform hover:-translate-y-2 transition-all duration-300 border border-indigo-100 relative overflow-hidden">
+            <div class="absolute -right-4 -top-4 w-20 h-20 bg-indigo-100 rounded-full opacity-20"></div>
+            <div class="relative z-10">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-indigo-400 mb-2">Today's Sales</p>
+                        <p class="text-3xl font-bold text-indigo-600">Rp <span x-text="numberFormat(3450000)"></span></p>
                     </div>
-
-                    <div class="h-full overflow-hidden">
-                        <div class="h-full overflow-y-auto p-4">
-                            <!-- Empty State -->
-                            <div x-show="products.length === 0" class="flex flex-col items-center justify-center py-12 text-gray-400">
-                                <i class="fas fa-box-open text-5xl mb-4"></i>
-                                <p class="text-xl font-medium">No products available</p>
-                                <p class="text-sm mt-1">Add products to get started</p>
-                            </div>
-
-                            <!-- Search Empty State -->
-                            <div x-show="filteredProducts().length === 0 && keyword.length > 0" class="flex flex-col items-center justify-center py-12 text-gray-400">
-                                <i class="fas fa-search text-5xl mb-4"></i>
-                                <p class="text-xl font-medium">No results found</p>
-                                <p class="text-sm mt-1">Try a different search term</p>
-                            </div>
-
-                            <!-- Loading State -->
-                            <div x-show="isLoading" class="flex justify-center py-12">
-                                <i class="fas fa-spinner fa-spin text-4xl text-cyan-500"></i>
-                            </div>
-
-                            <!-- Product Grid -->
-                            <div x-show="filteredProducts().length > 0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                <template x-for="product in filteredProducts()" :key="product.id">
-                                    <div @click="addToCart(product)" 
-                                         class="group relative bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
-                                        <!-- Product Loading -->
-                                        <div x-show="product.isLoading" class="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center z-10">
-                                            <i class="fas fa-spinner fa-spin text-2xl text-cyan-500"></i>
-                                        </div>
-                                        
-                                        <!-- Product Image -->
-                                        <div class="h-32 bg-gray-100 flex items-center justify-center overflow-hidden">
-                                            <img :src="product.image" :alt="product.name" 
-                                                 class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                                 @load="handleImageLoad(product)">
-                                        </div>
-                                        
-                                        <!-- Product Info -->
-                                        <div class="p-3">
-                                            <h3 class="font-semibold text-gray-800 truncate" x-text="product.name"></h3>
-                                            <div class="mt-1 flex justify-between items-center">
-                                                <span class="text-sm text-gray-500">
-                                                    <i class="fas fa-barcode mr-1"></i>
-                                                    <span x-text="product.upc || 'N/A'"></span>
-                                                </span>
-                                                <span class="font-bold text-cyan-600" x-text="priceFormat(product.price)"></span>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Quick Add Badge -->
-                                        <div class="absolute top-2 right-2 bg-cyan-500 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md">
-                                            <i class="fas fa-plus"></i>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
+                    <div class="bg-indigo-500 p-3 rounded-lg shadow-lg text-white group-hover:rotate-12 transition-transform duration-300">
+                        <i class="fas fa-wallet text-2xl"></i>
                     </div>
                 </div>
-
-                <!-- Shopping Cart -->
-                <div class="w-full lg:w-96 bg-white rounded-xl shadow-md overflow-hidden">
-                    <div class="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-b">
-                        <h2 class="text-lg font-bold text-gray-800 flex items-center">
-                            <i class="fas fa-shopping-cart mr-2"></i>
-                            Order Summary
-                            <span x-show="cart.length > 0" class="ml-auto bg-cyan-500 text-white text-xs font-bold px-2 py-1 rounded-full" x-text="getItemsCount()"></span>
-                        </h2>
-                    </div>
-
-                    <!-- Empty Cart -->
-                    <div x-show="cart.length === 0" class="flex flex-col items-center justify-center py-12 text-gray-400">
-                        <i class="fas fa-shopping-cart text-5xl mb-4"></i>
-                        <p class="text-lg font-medium">Your cart is empty</p>
-                        <p class="text-sm mt-1">Add products to continue</p>
-                    </div>
-
-                    <!-- Cart Items -->
-                    <div x-show="cart.length > 0" class="divide-y divide-gray-100 max-h-96 overflow-y-auto">
-                        <template x-for="(item, index) in cart" :key="item.productId">
-                            <div class="p-3 hover:bg-gray-50 transition-colors relative">
-                                <!-- Loading Overlay -->
-                                <div x-show="item.isLoading" class="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center z-10">
-                                    <i class="fas fa-spinner fa-spin text-xl text-cyan-500"></i>
-                                </div>
-                                
-                                <div class="flex items-start">
-                                    <!-- Product Image -->
-                                    <div class="flex-shrink-0 h-12 w-12 bg-gray-100 rounded-lg overflow-hidden">
-                                        <img :src="item.image" :alt="item.name" class="h-full w-full object-cover">
-                                    </div>
-                                    
-                                    <!-- Product Details -->
-                                    <div class="ml-3 flex-1">
-                                        <h3 class="text-sm font-medium text-gray-800" x-text="item.name"></h3>
-                                        <p class="text-xs text-gray-500 mt-1">
-                                            <span x-text="priceFormat(item.price)"></span>
-                                            <span x-show="item.qty > 1" class="ml-1">
-                                                × <span x-text="item.qty"></span> = <span class="font-semibold" x-text="priceFormat(item.price * item.qty)"></span>
-                                            </span>
-                                        </p>
-                                    </div>
-                                    
-                                    <!-- Quantity Controls -->
-                                    <div class="ml-2">
-                                        <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                                            <button @click="addQty(item, -1)" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
-                                                <i class="fas fa-minus text-xs"></i>
-                                            </button>
-                                            <input x-model.number="item.qty" type="text" 
-                                                   class="w-10 text-center border-0 focus:ring-0 focus:outline-none">
-                                            <button @click="addQty(item, 1)" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
-                                                <i class="fas fa-plus text-xs"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Remove Button -->
-                                    <button @click="removeFromCart(index)" class="ml-2 text-gray-400 hover:text-red-500 transition-colors">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-
-                    <!-- Payment Summary -->
-                    <div x-show="cart.length > 0" class="border-t border-gray-100 p-4">
-                        <div class="space-y-3">
-                            <div class="flex justify-between text-lg font-bold">
-                                <span>Total:</span>
-                                <span x-text="priceFormat(getTotalPrice())"></span>
-                            </div>
-                            
-                            <!-- Cash Input -->
-                            <div class="mt-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Cash Payment</label>
-                                <div class="relative rounded-md shadow-sm">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-gray-500">Rp</span>
-                                    </div>
-                                    <input x-bind:value="numberFormat(cash)" @keyup="updateCash($event.target.value)"
-                                           type="text" class="focus:ring-cyan-500 focus:border-cyan-500 block w-full pl-12 pr-12 sm:text-sm border-gray-300 rounded-md py-3">
-                                </div>
-                                
-                                <!-- Quick Cash Buttons -->
-                                <div class="grid grid-cols-4 gap-2 mt-2">
-                                    <template x-for="money in moneys">
-                                        <button @click="addCash(money)" class="text-xs bg-gray-100 hover:bg-gray-200 rounded-md py-1 transition-colors">
-                                            +<span x-text="numberFormat(money)"></span>
-                                        </button>
-                                    </template>
-                                </div>
-                            </div>
-                            
-                            <!-- Change Display -->
-                            <div x-show="change !== 0" class="p-3 rounded-lg"
-                                 :class="{'bg-green-50 text-green-800': change > 0, 'bg-red-50 text-red-800': change < 0}">
-                                <div class="flex justify-between font-medium">
-                                    <span x-text="change > 0 ? 'Change:' : 'Amount Due:'"></span>
-                                    <span x-text="priceFormat(Math.abs(change))"></span>
-                                </div>
-                            </div>
-                            
-                            <!-- Action Buttons -->
-                            <div class="flex space-x-2 pt-2">
-                                <button @click="clear()" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center">
-                                    <i class="fas fa-trash-alt mr-2"></i> Clear
-                                </button>
-                                <button @click="submit()" :disabled="!submitable()"
-                                        class="flex-1 py-3 rounded-lg font-medium transition-colors flex items-center justify-center"
-                                        :class="{
-                                            'bg-cyan-500 hover:bg-cyan-600 text-white': submitable(),
-                                            'bg-gray-200 text-gray-500 cursor-not-allowed': !submitable()
-                                        }">
-                                    <i class="fas fa-check-circle mr-2"></i> Process
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="mt-4 flex items-center">
+                    <span class="bg-green-100 text-green-600 px-2 py-1 rounded-full text-xs font-medium">
+                        <i class="fas fa-arrow-up mr-1"></i>12%
+                    </span>
+                    <span class="ml-2 text-sm text-gray-500">vs yesterday</span>
+                </div>
+                <div class="w-full h-1.5 bg-gray-100 rounded-full mt-4 overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-indigo-400 to-cyan-400 rounded-full w-3/4 animate-pulse"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Products Management Tab -->
-        <div x-show="activeTab === 'products'" x-transition class="bg-white rounded-xl shadow-md overflow-hidden">
-            <div class="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-b">
-                <h2 class="text-lg font-bold text-gray-800 flex items-center">
-                    <i class="fas fa-boxes mr-2"></i>
-                    Product Management
-                </h2>
-            </div>
-            
-            <div class="p-4">
-                <div class="flex justify-between items-center mb-4">
-                    <div class="relative w-64">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-search text-gray-400"></i>
-                        </div>
-                        <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" placeholder="Search products...">
+        <!-- Transactions Card -->
+        <div class="bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-lg p-6 group hover:transform hover:-translate-y-2 transition-all duration-300 border border-blue-100 relative overflow-hidden">
+            <div class="absolute -right-4 -top-4 w-20 h-20 bg-blue-100 rounded-full opacity-20"></div>
+            <div class="relative z-10">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-blue-400 mb-2">Transactions</p>
+                        <p class="text-3xl font-bold text-blue-600">42</p>
                     </div>
-                    <button class="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-md flex items-center transition-colors">
-                        <i class="fas fa-plus mr-2"></i> Add Product
-                    </button>
+                    <div class="bg-blue-500 p-3 rounded-lg shadow-lg text-white group-hover:rotate-12 transition-transform duration-300">
+                        <i class="fas fa-exchange-alt text-2xl"></i>
+                    </div>
                 </div>
-                
-                <!-- Products Table -->
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKU</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-10 w-10">
-                                            <img class="h-10 w-10 rounded-full" src="https://via.placeholder.com/40?text=PB" alt="">
-                                        </div>
-                                        <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900">Banana Boat</div>
-                                            <div class="text-sm text-gray-500">Water Sports</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">PROD-001</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp 250,000</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">15</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <button class="text-cyan-600 hover:text-cyan-900 mr-3"><i class="fas fa-edit"></i></button>
-                                    <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <!-- More product rows... -->
-                        </tbody>
-                    </table>
+                <div class="mt-4 flex items-center">
+                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs font-medium">
+                        <i class="fas fa-arrow-up mr-1"></i>8%
+                    </span>
+                    <span class="ml-2 text-sm text-gray-500">vs last week</span>
+                </div>
+                <div class="w-full h-1.5 bg-gray-100 rounded-full mt-4 overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full w-1/2 animate-pulse"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Reports Tab -->
-        <div x-show="activeTab === 'reports'" x-transition class="bg-white rounded-xl shadow-md overflow-hidden">
-            <div class="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-b">
-                <h2 class="text-lg font-bold text-gray-800 flex items-center">
-                    <i class="fas fa-chart-bar mr-2"></i>
-                    Sales Reports
-                </h2>
-            </div>
-            
-            <div class="p-4">
-                <!-- Date Range Selector -->
-                <div class="flex items-center space-x-4 mb-6">
-                    <div class="flex items-center space-x-2">
-                        <label class="text-sm font-medium text-gray-700">From:</label>
-                        <input type="date" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
+        <!-- Top Product Card -->
+        <div class="bg-gradient-to-br from-white to-purple-50 rounded-2xl shadow-lg p-6 group hover:transform hover:-translate-y-2 transition-all duration-300 border border-purple-100 relative overflow-hidden">
+            <div class="absolute -right-4 -top-4 w-20 h-20 bg-purple-100 rounded-full opacity-20"></div>
+            <div class="relative z-10">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-purple-400 mb-2">Top Product</p>
+                        <p class="text-2xl font-bold text-purple-600">Green Tea</p>
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <label class="text-sm font-medium text-gray-700">To:</label>
-                        <input type="date" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
-                    </div>
-                    <button class="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-md flex items-center transition-colors">
-                        <i class="fas fa-filter mr-2"></i> Filter
-                    </button>
-                </div>
-                
-                <!-- Stats Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
-                                <i class="fas fa-money-bill-wave text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-medium text-gray-500">Total Sales</h3>
-                                <p class="text-2xl font-semibold text-gray-900">Rp 12,450,000</p>
-                                <p class="text-xs text-green-600 mt-1"><i class="fas fa-arrow-up mr-1"></i> 12% from last week</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
-                                <i class="fas fa-shopping-cart text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-medium text-gray-500">Transactions</h3>
-                                <p class="text-2xl font-semibold text-gray-900">84</p>
-                                <p class="text-xs text-green-600 mt-1"><i class="fas fa-arrow-up mr-1"></i> 8% from last week</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
-                                <i class="fas fa-users text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-medium text-gray-500">Customers</h3>
-                                <p class="text-2xl font-semibold text-gray-900">56</p>
-                                <p class="text-xs text-red-600 mt-1"><i class="fas fa-arrow-down mr-1"></i> 3% from last week</p>
-                            </div>
-                        </div>
+                    <div class="bg-purple-500 p-3 rounded-lg shadow-lg text-white group-hover:rotate-12 transition-transform duration-300">
+                        <i class="fas fa-crown text-2xl"></i>
                     </div>
                 </div>
-                
-                <!-- Sales Chart -->
-                <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 mb-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-medium text-gray-900">Sales Overview</h3>
-                        <div class="flex space-x-2">
-                            <button class="px-3 py-1 text-sm bg-cyan-500 text-white rounded-md">Daily</button>
-                            <button class="px-3 py-1 text-sm bg-white border border-gray-300 text-gray-700 rounded-md">Weekly</button>
-                            <button class="px-3 py-1 text-sm bg-white border border-gray-300 text-gray-700 rounded-md">Monthly</button>
-                        </div>
-                    </div>
-                    <div class="h-64">
-                        <!-- Chart would go here - using a placeholder -->
-                        <div class="w-full h-full bg-gray-100 rounded flex items-center justify-center text-gray-400">
-                            <i class="fas fa-chart-line text-4xl"></i>
-                        </div>
-                    </div>
+                <div class="mt-4 flex items-center">
+                    <span class="bg-purple-100 text-purple-600 px-2 py-1 rounded-full text-xs font-medium">
+                        128 sold
+                    </span>
+                    <span class="ml-2 text-sm text-gray-500">this week</span>
                 </div>
-                
-                <!-- Top Products -->
-                <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Top Selling Products</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-3">
-                                <i class="fas fa-ship"></i>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex justify-between">
-                                    <span class="text-sm font-medium">Banana Boat</span>
-                                    <span class="text-sm font-semibold">Rp 3,250,000</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
-                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 75%"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- More top products... -->
-                    </div>
+                <div class="w-full h-1.5 bg-gray-100 rounded-full mt-4 overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-purple-400 to-pink-400 rounded-full w-5/6 animate-pulse"></div>
                 </div>
             </div>
         </div>
-    </main>
-</div>
 
-<!-- First Time Modal -->
-<div x-show="firstTime" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-xl max-w-md w-full">
-        <div class="p-6 text-center">
-            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-cyan-100 mb-4">
-                <i class="fas fa-store text-cyan-600 text-2xl"></i>
-            </div>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">Welcome to Taman Sari POS</h3>
-            <p class="text-sm text-gray-500 mb-6">Get started by loading sample data or setting up your own products</p>
-            
-            <div class="space-y-3">
-                <button @click="startWithSampleData()" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center">
-                    <i class="fas fa-download mr-2"></i> Load Sample Data
-                </button>
-                <button @click="startBlank()" class="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 py-3 rounded-lg font-medium transition-colors flex items-center justify-center">
-                    <i class="fas fa-plus-circle mr-2"></i> Start Fresh
-                </button>
+        <!-- Inventory Value Card -->
+        <div class="bg-gradient-to-br from-white to-amber-50 rounded-2xl shadow-lg p-6 group hover:transform hover:-translate-y-2 transition-all duration-300 border border-amber-100 relative overflow-hidden">
+            <div class="absolute -right-4 -top-4 w-20 h-20 bg-amber-100 rounded-full opacity-20"></div>
+            <div class="relative z-10">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm font-medium text-amber-400 mb-2">Inventory Value</p>
+                        <p class="text-3xl font-bold text-amber-600">Rp <span x-text="numberFormat(12500000)"></span></p>
+                    </div>
+                    <div class="bg-amber-500 p-3 rounded-lg shadow-lg text-white group-hover:rotate-12 transition-transform duration-300">
+                        <i class="fas fa-boxes text-2xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center">
+                    <span class="bg-amber-100 text-amber-600 px-2 py-1 rounded-full text-xs font-medium">
+                        <i class="fas fa-exclamation-triangle mr-1"></i>3 low
+                    </span>
+                    <span class="ml-2 text-sm text-gray-500">stock items</span>
+                </div>
+                <div class="w-full h-1.5 bg-gray-100 rounded-full mt-4 overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-amber-400 to-orange-400 rounded-full w-2/3 animate-pulse"></div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
+    <!-- Enhanced Chart Section with Ultra Rounded Charts -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+        <!-- Sales Chart - Wider -->
+        <div class="bg-white rounded-3xl shadow-xl p-6 lg:col-span-3 border border-gray-100 hover:shadow-2xl transition-shadow duration-300 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-100 rounded-full opacity-10"></div>
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-gray-800">
+                    <i class="fas fa-chart-line text-indigo-600 mr-2"></i>
+                    Sales Performance
+                </h3>
+                <div class="relative">
+                    <select class="appearance-none bg-indigo-50 text-indigo-700 py-2 pl-4 pr-8 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-indigo-100">
+                        <option>Last 7 Days</option>
+                        <option>Last 30 Days</option>
+                        <option>This Year</option>
+                    </select>
+                    <i class="fas fa-chevron-down absolute right-3 top-3 text-indigo-500 text-sm"></i>
+                </div>
+            </div>
+            <div class="h-80" id="salesChart"></div>
+        </div>
 
-@endsection
+        <!-- Revenue Breakdown - Narrower -->
+        <div class="bg-white rounded-3xl shadow-xl p-6 lg:col-span-2 border border-gray-100 hover:shadow-2xl transition-shadow duration-300 relative overflow-hidden">
+            <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-purple-100 rounded-full opacity-10"></div>
+            <h3 class="text-lg font-bold text-gray-800 mb-6">
+                <i class="fas fa-chart-pie text-purple-600 mr-2"></i>
+                Revenue Breakdown
+            </h3>
+            <div class="h-80" id="pieChart"></div>
+        </div>
+    </div>
+
+    <!-- New Section: Recent Orders & Quick Actions -->
+    <div class="grid grid-cols-1 lg:grid-cols-7 gap-6 mb-8">
+        <!-- Recent Orders Table -->
+        <div class="bg-white rounded-3xl shadow-xl p-6 lg:col-span-4 border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-gray-800">
+                    <i class="fas fa-shopping-bag text-indigo-600 mr-2"></i>
+                    Recent Orders
+                </h3>
+                <a href="#" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium flex items-center">
+                    View All
+                    <i class="fas fa-arrow-right ml-1 text-xs"></i>
+                </a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th class="px-4 py-3 rounded-l-lg">Order ID</th>
+                            <th class="px-4 py-3">Customer</th>
+                            <th class="px-4 py-3">Amount</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3 rounded-r-lg">Time</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr class="text-sm hover:bg-indigo-50 transition-colors duration-200">
+                            <td class="px-4 py-3 font-medium text-gray-800">#ORD-2305</td>
+                            <td class="px-4 py-3">Siti Rahma</td>
+                            <td class="px-4 py-3 font-medium">Rp 135.000</td>
+                            <td class="px-4 py-3">
+                                <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">Completed</span>
+                            </td>
+                            <td class="px-4 py-3 text-gray-500">10:24 AM</td>
+                        </tr>
+                        <tr class="text-sm hover:bg-indigo-50 transition-colors duration-200">
+                            <td class="px-4 py-3 font-medium text-gray-800">#ORD-2304</td>
+                            <td class="px-4 py-3">Budi Santoso</td>
+                            <td class="px-4 py-3 font-medium">Rp 85.000</td>
+                            <td class="px-4 py-3">
+                                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">Processing</span>
+                            </td>
+                            <td class="px-4 py-3 text-gray-500">9:45 AM</td>
+                        </tr>
+                        <tr class="text-sm hover:bg-indigo-50 transition-colors duration-200">
+                            <td class="px-4 py-3 font-medium text-gray-800">#ORD-2303</td>
+                            <td class="px-4 py-3">Rini Wijaya</td>
+                            <td class="px-4 py-3 font-medium">Rp 210.000</td>
+                            <td class="px-4 py-3">
+                                <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">Completed</span>
+                            </td>
+                            <td class="px-4 py-3 text-gray-500">Yesterday</td>
+                        </tr>
+                        <tr class="text-sm hover:bg-indigo-50 transition-colors duration-200">
+                            <td class="px-4 py-3 font-medium text-gray-800">#ORD-2302</td>
+                            <td class="px-4 py-3">Agus Purnomo</td>
+                            <td class="px-4 py-3 font-medium">Rp 150.000</td>
+                            <td class="px-4 py-3">
+                                <span class="bg-amber-100 text-amber-700 text-xs px-2 py-1 rounded-full">Pending</span>
+                            </td>
+                            <td class="px-4 py-3 text-gray-500">Yesterday</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-3xl shadow-xl p-6 lg:col-span-3 border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
+            <h3 class="text-lg font-bold text-gray-800 mb-6">
+                <i class="fas fa-bolt text-amber-500 mr-2"></i>
+                Quick Actions
+            </h3>
+            <div class="grid grid-cols-2 gap-4">
+                <a href="#" class="bg-indigo-50 hover:bg-indigo-100 rounded-xl p-4 text-center transition-colors duration-300">
+                    <div class="bg-indigo-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="fas fa-plus text-indigo-600 text-xl"></i>
+                    </div>
+                    <p class="text-sm font-medium text-gray-700">New Order</p>
+                </a>
+                <a href="#" class="bg-green-50 hover:bg-green-100 rounded-xl p-4 text-center transition-colors duration-300">
+                    <div class="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="fas fa-box text-green-600 text-xl"></i>
+                    </div>
+                    <p class="text-sm font-medium text-gray-700">Add Product</p>
+                </a>
+                <a href="#" class="bg-blue-50 hover:bg-blue-100 rounded-xl p-4 text-center transition-colors duration-300">
+                    <div class="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="fas fa-user-plus text-blue-600 text-xl"></i>
+                    </div>
+                    <p class="text-sm font-medium text-gray-700">New Customer</p>
+                </a>
+                <a href="#" class="bg-purple-50 hover:bg-purple-100 rounded-xl p-4 text-center transition-colors duration-300">
+                    <div class="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="fas fa-chart-bar text-purple-600 text-xl"></i>
+                    </div>
+                    <p class="text-sm font-medium text-gray-700">View Reports</p>
+                </a>
+            </div>
+
+            <!-- Inventory Alerts -->
+            <div class="mt-6">
+                <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+                    <i class="fas fa-exclamation-triangle text-amber-500 mr-2"></i>
+                    Low Stock Alerts
+                </h4>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between bg-amber-50 px-3 py-2 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="bg-amber-100 p-1 rounded mr-2">
+                                <i class="fas fa-wine-bottle text-amber-600 text-sm"></i>
+                            </div>
+                            <span class="text-sm">Green Tea</span>
+                        </div>
+                        <span class="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full">3 left</span>
+                    </div>
+                    <div class="flex items-center justify-between bg-amber-50 px-3 py-2 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="bg-amber-100 p-1 rounded mr-2">
+                                <i class="fas fa-coffee text-amber-600 text-sm"></i>
+                            </div>
+                            <span class="text-sm">Arabica Coffee</span>
+                        </div>
+                        <span class="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full">5 left</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Section: Product Performance -->
+    <div class="bg-white rounded-3xl shadow-xl p-6 mb-8 border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
+        <h3 class="text-lg font-bold text-gray-800 mb-6">
+            <i class="fas fa-star text-amber-400 mr-2"></i>
+            Product Performance
+        </h3>
+        <div class="h-96" id="barChart"></div>
+    </div>
+
+    <!-- Performance Metrics -->
+    <div class="bg-white rounded-3xl shadow-xl p-6 mb-8 border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
+        <h3 class="text-lg font-bold text-gray-800 mb-6">
+            <i class="fas fa-tachometer-alt text-indigo-600 mr-2"></i>
+            Performance Metrics
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div class="bg-gray-50 p-4 rounded-xl">
+                <p class="text-sm font-medium text-gray-500 mb-1">Sales Target</p>
+                <div class="flex items-end justify-between">
+                    <p class="text-2xl font-bold text-indigo-600">78%</p>
+                    <div class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-indigo-500 rounded-full" style="width: 78%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-xl">
+                <p class="text-sm font-medium text-gray-500 mb-1">Conversion Rate</p>
+                <div class="flex items-end justify-between">
+                    <p class="text-2xl font-bold text-green-600">42%</p>
+                    <div class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-green-500 rounded-full" style="width: 42%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-xl">
+                <p class="text-sm font-medium text-gray-500 mb-1">Avg. Order Value</p>
+                <div class="flex items-end justify-between">
+                    <p class="text-2xl font-bold text-blue-600">Rp 125K</p>
+                    <div class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-blue-500 rounded-full" style="width: 65%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-xl">
+                <p class="text-sm font-medium text-gray-500 mb-1">Customer Retention</p>
+                <div class="flex items-end justify-between">
+                    <p class="text-2xl font-bold text-purple-600">89%</p>
+                    <div class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-purple-500 rounded-full" style="width: 89%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-xl">
+                <p class="text-sm font-medium text-gray-500 mb-1">Inventory Turnover</p>
+                <div class="flex items-end justify-between">
+                    <p class="text-2xl font-bold text-amber-600">3.2x</p>
+                    <div class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-amber-500 rounded-full" style="width: 64%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- Required AmCharts core -->
+<!-- <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize ultra rounded line chart with AmCharts
+        am5.ready(function() {
+            // Create root element
+            var root = am5.Root.new("salesChart");
+            
+            // Set themes
+            root.setThemes([am5themes_Animated.new(root)]);
+            
+            // Create chart
+            var chart = root.container.children.push(
+                am5xy.XYChart.new(root, {
+                    panX: true,
+                    panY: true,
+                    wheelX: "panX",
+                    wheelY: "zoomX",
+                    pinchZoomX: true,
+                    paddingLeft: 0,
+                    paddingRight: 0
+                })
+            );
+            
+            // Add cursor
+            var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+                behavior: "none"
+            }));
+            cursor.lineY.set("visible", false);
+            
+            // Create axes
+            var xAxis = chart.xAxes.push(
+                am5xy.CategoryAxis.new(root, {
+                    maxDeviation: 0.3,
+                    categoryField: "month",
+                    renderer: am5xy.AxisRendererX.new(root, {
+                        minGridDistance: 30,
+                        strokeOpacity: 0.1
+                    }),
+                    tooltip: am5.Tooltip.new(root, {})
+                })
+            );
+            
+            var yAxis = chart.yAxes.push(
+                am5xy.ValueAxis.new(root, {
+                    maxDeviation: 0.3,
+                    renderer: am5xy.AxisRendererY.new(root, {
+                        strokeOpacity: 0.1
+                    })
+                })
+            );
+            
+            // Create series
+            var series = chart.series.push(
+                am5xy.LineSeries.new(root, {
+                    name: "Sales",
+                    xAxis: xAxis,
+                    yAxis: yAxis,
+                    valueYField: "value",
+                    categoryXField: "month",
+                    tooltip: am5.Tooltip.new(root, {
+                        labelText: "Rp {valueY}",
+                        background: am5.RoundedRectangle.new(root, {
+                            cornerRadiusTL: 10,
+                            cornerRadiusTR: 10,
+                            cornerRadiusBL: 10,
+                            cornerRadiusBR: 10,
+                            fill: am5.color("#6366F1"),
+                            fillOpacity: 0.9
+                        })
+                    }),
+                    stroke: am5.color("#6366F1"),
+                    fill: am5.color("#6366F1")
+                })
+            );
+            
+            // Configure series appearance
+            series.fills.template.setAll({
+                fillOpacity: 0.2,
+                visible: true
+            });
+            
+            // Corrected way to set line properties
+            series.strokes.template.setAll({
+                strokeWidth: 4,
+                strokeDasharray: [0, 0],
+                lineJoin: "round",
+                lineCap: "round"
+            });
+            
+            // Add rounded bullets for data points
+            series.bullets.push(function() {
+                var circle = am5.Circle.new(root, {
+                    radius: 6,
+                    fill: am5.color("#6366F1"),
+                    stroke: am5.color("#ffffff"),
+                    strokeWidth: 2
+                });
+                
+                circle.set("shadow", am5.Shadow.new(root, {
+                    blur: 5,
+                    opacity: 0.5,
+                    color: am5.color("#6366F1"),
+                    offsetX: 0,
+                    offsetY: 0
+                }));
+                
+                return am5.Bullet.new(root, {
+                    sprite: circle,
+                    dynamic: true,
+                    dynamicSize: true
+                });
+            });
+            
+            // Set data
+            var data = [
+                { month: "Jan", value: 6500000 },
+                { month: "Feb", value: 5900000 },
+                { month: "Mar", value: 8000000 },
+                { month: "Apr", value: 8100000 },
+                { month: "May", value: 5600000 },
+                { month: "Jun", value: 7500000 },
+                { month: "Jul", value: 8200000 },
+                { month: "Aug", value: 7800000 },
+                { month: "Sep", value: 9000000 }
+            ];
+            
+            xAxis.data.setAll(data);
+            series.data.setAll(data);
+            
+            // Add scrollbar with rounded corners
+            chart.set("scrollbarX", am5.Scrollbar.new(root, {
+                orientation: "horizontal",
+                background: am5.RoundedRectangle.new(root, {
+                    cornerRadiusTL: 5,
+                    cornerRadiusTR: 5,
+                    cornerRadiusBL: 5,
+                    cornerRadiusBR: 5,
+                    fill: am5.color("#E5E7EB")
+                })
+            }));
+            
+            // Make the chart animate
+            series.appear(1000);
+            chart.appear(1000, 100);
+        });
+        
+        // Initialize ultra rounded pie chart with AmCharts
+        am5.ready(function() {
+            // Create root element
+            var root = am5.Root.new("pieChart");
+            
+            // Set themes
+            root.setThemes([am5themes_Animated.new(root)]);
+            
+            // Create chart
+            var chart = root.container.children.push(
+                am5percent.PieChart.new(root, {
+                    layout: root.verticalLayout,
+                    innerRadius: am5.percent(50),
+                    radius: am5.percent(90)
+                })
+            );
+            
+            // Create series
+            var series = chart.series.push(
+                am5percent.PieSeries.new(root, {
+                    valueField: "value",
+                    categoryField: "category",
+                    alignLabels: true,
+                    innerRadius: am5.percent(50),
+                    startAngle: 180,
+                    endAngle: 360
+                })
+            );
+            
+            // Configure slices with ultra rounded corners
+            series.slices.template.setAll({
+                strokeWidth: 2,
+                stroke: am5.color(0xffffff),
+                cornerRadius: 15,
+                fillOpacity: 0.9
+            });
+            
+            // Add effects to slices on hover
+            series.slices.template.states.create("hover", {
+                fillOpacity: 1,
+                scale: 1.03
+            });
+            
+            // Configure labels
+            series.labels.template.setAll({
+                fontSize: 12,
+                fontWeight: "500",
+                textType: "circular",
+                radius: 10,
+                inside: true,
+                text: "{category}: {valuePercentTotal.formatNumber('0.0')}%"
+            });
+            
+            // Configure tooltips with rounded corners
+            series.slices.template.set("tooltip", am5.Tooltip.new(root, {
+                labelText: "{category}: Rp {value} ({valuePercentTotal.formatNumber('0.0')}%)",
+                background: am5.RoundedRectangle.new(root, {
+                    cornerRadiusTL: 10,
+                    cornerRadiusTR: 10,
+                    cornerRadiusBL: 10,
+                    cornerRadiusBR: 10,
+                    fill: am5.color("#ffffff"),
+                    fillOpacity: 0.95,
+                    stroke: am5.color("#E5E7EB"),
+                    strokeWidth: 1
+                })
+            }));
+            
+            // Add legend with rounded items
+            var legend = chart.children.push(
+                am5.Legend.new(root, {
+                    centerX: am5.percent(50),
+                    x: am5.percent(50),
+                    marginTop: 15,
+                    marginBottom: 15,
+                    layout: am5.GridLayout.new(root, {
+                        maxColumns: 2,
+                        fixedWidthGrid: true
+                    })
+                })
+            );
+            
+            legend.markers.template.setAll({
+                width: 12,
+                height: 12,
+                cornerRadius: 6
+            });
+            
+            legend.valueLabels.template.setAll({
+                textAlign: "right"
+            });
+            
+            legend.labels.template.setAll({
+                fontSize: 12
+            });
+            
+            legend.data.setAll(series.dataItems);
+            
+            // Set data
+            series.data.setAll([
+                { category: "Food & Beverage", value: 65, color: am5.color("#6366F1") },
+                { category: "Electronics", value: 15, color: am5.color("#EC4899") },
+                { category: "Fashion", value: 12, color: am5.color("#10B981") },
+                { category: "Home Goods", value: 5, color: am5.color("#F59E0B") },
+                { category: "Others", value: 3, color: am5.color("#3B82F6") }
+            ]);
+            
+            // Play initial series animation
+            series.appear(1000, 100);
+        });
+        
+        // Initialize rounded bar chart for product performance
+        am5.ready(function() {
+            // Create root element
+            var root = am5.Root.new("barChart");
+            
+            // Set themes
+            root.setThemes([am5themes_Animated.new(root)]);
+            
+            // Create chart
+            var chart = root.container.children.push(
+                am5xy.XYChart.new(root, {
+                    panX: false,
+                    panY: false,
+                    wheelX: "none",
+                    wheelY: "none",
+                    paddingLeft: 0,
+                    paddingRight: 0
+                })
+            );
+            
+            // Create axes
+            var yAxis = chart.yAxes.push(
+                am5xy.CategoryAxis.new(root, {
+                    categoryField: "product",
+                    renderer: am5xy.AxisRendererY.new(root, {
+                        minGridDistance: 20,
+                        strokeOpacity: 0.1,
+                        cellStartLocation: 0.1,
+                        cellEndLocation: 0.9
+                    })
+                })
+            );
+            
+            var xAxis = chart.xAxes.push(
+                am5xy.ValueAxis.new(root, {
+                    renderer: am5xy.AxisRendererX.new(root, {
+                        strokeOpacity: 0.1
+                    })
+                })
+            );
+            
+            // Create series
+            var series = chart.series.push(
+                am5xy.ColumnSeries.new(root, {
+                    name: "Sales",
+                    xAxis: xAxis,
+                    yAxis: yAxis,
+                    valueXField: "sales",
+                    categoryYField: "product",
+                    tooltip: am5.Tooltip.new(root, {
+                        labelText: "{product}: Rp {valueX}",
+                        background: am5.RoundedRectangle.new(root, {
+                            cornerRadiusTL: 10,
+                            cornerRadiusTR: 10,
+                            cornerRadiusBL: 10,
+                            cornerRadiusBR: 10,
+                            fill: am5.color("#ffffff"),
+                            fillOpacity: 0.95,
+                            stroke: am5.color("#E5E7EB"),
+                            strokeWidth: 1
+                        })
+                    })
+                })
+            );
+            
+            // Configure columns with rounded corners
+            series.columns.template.setAll({
+                width: am5.percent(70),
+                strokeOpacity: 0,
+                cornerRadiusTL: 10,
+                cornerRadiusTR: 10,
+                cornerRadiusBL: 10,
+                cornerRadiusBR: 10,
+                tooltipY: 0
+            });
+            
+            // Add gradient fill to columns
+            series.columns.template.adapters.add("fill", function(fill, target) {
+                return am5.Color.brighten(am5.color("#6366F1"), target.dataItem.index * 0.2);
+            });
+            
+            // Add rounded bullets for data points
+            series.bullets.push(function() {
+                return am5.Bullet.new(root, {
+                    sprite: am5.Label.new(root, {
+                        text: "{valueX}",
+                        fill: am5.color("#ffffff"),
+                        centerX: am5.percent(50),
+                        centerY: am5.percent(50),
+                        populateText: true
+                    })
+                });
+            });
+            
+            // Set data
+            var data = [
+                { product: "Green Tea", sales: 1280000 },
+                { product: "Arabica Coffee", sales: 980000 },
+                { product: "Milk Tea", sales: 750000 },
+                { product: "Black Coffee", sales: 620000 },
+                { product: "Chocolate", sales: 480000 },
+                { product: "Latte", sales: 420000 }
+            ];
+            
+            yAxis.data.setAll(data);
+            series.data.setAll(data);
+            
+            // Add scrollbar with rounded corners
+            chart.set("scrollbarX", am5.Scrollbar.new(root, {
+                orientation: "horizontal",
+                background: am5.RoundedRectangle.new(root, {
+                    cornerRadiusTL: 5,
+                    cornerRadiusTR: 5,
+                    cornerRadiusBL: 5,
+                    cornerRadiusBR: 5,
+                    fill: am5.color("#E5E7EB")
+                })
+            }));
+            
+            // Make the chart animate
+            series.appear(1000);
+            chart.appear(1000, 100);
+        });
+    });
+</script> -->

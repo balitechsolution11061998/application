@@ -137,8 +137,6 @@
   <!-- Login Form -->
   @yield('content_login')
 
-
-
   <!-- Tambahkan modal konfirmasi logout -->
   <div x-show="showLogoutModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
     <div class="bg-white rounded-lg p-6 w-96">
@@ -195,7 +193,17 @@
     <div class="hide-print flex flex-row h-screen antialiased text-blue-gray-800">
       <!-- left sidebar -->
       @include('pos.sidebar')
-      @yield('content')
+
+      <!-- Main Dashboard Content -->
+      <div x-show="isLoggedIn" class="hide-print w-full overflow-y-auto">
+    
+      <div class="flex-grow flex">
+
+
+        <!-- Main Dashboard Content -->
+        @yield('content')
+      </div>
+      </div>
     </div>
     <!-- end of noprint-area -->
   </div>
