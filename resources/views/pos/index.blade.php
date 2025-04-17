@@ -187,25 +187,40 @@
     </div>
   </div>
 
-  <div x-show="isLoggedIn">
-    <!-- Header dengan tombol logout dan informasi pengguna -->
-    <!-- noprint-area -->
-    <div class="hide-print flex flex-row h-screen antialiased text-blue-gray-800">
-      <!-- left sidebar -->
-      @include('pos.sidebar')
-
-      <!-- Main Dashboard Content -->
-      <div x-show="isLoggedIn" class="hide-print w-full overflow-y-auto">
-    
-      <div class="flex-grow flex">
-
-
-        <!-- Main Dashboard Content -->
-        @yield('content')
-      </div>
-      </div>
+  <div x-show="isLoggedIn" class="flex h-screen antialiased text-blue-gray-800 hide-print">
+    <!-- Sidebar Overlay (mobile only) -->
+    <div x-show="isSidebarOpen" @click="isSidebarOpen = false"
+      class="fixed inset-0 z-30 bg-black bg-opacity-50 md:hidden"
+      x-transition:enter="transition-opacity ease-linear duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="transition-opacity ease-linear duration-300"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0">
     </div>
-    <!-- end of noprint-area -->
+
+    <!-- Sidebar -->
+    <div class="flex-shrink-0 bg-cyan-500 shadow-lg z-40 h-full transition-all duration-300 ease-in-out"
+      :class="{
+         'w-20': isSidebarOpen,
+         '-translate-x-full md:translate-x-0 md:w-16': !isSidebarOpen
+       }">
+      @include('pos.sidebar')
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Toggle Button -->
+      <button @click="toggleSidebar()"
+        class="md:hidden fixed top-4 left-4 z-50 bg-cyan-500 text-white p-2 rounded-full shadow-lg">
+        <i class="fas fa-bars"></i>
+      </button>
+      
+      <!-- Main Content -->
+      <main class="flex-1 overflow-y-auto p-4">
+        @yield('content')
+      </main>
+    </div>
   </div>
   <!-- Tambahkan sebelum penutup </body> -->
   <div class="fixed bottom-20 right-20 z-30" x-show="isLoggedIn">
