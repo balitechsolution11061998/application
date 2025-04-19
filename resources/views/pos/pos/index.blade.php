@@ -15,6 +15,122 @@
         class="bg-white rounded-2xl shadow-lg text-lg full w-full h-14 py-4 pl-16 transition-all duration-300 focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-cyan-300 border border-gray-200"
         placeholder="Search menu ..." x-model="keyword" />
     </div>
+    <!-- Add this section below the search bar and above the product grid -->
+    <div class="px-2 mb-4">
+      <!-- Community Filter -->
+      <div class="mb-4">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-sm font-medium text-gray-700 flex items-center">
+            <span class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+              <i class="fas fa-users text-blue-500"></i>
+            </span>
+            Partner Communities
+          </h3>
+          <button @click="communityScrollLeft()" class="text-gray-400 hover:text-blue-500 p-1">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+        </div>
+
+        <div class="relative">
+          <div class="overflow-hidden">
+            <div x-ref="communitySlider" class="flex space-x-2 transition-transform duration-300 pb-2"
+              style="scroll-behavior: smooth;">
+              <button @click="activeCommunity = ''"
+                class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap flex items-center flex-shrink-0 transition-all"
+                :class="activeCommunity === '' ? 
+                   'bg-blue-500 text-white shadow-md' : 
+                   'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200 hover:border-blue-200'">
+                <i class="fas fa-globe mr-2"></i>
+                All
+              </button>
+
+              <template x-for="community in communities" :key="community.id">
+                <button @click="activeCommunity = community.id"
+                  class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap flex items-center flex-shrink-0 transition-all group relative"
+                  :class="activeCommunity === community.id ? 
+                     'bg-blue-500 text-white shadow-md' : 
+                     'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200 hover:border-blue-200'">
+                  <div class="absolute -top-1 -right-1 bg-white rounded-full p-1 shadow-sm"
+                    x-show="activeCommunity === community.id">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <img :src="community.logo" class="w-5 h-5 rounded-full mr-2 object-cover border border-gray-200">
+                  <span x-text="community.name"></span>
+                </button>
+              </template>
+            </div>
+          </div>
+          <button @click="communityScrollRight()" class="absolute right-0 top-0 text-gray-400 hover:text-blue-500 p-1">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Company Filter -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-sm font-medium text-gray-700 flex items-center">
+            <span class="w-8 h-8 rounded-full bg-cyan-100 flex items-center justify-center mr-2">
+              <i class="fas fa-building text-cyan-500"></i>
+            </span>
+            Partner Companies
+          </h3>
+          <button @click="companyScrollLeft()" class="text-gray-400 hover:text-cyan-500 p-1">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+        </div>
+
+        <div class="relative">
+          <div class="overflow-hidden">
+            <div x-ref="companySlider" class="flex space-x-2 transition-transform duration-300 pb-2"
+              style="scroll-behavior: smooth;">
+              <button @click="activeCompany = ''"
+                class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap flex items-center flex-shrink-0 transition-all"
+                :class="activeCompany === '' ? 
+                   'bg-cyan-500 text-white shadow-md' : 
+                   'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200 hover:border-cyan-200'">
+                <i class="fas fa-briefcase mr-2"></i>
+                All
+              </button>
+
+              <template x-for="company in companies" :key="company.id">
+                <button @click="activeCompany = company.id"
+                  class="px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap flex items-center flex-shrink-0 transition-all group"
+                  :class="activeCompany === company.id ? 
+                     'bg-cyan-500 text-white shadow-md' : 
+                     'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200 hover:border-cyan-200'">
+                  <div class="relative mr-2">
+                    <img :src="company.logo" class="w-5 h-5 rounded-full object-cover border border-gray-200">
+                    <div class="absolute -top-1 -right-1 bg-white rounded-full p-0.5 shadow-sm"
+                      x-show="activeCompany === company.id">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-cyan-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                  <span x-text="company.name"></span>
+                  <span x-show="company.discount"
+                    class="ml-2 px-2 py-0.5 text-xs rounded-full font-bold"
+                    :class="activeCompany === company.id ? 
+                       'bg-white text-cyan-600' : 
+                       'bg-cyan-100 text-cyan-800'">
+                    <span x-text="company.discount + '%'"></span>
+                  </span>
+                </button>
+              </template>
+            </div>
+          </div>
+          <button @click="companyScrollRight()" class="absolute right-0 top-0 text-gray-400 hover:text-cyan-500 p-1">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    
+
 
     <!-- Product Grid (Scrollable) -->
     <div class="flex-1 overflow-hidden">

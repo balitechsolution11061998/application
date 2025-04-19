@@ -255,7 +255,26 @@
         display: none;
       }
     }
-    
+    .filter-container {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  .filter-container::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+  
+  /* Smooth hover transitions */
+  .filter-btn {
+    transition: all 0.2s ease;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .filter-btn {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+    }
+  }
   </style>
 </head>
 
