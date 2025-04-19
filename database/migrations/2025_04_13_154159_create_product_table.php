@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('price');
+            $table->integer('price'); // Harga default produk
             $table->string('image')->nullable();
             $table->string('sku')->unique();
             $table->string('upc')->nullable()->index();
@@ -26,6 +25,27 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['company_id', 'is_active']);
+        });
+
+        // Create paguyubans table (komunitas paguyuban)
+        Schema::create('paguyubans', function (Blueprint $table) {
+            $table->id();
+            $table->string('name'); // Nama paguyuban
+            $table->text('description')->nullable(); // Deskripsi paguyuban
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
+        });
+
+        // Create product_paguyuban table (relasi antara produk dan harga di paguyuban)
+        Schema::create('product_paguyuban', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete(); // Relasi ke produk
+            $table->foreignId('paguyuban_id')->constrained('paguyubans')->cascadeOnDelete(); // Relasi ke paguyuban
+            $table->integer('price'); // Harga khusus untuk paguyuban tertentu
+            $table->timestamps();
+
+            // Index untuk mempercepat pencarian
+            $table->unique(['product_id', 'paguyuban_id']);
         });
 
         // Create expenses table (separate from products)
@@ -81,8 +101,15 @@ return new class extends Migration
             $table->dropForeign(['company_id']);
         });
 
+        Schema::table('product_paguyuban', function (Blueprint $table) {
+            $table->dropForeign(['product_id']);
+            $table->dropForeign(['paguyuban_id']);
+        });
+
         Schema::dropIfExists('bonuses');
         Schema::dropIfExists('expenses');
+        Schema::dropIfExists('product_paguyuban');
+        Schema::dropIfExists('paguyubans');
         Schema::dropIfExists('products');
     }
 };

@@ -312,6 +312,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('data-kependudukan/import', [DataKependudukanController::class, 'importStore'])->name('data-kependudukan.import.store');
     Route::post('/data-kependudukan/bulk-store', [DataKependudukanController::class, 'bulkStore'])->name('data-kependudukan.bulkStore');
     Route::resource('titles', TitleController::class);
+
+
+    Route::get('/poskasir', [PosController::class,'pos'])->name('pos.index');
+
 });
 Route::post('/generate', [OpenAIController::class, 'generate']);
 Route::get('/loginPos', [PosController::class,'index'])->name('poskasir.index');

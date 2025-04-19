@@ -1,100 +1,245 @@
-
-
-<div class="flex-shrink-0 w-20 bg-cyan-500 shadow-lg z-40 h-full" style="border: 2px solid red;">
-  <!-- Logo -->
-  <div class="flex items-center justify-center py-4">
-    <a href="{{ route('dashboard.pos') }}" class="flex items-center justify-center h-12 w-12 bg-cyan-50 text-cyan-700 rounded-full overflow-hidden">
-      <img src="{{ asset('img/logo/logotamansari.jpeg') }}" alt="Logo Tamansari" class="h-full w-full object-cover">
-    </a>
+<!-- Sidebar -->
+<div class="hide-print flex flex-col bg-gradient-to-b from-indigo-700 to-indigo-900 text-white shadow-xl transition-all duration-300 ease-in-out"
+     :class="{ 'w-20': isSidebarCollapsed, 'w-64': !isSidebarCollapsed }">
+  
+  <!-- Logo and Brand - Collapsible -->
+  <div class="p-4 border-b border-indigo-800 flex items-center justify-center hover:bg-indigo-800/30 transition-all duration-300 rounded-b-2xl"
+       :class="{ 'px-2': isSidebarCollapsed }">
+    <div class="flex flex-col items-center" :class="{ 'flex-row': isSidebarCollapsed }">
+      <div class="w-10 h-10 rounded-xl bg-white p-1 shadow-lg overflow-hidden transition-all duration-300 hover:rotate-6 hover:scale-110"
+           :class="{ 'mb-0': isSidebarCollapsed, 'mb-2': !isSidebarCollapsed }">
+        <img src="/img/logo/logotamansari.jpeg" alt="Taman Sari Logo" class="h-full w-full object-cover rounded-lg">
+      </div>
+      <div class="text-center transition-opacity duration-300" :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">
+        <h1 class="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-indigo-200">Taman Sari</h1>
+        <p class="text-xs text-indigo-200/80 mt-0.5">Point of Sale</p>
+      </div>
+    </div>
   </div>
 
-  <!-- Menu Items -->
-  <ul class="flex flex-col items-center space-y-4 mt-4 flex-grow">
-    <!-- Dashboard Menu - Visible to all logged in users -->
-    <li class="w-full flex justify-center">
-      <a href="{{ route('dashboard.pos') }}" class="flex items-center group" title="Dashboard">
-        <span class="flex items-center justify-center text-cyan-100 hover:bg-cyan-400 h-12 w-12 rounded-2xl group-hover:text-white transition-colors">
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-          </svg>
-        </span>
-      </a>
-    </li>
+  <!-- User Info - Collapsible -->
+  <div class="p-3 border-b border-indigo-800/50 flex items-center justify-center hover:bg-indigo-800/30 transition-all duration-300 rounded-lg mx-2 my-2"
+       :class="{ 'px-2': isSidebarCollapsed }">
+    <div class="flex items-center group" :class="{ 'justify-center': isSidebarCollapsed }">
+      <div class="relative">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-300 to-indigo-400 flex items-center justify-center shadow-inner transition-all duration-300 group-hover:rotate-6">
+          <i class="fas fa-user text-indigo-700 text-sm"></i>
+        </div>
+        <span class="absolute bottom-0 right-0 w-2 h-2 bg-green-400 rounded-full border border-indigo-800 animate-pulse"></span>
+      </div>
+      <div class="ml-2 transition-all duration-300" :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">
+        <p class="text-sm font-medium text-white/90" x-text="username || 'Guest'"></p>
+      </div>
+    </div>
+  </div>
 
-    <!-- Products Menu - For admin and accounting -->
-    @role(['admin', 'accounting'])
-    <li class="w-full flex justify-center">
-      <a href="{{ route('products.index') }}" class="flex items-center group" title="Products">
-        <span class="flex items-center justify-center text-cyan-100 hover:bg-cyan-400 h-12 w-12 rounded-2xl group-hover:text-white transition-colors">
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
-        </span>
-      </a>
-    </li>
-    @endrole
-
-    <!-- Community Partners Menu - Only for admin -->
-    @role('admin')
-    <li class="w-full flex justify-center">
-      <a href="{{ route('partners.index') }}" class="flex items-center group" title="Community Partners">
-        <span class="flex items-center justify-center text-cyan-100 hover:bg-cyan-400 h-12 w-12 rounded-2xl group-hover:text-white transition-colors">
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-        </span>
-      </a>
-    </li>
-    @endrole
-
-    <!-- POS Menu - For cashier role -->
-    @role('cashier')
-    <li class="w-full flex justify-center">
-      <a href="{{ route('pos.index') }}" class="flex items-center group" title="Point of Sale">
-        <span class="flex items-center justify-center text-cyan-100 hover:bg-cyan-400 h-12 w-12 rounded-2xl group-hover:text-white transition-colors">
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-        </span>
-      </a>
-    </li>
-    @endrole
-
-    <!-- Reports Menu - For admin and accounting -->
-    @can('administrator','acct')
-    <li class="w-full flex justify-center">
-      <a href="{{ route('reports.index') }}" class="flex items-center group" title="Reports">
-        <span class="flex items-center justify-center text-cyan-100 hover:bg-cyan-400 h-12 w-12 rounded-2xl group-hover:text-white transition-colors">
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        </span>
-      </a>
-    </li>
-    @endrole
-  </ul>
-
-  <!-- Bottom Menu Items (Profile and Logout) -->
-  <ul class="flex flex-col items-center space-y-4 pb-4">
-    <!-- User Profile Button -->
-    <li class="w-full flex justify-center">
-      <button @click="showUserModal = true" class="flex items-center w-full focus:outline-none group" title="User Profile">
-        <span class="flex items-center justify-center text-cyan-100 hover:bg-cyan-400 h-12 w-12 rounded-2xl group-hover:text-white transition-colors">
-          <i class="fas fa-user-circle fa-lg"></i>
-        </span>
+  <!-- Navigation Menu -->
+  <nav class="flex-1 overflow-y-auto py-2 px-2">
+    <!-- Toggle Button - Centered when collapsed -->
+    <div class="flex mb-2" :class="{ 'justify-center': isSidebarCollapsed }">
+      <button @click="isSidebarCollapsed = !isSidebarCollapsed" 
+        class="p-2 rounded-xl bg-indigo-800/50 text-white hover:bg-indigo-600 transition-all duration-300 hover:shadow-lg hover:scale-105"
+        :title="isSidebarCollapsed ? 'Expand menu' : 'Collapse menu'">
+        <i :class="isSidebarCollapsed ? 'fas fa-chevron-right text-xs' : 'fas fa-chevron-left text-xs'"></i>
       </button>
-    </li>
+    </div>
 
-    <!-- Logout Button -->
-    <li class="w-full flex justify-center">
-      <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="flex items-center w-full focus:outline-none group" title="Logout">
-          <span class="flex items-center justify-center text-cyan-100 hover:bg-red-400 h-12 w-12 rounded-2xl group-hover:text-white transition-colors">
-            <i class="fas fa-sign-out-alt fa-lg"></i>
-          </span>
+    <ul class="space-y-1">
+      <!-- Dashboard -->
+      <li>
+        <a href="/pos/dashboard" 
+          class="sidebar-item flex items-center px-3 py-2 rounded-xl hover:bg-indigo-600/90 transition-all duration-300 group"
+          :class="{ 
+            'bg-indigo-600/80 shadow-md': currentPage === 'dashboard', 
+            'justify-center': isSidebarCollapsed,
+            'px-3': !isSidebarCollapsed
+          }">
+          <div class="flex items-center justify-center w-7 h-7 rounded-xl bg-indigo-800/50 group-hover:bg-white/20 transition-all duration-300">
+            <i class="fas fa-tachometer-alt text-xs group-hover:scale-110 transition-transform"></i>
+          </div>
+          <span class="ml-3 text-sm font-medium text-white/90 group-hover:text-white transition-all"
+                :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">Dashboard</span>
+          <span x-show="isSidebarCollapsed" class="sr-only">Dashboard</span>
+          <div x-show="isSidebarCollapsed && currentPage === 'dashboard'" class="absolute right-2 w-1.5 h-1.5 bg-white rounded-full"></div>
+        </a>
+      </li>
+
+      <!-- POS -->
+      <li>
+        <a href="/poskasir" 
+          class="sidebar-item flex items-center px-3 py-2 rounded-xl hover:bg-indigo-600/90 transition-all duration-300 group"
+          :class="{ 
+            'bg-indigo-600/80 shadow-md': currentPage === 'pos', 
+            'justify-center': isSidebarCollapsed,
+            'px-3': !isSidebarCollapsed
+          }">
+          <div class="flex items-center justify-center w-7 h-7 rounded-xl bg-indigo-800/50 group-hover:bg-white/20 transition-all duration-300">
+            <i class="fas fa-cash-register text-xs group-hover:scale-110 transition-transform"></i>
+          </div>
+          <span class="ml-3 text-sm font-medium text-white/90 group-hover:text-white transition-all"
+                :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">POS</span>
+          <span x-show="isSidebarCollapsed" class="sr-only">POS</span>
+          <div x-show="isSidebarCollapsed && currentPage === 'pos'" class="absolute right-2 w-1.5 h-1.5 bg-white rounded-full"></div>
+        </a>
+      </li>
+
+      <!-- Products -->
+      <li>
+        <a href="/pos/products" 
+          class="sidebar-item flex items-center px-3 py-2 rounded-xl hover:bg-indigo-600/90 transition-all duration-300 group"
+          :class="{ 
+            'bg-indigo-600/80 shadow-md': currentPage === 'products', 
+            'justify-center': isSidebarCollapsed,
+            'px-3': !isSidebarCollapsed
+          }">
+          <div class="flex items-center justify-center w-7 h-7 rounded-xl bg-indigo-800/50 group-hover:bg-white/20 transition-all duration-300">
+            <i class="fas fa-box-open text-xs group-hover:scale-110 transition-transform"></i>
+          </div>
+          <span class="ml-3 text-sm font-medium text-white/90 group-hover:text-white transition-all"
+                :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">Products</span>
+          <span x-show="isSidebarCollapsed" class="sr-only">Products</span>
+          <div x-show="isSidebarCollapsed && currentPage === 'products'" class="absolute right-2 w-1.5 h-1.5 bg-white rounded-full"></div>
+        </a>
+      </li>
+
+      <!-- Orders -->
+      <li>
+        <a href="/pos/orders" 
+          class="sidebar-item flex items-center px-3 py-2 rounded-xl hover:bg-indigo-600/90 transition-all duration-300 group"
+          :class="{ 
+            'bg-indigo-600/80 shadow-md': currentPage === 'orders', 
+            'justify-center': isSidebarCollapsed,
+            'px-3': !isSidebarCollapsed
+          }">
+          <div class="flex items-center justify-center w-7 h-7 rounded-xl bg-indigo-800/50 group-hover:bg-white/20 transition-all duration-300">
+            <i class="fas fa-shopping-bag text-xs group-hover:scale-110 transition-transform"></i>
+          </div>
+          <span class="ml-3 text-sm font-medium text-white/90 group-hover:text-white transition-all"
+                :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">Orders</span>
+          <span x-show="isSidebarCollapsed" class="sr-only">Orders</span>
+          <div x-show="isSidebarCollapsed && currentPage === 'orders'" class="absolute right-2 w-1.5 h-1.5 bg-white rounded-full"></div>
+        </a>
+      </li>
+
+      <!-- Customers -->
+      <li>
+        <a href="/pos/customers" 
+          class="sidebar-item flex items-center px-3 py-2 rounded-xl hover:bg-indigo-600/90 transition-all duration-300 group"
+          :class="{ 
+            'bg-indigo-600/80 shadow-md': currentPage === 'customers', 
+            'justify-center': isSidebarCollapsed,
+            'px-3': !isSidebarCollapsed
+          }">
+          <div class="flex items-center justify-center w-7 h-7 rounded-xl bg-indigo-800/50 group-hover:bg-white/20 transition-all duration-300">
+            <i class="fas fa-users text-xs group-hover:scale-110 transition-transform"></i>
+          </div>
+          <span class="ml-3 text-sm font-medium text-white/90 group-hover:text-white transition-all"
+                :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">Customers</span>
+          <span x-show="isSidebarCollapsed" class="sr-only">Customers</span>
+          <div x-show="isSidebarCollapsed && currentPage === 'customers'" class="absolute right-2 w-1.5 h-1.5 bg-white rounded-full"></div>
+        </a>
+      </li>
+
+      <!-- Reports -->
+      <li>
+        <a href="/pos/reports" 
+          class="sidebar-item flex items-center px-3 py-2 rounded-xl hover:bg-indigo-600/90 transition-all duration-300 group"
+          :class="{ 
+            'bg-indigo-600/80 shadow-md': currentPage === 'reports', 
+            'justify-center': isSidebarCollapsed,
+            'px-3': !isSidebarCollapsed
+          }">
+          <div class="flex items-center justify-center w-7 h-7 rounded-xl bg-indigo-800/50 group-hover:bg-white/20 transition-all duration-300">
+            <i class="fas fa-chart-line text-xs group-hover:scale-110 transition-transform"></i>
+          </div>
+          <span class="ml-3 text-sm font-medium text-white/90 group-hover:text-white transition-all"
+                :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">Reports</span>
+          <span x-show="isSidebarCollapsed" class="sr-only">Reports</span>
+          <div x-show="isSidebarCollapsed && currentPage === 'reports'" class="absolute right-2 w-1.5 h-1.5 bg-white rounded-full"></div>
+        </a>
+      </li>
+
+      <!-- Settings -->
+      <li>
+        <a href="/pos/settings" 
+          class="sidebar-item flex items-center px-3 py-2 rounded-xl hover:bg-indigo-600/90 transition-all duration-300 group"
+          :class="{ 
+            'bg-indigo-600/80 shadow-md': currentPage === 'settings', 
+            'justify-center': isSidebarCollapsed,
+            'px-3': !isSidebarCollapsed
+          }">
+          <div class="flex items-center justify-center w-7 h-7 rounded-xl bg-indigo-800/50 group-hover:bg-white/20 transition-all duration-300">
+            <i class="fas fa-cog text-xs group-hover:scale-110 transition-transform"></i>
+          </div>
+          <span class="ml-3 text-sm font-medium text-white/90 group-hover:text-white transition-all"
+                :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">Settings</span>
+          <span x-show="isSidebarCollapsed" class="sr-only">Settings</span>
+          <div x-show="isSidebarCollapsed && currentPage === 'settings'" class="absolute right-2 w-1.5 h-1.5 bg-white rounded-full"></div>
+        </a>
+      </li>
+
+      <!-- Divider -->
+      <li class="border-t border-indigo-800/50 my-2 mx-3 rounded-full"></li>
+
+      <!-- Help -->
+      <li>
+        <a href="/pos/help" 
+          class="sidebar-item flex items-center px-3 py-2 rounded-xl hover:bg-indigo-600/90 transition-all duration-300 group"
+          :class="{ 
+            'bg-indigo-600/80 shadow-md': currentPage === 'help', 
+            'justify-center': isSidebarCollapsed,
+            'px-3': !isSidebarCollapsed
+          }">
+          <div class="flex items-center justify-center w-7 h-7 rounded-xl bg-indigo-800/50 group-hover:bg-white/20 transition-all duration-300">
+            <i class="fas fa-question-circle text-xs group-hover:scale-110 transition-transform"></i>
+          </div>
+          <span class="ml-3 text-sm font-medium text-white/90 group-hover:text-white transition-all"
+                :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">Help</span>
+          <span x-show="isSidebarCollapsed" class="sr-only">Help</span>
+          <div x-show="isSidebarCollapsed && currentPage === 'help'" class="absolute right-2 w-1.5 h-1.5 bg-white rounded-full"></div>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Sync Status & Logout Button -->
+  <div class="p-3 border-t border-indigo-800/50">
+    <!-- Sync Status - Collapsible -->
+    <div class="flex items-center justify-between mb-3 px-2 py-1.5 rounded-xl bg-indigo-800/30 hover:bg-indigo-800/50 transition-all duration-300"
+         :class="{ 'justify-center': isSidebarCollapsed }">
+      <div class="flex items-center space-x-2">
+        <div class="w-2 h-2 rounded-full bg-green-400 pulse"></div>
+        <span class="text-xs font-medium text-white/90" 
+              :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">Online</span>
+      </div>
+      <div class="flex items-center" :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">
+        <span class="text-xs mr-2 truncate text-white/80" x-text="lastSyncTime || 'Not synced'"></span>
+        <button @click="syncData()" class="text-indigo-200 hover:text-white transition-colors hover:scale-110">
+          <i class="fas fa-sync-alt text-xs" :class="{'fa-spin': isSyncing}"></i>
         </button>
-      </form>
-    </li>
-  </ul>
+      </div>
+      <button x-show="isSidebarCollapsed" @click="syncData()" 
+              class="text-indigo-200 hover:text-white transition-colors hover:scale-110"
+              title="Sync Data">
+        <i class="fas fa-sync-alt text-xs" :class="{'fa-spin': isSyncing}"></i>
+      </button>
+    </div>
+
+    <!-- Logout Button - Collapsible -->
+    <button @click="requestLogout()" 
+      class="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-red-500/90 to-red-600/90 hover:from-red-600 hover:to-red-700 text-white py-2 rounded-xl transition-all duration-300 hover:shadow-md group"
+      :class="{ 'px-2': isSidebarCollapsed, 'px-3': !isSidebarCollapsed }">
+      <i class="fas fa-sign-out-alt group-hover:scale-110 transition-transform"></i>
+      <span class="text-sm font-medium group-hover:scale-105 transition-transform"
+            :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">Logout</span>
+    </button>
+  </div>
+
+  <!-- Version Info - Collapsible -->
+  <div class="p-2 text-center">
+    <p class="text-xs text-indigo-300/80 transition-all duration-300"
+       :class="{ 'text-center': isSidebarCollapsed, 'text-left px-3': !isSidebarCollapsed }">
+      <span x-show="!isSidebarCollapsed">Taman Sari POS </span>v1.2.0
+    </p>
+  </div>
 </div>
