@@ -72,4 +72,4 @@ Route::prefix('rcv')->group(function () {
 });
 Route::post('/cost-change/store', [CostChangeController::class, 'store']);
 
-Route::apiResource('products', ProductController::class);
+Route::get('/products/list-datas', [ProductController::class, 'datas'])->name('products.datas');
