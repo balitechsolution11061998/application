@@ -12,10 +12,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
 {
-    public function __construct()
-{
-    $this->middleware('auth'); // This could cause redirects if not authenticated
-}
+
 
     public function index()
     {

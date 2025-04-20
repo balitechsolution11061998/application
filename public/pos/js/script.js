@@ -553,56 +553,31 @@ function initApp() {
     // Fungsi untuk mengambil data dari API
     async fetchProductsFromAPI() {
       try {
-        const apiUrl = '/products/list-datas'; // Make sure this matches your Laravel route
-        
+        // CORS Solution: Using proxy in development
+        const apiUrl = 'https://www.publicconcerns.online/api/products/list-datas';
+
         const response = await fetch(apiUrl, {
           headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'application/json'
+            'X-Requested-With': 'XMLHttpRequest'
           }
         });
-    
+
         if (!response.ok) {
           throw new Error(`Failed to fetch products: ${response.status} ${response.statusText}`);
         }
-    
-        const responseData = await response.json();
-        
-        // Handle both single product and product list responses
-        const productsData = responseData.data || responseData;
-        
-        console.log("API Response:", responseData);
-        
-        // Transform the API data to match your frontend needs
-        return Array.isArray(productsData) 
-          ? productsData.map(product => this.formatProduct(product))
-          : [this.formatProduct(productsData)];
-          
+
+        const data = await response.json();
+        console.log("Products loaded:", data);
+
+        return data.map(product => ({
+          ...product,
+          isLoading: false
+        }));
       } catch (error) {
         console.error('Error fetching products:', error);
         safeToastr.error('Failed to load products. Please check your connection.');
         return [];
       }
-    },
-    
-    // Helper function to format product data consistently
-    formatProduct(product) {
-      return {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        sku: product.sku,
-        image_url: product.image_url || '/images/default-product.png',
-        description: product.description || '',
-        company: product.company ? {
-          id: product.company.id,
-          name: product.company.name,
-          logo: product.company.logo_url
-        } : null,
-        is_active: product.is_active,
-        created_at: product.created_at,
-        isLoading: false
-      };
     },
 
     // Show animated toast message with icon
