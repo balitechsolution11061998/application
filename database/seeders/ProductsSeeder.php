@@ -5,8 +5,10 @@ namespace Database\Seeders;
 use App\Models\Bonus;
 use App\Models\Expense;
 use App\Models\Product;
+use App\Models\Paguyuban;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ProductsSeeder extends Seeder
 {
@@ -40,19 +42,19 @@ class ProductsSeeder extends Seeder
             [
                 'name' => 'Janggolan Dalam Up', 
                 'price' => 15000, 
-                'sku' => 'JANGGOLAN DALAM UP',
+                'sku' => 'JANGGOLAN-DALAM-UP',  // Fixed SKU format for consistency
                 'image' => '/img/pos/janggolan-dalam.jpg'
             ],
             [
                 'name' => 'Janggolan Luar 2x DV', 
                 'price' => 200000, 
-                'sku' => 'JANGGOLAN LUAR 2x DV',
+                'sku' => 'JANGGOLAN-LUAR-2X-DV',  // Fixed SKU format for consistency
                 'image' => '/img/pos/janggolan-dalam.jpg'
             ],
             [
                 'name' => 'Janggolan Luar 3x DV', 
                 'price' => 325000, 
-                'sku' => 'JANGGOLAN LUAR 3x DV',
+                'sku' => 'JANGGOLAN-LUAR-3X-DV',  // Fixed SKU format for consistency
                 'image' => '/img/pos/janggolan-dalam.jpg'
             ],
             [
@@ -136,6 +138,25 @@ class ProductsSeeder extends Seeder
             ],
         ];
 
+        // Define paguyubans (community groups)
+        $paguyubans = [
+            [
+                'name' => 'Paguyuban Tanjung Benoa',
+                'description' => 'Komunitas penyedia layanan wisata di area Tanjung Benoa',
+                'logo' => '/img/paguyuban/tanjung-benoa.png',
+            ],
+            [
+                'name' => 'Paguyuban Sanur',
+                'description' => 'Komunitas penyedia layanan wisata di area Sanur',
+                'logo' => '/img/paguyuban/sanur.png',
+            ],
+            [
+                'name' => 'Paguyuban Kuta',
+                'description' => 'Komunitas penyedia layanan wisata di area Kuta',
+                'logo' => '/img/paguyuban/kuta.png',
+            ],
+        ];
+
         // Seed products first
         $createdProducts = [];
         foreach ($products as $productData) {
@@ -156,19 +177,19 @@ class ProductsSeeder extends Seeder
         // Define bonuses that will link to existing products
         $bonuses = [
             [
-                'product_sku' => 'BANANA-BOAT', // This must match an existing product SKU
+                'product_sku' => 'BANANA-BOAT',
                 'name' => 'Bonus Banana Boat',
                 'bonus_type' => 'monthly',
                 'amount' => 100000,
             ],
             [
-                'product_sku' => 'TUBBING', // This must match an existing product SKU
+                'product_sku' => 'TUBBING',
                 'name' => 'Bonus Tubbing',
                 'bonus_type' => 'monthly',
                 'amount' => 150000,
             ],
             [
-                'product_sku' => 'OPER-PAR-ADV', // This must match an existing product SKU
+                'product_sku' => 'OPER-PAR-ADV',
                 'name' => 'Bonus Par Adv',
                 'bonus_type' => 'monthly',
                 'amount' => 125000,
@@ -184,11 +205,11 @@ class ProductsSeeder extends Seeder
                     'bonus_type' => $bonusData['bonus_type'],
                     'amount' => $bonusData['amount'],
                     'valid_from' => now(),
-                    'valid_to' => now()->addMonth(),
+                    'valid_to' => now()->addYear(),  // Extended validity period
                     'is_active' => true,
                 ]);
             } else {
-                throw new \Exception("Product with SKU {$bonusData['product_sku']} not found for bonus creation.");
+                Log::warning("Product with SKU {$bonusData['product_sku']} not found for bonus creation. Skipping this bonus.");
             }
         }
 
@@ -204,6 +225,51 @@ class ProductsSeeder extends Seeder
                 'is_recurring' => true,
                 'recurrence' => 'monthly',
                 'is_active' => true,
+            ]);
+        }
+
+        // Seed paguyubans
+        $createdPaguyubans = [];
+        foreach ($paguyubans as $paguyubanData) {
+            $paguyuban = Paguyuban::create([
+                'name' => $paguyubanData['name'],
+                'description' => $paguyubanData['description'],
+                'logo' => $paguyubanData['logo'],
+                'is_active' => true,
+            ]);
+            $createdPaguyubans[$paguyuban->name] = $paguyuban;
+        }
+
+        // Define product-paguyuban special prices mapping
+        // Only include mappings for products that definitely exist
+        $productPaguyubanPrices = [
+            // Format: [product_sku, paguyuban_name, special_price]
+            ['DIVE-FEE', 'Paguyuban Tanjung Benoa', 18000],
+            ['DIVE-FEE', 'Paguyuban Sanur', 19000],
+            ['BANANA-BOAT', 'Paguyuban Tanjung Benoa', 150000],
+            ['TUBBING', 'Paguyuban Tanjung Benoa', 125000],
+            ['OPER-JET-SKI', 'Paguyuban Kuta', 90000],
+            ['OPER-FLY-FISH', 'Paguyuban Sanur', 90000],
+        ];
+
+        // Seed product_paguyuban (special prices for products in specific paguyubans)
+        foreach ($productPaguyubanPrices as [$productSku, $paguyubanName, $specialPrice]) {
+            if (!isset($createdProducts[$productSku])) {
+                Log::warning("Product with SKU {$productSku} not found for creating product_paguyuban relation. Skipping this relation.");
+                continue;
+            }
+            
+            if (!isset($createdPaguyubans[$paguyubanName])) {
+                Log::warning("Paguyuban {$paguyubanName} not found for creating product_paguyuban relation. Skipping this relation.");
+                continue;
+            }
+            
+            DB::table('product_paguyuban')->insert([
+                'product_id' => $createdProducts[$productSku]->id,
+                'paguyuban_id' => $createdPaguyubans[$paguyubanName]->id,
+                'price' => $specialPrice,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
     }

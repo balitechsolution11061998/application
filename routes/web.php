@@ -311,17 +311,33 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::get('/poskasir', [PosController::class, 'pos'])->name('pos.index');
-    Route::prefix('product')->group(function () {
-        Route::get('/', [ProductController::class, 'index'])->name('product.index');
-        Route::get('/create', [ProductController::class, 'create'])->name('product.create');
-        Route::post('/', [ProductController::class, 'store'])->name('product.store');
-        Route::get('/{product}', [ProductController::class, 'detail'])->name('product.detail');
-        Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('product.edit');
-        Route::put('/{product}', [ProductController::class, 'update'])->name('product.update');
-        Route::delete('/{product}', [ProductController::class, 'destroy'])->name('product.destroy');
+
+    Route::prefix('products')->group(function () {
+        // Main resource routes
+        Route::resource('/', ProductController::class)
+            ->parameters(['' => 'product']) // Maps `/product/{product}` to $product
+            ->names([
+                'index'   => 'products.index',
+                'create'  => 'products.create',
+                'store'   => 'products.store',
+                'show'    => 'products.show',
+                'edit'    => 'products.edit',
+                'update'  => 'products.update',
+                'destroy' => 'products.destroy',
+            ]);
+        
+        // Custom route for fetching product data
+        Route::get('/list-data', [ProductController::class, 'data'])->name('products.data');
+        Route::get('/list-datas', [ProductController::class, 'datas'])->name('products.datas');
+
+        
+        // Custom route for toggle-status
         Route::post('/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('product.toggle-status');
-        Route::get('/data', [ProductController::class, 'data'])->name('product.data');
     });
+    
+    
+    
+
 
     Route::prefix('paguyubans')->group(function () {
         Route::get('/', [PaguyubanController::class, 'index'])->name('paguyubans.index');

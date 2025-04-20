@@ -13,14 +13,17 @@ class Paguyuban extends Model
     protected $fillable = [
         'name',
         'description',
-        'is_active',
-        'logo'
+        'logo',
+        'is_active'
     ];
 
     protected $casts = [
         'is_active' => 'boolean'
     ];
 
+    /**
+     * Get the products associated with the paguyuban.
+     */
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class)
@@ -28,6 +31,9 @@ class Paguyuban extends Model
             ->withTimestamps();
     }
 
+    /**
+     * Get the logo URL attribute.
+     */
     public function getLogoUrlAttribute()
     {
         return $this->logo ? asset('storage/paguyubans/' . $this->logo) : asset('images/default-paguyuban.png');
