@@ -275,6 +275,102 @@
       font-size: 0.875rem;
     }
   }
+  .filter-chip {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .filter-chip:hover {
+      transform: translateY(-2px);
+    }
+    
+    .filter-chip.active {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5); }
+      70% { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+    
+    .scroll-button {
+      opacity: 0.8;
+      transition: all 0.2s ease;
+    }
+    
+    .scroll-button:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+    
+    .slider-container {
+      mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    }
+    
+    .section-title {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      bottom: -4px;
+      left: 0;
+      background: linear-gradient(to right, currentColor, transparent);
+      transform: scaleX(0.7);
+      transform-origin: bottom left;
+      transition: transform 0.3s ease-out;
+    }
+    
+    .section-title:hover::after {
+      transform: scaleX(1);
+    }
+    
+    .badge-pulse {
+      animation: badgePulse 1.5s infinite;
+    }
+    
+    @keyframes badgePulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    .company-logo {
+      transition: all 0.3s ease;
+    }
+    
+    .company-logo:hover {
+      transform: rotate(10deg);
+    }
+    
+    .scroll-container {
+      position: relative;
+    }
+    
+    .scroll-gradient-left,
+    .scroll-gradient-right {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 40px;
+      pointer-events: none;
+      z-index: 2;
+    }
+    
+    .scroll-gradient-left {
+      left: 0;
+      background: linear-gradient(to right, white, rgba(255,255,255,0));
+    }
+    
+    .scroll-gradient-right {
+      right: 0;
+      background: linear-gradient(to left, white, rgba(255,255,255,0));
+    }
   </style>
 </head>
 
@@ -448,7 +544,7 @@
 
   <!-- Print Area -->
   <div id="print-area" class="print-area"></div>
-
+  
   <script>
     if (typeof toastr !== 'undefined') {
       toastr.options = {

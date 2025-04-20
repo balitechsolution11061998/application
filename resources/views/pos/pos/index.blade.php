@@ -5,16 +5,93 @@
   <!-- Product Menu Section -->
   <div class="flex flex-col bg-gradient-to-br from-gray-50 to-gray-100 h-full w-full py-6 px-4">
     <!-- Search Bar (Fixed) -->
-    <div class="flex px-2 flex-row relative mb-6">
-      <div class="absolute left-5 top-3 px-2 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-md transform hover:scale-105 transition-transform">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
+    <div class="w-full max-w-2xl search-container">
+      <!-- Search Bar with Enhanced Effects -->
+      <div class="relative mb-6">
+        <!-- Animated Search Icon -->
+        <div class="absolute left-5 top-3 px-3 py-3 rounded-full bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-400 text-white shadow-lg transform hover:scale-110 transition-transform duration-300 cursor-pointer search-icon z-10">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+
+        <!-- Enhanced Input -->
+        <input type="text"
+          class="search-input bg-white rounded-2xl shadow-lg text-lg w-full h-16 py-4 pl-20 pr-12 transition-all duration-300 focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-400 border border-gray-200"
+          placeholder="Search delicious menu items..."
+          x-model="keyword"
+          @focus="showSuggestions = true"
+          @blur="setTimeout(() => showSuggestions = false, 200)" />
+
+        <!-- Popular Badge -->
+        <div class="absolute right-4 top-3 search-badge">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-pink-500 to-orange-500 text-white shadow-sm">
+            Popular
+          </span>
+        </div>
+
+        <!-- Search Suggestions Dropdown -->
+        <div class="search-suggestions absolute w-full mt-2 bg-white rounded-xl shadow-xl z-20 border border-gray-100 overflow-hidden" x-show="showSuggestions" style="display: none;">
+          <div class="p-3 bg-gradient-to-r from-blue-50 to-purple-50">
+            <h3 class="text-sm font-semibold text-gray-600">Popular Searches</h3>
+          </div>
+          <div>
+            <template x-for="item in suggestions.filter(s => s.toLowerCase().includes(keyword.toLowerCase()))" :key="item">
+              <div class="px-4 py-3 hover:bg-blue-50 cursor-pointer flex items-center transition-all duration-200" @click="keyword = item">
+                <div class="text-blue-500 mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+                  </svg>
+                </div>
+                <span x-text="item" class="text-gray-700"></span>
+              </div>
+            </template>
+          </div>
+        </div>
       </div>
-      <input type="text"
-        class="bg-white rounded-2xl shadow-lg text-lg full w-full h-14 py-4 pl-16 transition-all duration-300 focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-cyan-300 border border-gray-200"
-        placeholder="Search menu ..." x-model="keyword" />
+
+      <!-- Quick Category Pills -->
+      <div class="flex flex-wrap gap-2 justify-center mb-6">
+        <div class="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer">
+          <span class="font-medium">All Menu</span>
+        </div>
+        <div class="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer">
+          <span class="font-medium">Popular</span>
+        </div>
+        <div class="px-4 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-full shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer">
+          <span class="font-medium">Discount</span>
+        </div>
+        <div class="px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-full shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer">
+          <span class="font-medium">New Items</span>
+        </div>
+      </div>
+
+      <!-- Recent Searches -->
+      <div class="bg-white p-4 rounded-xl shadow-md">
+        <h3 class="text-sm font-semibold text-gray-500 mb-3">Recent Searches</h3>
+        <div class="flex flex-wrap gap-2">
+          <div class="flex items-center px-3 py-1 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 cursor-pointer">
+            <span class="text-gray-600 text-sm">Spicy Ramen</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
+          <div class="flex items-center px-3 py-1 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 cursor-pointer">
+            <span class="text-gray-600 text-sm">Vegetarian</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
+          <div class="flex items-center px-3 py-1 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 cursor-pointer">
+            <span class="text-gray-600 text-sm">Desserts</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
+        </div>
+      </div>
     </div>
+
     <!-- Add this section below the search bar and above the product grid -->
     <div class="px-2 mb-4">
       <!-- Community Filter -->
@@ -129,7 +206,8 @@
       </div>
     </div>
 
-    
+
+
 
 
     <!-- Product Grid (Scrollable) -->
@@ -255,50 +333,30 @@
         <p class="text-gray-600 text-center mt-2">Add products to start a transaction</p>
       </div>
 
-      <!-- Cart Items (Fixed Height with Scroll) -->
+      <!-- Cart Items List with Enhanced Design -->
       <div x-show="cart.length > 0" class="flex-1 flex flex-col overflow-hidden">
-        <!-- Cart Header (Fixed) -->
-        <div class="h-16 flex items-center justify-between px-6 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
-          <div class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            <span class="ml-2 font-medium text-gray-700">Current Order</span>
-            <div x-show="getItemsCount() > 0"
-              class="ml-2 bg-cyan-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-sm"
-              x-text="getItemsCount()"></div>
-          </div>
-
-          <!-- Clear Cart Button -->
-          <button x-on:click="clear()" class="text-gray-400 hover:text-red-500 focus:outline-none transition-colors transform hover:scale-110" title="Clear cart">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </button>
-        </div>
-
         <!-- Cart Items List (Scrollable) -->
         <div class="flex-1 w-full px-4 py-4 overflow-y-auto">
           <template x-for="item in cart" :key="item.productId">
-            <div class="select-none mb-3 bg-gradient-to-br from-gray-50 to-white rounded-lg w-full text-gray-700 py-3 px-3 flex items-center relative group hover:bg-gray-50 transition-all border border-gray-100 shadow-sm">
+            <div class="select-none mb-3 bg-gradient-to-br from-gray-50 to-white rounded-lg w-full text-gray-700 py-3 px-3 flex items-center relative group hover:bg-gray-50 transition-all border border-gray-100 shadow-sm hover:shadow-md">
               <!-- Loading Spinner -->
               <div x-show="item.isLoading"
                 class="absolute inset-0 flex justify-center items-center bg-white/90 backdrop-blur-sm rounded-lg z-10">
-                <i class="fas fa-spinner fa-spin text-xl text-cyan-500"></i>
+                <div class="w-8 h-8 border-t-2 border-b-2 border-cyan-500 rounded-full animate-spin"></div>
               </div>
 
-              <!-- Product Image -->
+              <!-- Product Image with Improved Badge -->
               <div class="relative">
-                <img :src="item.image || '/img/no-image.jpg'" :alt="item.name" class="rounded-lg h-12 w-12 object-cover shadow-sm border border-gray-200">
-                <div class="absolute -top-1 -right-1 bg-cyan-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-sm" x-text="item.qty"></div>
+                <img :src="item.image || '/img/no-image.jpg'" :alt="item.name" class="rounded-lg h-14 w-14 object-cover shadow-sm border border-gray-200">
+                <div class="absolute -top-2 -right-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full shadow-sm" x-text="item.qty"></div>
               </div>
 
-              <!-- Product Info -->
+              <!-- Product Info with Better Layout -->
               <div class="flex-grow ml-3">
                 <!-- Product Name -->
                 <h5 class="text-sm font-medium" x-text="item.name"></h5>
 
-                <!-- Price -->
+                <!-- Price with Better Display -->
                 <div class="flex items-center">
                   <p x-show="item.discount" class="text-xs line-through text-gray-400 mr-1" x-text="priceFormat(item.price)"></p>
                   <p class="text-xs text-cyan-600 font-semibold"
@@ -318,7 +376,7 @@
                 </div>
               </div>
 
-              <!-- Quantity Controls -->
+              <!-- Quantity Controls with Improved Style -->
               <div class="ml-3">
                 <div class="w-28 grid grid-cols-3 gap-2">
                   <!-- Decrease Quantity -->
@@ -347,6 +405,7 @@
         </div>
       </div>
       <!-- End Cart Items -->
+
 
       <!-- Payment Summary (Fixed) -->
       <div class="w-full px-6 py-4 border-t border-gray-100 bg-gradient-to-b from-white to-gray-50">

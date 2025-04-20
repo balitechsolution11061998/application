@@ -85,7 +85,7 @@
 
       <!-- Products -->
       <li>
-        <a href="/pos/products" 
+        <a href="/products" 
           class="sidebar-item flex items-center px-3 py-2 rounded-xl hover:bg-indigo-600/90 transition-all duration-300 group"
           :class="{ 
             'bg-indigo-600/80 shadow-md': currentPage === 'products', 

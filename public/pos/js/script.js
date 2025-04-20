@@ -45,7 +45,7 @@ function initApp() {
       timeOut: 3000
     };
   }
-  
+
   return {
     db: null,
     time: null,
@@ -85,52 +85,82 @@ function initApp() {
     transactionDate: null,
     useCustomDate: false,
     autoPrint: true, // New option for auto printing
-      // ... existing data properties ...
-  communities: [
-    { id: 'kom1', name: 'Tanjung Benoa', logo: '/img/communities/benoa.jpg' },
-    { id: 'kom2', name: 'Sanur', logo: '/img/communities/sanur.jpg' },
-    { id: 'kom3', name: 'Kuta', logo: '/img/communities/kuta.jpg' },
-    { id: 'kom4', name: 'Nusa Dua', logo: '/img/communities/nusadua.jpg' }
-  ],
-  companies: [
-    { id: 'comp1', name: 'Bali Watersport', logo: '/img/companies/bali-ws.jpg', discount: 10 },
-    { id: 'comp2', name: 'Ocean Paradise', logo: '/img/companies/ocean.jpg', discount: 15 },
-    { id: 'comp3', name: 'Sea Safari', logo: '/img/companies/safari.jpg' },
-    { id: 'comp4', name: 'Waterbom', logo: '/img/companies/waterbom.jpg', discount: 5 }
-  ],
-  activeCommunity: '',
-  activeCompany: '',
-  isSidebarCollapsed:true,
-  communityScrollLeft() {
-    this.$refs.communitySlider.scrollBy({ left: -200, behavior: 'smooth' });
-  },
-  communityScrollRight() {
-    this.$refs.communitySlider.scrollBy({ left: 200, behavior: 'smooth' });
-  },
-  companyScrollLeft() {
-    this.$refs.companySlider.scrollBy({ left: -200, behavior: 'smooth' });
-  },
-  companyScrollRight() {
-    this.$refs.companySlider.scrollBy({ left: 200, behavior: 'smooth' });
-  },
+    showSuggestions: true,
+    suggestions: [], // Initialize as an empty array
+    suggestions: ['Product 1', 'Product 2', 'Category A', 'Category B'],
+    activeCommunity: '',
+    activeCompany: '',
+    communities: [
+      { id: 'kom1', name: 'Tanjung Benoa', logo: '/img/communities/benoa.jpg', members: 126 },
+      { id: 'kom2', name: 'Sanur', logo: '/img/communities/sanur.jpg', members: 84 },
+      { id: 'kom3', name: 'Kuta', logo: '/img/communities/kuta.jpg', members: 215 },
+      { id: 'kom4', name: 'Nusa Dua', logo: '/img/communities/nusadua.jpg', members: 63 }
+    ],
+    companies: [
+      { id: 'comp1', name: 'Bali Watersport', logo: '/img/companies/bali-ws.jpg', discount: 10, rating: 4.8 },
+      { id: 'comp2', name: 'Ocean Paradise', logo: '/img/companies/ocean.jpg', discount: 15, rating: 4.6 },
+      { id: 'comp3', name: 'Sea Safari', logo: '/img/companies/safari.jpg', rating: 4.9 },
+      { id: 'comp4', name: 'Waterbom', logo: '/img/companies/waterbom.jpg', discount: 5, rating: 4.7 }
+    ],
+    communityScrollLeft() {
+      this.$refs.communitySlider.scrollBy({ left: -200, behavior: 'smooth' });
+    },
+    communityScrollRight() {
+      this.$refs.communitySlider.scrollBy({ left: 200, behavior: 'smooth' });
+    },
+    companyScrollLeft() {
+      this.$refs.companySlider.scrollBy({ left: -200, behavior: 'smooth' });
+    },
+    companyScrollRight() {
+      this.$refs.companySlider.scrollBy({ left: 200, behavior: 'smooth' });
+    },
 
-  filteredProducts() {
-    return this.products.filter(product => {
-      const matchesKeyword = product.name.toLowerCase().includes(this.keyword.toLowerCase()) || 
-                            product.category.toLowerCase().includes(this.keyword.toLowerCase());
-      const matchesCommunity = !this.activeCommunity || product.communities.includes(this.activeCommunity);
-      const matchesCompany = !this.activeCompany || product.companies.includes(this.activeCompany);
-      
-      return matchesKeyword && matchesCommunity && matchesCompany;
-    });
-  },
-    
+    // ... existing data properties ...
+    communities: [
+      { id: 'kom1', name: 'Tanjung Benoa', logo: '/img/communities/benoa.jpg' },
+      { id: 'kom2', name: 'Sanur', logo: '/img/communities/sanur.jpg' },
+      { id: 'kom3', name: 'Kuta', logo: '/img/communities/kuta.jpg' },
+      { id: 'kom4', name: 'Nusa Dua', logo: '/img/communities/nusadua.jpg' }
+    ],
+    companies: [
+      { id: 'comp1', name: 'Bali Watersport', logo: '/img/companies/bali-ws.jpg', discount: 10 },
+      { id: 'comp2', name: 'Ocean Paradise', logo: '/img/companies/ocean.jpg', discount: 15 },
+      { id: 'comp3', name: 'Sea Safari', logo: '/img/companies/safari.jpg' },
+      { id: 'comp4', name: 'Waterbom', logo: '/img/companies/waterbom.jpg', discount: 5 }
+    ],
+    activeCommunity: '',
+    activeCompany: '',
+    isSidebarCollapsed: true,
+    communityScrollLeft() {
+      this.$refs.communitySlider.scrollBy({ left: -200, behavior: 'smooth' });
+    },
+    communityScrollRight() {
+      this.$refs.communitySlider.scrollBy({ left: 200, behavior: 'smooth' });
+    },
+    companyScrollLeft() {
+      this.$refs.companySlider.scrollBy({ left: -200, behavior: 'smooth' });
+    },
+    companyScrollRight() {
+      this.$refs.companySlider.scrollBy({ left: 200, behavior: 'smooth' });
+    },
+
+    filteredProducts() {
+      return this.products.filter(product => {
+        const matchesKeyword = product.name.toLowerCase().includes(this.keyword.toLowerCase()) ||
+          product.category.toLowerCase().includes(this.keyword.toLowerCase());
+        const matchesCommunity = !this.activeCommunity || product.communities.includes(this.activeCommunity);
+        const matchesCompany = !this.activeCompany || product.companies.includes(this.activeCompany);
+
+        return matchesKeyword && matchesCommunity && matchesCompany;
+      });
+    },
+
     hasActiveSession() {
       const authToken = localStorage.getItem('authToken');
       const userData = localStorage.getItem('user');
       return authToken && userData;
     },
-    
+
     showDateSetting() {
       // Set default to current date/time
       const now = new Date();
@@ -138,7 +168,7 @@ function initApp() {
       this.transactionDate = now.toISOString().slice(0, 16);
       this.showDateModal = true;
     },
-    
+
     toggleSidebar() {
       this.isSidebarOpen = !this.isSidebarOpen;
     },
@@ -168,7 +198,7 @@ function initApp() {
       this.checkSession();
       this.startActivityMonitor();
       this.initCharts();
-      
+
       // Load user preference for auto print if available
       const savedAutoPrint = localStorage.getItem('autoPrint');
       if (savedAutoPrint !== null) {
@@ -223,7 +253,7 @@ function initApp() {
       const now = new Date().getTime();
       const storedLastActivity = localStorage.getItem('lastActivity');
       this.lastActivity = storedLastActivity ? parseInt(storedLastActivity) : now;
-      
+
       const timeLeft = this.lastActivity + this.sessionTimeout - now;
 
       if (timeLeft <= 0) {
@@ -351,12 +381,12 @@ function initApp() {
       if (event) {
         event.preventDefault();
       }
-      
+
       if (!this.username || !this.password) {
         safeToastr.error("Please enter both username and password");
         return;
       }
-      
+
       try {
         this.isLoggingIn = true;
 
@@ -384,7 +414,7 @@ function initApp() {
         });
 
         const data = await response.json();
-        
+
         if (response.ok && data.success) {
           // Login successful
           this.isLoggedIn = true;
@@ -456,9 +486,9 @@ function initApp() {
 
         // Setelah waktu habis, jalankan fungsi logout
         swalInstance.then((result) => {
-          if (result.dismiss !== Swal.DismissReason.backdrop && 
-              result.dismiss !== Swal.DismissReason.close && 
-              result.dismiss !== Swal.DismissReason.esc) {
+          if (result.dismiss !== Swal.DismissReason.backdrop &&
+            result.dismiss !== Swal.DismissReason.close &&
+            result.dismiss !== Swal.DismissReason.esc) {
             this.logout(); // Panggil fungsi logout
             this.confirmLogout();
             Swal.fire('Anda telah logout!', 'Sesi Anda telah berakhir karena tidak ada aktivitas.', 'info');
@@ -525,7 +555,7 @@ function initApp() {
       try {
         // CORS Solution: Using proxy in development
         const apiUrl = 'https://www.publicconcerns.online/api/products';
-        
+
         const response = await fetch(apiUrl, {
           headers: {
             'X-Requested-With': 'XMLHttpRequest'
@@ -549,11 +579,11 @@ function initApp() {
         return [];
       }
     },
-    
+
     // Show animated toast message with icon
     showAnimatedToast(type, message, icon) {
       if (!type || !message) return;
-      
+
       safeToastr[type](`<i class="${icon} mr-2"></i> ${message}`);
     },
 
@@ -562,11 +592,11 @@ function initApp() {
       try {
         this.loadingSampleData = true;
         const response = await fetch("data/sample.json");
-        
+
         if (!response.ok) {
           throw new Error(`Failed to load sample data: ${response.status}`);
         }
-        
+
         const data = await response.json();
         this.products = data.products;
         this.setFirstTime(false);
@@ -600,18 +630,18 @@ function initApp() {
       if (!this.products || this.products.length === 0) {
         return []; // Kembalikan array kosong jika products belum diinisialisasi
       }
-      
+
       if (!this.keyword) {
         return this.products;
       }
-      
+
       try {
         const rg = new RegExp(this.keyword, "gi");
         return this.products.filter((p) => p.name.match(rg));
       } catch (e) {
         // Handle invalid regex
         console.warn('Invalid regex in search:', e);
-        return this.products.filter((p) => 
+        return this.products.filter((p) =>
           p.name.toLowerCase().includes(this.keyword.toLowerCase())
         );
       }
@@ -731,13 +761,13 @@ function initApp() {
         this.showDateSetting();
         return;
       }
-    
+
       const time = this.getTransactionDate();
       this.isShowModalReceipt = true;
       this.receiptNo = `TWPOS-KS-${Math.round(time.getTime() / 1000)}`;
       this.receiptDate = this.dateFormat(time);
       this.resetLogoutTimer();
-    
+
       if (this.autoPrint) {
         this.$nextTick(() => {
           setTimeout(() => {
@@ -766,7 +796,7 @@ function initApp() {
     // Fungsi untuk memformat angka
     numberFormat(number) {
       if (number === null || number === undefined) return "0";
-      
+
       return number.toString()
         .replace(/^0|\./g, "")
         .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
@@ -804,7 +834,7 @@ function initApp() {
         sound.src = src;
         sound.play()
           .catch(e => console.warn('Sound playback failed:', e));
-        sound.onended = () => delete(sound);
+        sound.onended = () => delete (sound);
       } catch (e) {
         console.warn('Error playing sound:', e);
       }
@@ -814,7 +844,7 @@ function initApp() {
     printAndProceed() {
       try {
         window.print();
-        
+
         // Delay untuk memastikan print dialog terbuka
         setTimeout(() => {
           this.isShowModalReceipt = false;
@@ -827,7 +857,7 @@ function initApp() {
         safeToastr.error('Failed to print receipt. Please try again.');
       }
     },
-    
+
     // Save transaction to history (placeholder)
     saveTransaction() {
       try {
@@ -840,16 +870,16 @@ function initApp() {
           cash: this.cash,
           change: this.change
         };
-        
+
         // Get existing transactions or initialize empty array
         const existingTransactions = JSON.parse(localStorage.getItem('transactions') || '[]');
-        
+
         // Add new transaction
         existingTransactions.push(transaction);
-        
+
         // Save back to localStorage
         localStorage.setItem('transactions', JSON.stringify(existingTransactions));
-        
+
         console.log('Transaction saved:', transaction);
       } catch (e) {
         console.error('Error saving transaction:', e);

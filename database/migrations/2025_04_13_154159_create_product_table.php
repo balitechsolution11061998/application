@@ -30,9 +30,10 @@ return new class extends Migration
         // Create paguyubans table (komunitas paguyuban)
         Schema::create('paguyubans', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Nama paguyuban
-            $table->text('description')->nullable(); // Deskripsi paguyuban
+            $table->string('name');
+            $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->string('logo')->nullable(); // Kolom logo untuk menyimpan nama file logo
             $table->timestamps();
         });
 

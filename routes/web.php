@@ -40,39 +40,39 @@ use App\Http\Controllers\TpsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TandaTerimaController;
 use App\Http\Controllers\DashboardController;
-
-
+use App\Http\Controllers\PaguyubanController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TitleController;
 use App\Models\ItemSupplier;
 use Illuminate\Support\Facades\Route;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
 // Web Routes
-Route::get('/', function(){
+Route::get('/', function () {
     return view('welcomepage');
 });
 
-Route::get('/pariwisata', function(){
+Route::get('/pariwisata', function () {
     return view('pariwisata');
 });
 
-Route::get('/universitas', function(){
+Route::get('/universitas', function () {
     return view('university');
 });
 
-Route::get('/software_kasir', function(){
+Route::get('/software_kasir', function () {
     return view('software_kasir');
 });
 
-Route::get('/absensi', function(){
+Route::get('/absensi', function () {
     return view('absensi');
 });
 
-Route::get('/cv', function(){
+Route::get('/cv', function () {
     return view('cv');
 });
 
-Route::get('/ecommerce', function(){
+Route::get('/ecommerce', function () {
     return view('ecommerce');
 });
 
@@ -135,7 +135,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/send-account', [UserController::class, 'sendAccount'])->name('send-account');
         Route::get('/supplier/{supplier}/profile', [UserController::class, 'supplierProfile'])->name('supplier.profile');
         Route::get('/supplier/{supplier}/profile/update', [UserController::class, 'updateSupplierProfile'])->name('supplier.updateSupplierProfile');
-
     });
 
     // Dashboard Pilkada Routes
@@ -150,7 +149,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/purchase-orders/count-per-date', [DashboardPoController::class, 'getPOCountPerDate'])->name('getPOCountPerDate');
         Route::get('/purchase-orders/followUp', [DashboardPoController::class, 'followUp'])->name('followUp');
         Route::get('/purchase-orders/count-per-region', [DashboardPoController::class, 'getPOCountPerRegion'])->name('getPOCountPerRegion');
-
     });
 
     Route::prefix('dashboard-kependudukan')->as('dashboard-kependudukan.')->group(function () {
@@ -204,7 +202,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/edit/{id}', [StoreController::class, 'edit'])->name('edit');
         Route::delete('/destroy/{id}', [StoreController::class, 'delete'])->name('destroy');
         Route::get('/getStores', [StoreController::class, 'getStores'])->name('getStores');
-
     });
 
     Route::prefix('price-change')->as('price-change.')->group(function () {
@@ -216,7 +213,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::prefix('regions')->as('regions.')->group(function () {
         Route::get('/data', [RegionController::class, 'data'])->name('data');
         Route::get('/getRegions', [RegionController::class, 'getRegions'])->name('getRegions');
-
     });
 
     // Purchase Orders Routes
@@ -314,11 +310,32 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('titles', TitleController::class);
 
 
-    Route::get('/poskasir', [PosController::class,'pos'])->name('pos.index');
+    Route::get('/poskasir', [PosController::class, 'pos'])->name('pos.index');
+    Route::prefix('product')->group(function () {
+        Route::get('/', [ProductController::class, 'index'])->name('product.index');
+        Route::get('/create', [ProductController::class, 'create'])->name('product.create');
+        Route::post('/', [ProductController::class, 'store'])->name('product.store');
+        Route::get('/{product}', [ProductController::class, 'detail'])->name('product.detail');
+        Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('product.edit');
+        Route::put('/{product}', [ProductController::class, 'update'])->name('product.update');
+        Route::delete('/{product}', [ProductController::class, 'destroy'])->name('product.destroy');
+        Route::post('/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('product.toggle-status');
+        Route::get('/data', [ProductController::class, 'data'])->name('product.data');
+    });
 
+    Route::prefix('paguyubans')->group(function () {
+        Route::get('/', [PaguyubanController::class, 'index'])->name('paguyubans.index');
+        Route::get('/create', [PaguyubanController::class, 'create'])->name('paguyubans.create');
+        Route::post('/', [PaguyubanController::class, 'store'])->name('paguyubans.store');
+        Route::get('/{paguyuban}', [PaguyubanController::class, 'show'])->name('paguyubans.show');
+        Route::get('/{paguyuban}/edit', [PaguyubanController::class, 'edit'])->name('paguyubans.edit');
+        Route::put('/{paguyuban}', [PaguyubanController::class, 'update'])->name('paguyubans.update');
+        Route::delete('/{paguyuban}', [PaguyubanController::class, 'destroy'])->name('paguyubans.destroy');
+        Route::post('/{paguyuban}/toggle-status', [PaguyubanController::class, 'toggleStatus'])->name('paguyubans.toggle-status');
+    });
 });
 Route::post('/generate', [OpenAIController::class, 'generate']);
-Route::get('/loginPos', [PosController::class,'index'])->name('poskasir.index');
+Route::get('/loginPos', [PosController::class, 'index'])->name('poskasir.index');
 
 // Documentation Route
 Route::get('/docs', fn() => view('docs.index'));
