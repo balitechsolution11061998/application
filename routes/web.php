@@ -327,7 +327,6 @@ Route::group(['middleware' => ['auth']], function () {
             ]);
         
         // Custom route for fetching product data
-        Route::get('/list-data', [ProductController::class, 'data'])->name('products.data');
         Route::get('/list-datas', [ProductController::class, 'datas'])->name('products.datas');
 
         
@@ -335,7 +334,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('product.toggle-status');
     });
     
-    
+    Route::get('/product/list-data', [ProductController::class, 'data'])->name('products.data');
+
     
 
 

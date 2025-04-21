@@ -22,24 +22,70 @@ class ProductController extends Controller
 
     public function data(Request $request)
     {
-        $products = Product::with(['company:id,name'])
-            ->select(['id', 'name', 'sku', 'price', 'image', 'company_id', 'is_active', 'created_at', 'stock', 'stock_threshold', 'discount_price', 'description']);
-
-        return DataTables::of($products)
+        $query = Product::with(['company:id,name,logo'])
+            ->select([
+                'id', 
+                'name', 
+                'sku', 
+                'price', 
+                'image', 
+                'company_id', 
+                'is_active', 
+                'created_at',
+                'stock',
+                'stock_threshold',
+                'discount_price',
+                'description'
+                // Removed 'category' from select
+            ]);
+    
+        return DataTables::of($query)
             ->addColumn('image_url', function ($product) {
                 return $product->image ? asset('storage/' . $product->image) : asset('images/default-product.png');
             })
             ->addColumn('company_logo', function ($product) {
-                return $product->company && $product->company->logo ? asset('storage/' . $product->company->logo) : null;
+                return $product->company && $product->company->logo 
+                    ? asset('storage/' . $product->company->logo) 
+                    : null;
             })
             ->addColumn('category', function ($product) {
-                return $product->category ?? 'No category';
-            })
-            ->addColumn('actions', function ($product) {
-                return view('products.partials.actions', compact('product'))->render();
+                return $product->category ?? 'No category'; // Handle null case
             })
             ->rawColumns(['actions'])
             ->toJson();
+    }
+
+       /**
+     * Display the specified product.
+     *
+     * @param  int|string  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        try {
+            $product = Product::with([
+                    'company' => function ($query) {
+                        $query->select('id', 'name', 'logo');
+                    },
+                    'paguyubans' => function ($query) {
+                        $query->select('paguyubans.id', 'name')
+                            ->withPivot('price');
+                    }
+                ])
+                ->findOrFail($id);
+    
+            return view('products.show', [ // Note: changed to products.show
+                'product' => $product,
+                'image_url' => $this->getImageUrl($product),
+                'company_logo_url' => $product->company 
+                    ? $this->getImageUrl($product->company, 'logo') 
+                    : null
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()->route('products.index')
+                ->with('error', 'Product not found');
+        }
     }
 
     public function datas(Request $request)
@@ -126,37 +172,7 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
 
-    /**
-     * Display the specified product.
-     *
-     * @param  int|string  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        try {
-            $product = Product::with([
-                'company' => function ($query) {
-                    $query->select('id', 'name');
-                },
-                'paguyubans' => function ($query) {
-                    $query->select('paguyubans.id', 'name')
-                        ->withPivot('price');
-                }
-            ])
-                ->findOrFail($id);
-            dd($product);
-            return view('products.show', [
-                'product' => $product,
-                'image_url' => $this->getImageUrl($product),
-                'company_logo_url' => $product->company ? $this->getImageUrl($product->company, 'logo') : null
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // Redirect back or to index with error message
-            return redirect()->route('products.index')
-                ->with('error', 'Product not found');
-        }
-    }
+ 
 
     public function edit(Product $product)
     {

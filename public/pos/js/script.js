@@ -567,9 +567,8 @@ function initApp() {
         }
 
         const data = await response.json();
-        console.log("Products loaded:", data);
 
-        return data.map(product => ({
+        return data.data.map(product => ({
           ...product,
           isLoading: false
         }));

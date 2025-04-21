@@ -93,12 +93,33 @@
             'px-3': !isSidebarCollapsed
           }">
           <div class="flex items-center justify-center w-7 h-7 rounded-xl bg-indigo-800/50 group-hover:bg-white/20 transition-all duration-300">
-            <i class="fas fa-box-open text-xs group-hover:scale-110 transition-transform"></i>
+            <i class="fas fa-boxes text-xs group-hover:scale-110 transition-transform"></i>
           </div>
           <span class="ml-3 text-sm font-medium text-white/90 group-hover:text-white transition-all"
                 :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">Products</span>
           <span x-show="isSidebarCollapsed" class="sr-only">Products</span>
           <div x-show="isSidebarCollapsed && currentPage === 'products'" class="absolute right-2 w-1.5 h-1.5 bg-white rounded-full"></div>
+        </a>
+      </li>
+
+      <!-- Paguyuban/Komunitas -->
+      <li>
+        <a href="/pos/community" 
+          class="sidebar-item flex items-center px-3 py-2 rounded-xl hover:bg-indigo-600/90 transition-all duration-300 group"
+          :class="{ 
+            'bg-indigo-600/80 shadow-md': currentPage === 'community', 
+            'justify-center': isSidebarCollapsed,
+            'px-3': !isSidebarCollapsed
+          }">
+          <div class="flex items-center justify-center w-7 h-7 rounded-xl bg-indigo-800/50 group-hover:bg-white/20 transition-all duration-300">
+            <i class="fas fa-users text-xs group-hover:scale-110 transition-transform"></i>
+          </div>
+          <span class="ml-3 text-sm font-medium text-white/90 group-hover:text-white transition-all"
+                :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">Paguyuban</span>
+          <span x-show="isSidebarCollapsed" class="sr-only">Paguyuban</span>
+          <div x-show="isSidebarCollapsed && currentPage === 'community'" class="absolute right-2 w-1.5 h-1.5 bg-white rounded-full"></div>
+          <!-- Badge for new feature -->
+          <span x-show="!isSidebarCollapsed" class="ml-auto px-2 py-0.5 text-xs font-medium rounded-full bg-yellow-400/90 text-indigo-900 animate-pulse">New</span>
         </a>
       </li>
 
@@ -112,7 +133,7 @@
             'px-3': !isSidebarCollapsed
           }">
           <div class="flex items-center justify-center w-7 h-7 rounded-xl bg-indigo-800/50 group-hover:bg-white/20 transition-all duration-300">
-            <i class="fas fa-shopping-bag text-xs group-hover:scale-110 transition-transform"></i>
+            <i class="fas fa-receipt text-xs group-hover:scale-110 transition-transform"></i>
           </div>
           <span class="ml-3 text-sm font-medium text-white/90 group-hover:text-white transition-all"
                 :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">Orders</span>
@@ -131,7 +152,7 @@
             'px-3': !isSidebarCollapsed
           }">
           <div class="flex items-center justify-center w-7 h-7 rounded-xl bg-indigo-800/50 group-hover:bg-white/20 transition-all duration-300">
-            <i class="fas fa-users text-xs group-hover:scale-110 transition-transform"></i>
+            <i class="fas fa-user-friends text-xs group-hover:scale-110 transition-transform"></i>
           </div>
           <span class="ml-3 text-sm font-medium text-white/90 group-hover:text-white transition-all"
                 :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">Customers</span>
@@ -150,7 +171,7 @@
             'px-3': !isSidebarCollapsed
           }">
           <div class="flex items-center justify-center w-7 h-7 rounded-xl bg-indigo-800/50 group-hover:bg-white/20 transition-all duration-300">
-            <i class="fas fa-chart-line text-xs group-hover:scale-110 transition-transform"></i>
+            <i class="fas fa-chart-pie text-xs group-hover:scale-110 transition-transform"></i>
           </div>
           <span class="ml-3 text-sm font-medium text-white/90 group-hover:text-white transition-all"
                 :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">Reports</span>
@@ -169,7 +190,7 @@
             'px-3': !isSidebarCollapsed
           }">
           <div class="flex items-center justify-center w-7 h-7 rounded-xl bg-indigo-800/50 group-hover:bg-white/20 transition-all duration-300">
-            <i class="fas fa-cog text-xs group-hover:scale-110 transition-transform"></i>
+            <i class="fas fa-cogs text-xs group-hover:scale-110 transition-transform"></i>
           </div>
           <span class="ml-3 text-sm font-medium text-white/90 group-hover:text-white transition-all"
                 :class="{ 'opacity-0 w-0 h-0': isSidebarCollapsed, 'opacity-100': !isSidebarCollapsed }">Settings</span>
