@@ -1,3 +1,5 @@
+
+
 function initApp() {
   // Initialize toastr with safe fallback
   window.safeToastr = {

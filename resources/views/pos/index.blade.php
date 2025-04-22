@@ -544,7 +544,7 @@
 
   <!-- Print Area -->
   <div id="print-area" class="print-area"></div>
-  
+  @stack('scripts')
   <script>
     if (typeof toastr !== 'undefined') {
       toastr.options = {

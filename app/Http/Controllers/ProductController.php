@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
+use function PHPUnit\Framework\isNull;
+
 class ProductController extends Controller
 {
 
@@ -22,7 +24,11 @@ class ProductController extends Controller
 
     public function data(Request $request)
     {
-        $query = Product::with(['company:id,name,logo'])
+        $sortField = $request->input('sort', 'name');
+        $sortDirection = $request->input('direction', 'asc');
+        $perPage = $request->input('per_page', 10);
+        
+        $query = Product::with(['company:id,name'])
             ->select([
                 'id', 
                 'name', 
@@ -36,23 +42,60 @@ class ProductController extends Controller
                 'stock_threshold',
                 'discount_price',
                 'description'
-                // Removed 'category' from select
             ]);
+        // Apply filters
+        if (!isNull($request->has('status'))) {
+            $query->where('is_active', $request->status);
+        }
     
-        return DataTables::of($query)
-            ->addColumn('image_url', function ($product) {
-                return $product->image ? asset('storage/' . $product->image) : asset('images/default-product.png');
-            })
-            ->addColumn('company_logo', function ($product) {
-                return $product->company && $product->company->logo 
-                    ? asset('storage/' . $product->company->logo) 
-                    : null;
-            })
-            ->addColumn('category', function ($product) {
-                return $product->category ?? 'No category'; // Handle null case
-            })
-            ->rawColumns(['actions'])
-            ->toJson();
+        if (!isNull($request->has('company'))) {
+            $query->where('company_id', $request->company);
+        }
+    
+        if (!isNull($request->has('stock_status'))) {
+            switch ($request->stock_status) {
+                case 'low_stock':
+                    $query->whereColumn('stock', '<', 'stock_threshold')
+                          ->where('stock', '>', 0);
+                    break;
+                case 'critical':
+                    $query->where('stock', '<=', 0);
+                    break;
+                case 'in_stock':
+                    $query->where('stock', '>', 0);
+                    break;
+            }
+        }
+    
+        // Apply sorting
+        $query->orderBy($sortField, $sortDirection);
+    
+        // Paginate the results
+        $products = $query->paginate($perPage);
+    
+        // Transform the data
+        $transformedProducts = $products->getCollection()->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'sku' => $product->sku,
+                'price' => $product->price,
+                'stock' => $product->stock,
+                'min_stock' => $product->stock_threshold,
+                'category' => $product->category ?? 'No category',
+                'company' => $product->company ? $product->company->name : 'Internal Operations',
+                'status' => $product->is_active ? 'active' : 'inactive',
+                'image_url' => $product->image ? asset('storage/' . $product->image) : asset('images/default-product.png')
+            ];
+        });
+    
+        return response()->json([
+            'data' => $transformedProducts,
+            'current_page' => $products->currentPage(),
+            'per_page' => $products->perPage(),
+            'total' => $products->total(),
+            'last_page' => $products->lastPage(),
+        ]);
     }
 
        /**
