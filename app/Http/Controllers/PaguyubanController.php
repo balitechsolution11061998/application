@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Paguyuban;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -44,10 +45,37 @@ class PaguyubanController extends Controller
             ->with('success', 'Paguyuban created successfully!');
     }
 
-    public function show(Paguyuban $paguyuban)
-    {
-        return view('paguyuban.show', compact('paguyuban'));
+// In your PaguyubanController or relevant controller
+public function show(Paguyuban $paguyuban)
+{
+    // Get products not already associated with this paguyuban
+    $availableProducts = Product::whereDoesntHave('paguyubans', function($query) use ($paguyuban) {
+        $query->where('paguyuban_id', $paguyuban->id);
+    })->get();
+
+    return view('paguyuban.show', compact('paguyuban', 'availableProducts'));
+}
+
+public function addPricing(Request $request, Paguyuban $paguyuban)
+{
+    $request->validate([
+        'product_id' => 'required|exists:products,id',
+        'price' => 'required|numeric|min:0'
+    ]);
+
+    // Check if this product already has pricing for this paguyuban
+    if ($paguyuban->products()->where('product_id', $request->product_id)->exists()) {
+        return back()->with('error', 'This product already has special pricing for this community.');
     }
+
+    // Attach the product with special price
+    $paguyuban->products()->attach($request->product_id, [
+        'price' => $request->price
+    ]);
+
+    return redirect()->route('pos.community.show', $paguyuban)
+        ->with('success', 'Special pricing added successfully!');
+}
 
     public function edit(Paguyuban $paguyuban)
     {

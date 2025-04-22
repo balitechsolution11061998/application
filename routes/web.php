@@ -43,6 +43,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PaguyubanController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TitleController;
+use App\Http\Controllers\PaguyubanPricingController;
 use App\Models\ItemSupplier;
 use Illuminate\Support\Facades\Route;
 use Telegram\Bot\Laravel\Facades\Telegram;
@@ -359,6 +360,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/{paguyuban}', [PaguyubanController::class, 'update'])->name('update');
         Route::delete('/{paguyuban}', [PaguyubanController::class, 'destroy'])->name('destroy');
     });
+
+    Route::post('/paguyuban/{paguyuban}/add-pricing', [PaguyubanController::class, 'addPricing'])
+    ->name('pos.community.add-pricing');
+
+    Route::prefix('paguyuban/{paguyuban}/pricing')->group(function () {
+        Route::post('/', [PaguyubanPricingController::class, 'store'])->name('pos.community.pricing.store');
+        Route::put('/{product}', [PaguyubanPricingController::class, 'update'])->name('pos.community.pricing.update');
+        Route::delete('/{product}', [PaguyubanPricingController::class, 'destroy'])->name('pos.community.pricing.destroy');
+    });
+    Route::get('/paguyuban/{paguyuban}/activity-log', [PaguyubanPricingController::class, 'activityLog'])
+    ->name('pos.community.activity-log');
 });
 Route::post('/generate', [OpenAIController::class, 'generate']);
 Route::get('/loginPos', [PosController::class, 'index'])->name('poskasir.index');
