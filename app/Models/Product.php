@@ -41,6 +41,8 @@ class Product extends Model
             ->withTimestamps();
     }
 
+
+
     public function bonuses()
     {
         return $this->hasMany(Bonus::class);

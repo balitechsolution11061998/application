@@ -11,13 +11,13 @@ class PaguyubanController extends Controller
 {
     public function index()
     {
-        $paguyubans = Paguyuban::latest()->paginate(10);
-        return view('paguyubans.index', compact('paguyubans'));
+        $paguyubans = Paguyuban::orderBy('name')->paginate(10);
+        return view('paguyuban.index', compact('paguyubans'));
     }
 
     public function create()
     {
-        return view('paguyubans.create');
+        return view('paguyuban.create');
     }
 
     public function store(Request $request)
@@ -25,35 +25,33 @@ class PaguyubanController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean'
         ]);
 
         $data = $request->except('logo');
+        $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('logo')) {
-            $logo = $request->file('logo');
-            $filename = Str::slug($request->name) . '-' . time() . '.' . $logo->getClientOriginalExtension();
-            $path = $logo->storeAs('public/paguyubans', $filename);
-            $data['logo'] = $filename;
+            $filename = 'paguyuban-'.Str::slug($request->name).'-'.time().'.'.$request->logo->extension();
+            $path = $request->logo->storeAs('paguyubans', $filename, 'public');
+            $data['logo'] = $path;
         }
-
-        $data['is_active'] = $request->has('is_active');
 
         Paguyuban::create($data);
 
-        return redirect()->route('paguyubans.index')->with('success', 'Paguyuban created successfully.');
+        return redirect()->route('pos.community.index')
+            ->with('success', 'Paguyuban created successfully!');
     }
 
     public function show(Paguyuban $paguyuban)
     {
-        $paguyuban->load('products');
-        return view('paguyubans.show', compact('paguyuban'));
+        return view('paguyuban.show', compact('paguyuban'));
     }
 
     public function edit(Paguyuban $paguyuban)
     {
-        return view('paguyubans.edit', compact('paguyuban'));
+        return view('paguyuban.edit', compact('paguyuban'));
     }
 
     public function update(Request $request, Paguyuban $paguyuban)
@@ -61,47 +59,39 @@ class PaguyubanController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'boolean'
         ]);
 
         $data = $request->except('logo');
+        $data['is_active'] = $request->has('is_active');
 
-        // Handle logo update
         if ($request->hasFile('logo')) {
             // Delete old logo if exists
             if ($paguyuban->logo) {
-                Storage::delete('public/paguyubans/' . $paguyuban->logo);
+                Storage::disk('public')->delete($paguyuban->logo);
             }
             
-            $logo = $request->file('logo');
-            $filename = Str::slug($request->name) . '-' . time() . '.' . $logo->getClientOriginalExtension();
-            $path = $logo->storeAs('public/paguyubans', $filename);
-            $data['logo'] = $filename;
+            $filename = 'paguyuban-'.Str::slug($request->name).'-'.time().'.'.$request->logo->extension();
+            $path = $request->logo->storeAs('paguyubans', $filename, 'public');
+            $data['logo'] = $path;
         }
-
-        $data['is_active'] = $request->has('is_active');
 
         $paguyuban->update($data);
 
-        return redirect()->route('paguyubans.index')->with('success', 'Paguyuban updated successfully.');
+        return redirect()->route('pos.community.index')
+            ->with('success', 'Paguyuban updated successfully!');
     }
 
     public function destroy(Paguyuban $paguyuban)
     {
-        // Delete logo if exists
         if ($paguyuban->logo) {
-            Storage::delete('public/paguyubans/' . $paguyuban->logo);
+            Storage::disk('public')->delete($paguyuban->logo);
         }
 
         $paguyuban->delete();
 
-        return redirect()->route('paguyubans.index')->with('success', 'Paguyuban deleted successfully.');
-    }
-
-    public function toggleStatus(Paguyuban $paguyuban)
-    {
-        $paguyuban->update(['is_active' => !$paguyuban->is_active]);
-        return back()->with('success', 'Paguyuban status updated successfully.');
+        return redirect()->route('pos.community.index')
+            ->with('success', 'Paguyuban deleted successfully!');
     }
 }

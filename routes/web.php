@@ -349,6 +349,16 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('/{paguyuban}', [PaguyubanController::class, 'destroy'])->name('paguyubans.destroy');
         Route::post('/{paguyuban}/toggle-status', [PaguyubanController::class, 'toggleStatus'])->name('paguyubans.toggle-status');
     });
+
+    Route::prefix('pos/community')->name('pos.community.')->group(function () {
+        Route::get('/', [PaguyubanController::class, 'index'])->name('index');
+        Route::get('/create', [PaguyubanController::class, 'create'])->name('create');
+        Route::post('/', [PaguyubanController::class, 'store'])->name('store');
+        Route::get('/{paguyuban}', [PaguyubanController::class, 'show'])->name('show');
+        Route::get('/{paguyuban}/edit', [PaguyubanController::class, 'edit'])->name('edit');
+        Route::put('/{paguyuban}', [PaguyubanController::class, 'update'])->name('update');
+        Route::delete('/{paguyuban}', [PaguyubanController::class, 'destroy'])->name('destroy');
+    });
 });
 Route::post('/generate', [OpenAIController::class, 'generate']);
 Route::get('/loginPos', [PosController::class, 'index'])->name('poskasir.index');
