@@ -35,6 +35,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->string('logo')->nullable(); // Kolom logo untuk menyimpan nama file logo
             $table->timestamps();
+            $table->softDeletes();
         });
 
         // Create product_paguyuban table (relasi antara produk dan harga di paguyuban)

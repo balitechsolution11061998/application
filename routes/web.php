@@ -77,6 +77,18 @@ Route::get('/ecommerce', function () {
     return view('ecommerce');
 });
 
+Route::get('/pivot', function () {
+    return view('pivot');
+});
+
+Route::get('/wedding', function () {
+    return view('wedding');
+});
+
+Route::get('/portofolio', function () {
+    return view('portofolio');
+});
+
 // Authentication Routes
 
 
