@@ -11,45 +11,67 @@ class PaguyubanPricingController extends Controller
 {
     public function store(Request $request, Paguyuban $paguyuban)
     {
+        // Validate the incoming request
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'price' => 'required|numeric|min:0'
         ]);
-
-        // Check if pricing already exists
-        if ($paguyuban->products()->where('product_id', $request->product_id)->exists()) {
+    
+        try {
+            // Check if pricing already exists for the product in this Paguyuban
+            if ($paguyuban->products()->where('product_id', $request->product_id)->exists()) {
+                // Log the failed attempt to add duplicate pricing
+                activity()
+                    ->causedBy(auth()->user())
+                    ->performedOn($paguyuban)
+                    ->withProperties([
+                        'product_id' => $request->product_id,
+                        'attempted_price' => $request->price
+                    ])
+                    ->log('Failed to add special pricing - product already exists');
+                
+                return back()->with('error', 'This product already has special pricing for this community.');
+            }
+    
+            // Get the product to ensure it's valid
+            $product = Product::findOrFail($request->product_id);
+    
+            // Attach the product to the Paguyuban with the special price
+            $paguyuban->products()->attach($request->product_id, ['price' => $request->price]);
+    
+            // Log the successful addition of special pricing
             activity()
                 ->causedBy(auth()->user())
                 ->performedOn($paguyuban)
                 ->withProperties([
-                    'product_id' => $request->product_id,
-                    'attempted_price' => $request->price
+                    'product_id' => $product->id,
+                    'product_name' => $product->name,
+                    'regular_price' => $product->price,
+                    'special_price' => $request->price,
+                    'discount_percentage' => round((($product->price - $request->price) / $product->price) * 100, 2)
                 ])
-                ->log('Failed to add special pricing - product already exists');
-
-            return back()->with('error', 'This product already has special pricing for this community.');
+                ->log('Added special pricing for product');
+    
+            // Return success message and redirect
+            return redirect()->route('pos.community.show', $paguyuban)
+                ->with('success', 'Special pricing added successfully!');
+        } catch (\Exception $e) {
+            // Log the exception error
+            activity()
+                ->causedBy(auth()->user())
+                ->performedOn($paguyuban)
+                ->withProperties([
+                    'error' => $e->getMessage(),
+                    'product_id' => $request->product_id,
+                    'price' => $request->price
+                ])
+                ->log('Error adding special pricing');
+    
+            // Return error response to the user
+            return back()->with('error', 'An error occurred while adding special pricing. Please try again.');
         }
-
-        $product = Product::find($request->product_id);
-        
-        $paguyuban->products()->attach($request->product_id, ['price' => $request->price]);
-
-        // Log the activity
-        activity()
-            ->causedBy(auth()->user())
-            ->performedOn($paguyuban)
-            ->withProperties([
-                'product_id' => $product->id,
-                'product_name' => $product->name,
-                'regular_price' => $product->price,
-                'special_price' => $request->price,
-                'discount_percentage' => round((($product->price - $request->price) / $product->price) * 100, 2)
-            ])
-            ->log('Added special pricing for product');
-
-        return redirect()->route('pos.community.show', $paguyuban)
-            ->with('success', 'Special pricing added successfully!');
     }
+    
 
     public function update(Request $request, Paguyuban $paguyuban, Product $product)
     {

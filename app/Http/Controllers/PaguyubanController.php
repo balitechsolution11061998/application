@@ -53,11 +53,29 @@ class PaguyubanController extends Controller
     // In your PaguyubanController or relevant controller
     public function show(Paguyuban $paguyuban)
     {
-        // Get products not already associated with this paguyuban
-        $availableProducts = Product::whereDoesntHave('paguyubans', function ($query) use ($paguyuban) {
-            $query->where('paguyuban_id', $paguyuban->id);
-        })->get();
+        // Eager load products with their pivot data
+        $paguyuban->load(['products' => function($query) {
+            $query->select('products.id', 'products.name', 'products.price', 'products.image')
+                  ->withPivot('price as special_price');
+        }]);
 
+        
+        // Get products not already associated with this paguyuban
+        $availableProducts = Product::whereDoesntHave('paguyubans', function($query) use ($paguyuban) {
+            $query->where('paguyuban_id', $paguyuban->id);
+        })->get(['id', 'name', 'price', 'image']);
+
+        // Calculate discount stats
+        $paguyuban->discounted_products_count = $paguyuban->products()
+            ->whereColumn('paguyuban_product.price', '<', 'products.price')
+            ->count();
+        
+        $paguyuban->average_discount = $paguyuban->products()
+            ->whereColumn('paguyuban_product.price', '<', 'products.price')
+            ->selectRaw('AVG((1 - (paguyuban_product.price / products.price)) * 100) as avg_discount')
+            ->value('avg_discount') ?? 0;
+        
+    
         return view('paguyuban.show', compact('paguyuban', 'availableProducts'));
     }
 
