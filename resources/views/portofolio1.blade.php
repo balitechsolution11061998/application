@@ -41,7 +41,7 @@
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center">
                 <div class="w-10 h-10 mr-3 rounded-full overflow-hidden border-2 border-blue-500">
-                    <img src="/api/placeholder/100/100" alt="Sri Angelia Barus" class="w-full h-full object-cover">
+                    <img src="/img/portofolio1/img1.jpg" alt="Sri Angelia Barus" class="w-full h-full object-cover">
                 </div>
                 <div class="text-xl font-bold text-gray-800">Sri Angelia Barus</div>
             </div>
@@ -84,7 +84,7 @@
         </div>
         <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
             <div class="w-52 h-52 mx-auto mb-6 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                <img src="/api/placeholder/400/400" alt="Sri Angelia Barus" class="w-full h-full object-cover">
+                <img src="/img/portofolio1/img1.jpg" alt="Sri Angelia Barus" class="w-full h-full object-cover">
             </div>
             <h1 class="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">Sri Angelia Barus</h1>
             <p class="text-xl md:text-2xl mb-6 animate-fade-in delay-300">Fotografer Kreatif & Storyteller Visual</p>
