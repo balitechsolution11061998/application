@@ -143,7 +143,7 @@
       </li>
 
       <!-- Customers -->
-      <li>
+      <!-- <li>
         <a href="/pos/customers" 
           class="sidebar-item flex items-center px-3 py-2 rounded-xl hover:bg-indigo-600/90 transition-all duration-300 group"
           :class="{ 
@@ -159,10 +159,10 @@
           <span x-show="isSidebarCollapsed" class="sr-only">Customers</span>
           <div x-show="isSidebarCollapsed && currentPage === 'customers'" class="absolute right-2 w-1.5 h-1.5 bg-white rounded-full"></div>
         </a>
-      </li>
+      </li> -->
 
       <!-- Reports -->
-      <li>
+      <!-- <li>
         <a href="/pos/reports" 
           class="sidebar-item flex items-center px-3 py-2 rounded-xl hover:bg-indigo-600/90 transition-all duration-300 group"
           :class="{ 
@@ -178,7 +178,7 @@
           <span x-show="isSidebarCollapsed" class="sr-only">Reports</span>
           <div x-show="isSidebarCollapsed && currentPage === 'reports'" class="absolute right-2 w-1.5 h-1.5 bg-white rounded-full"></div>
         </a>
-      </li>
+      </li> -->
 
       <!-- Settings -->
       <li>
