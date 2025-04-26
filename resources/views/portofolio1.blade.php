@@ -145,8 +145,8 @@
                     <h3 class="text-xl font-semibold mb-4">Foto Editing Profesional</h3>
                     <p class="text-gray-600 mb-4">Mahir dalam Adobe Lightroom dan Photoshop untuk editing berkualitas tinggi.</p>
                     <div class="flex justify-center space-x-2">
-                        <img src="/api/placeholder/50/50" alt="Lightroom" class="w-12 h-12 rounded-md">
-                        <img src="/api/placeholder/50/50" alt="Photoshop" class="w-12 h-12 rounded-md">
+                        <img src="/img/portofolio1/photoshop-lightroom.png" alt="Lightroom" class="w-12 h-12 rounded-md">
+                        <img src="/img/portofolio1/adobe-photoshop.png" alt="Photoshop" class="w-12 h-12 rounded-md">
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-md text-center transform transition duration-300 hover:scale-105">
@@ -154,8 +154,8 @@
                     <h3 class="text-xl font-semibold mb-4">Videografi Kreatif</h3>
                     <p class="text-gray-600 mb-4">Kemampuan produksi video dari konsep hingga editing menggunakan Premiere Pro.</p>
                     <div class="flex justify-center space-x-2">
-                        <img src="/api/placeholder/50/50" alt="Premiere Pro" class="w-12 h-12 rounded-md">
-                        <img src="/api/placeholder/50/50" alt="CapCut" class="w-12 h-12 rounded-md">
+                        <img src="/img/portofolio1/premiere-pro.png" alt="Premiere Pro" class="w-12 h-12 rounded-md">
+                        <img src="/img/portofolio1/capcut-logo.png" alt="CapCut" class="w-12 h-12 rounded-md">
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-md text-center transform transition duration-300 hover:scale-105">
@@ -163,8 +163,8 @@
                     <h3 class="text-xl font-semibold mb-4">Peralatan Profesional</h3>
                     <p class="text-gray-600 mb-4">Menggunakan kamera dan perlengkapan berkualitas tinggi.</p>
                     <div class="flex justify-center space-x-2">
-                        <img src="/api/placeholder/50/50" alt="Canon" class="w-12 h-12 rounded-md">
-                        <img src="/api/placeholder/50/50" alt="Lighting" class="w-12 h-12 rounded-md">
+                        <img src="/img/portofolio1/canon.jpeg" alt="Canon" class="w-12 h-12 rounded-md">
+                        <img src="/img/portofolio1/3997786.png" alt="Lighting" class="w-12 h-12 rounded-md">
                     </div>
                 </div>
             </div>
