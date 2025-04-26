@@ -39,6 +39,65 @@
 
     <!-- Main Content - Full Width -->
     <div class="w-full px-4 sm:px-6 lg:px-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200/50 dark:border-gray-700/50">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Communities</p>
+                        <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mt-1">{{ $paguyubans->total() }}</p>
+                    </div>
+                    <div class="p-3 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-300">
+                        <i class="fas fa-users text-2xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500 mr-2"></span>
+                        <span>{{ $activeCount = $paguyubans->where('is_active', true)->count() }} active</span>
+                    </div>
+                    <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        <span class="h-2 w-2 rounded-full bg-gray-300 dark:bg-gray-600 mr-2"></span>
+                        <span>{{ $paguyubans->total() - $activeCount }} inactive</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200/50 dark:border-gray-700/50">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Products</p>
+                        <p class="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">{{ $totalProducts }}</p>
+                    </div>
+                    <div class="p-3 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-300">
+                        <i class="fas fa-boxes text-2xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        <span class="font-medium">{{ $paguyubans->sum('products_count') }}</span> special pricing entries
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200/50 dark:border-gray-700/50">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Average Discount</p>
+                        <p class="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-1">{{ number_format($averageDiscount, 1) }}%</p>
+                    </div>
+                    <div class="p-3 rounded-full bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-300">
+                        <i class="fas fa-percentage text-2xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        Across all community pricing
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Filters Card -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md mb-6 overflow-hidden border border-gray-200/50 dark:border-gray-700/50 w-full">
             <div class="p-5">
@@ -88,7 +147,7 @@
                                 Status
                             </th>
                             <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider min-w-[200px]">
-                                Products & Discount
+                                Products & Pricing
                             </th>
                             <th scope="col" class="px-6 py-4 text-right text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider min-w-[150px]">
                                 Actions
@@ -137,7 +196,10 @@
                                         <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                                             <div class="bg-indigo-500 h-2 rounded-full" style="width: {{ min(($paguyuban->products_count / 50) * 100, 100) }}%"></div>
                                         </div>
-                                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $paguyuban->products_count }} of max 50 products</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
+                                            <span>{{ $paguyuban->products_count }} of max 50 products</span>
+                                            <span class="font-medium">Total savings: Rp{{ number_format($paguyuban->products->sum(function($product) { return ($product->price - $product->pivot->price) * 100; }), 0) }}</span>
+                                        </div>
                                     </div>
                                     @endif
                                 </div>
@@ -310,7 +372,7 @@
         resetFilters.addEventListener('click', function() {
             if (searchInput) searchInput.value = '';
             if (statusFilter) statusFilter.value = '';
-            
+
             const rows = document.querySelectorAll('tbody tr');
             rows.forEach(row => {
                 row.style.display = '';
@@ -335,6 +397,7 @@
             opacity: 0;
             transform: translateY(20px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -346,6 +409,7 @@
             opacity: 1;
             transform: translateY(0);
         }
+
         to {
             opacity: 0;
             transform: translateY(20px);
@@ -450,7 +514,7 @@
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
-        
+
         thead {
             position: absolute;
             width: 1px;
@@ -462,28 +526,28 @@
             white-space: nowrap;
             border-width: 0;
         }
-        
+
         tr {
             display: flex;
             flex-direction: column;
             border-bottom: 1px solid #e5e7eb;
             padding: 1rem 0;
         }
-        
+
         td {
             display: flex;
             justify-content: space-between;
             padding: 0.5rem 1rem;
             border: none;
         }
-        
+
         td::before {
             content: attr(data-label);
             font-weight: 600;
             margin-right: 1rem;
             color: #6b7280;
         }
-        
+
         .px-8 {
             padding-left: 1rem !important;
             padding-right: 1rem !important;

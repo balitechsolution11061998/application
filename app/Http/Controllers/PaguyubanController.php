@@ -13,8 +13,12 @@ class PaguyubanController extends Controller
 {
     public function index()
     {
-        $paguyubans = Paguyuban::orderBy('name')->paginate(10);
-        return view('paguyuban.index', compact('paguyubans'));
+        $paguyubans = Paguyuban::withCount('products')->orderBy('name')->paginate(10);
+        
+        $totalProducts = Product::count();
+        $averageDiscount = $paguyubans->avg('discount_percentage') ?? 0;
+        
+        return view('paguyuban.index', compact('paguyubans', 'totalProducts', 'averageDiscount'));
     }
 
     public function create()

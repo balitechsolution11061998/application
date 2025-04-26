@@ -42,6 +42,13 @@ class Paguyuban extends Model
         return $this->logo ? asset('storage/paguyubans/' . $this->logo) : asset('images/default-paguyuban.png');
     }
 
+    public function getDiscountPercentageAttribute()
+    {
+        return $this->products->avg(function ($product) {
+            return round((($product->price - $product->pivot->price) / $product->price) * 100, 2);
+        }) ?? 0;
+    }
+
     public function activities()
     {
         return $this->morphMany(Activity::class, 'subject')->latest();
