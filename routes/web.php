@@ -89,6 +89,10 @@ Route::get('/portofolio', function () {
     return view('portofolio');
 });
 
+Route::get('/portofolio1', function () {
+    return view('portofolio1');
+});
+
 // Authentication Routes
 
 
@@ -383,6 +387,9 @@ Route::group(['middleware' => ['auth']], function () {
     });
     Route::get('/paguyuban/{paguyuban}/activity-log', [PaguyubanPricingController::class, 'activityLog'])
     ->name('pos.community.activity-log');
+
+    Route::get('/paguyuban/{paguyuban}/export', [PaguyubanController::class, 'export'])
+    ->name('pos.community.export');
 });
 Route::post('/generate', [OpenAIController::class, 'generate']);
 Route::get('/loginPos', [PosController::class, 'index'])->name('poskasir.index');

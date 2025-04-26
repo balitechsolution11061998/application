@@ -2,17 +2,16 @@
 
 @section('content')
 <div class="w-full px-4 py-6 max-w-7xl mx-auto">
-    <!-- Header Section with Enhanced Animation -->
-    <div class="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-6 mb-8 shadow-xl transform transition-all duration-500 hover:scale-[1.005] hover:shadow-2xl relative overflow-hidden">
-        <!-- Animated background elements -->
-        <div class="absolute top-0 left-0 w-full h-full opacity-10">
-            <div class="absolute top-10 left-20 w-32 h-32 rounded-full bg-white animate-pulse" style="animation-delay: 0.5s"></div>
-            <div class="absolute bottom-5 right-10 w-40 h-40 rounded-full bg-white animate-pulse" style="animation-delay: 1s"></div>
-        </div>
-        
+    <!-- Enhanced Header Section with 3D Effect -->
+    <div class="relative bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-6 mb-8 shadow-2xl transform transition-all duration-500 hover:shadow-3xl hover:-translate-y-1 overflow-hidden">
+        <!-- Floating circles decoration -->
+        <div class="absolute -top-10 -left-10 w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm animate-float-slow"></div>
+        <div class="absolute -bottom-5 -right-5 w-16 h-16 rounded-full bg-white/15 backdrop-blur-sm animate-float-medium"></div>
+        <div class="absolute top-1/4 right-1/4 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm animate-float-fast"></div>
+
         <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div class="flex items-center space-x-4">
-                <div class="h-16 w-16 rounded-full border-4 border-white/80 shadow-lg overflow-hidden bg-white/20 backdrop-blur-sm flex items-center justify-center transition-transform duration-300 hover:rotate-6">
+                <div class="h-16 w-16 rounded-full border-4 border-white/80 shadow-lg overflow-hidden bg-white/20 backdrop-blur-sm flex items-center justify-center transition-transform duration-300 hover:rotate-6 hover:shadow-xl">
                     @if($paguyuban->logo)
                     <img src="{{ asset('storage/'.$paguyuban->logo) }}" alt="{{ $paguyuban->name }}" class="h-full w-full object-cover transform transition-transform duration-500 hover:scale-110">
                     @else
@@ -24,172 +23,88 @@
                         {{ $paguyuban->name }}
                     </h1>
                     <div class="flex items-center mt-2 space-x-3">
-                        <div class="status-badge relative">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $paguyuban->is_active ? 'bg-white/20 text-white backdrop-blur-sm' : 'bg-red-500/90 text-white' }} animate-pulse cursor-pointer">
-                                <span class="w-2 h-2 rounded-full mr-2 {{ $paguyuban->is_active ? 'bg-green-300' : 'bg-red-300' }}"></span>
-                                {{ $paguyuban->is_active ? 'Active' : 'Inactive' }}
-                            </span>
-                            <div class="status-tooltip hidden absolute z-10 w-48 p-2 mt-2 text-sm text-white bg-gray-800 rounded-lg shadow-lg">
-                                {{ $paguyuban->is_active ? 'This community is currently active' : 'This community is currently inactive' }}
-                            </div>
-                        </div>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $paguyuban->is_active ? 'bg-white/20 text-white backdrop-blur-sm' : 'bg-red-500/90 text-white' }} animate-pulse">
+                            <span class="w-2 h-2 rounded-full mr-2 {{ $paguyuban->is_active ? 'bg-green-300' : 'bg-red-300' }}"></span>
+                            {{ $paguyuban->is_active ? 'Active' : 'Inactive' }}
+                        </span>
                         <span class="text-white/80 text-sm transition-all duration-300 hover:text-white flex items-center">
                             <i class="fas fa-users mr-1"></i>
                             {{ $paguyuban->members_count }} members
                         </span>
                         <span class="text-white/80 text-sm transition-all duration-300 hover:text-white flex items-center">
                             <i class="fas fa-tags mr-1"></i>
-                            {{ $paguyuban->products_count }} special products
+                            {{ $paguyuban->products->count() }} special products
                         </span>
                     </div>
                 </div>
             </div>
             <div class="flex items-center space-x-3 w-full md:w-auto mt-3 sm:mt-0">
-                <a href="{{ route('pos.community.edit', $paguyuban) }}" class="flex items-center justify-center px-5 py-2.5 bg-white/90 hover:bg-white text-indigo-600 rounded-xl shadow-sm transition-all duration-300 group hover:shadow-md transform hover:-translate-y-0.5">
+                <a href="{{ route('pos.community.edit', $paguyuban) }}" class="flex items-center justify-center px-5 py-2.5 bg-white/90 hover:bg-white text-indigo-600 rounded-xl shadow-sm transition-all duration-300 group hover:shadow-md transform hover:-translate-y-0.5 hover:scale-105">
                     <i class="fas fa-edit mr-2 group-hover:scale-110 transition-transform"></i>
-                    <span class="whitespace-nowrap text-sm font-medium">Edit Community</span>
+                    <span class="whitespace-nowrap text-sm font-medium">Edit</span>
                 </a>
-                <button onclick="toggleMembersList()" class="flex items-center justify-center px-5 py-2.5 bg-indigo-700/90 hover:bg-indigo-600 text-white rounded-xl shadow-sm transition-all duration-300 group hover:shadow-md transform hover:-translate-y-0.5">
-                    <i class="fas fa-user-plus mr-2 group-hover:scale-110 transition-transform"></i>
-                    <span class="whitespace-nowrap text-sm font-medium">Manage Members</span>
-                </button>
-                <a href="{{ route('pos.community.index') }}" class="flex items-center justify-center px-5 py-2.5 border border-white/50 rounded-xl bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                <a href="{{ route('pos.community.index') }}" class="flex items-center justify-center px-5 py-2.5 border border-white/50 rounded-xl bg-white/10 text-white hover:bg-white/20 transition-colors duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:scale-105">
                     <i class="fas fa-arrow-left mr-2"></i>
                     <span class="whitespace-nowrap text-sm font-medium">Back</span>
                 </a>
+                <button onclick="showQuickActionsMenu()" class="flex items-center justify-center px-4 py-2.5 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white shadow-md transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105 group">
+                    <i class="fas fa-bolt mr-2 group-hover:animate-bounce"></i>
+                    <span class="whitespace-nowrap text-sm font-medium">Quick Actions</span>
+                    <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Members List Modal (Hidden by default) -->
-    <div id="membersListModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-opacity duration-300">
-        <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-2xl bg-white dark:bg-gray-800 transform transition-all duration-300 scale-95 opacity-0" id="membersModalContent">
-            <div class="flex justify-between items-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                    {{ $paguyuban->name }} Members
-                </h3>
-                <button onclick="toggleMembersList()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-transform duration-200 hover:rotate-90">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="mb-4 flex justify-between items-center">
-                <div class="relative w-full max-w-md">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-search text-gray-400"></i>
-                    </div>
-                    <input type="text" id="memberSearch" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Search members...">
-                </div>
-                <button onclick="openAddMemberModal()" class="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 whitespace-nowrap">
-                    <i class="fas fa-plus mr-2"></i> Add Member
-                </button>
-            </div>
-            
-            <div class="space-y-3 max-h-96 overflow-y-auto" id="membersListContainer">
-                <!-- Members will be loaded here via AJAX -->
-                <div class="text-center py-8">
-                    <i class="fas fa-spinner fa-spin text-2xl text-indigo-500"></i>
-                    <p class="text-gray-500 mt-2">Loading members...</p>
-                </div>
-            </div>
-            
-            <div class="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
-                <div class="text-sm text-gray-500 dark:text-gray-400">
-                    Showing <span id="membersFrom" class="font-medium">0</span> to <span id="membersTo" class="font-medium">0</span> of <span id="membersTotal" class="font-medium">0</span> members
-                </div>
-                <div class="flex space-x-2">
-                    <button id="prevMembersPage" class="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 transform hover:-translate-x-0.5 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                        Previous
-                    </button>
-                    <button id="nextMembersPage" class="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 transform hover:translate-x-0.5 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                        Next
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Member Modal -->
-    <div id="addMemberModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-opacity duration-300">
-        <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-2xl bg-white dark:bg-gray-800 transform transition-all duration-300 scale-95 opacity-0" id="addMemberModalContent">
-            <div class="flex justify-between items-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                    Add New Member
-                </h3>
-                <button onclick="closeAddMemberModal()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-transform duration-200 hover:rotate-90">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <form id="addMemberForm">
-                @csrf
-                <input type="hidden" name="paguyuban_id" value="{{ $paguyuban->id }}">
-                
-                <div class="space-y-4">
-                    <div>
-                        <label for="memberName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Member Name</label>
-                        <input type="text" id="memberName" name="name" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white">
-                    </div>
-                    
-                    <div>
-                        <label for="memberEmail" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
-                        <input type="email" id="memberEmail" name="email" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white">
-                    </div>
-                    
-                    <div>
-                        <label for="memberPhone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone Number</label>
-                        <input type="tel" id="memberPhone" name="phone" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white">
-                    </div>
-                    
-                    <div>
-                        <label for="memberAddress" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Address</label>
-                        <textarea id="memberAddress" name="address" rows="3" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"></textarea>
-                    </div>
-                </div>
-                
-                <div class="mt-6 flex justify-end space-x-3">
-                    <button type="button" onclick="closeAddMemberModal()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Cancel
-                    </button>
-                    <button type="submit" class="px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Add Member
-                    </button>
-                </div>
-            </form>
+    <!-- Quick Actions Dropdown (Hidden by default) -->
+    <div id="quickActionsMenu" class="hidden absolute right-4 mt-2 w-56 rounded-xl shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 z-50 transform transition-all duration-300 origin-top-right scale-95 opacity-0">
+        <div class="p-2 space-y-1">
+            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200">
+                <i class="fas fa-user-plus mr-3 text-indigo-500"></i>
+                Add Members
+            </a>
+            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200">
+                <i class="fas fa-envelope mr-3 text-blue-500"></i>
+                Send Notification
+            </a>
+            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200">
+                <i class="fas fa-chart-pie mr-3 text-green-500"></i>
+                Generate Report
+            </a>
+            <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200">
+                <i class="fas fa-cog mr-3 text-purple-500"></i>
+                Community Settings
+            </a>
         </div>
     </div>
 
     <!-- Main Content Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Left Column - Details and Stats -->
+        <!-- Left Column - Details and Performance -->
         <div class="lg:col-span-1 space-y-6">
-            <!-- Community Details Card -->
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700/50 transform transition-all duration-300 hover:shadow-xl">
-                <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/20">
+            <!-- Enhanced Details Card with Interactive Elements -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700/50 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700/20 dark:to-gray-800/30">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                         <i class="fas fa-info-circle text-indigo-500 mr-2 animate-bounce" style="animation-duration: 2s"></i>
                         Community Details
+                        <button onclick="toggleDetailsEdit()" class="ml-auto text-xs bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 px-2 py-1 rounded-lg hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors">
+                            <i class="fas fa-pencil-alt mr-1"></i> Edit
+                        </button>
                     </h3>
                 </div>
                 <div class="p-6">
-                    <div class="space-y-5">
-                        <!-- Description with read more/less functionality -->
+                    <div id="detailsView" class="space-y-5">
+                        <!-- View Mode -->
                         <div class="transition-all duration-300 hover:bg-gray-50/50 dark:hover:bg-gray-700/30 p-3 rounded-lg">
                             <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Description</p>
-                            <div class="relative">
-                                <p id="communityDescription" class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed overflow-hidden" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
-                                    {{ $paguyuban->description ?? 'No description provided' }}
-                                </p>
-                                @if(strlen($paguyuban->description) > 150)
-                                <button onclick="toggleDescription()" class="text-indigo-600 dark:text-indigo-400 text-xs font-medium mt-1 focus:outline-none">
-                                    Read more
-                                </button>
-                                @endif
-                            </div>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                                {{ $paguyuban->description ?? 'No description provided' }}
+                            </p>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
-                            <!-- Status Card -->
                             <div class="transition-all duration-300 hover:bg-gray-50/50 dark:hover:bg-gray-700/30 p-3 rounded-lg">
                                 <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Status</p>
                                 <p class="mt-1">
@@ -198,43 +113,22 @@
                                     </span>
                                 </p>
                             </div>
-                            
-                            <!-- Members Count Card -->
                             <div class="transition-all duration-300 hover:bg-gray-50/50 dark:hover:bg-gray-700/30 p-3 rounded-lg">
                                 <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Members</p>
                                 <p class="text-gray-700 dark:text-gray-300 font-medium animate-count" data-count="{{ $paguyuban->members_count }}">
                                     0
                                 </p>
                             </div>
-                            
-                            <!-- Products Count Card -->
-                            <div class="transition-all duration-300 hover:bg-gray-50/50 dark:hover:bg-gray-700/30 p-3 rounded-lg">
-                                <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Special Products</p>
-                                <p class="text-gray-700 dark:text-gray-300 font-medium animate-count" data-count="{{ $paguyuban->products_count }}">
-                                    0
-                                </p>
-                            </div>
-                            
-                            <!-- Discount Rate Card -->
-                            <div class="transition-all duration-300 hover:bg-gray-50/50 dark:hover:bg-gray-700/30 p-3 rounded-lg">
-                                <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Avg. Discount</p>
-                                <p class="text-gray-700 dark:text-gray-300 font-medium">
-                                    <span class="text-green-600 dark:text-green-400 animate-count" data-count="{{ $paguyuban->average_discount ?? 0 }}">0</span>%
-                                </p>
-                            </div>
                         </div>
 
-                        <!-- Created date -->
                         <div class="border-t border-gray-100 dark:border-gray-700 pt-4 transition-all duration-300 hover:bg-gray-50/50 dark:hover:bg-gray-700/30 p-3 rounded-lg">
                             <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Created</p>
                             <div class="flex items-center text-gray-700 dark:text-gray-300 text-sm">
                                 <i class="far fa-calendar-alt mr-2 text-gray-400 transition-transform duration-300 hover:scale-110"></i>
                                 {{ $paguyuban->created_at->format('M d, Y') }}
-                                <span class="text-gray-400 ml-1">({{ $paguyuban->created_at->diffForHumans() }})</span>
                             </div>
                         </div>
 
-                        <!-- Last updated -->
                         <div class="transition-all duration-300 hover:bg-gray-50/50 dark:hover:bg-gray-700/30 p-3 rounded-lg">
                             <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Last Updated</p>
                             <div class="flex items-center text-gray-700 dark:text-gray-300 text-sm">
@@ -244,88 +138,175 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Edit Mode (Hidden by default) -->
+                    <div id="detailsEdit" class="hidden space-y-4">
+                        <form action="{{ route('pos.community.update', $paguyuban) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <div class="mb-4">
+                                <label for="description" class="block text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Description</label>
+                                <textarea id="description" name="description" rows="3" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-gray-300">{{ $paguyuban->description }}</textarea>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Status</label>
+                                    <div class="relative">
+                                        <select name="is_active" class="block appearance-none w-full bg-gray-50 border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-gray-300">
+                                            <option value="1" {{ $paguyuban->is_active ? 'selected' : '' }}>Active</option>
+                                            <option value="0" {{ !$paguyuban->is_active ? 'selected' : '' }}>Inactive</option>
+                                        </select>
+                                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-300">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Logo</label>
+                                    <input type="file" name="logo" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                                </div>
+                            </div>
+                            <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <button type="button" onclick="toggleDetailsEdit()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
 
-            <!-- Performance Stats Card -->
-            <div class="mt-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700/50 transform transition-all duration-300 hover:shadow-xl">
-                <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/20">
+            <!-- Performance Card with Interactive Charts -->
+            <div class="mt-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700/50 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700/20 dark:to-gray-800/30">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                         <i class="fas fa-chart-line text-indigo-500 mr-2 animate-pulse" style="animation-duration: 1.5s"></i>
-                        Performance Stats
+                        Performance Analytics
+                        <div class="ml-auto flex items-center space-x-2">
+                            <select id="timeRange" class="text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                <option value="7">Last 7 days</option>
+                                <option value="30" selected>Last 30 days</option>
+                                <option value="90">Last 90 days</option>
+                            </select>
+                        </div>
                     </h3>
                 </div>
                 <div class="p-6">
-                    <div class="space-y-4">
-                        <!-- Monthly Sales Chart -->
-                        <div class="animate-progress">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Monthly Sales</span>
-                                <span class="text-sm font-semibold text-indigo-600 dark:text-indigo-400">Rp {{ number_format($paguyuban->monthly_sales ?? 0, 0, ',', '.') }}</span>
+                    <div class="space-y-6">
+                        <!-- Mini Line Chart -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Sales Trend</span>
+                                <span class="text-xs bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 px-2 py-0.5 rounded-lg">+12.5%</span>
                             </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
-                                <div class="bg-indigo-600 h-2 rounded-full progress-bar" style="width: 0%" data-width="{{ min(($paguyuban->monthly_sales ?? 0) / 20000000 * 100, 100) }}"></div>
-                            </div>
-                        </div>
-
-                        <!-- Member Growth Chart -->
-                        <div class="animate-progress" style="animation-delay: 0.2s">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Member Growth</span>
-                                <span class="text-sm font-semibold {{ ($paguyuban->member_growth ?? 0) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
-                                    {{ ($paguyuban->member_growth ?? 0) >= 0 ? '+' : '' }}{{ number_format($paguyuban->member_growth ?? 0, 1) }}%
-                                </span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
-                                <div class="{{ ($paguyuban->member_growth ?? 0) >= 0 ? 'bg-green-500' : 'bg-red-500' }} h-2 rounded-full progress-bar" style="width: 0%" data-width="{{ min(abs($paguyuban->member_growth ?? 0), 100) }}"></div>
+                            <div class="h-40">
+                                <canvas id="salesTrendChart"></canvas>
                             </div>
                         </div>
 
-                        <!-- Product Discounts Chart -->
-                        <div class="animate-progress" style="animation-delay: 0.4s">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Product Discounts</span>
-                                <span class="text-sm font-semibold text-purple-600 dark:text-purple-400">{{ $paguyuban->discounted_products_count ?? 0 }} Items</span>
+                        <!-- Bar Chart -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Top Products</span>
+                                <span class="text-xs bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-300 px-2 py-0.5 rounded-lg">By Revenue</span>
                             </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
-                                <div class="bg-purple-500 h-2 rounded-full progress-bar" style="width: 0%" data-width="{{ min(($paguyuban->discounted_products_count ?? 0) / ($paguyuban->products_count ?: 1) * 100, 100) }}"></div>
+                            <div class="h-40">
+                                <canvas id="topProductsChart"></canvas>
                             </div>
                         </div>
 
-                        <!-- Average Discount Chart -->
-                        <div class="animate-progress" style="animation-delay: 0.6s">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Avg. Discount</span>
-                                <span class="text-sm font-semibold text-yellow-600 dark:text-yellow-400">{{ number_format($paguyuban->average_discount ?? 0, 1) }}%</span>
+                        <!-- Progress Bars -->
+                        <div class="space-y-4">
+                            <div class="animate-progress">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Monthly Sales</span>
+                                    <span class="text-sm font-semibold text-indigo-600 dark:text-indigo-400">Rp 12.5M</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                                    <div class="bg-indigo-600 h-2 rounded-full progress-bar" style="width: 0%" data-width="75"></div>
+                                </div>
                             </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
-                                <div class="bg-yellow-500 h-2 rounded-full progress-bar" style="width: 0%" data-width="{{ min($paguyuban->average_discount ?? 0, 100) }}"></div>
+
+                            <div class="animate-progress" style="animation-delay: 0.2s">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Member Growth</span>
+                                    <span class="text-sm font-semibold text-green-600 dark:text-green-400">+24%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                                    <div class="bg-green-500 h-2 rounded-full progress-bar" style="width: 0%" data-width="45"></div>
+                                </div>
+                            </div>
+
+                            <div class="animate-progress" style="animation-delay: 0.4s">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Product Discounts</span>
+                                    <span class="text-sm font-semibold text-purple-600 dark:text-purple-400">32 Items</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                                    <div class="bg-purple-500 h-2 rounded-full progress-bar" style="width: 0%" data-width="60"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Quick Actions Card -->
-            <div class="mt-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700/50 transform transition-all duration-300 hover:shadow-xl">
-                <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/20">
+            <!-- Member Engagement Card -->
+            <div class="mt-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700/50 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700/20 dark:to-gray-800/30">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-                        <i class="fas fa-bolt text-indigo-500 mr-2 animate-pulse" style="animation-duration: 1s"></i>
-                        Quick Actions
+                        <i class="fas fa-users text-indigo-500 mr-2 animate-pulse" style="animation-duration: 2s"></i>
+                        Member Engagement
                     </h3>
                 </div>
                 <div class="p-6">
-                    <div class="grid grid-cols-2 gap-3">
-                     
-                        <button onclick="openModal()" class="flex flex-col items-center justify-center p-3 rounded-xl bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors duration-200 transform hover:-translate-y-1">
-                            <i class="fas fa-tag text-xl mb-2"></i>
-                            <span class="text-xs font-medium">Add Product</span>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 mr-3">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Active Shoppers</p>
+                                    <p class="text-lg font-semibold text-gray-700 dark:text-gray-300">1,248</p>
+                                </div>
+                            </div>
+                            <span class="text-xs bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-300 px-2 py-1 rounded-lg">+8.2%</span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-300 mr-3">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Monthly Visits</p>
+                                    <p class="text-lg font-semibold text-gray-700 dark:text-gray-300">3,456</p>
+                                </div>
+                            </div>
+                            <span class="text-xs bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-300 px-2 py-1 rounded-lg">-2.1%</span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="p-2 rounded-lg bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-300 mr-3">
+                                    <i class="fas fa-comment-alt"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Feedback Received</p>
+                                    <p class="text-lg font-semibold text-gray-700 dark:text-gray-300">189</p>
+                                </div>
+                            </div>
+                            <span class="text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 px-2 py-1 rounded-lg">+15.7%</span>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button onclick="showMemberEngagementModal()" class="w-full py-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-800/30 transition-colors flex items-center justify-center">
+                            <i class="fas fa-chart-bar mr-2"></i> View Detailed Analytics
                         </button>
-                        <a href="#" class="flex flex-col items-center justify-center p-3 rounded-xl bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors duration-200 transform hover:-translate-y-1">
-                            <i class="fas fa-file-export text-xl mb-2"></i>
-                            <span class="text-xs font-medium">Export Data</span>
-                        </a>
-                   
                     </div>
                 </div>
             </div>
@@ -333,53 +314,55 @@
 
         <!-- Right Column - Products and Activity -->
         <div class="lg:col-span-2 space-y-6">
-            <!-- Products Card -->
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700/50 transform transition-all duration-300 hover:shadow-xl">
-                <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/20">
+            <!-- Products Card with Enhanced Features -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700/50 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700/20 dark:to-gray-800/30">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                             <i class="fas fa-tags text-indigo-500 mr-2 animate-bounce" style="animation-duration: 2.5s"></i>
                             Special Pricing
+                            <span class="ml-2 text-xs bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 px-2 py-0.5 rounded-full">
+                                {{ $paguyuban->products->count() }} products
+                            </span>
                         </h3>
                         <div class="flex space-x-3">
                             <button onclick="openModal()" class="inline-flex items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all hover:shadow-md transform hover:-translate-y-0.5 animate-pulse-slow">
                                 <i class="fas fa-plus mr-2"></i> Add Product
                             </button>
                             <div class="relative">
-                                <button id="filterDropdownButton" class="inline-flex items-center px-4 py-2.5 border border-gray-300 text-sm font-medium rounded-xl shadow-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all hover:shadow-md transform hover:-translate-y-0.5">
+                                <button onclick="toggleFilterDropdown()" class="inline-flex items-center px-4 py-2.5 border border-gray-300 text-sm font-medium rounded-xl shadow-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all hover:shadow-md transform hover:-translate-y-0.5">
                                     <i class="fas fa-filter mr-2"></i> Filter
+                                    <i class="fas fa-chevron-down ml-2 text-xs"></i>
                                 </button>
-                                <div id="filterDropdown" class="hidden absolute z-10 mt-1 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-                                    <div class="p-3">
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sort By</label>
-                                        <select id="productSort" class="w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white">
-                                            <option value="name_asc">Name (A-Z)</option>
-                                            <option value="name_desc">Name (Z-A)</option>
-                                            <option value="price_asc">Price (Low to High)</option>
-                                            <option value="price_desc">Price (High to Low)</option>
-                                            <option value="discount_asc">Discount (Low to High)</option>
-                                            <option value="discount_desc">Discount (High to Low)</option>
-                                        </select>
-                                    </div>
-                                    <div class="p-3 border-t border-gray-200 dark:border-gray-700">
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filter</label>
-                                        <div class="space-y-2">
-                                            <div class="flex items-center">
-                                                <input id="filter_discounted" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700">
-                                                <label for="filter_discounted" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Discounted Only</label>
-                                            </div>
-                                            <div class="flex items-center">
-                                                <input id="filter_premium" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700">
-                                                <label for="filter_premium" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Premium Products</label>
-                                            </div>
+                                <div id="filterDropdown" class="hidden absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 z-10">
+                                    <div class="p-2">
+                                        <div class="mb-2">
+                                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Category</label>
+                                            <select class="w-full text-xs border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600">
+                                                <option>All Categories</option>
+                                                <option>Food & Beverage</option>
+                                                <option>Electronics</option>
+                                                <option>Household</option>
+                                            </select>
                                         </div>
-                                    </div>
-                                    <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-b-lg flex justify-between">
-                                        <button id="resetFilters" class="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100">Reset</button>
-                                        <button id="applyFilters" class="px-3 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700">Apply</button>
+                                        <div class="mb-2">
+                                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Discount Range</label>
+                                            <select class="w-full text-xs border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600">
+                                                <option>Any Discount</option>
+                                                <option>0-10%</option>
+                                                <option>10-20%</option>
+                                                <option>20%+</option>
+                                            </select>
+                                        </div>
+                                        <button class="w-full mt-2 px-3 py-1 bg-indigo-600 text-white text-xs rounded-lg hover:bg-indigo-700">
+                                            Apply Filters
+                                        </button>
                                     </div>
                                 </div>
                             </div>
+                            <button onclick="openProductManagement()" class="inline-flex items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all hover:shadow-md transform hover:-translate-y-0.5 animate-pulse-slow">
+                                <i class="fas fa-table mr-2"></i> Manage Pricing
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -436,7 +419,7 @@
                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $product->pivot->price < $product->price ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200' : ($product->pivot->price > $product->price ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200') }} transition-all duration-300 hover:scale-105">
                                         @if($product->pivot->price < $product->price)
                                             <i class="fas fa-arrow-down mr-1 text-xs"></i>
-                                            {{ number_format(100 - ($product->pivot->price / $product->price * 100), 0) }}%
+                                            {{ number_format(100 - ($product->pivot->price / $product->price * 100), 0 )}}%
                                             @elseif($product->pivot->price > $product->price)
                                             <i class="fas fa-arrow-up mr-1 text-xs"></i>
                                             {{ number_format(($product->pivot->price / $product->price * 100) - 100, 0) }}%
@@ -447,11 +430,14 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
-                                        <button onclick="openEditModal({{ $product->id }}, {{ $product->pivot->price }}, '{{ $product->name }}', {{ $product->price }})" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors p-2 rounded-lg hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20 transform hover:scale-110" title="Edit">
+                                        <button onclick="openEditModal({{ $product->id }}, {{ $product->pivot->price }})" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors p-2 rounded-lg hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20 transform hover:scale-110" title="Edit">
                                             <i class="fas fa-pencil-alt"></i>
                                         </button>
                                         <button onclick="confirmDelete({{ $product->id }})" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors p-2 rounded-lg hover:bg-red-50/50 dark:hover:bg-red-900/20 transform hover:scale-110" title="Remove">
                                             <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                        <button onclick="showProductDetails({{ $product->id }})" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 transition-colors p-2 rounded-lg hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transform hover:scale-110" title="Details">
+                                            <i class="fas fa-eye"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -465,10 +451,10 @@
                         Showing <span class="font-medium">1</span> to <span class="font-medium">{{ $paguyuban->products->count() }}</span> of <span class="font-medium">{{ $paguyuban->products->count() }}</span> results
                     </div>
                     <div class="flex space-x-2">
-                        <button class="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 transform hover:-translate-x-0.5 disabled:opacity-50" disabled>
+                        <button class="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 transform hover:-translate-x-0.5">
                             Previous
                         </button>
-                        <button class="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 transform hover:translate-x-0.5 disabled:opacity-50" disabled>
+                        <button class="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 transform hover:translate-x-0.5">
                             Next
                         </button>
                     </div>
@@ -487,25 +473,30 @@
                 @endif
             </div>
 
-            <!-- Activity Log with Enhanced Features -->
-            <div class="mt-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700/50 transform transition-all duration-300 hover:shadow-xl">
-                <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/20">
+            <!-- Recent Activity with Timeline View -->
+            <div class="mt-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700/50 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700/20 dark:to-gray-800/30">
                     <div class="flex justify-between items-center">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                             <i class="fas fa-history text-indigo-500 mr-2 animate-spin" style="animation-duration: 10s"></i>
-                            Recent Activity Log
+                            Recent Activity Timeline
                         </h3>
-                        <button onclick="fetchActivityLogs({{ $paguyuban->id }})" class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition-all duration-300 transform hover:scale-105">
+                        <button onclick="fetchActivityLogs({{ $paguyuban->id }})" class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition-all duration-300 transform hover:scale-105 flex items-center">
                             <i class="fas fa-sync-alt mr-1"></i> Refresh
                         </button>
                     </div>
                 </div>
                 <div class="p-6">
-                    <div class="space-y-4" id="activityLogsContainer">
-                        <!-- Activity logs will be inserted here by JavaScript -->
-                        <div class="text-center py-8">
-                            <i class="fas fa-spinner fa-spin text-2xl text-indigo-500"></i>
-                            <p class="text-gray-500 mt-2">Loading activity logs...</p>
+                    <div class="relative">
+                        <!-- Timeline -->
+                        <div class="border-l-2 border-indigo-200 dark:border-indigo-800 absolute h-full left-5 top-0"></div>
+
+                        <div class="space-y-6" id="activityLogsContainer">
+                            <!-- Activity items will be inserted here by JavaScript -->
+                            <div class="text-center py-8">
+                                <i class="fas fa-spinner fa-spin text-2xl text-indigo-500"></i>
+                                <p class="text-gray-500 mt-2">Loading activity logs...</p>
+                            </div>
                         </div>
                     </div>
                     <div class="mt-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4" id="activityPagination">
@@ -513,75 +504,167 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Product Performance Highlights -->
+            <div class="mt-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700/50 transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700/20 dark:to-gray-800/30">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                        <i class="fas fa-star text-yellow-500 mr-2 animate-pulse" style="animation-duration: 1.5s"></i>
+                        Product Performance Highlights
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Top Performing Product -->
+                        <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl border border-green-100 dark:border-green-800 transform transition-all duration-300 hover:scale-[1.02]">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs font-medium text-green-600 dark:text-green-300 mb-1">Top Performer</p>
+                                    <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">Organic Rice 5kg</h4>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Highest sales volume</p>
+                                </div>
+                                <div class="bg-green-100 dark:bg-green-800/50 text-green-600 dark:text-green-300 p-3 rounded-lg">
+                                    <i class="fas fa-trophy text-lg"></i>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex items-center justify-between">
+                                <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Sales</span>
+                                <span class="text-sm font-semibold text-green-600 dark:text-green-300">1,248 units</span>
+                            </div>
+                        </div>
+
+                        <!-- Most Discounted Product -->
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-800 transform transition-all duration-300 hover:scale-[1.02]">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs font-medium text-blue-600 dark:text-blue-300 mb-1">Best Discount</p>
+                                    <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">Premium Coffee 250g</h4>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">25% off regular price</p>
+                                </div>
+                                <div class="bg-blue-100 dark:bg-blue-800/50 text-blue-600 dark:text-blue-300 p-3 rounded-lg">
+                                    <i class="fas fa-percentage text-lg"></i>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex items-center justify-between">
+                                <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Savings</span>
+                                <span class="text-sm font-semibold text-blue-600 dark:text-blue-300">Rp 25,000/unit</span>
+                            </div>
+                        </div>
+
+                        <!-- Newest Addition -->
+                        <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-xl border border-purple-100 dark:border-purple-800 transform transition-all duration-300 hover:scale-[1.02]">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs font-medium text-purple-600 dark:text-purple-300 mb-1">Newest Addition</p>
+                                    <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">Honey 500ml</h4>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Added 2 days ago</p>
+                                </div>
+                                <div class="bg-purple-100 dark:bg-purple-800/50 text-purple-600 dark:text-purple-300 p-3 rounded-lg">
+                                    <i class="fas fa-bolt text-lg"></i>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex items-center justify-between">
+                                <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Sales</span>
+                                <span class="text-sm font-semibold text-purple-600 dark:text-purple-300">87 units</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Add Pricing Modal -->
-<div id="addPricingModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-opacity duration-300">
-    <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-2xl bg-white dark:bg-gray-800 transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
+<!-- Add Pricing Modal with Enhanced UI -->
+<div id="addPricingModal" class="hidden fixed inset-0 bg-gray-600/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 transition-opacity duration-300">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-2xl rounded-2xl bg-white dark:bg-gray-800 transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
+        <!-- Modal header -->
         <div class="flex justify-between items-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                Add Special Pricing
-            </h3>
+            <div>
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    Add Special Pricing
+                </h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Set exclusive pricing for community members</p>
+            </div>
             <button onclick="closeModal()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-transform duration-200 hover:rotate-90">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
+        <!-- Modal content -->
         <form id="addPricingForm" action="{{ route('pos.community.add-pricing', $paguyuban) }}" method="POST">
             @csrf
-            <div class="space-y-4">
+            <div class="space-y-6">
                 <div class="animate-fade-in-up" style="animation-delay: 0.1s">
-                    <label for="product_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product</label>
-                    <select id="product_id" name="product_id" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-300 hover:shadow-md">
-                        <option value="">Select a product</option>
-                        @foreach($availableProducts as $product)
-                        <option value="{{ $product->id }}" data-price="{{ $product->price }}">
-                            {{ $product->name }} (Rp {{ number_format($product->price, 0, ',', '.') }})
-                        </option>
-                        @endforeach
-                    </select>
+                    <label for="product_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Product</label>
+                    <div class="relative">
+                        <select id="product_id" name="product_id" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-300 hover:shadow-md pr-8">
+                            <option value="">Search or select a product</option>
+                            @foreach($availableProducts as $product)
+                            <option value="{{ $product->id }}" data-price="{{ $product->price }}">
+                                {{ $product->name }} (Rp {{ number_format($product->price, 0, ',', '.') }})
+                            </option>
+                            @endforeach
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="animate-fade-in-up" style="animation-delay: 0.2s">
-                    <label for="regular_price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Regular Price</label>
-                    <input type="text" id="regular_price" readonly class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white transition-all duration-300 hover:shadow-md">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="animate-fade-in-up" style="animation-delay: 0.2s">
+                        <label for="regular_price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Regular Price</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500">Rp</span>
+                            </div>
+                            <input type="text" id="regular_price" readonly class="bg-gray-100 pl-10 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white transition-all duration-300 hover:shadow-md">
+                        </div>
+                    </div>
+                    <div class="animate-fade-in-up" style="animation-delay: 0.3s">
+                        <label for="special_price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Special Price</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500">Rp</span>
+                            </div>
+                            <input type="number" id="special_price" name="price" required class="bg-gray-50 pl-10 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-300 hover:shadow-md">
+                        </div>
+                    </div>
                 </div>
 
-                <div class="animate-fade-in-up" style="animation-delay: 0.3s">
-                    <label for="special_price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Special Price</label>
+                <div class="animate-fade-in-up" style="animation-delay: 0.4s">
+                    <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-medium text-blue-600 dark:text-blue-300 mb-1">Price Difference</p>
+                                <p id="price_difference" class="text-sm font-medium animate-pulse" style="animation-duration: 1.5s">Select a product to see savings</p>
+                            </div>
+                            <div class="bg-blue-100 dark:bg-blue-800/50 text-blue-600 dark:text-blue-300 p-2 rounded-lg">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="animate-fade-in-up" style="animation-delay: 0.5s">
+                    <label for="effective_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Effective Date</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="text-gray-500">Rp</span>
+                            <i class="far fa-calendar text-gray-400"></i>
                         </div>
-                        <input type="number" id="special_price" name="price" required class="pl-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-300 hover:shadow-md">
-                    </div>
-                    <p id="price_difference" class="mt-1 text-sm animate-pulse" style="animation-duration: 1.5s"></p>
-                </div>
-                
-                <div class="animate-fade-in-up" style="animation-delay: 0.4s">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pricing Type</label>
-                    <div class="grid grid-cols-3 gap-3">
-                        <button type="button" onclick="setDiscountType('percentage', 10)" class="p-2 border border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                            <span class="block text-xs text-gray-500 dark:text-gray-400">10% Off</span>
-                        </button>
-                        <button type="button" onclick="setDiscountType('percentage', 20)" class="p-2 border border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                            <span class="block text-xs text-gray-500 dark:text-gray-400">20% Off</span>
-                        </button>
-                        <button type="button" onclick="setDiscountType('percentage', 30)" class="p-2 border border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                            <span class="block text-xs text-gray-500 dark:text-gray-400">30% Off</span>
-                        </button>
+                        <input type="date" id="effective_date" name="effective_date" class="bg-gray-50 pl-10 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                     </div>
                 </div>
             </div>
 
-            <div class="flex justify-end pt-6 mt-6 border-t border-gray-200 dark:border-gray-700 space-x-3 animate-fade-in-up" style="animation-delay: 0.5s">
+            <!-- Modal footer -->
+            <div class="flex justify-end pt-6 mt-6 border-t border-gray-200 dark:border-gray-700 space-x-3 animate-fade-in-up" style="animation-delay: 0.6s">
                 <button type="button" onclick="closeModal()" class="px-5 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600 transition-all duration-300 transform hover:-translate-x-1">
                     Cancel
                 </button>
-                <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 transform hover:translate-x-1">
-                    Save Pricing
+                <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 transform hover:translate-x-1 flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i> Save Pricing
                 </button>
             </div>
         </form>
@@ -589,91 +672,111 @@
 </div>
 
 <!-- Edit Pricing Modal -->
-<div id="editPricingModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-opacity duration-300">
-    <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-2xl bg-white dark:bg-gray-800 transform transition-all duration-300 scale-95 opacity-0" id="editModalContent">
+<div id="editPricingModal" class="hidden fixed inset-0 bg-gray-600/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 transition-opacity duration-300">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-2xl rounded-2xl bg-white dark:bg-gray-800 transform transition-all duration-300 scale-95 opacity-0" id="editModalContent">
+        <!-- Modal header -->
         <div class="flex justify-between items-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                Edit Special Pricing
-            </h3>
+            <div>
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    Edit Special Pricing
+                </h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Update pricing for community members</p>
+            </div>
             <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-transform duration-200 hover:rotate-90">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
+        <!-- Modal content -->
         <form id="editPricingForm" action="" method="POST">
             @csrf
             @method('PUT')
-            <div class="space-y-4">
+            <div class="space-y-6">
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product</label>
-                    <p id="editProductName" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"></p>
+                    <div class="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg block w-full p-2.5">
+                        <p id="editProductName" class="font-medium"></p>
+                        <p id="editProductSku" class="text-xs text-gray-500 dark:text-gray-400 mt-1"></p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="editRegularPrice" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Regular Price</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500">Rp</span>
+                            </div>
+                            <input type="text" id="editRegularPrice" readonly class="bg-gray-100 pl-10 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="editSpecialPrice" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Special Price</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500">Rp</span>
+                            </div>
+                            <input type="number" id="editSpecialPrice" name="price" required class="bg-gray-50 pl-10 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        </div>
+                    </div>
                 </div>
 
                 <div>
-                    <label for="editRegularPrice" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Regular Price</label>
-                    <input type="text" id="editRegularPrice" readonly class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-100 dark:border-purple-800">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-medium text-purple-600 dark:text-purple-300 mb-1">Price Impact</p>
+                                <p id="editPriceDifference" class="text-sm font-medium animate-pulse" style="animation-duration: 1.5s"></p>
+                            </div>
+                            <div class="bg-purple-100 dark:bg-purple-800/50 text-purple-600 dark:text-purple-300 p-2 rounded-lg">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div>
-                    <label for="editSpecialPrice" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Special Price</label>
+                    <label for="editEffectiveDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Effective Until</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="text-gray-500">Rp</span>
+                            <i class="far fa-calendar text-gray-400"></i>
                         </div>
-                        <input type="number" id="editSpecialPrice" name="price" required class="pl-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                    </div>
-                    <p id="editPriceDifference" class="mt-1 text-sm animate-pulse" style="animation-duration: 1.5s"></p>
-                </div>
-                
-                <div>
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quick Adjustments</label>
-                    <div class="grid grid-cols-4 gap-2">
-                        <button type="button" onclick="adjustPrice(-1000)" class="p-2 border border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                            <span class="block text-xs text-gray-500 dark:text-gray-400">-1,000</span>
-                        </button>
-                        <button type="button" onclick="adjustPrice(1000)" class="p-2 border border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                            <span class="block text-xs text-gray-500 dark:text-gray-400">+1,000</span>
-                        </button>
-                        <button type="button" onclick="adjustPrice(-5000)" class="p-2 border border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                            <span class="block text-xs text-gray-500 dark:text-gray-400">-5,000</span>
-                        </button>
-                        <button type="button" onclick="adjustPrice(5000)" class="p-2 border border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                            <span class="block text-xs text-gray-500 dark:text-gray-400">+5,000</span>
-                        </button>
+                        <input type="date" id="editEffectiveDate" name="effective_until" class="bg-gray-50 pl-10 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                     </div>
                 </div>
             </div>
 
+            <!-- Modal footer -->
             <div class="flex justify-end pt-6 mt-6 border-t border-gray-200 dark:border-gray-700 space-x-3">
                 <button type="button" onclick="closeEditModal()" class="px-5 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
                     Cancel
                 </button>
-                <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    Update Pricing
+                <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 flex items-center">
+                    <i class="fas fa-save mr-2"></i> Update Pricing
                 </button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
-<div id="deleteConfirmationModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-opacity duration-300">
-    <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-2xl bg-white dark:bg-gray-800 transform transition-all duration-300 scale-95 opacity-0" id="deleteModalContent">
+<!-- Delete Confirmation Modal with Enhanced UI -->
+<div id="deleteConfirmationModal" class="hidden fixed inset-0 bg-gray-600/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 transition-opacity duration-300">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-2xl rounded-2xl bg-white dark:bg-gray-800 transform transition-all duration-300 scale-95 opacity-0" id="deleteModalContent">
         <div class="p-6 text-center">
             <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-300 mb-4 animate-pulse">
                 <i class="fas fa-exclamation-triangle text-xl"></i>
             </div>
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Delete Pricing</h3>
-            <p class="text-gray-500 dark:text-gray-400 mb-6">Are you sure you want to remove this special pricing? This action cannot be undone.</p>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Confirm Removal</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-6">Are you sure you want to remove this special pricing? This action cannot be undone and will affect all community members.</p>
             <div class="flex justify-center space-x-4">
-                <button onclick="closeDeleteModal()" class="px-5 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
-                    Cancel
+                <button onclick="closeDeleteModal()" class="px-5 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600 transition-all duration-300 hover:-translate-x-1">
+                    <i class="fas fa-times mr-2"></i> Cancel
                 </button>
                 <form id="deleteForm" method="POST" class="inline">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
-                        Yes, Delete It
+                    <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300 hover:translate-x-1">
+                        <i class="fas fa-trash-alt mr-2"></i> Yes, Remove
                     </button>
                 </form>
             </div>
@@ -681,44 +784,355 @@
     </div>
 </div>
 
-<!-- QR Code Modal -->
-<div id="qrCodeModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-opacity duration-300">
-    <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-2xl bg-white dark:bg-gray-800 transform transition-all duration-300 scale-95 opacity-0" id="qrModalContent">
-        <div class="p-6 text-center">
-            <div class="flex justify-between items-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                    Community Join Code
+<!-- Product Details Modal -->
+<div id="productDetailsModal" class="hidden fixed inset-0 bg-gray-600/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 transition-opacity duration-300">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-2xl rounded-2xl bg-white dark:bg-gray-800 transform transition-all duration-300 scale-95 opacity-0" id="detailsModalContent">
+        <div class="flex justify-between items-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
+            <div>
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+                    <i class="fas fa-box-open text-indigo-500 mr-2"></i>
+                    Product Details
                 </h3>
-                <button onclick="closeQRCodeModal()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-transform duration-200 hover:rotate-90">
-                    <i class="fas fa-times"></i>
-                </button>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Detailed information about this product</p>
             </div>
-            
-            <div id="qrCodeContainer" class="flex justify-center mb-6">
-                <!-- QR Code will be generated here -->
-                <div class="p-4 bg-white rounded-lg border border-gray-200 dark:border-gray-600">
-                    <canvas id="qrCanvas" width="200" height="200"></canvas>
+            <button onclick="closeProductDetails()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-transform duration-200 hover:rotate-90">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="space-y-6">
+            <div class="flex flex-col md:flex-row gap-6">
+                <div class="w-full md:w-1/3 flex justify-center">
+                    <div class="h-40 w-40 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden border-2 border-gray-200 dark:border-gray-600">
+                        <img id="productDetailImage" src="" alt="Product Image" class="h-full w-full object-cover">
+                        <i id="productDetailIcon" class="fas fa-box text-3xl text-gray-400 dark:text-gray-500 hidden"></i>
+                    </div>
+                </div>
+                <div class="w-full md:w-2/3">
+                    <h2 id="productDetailName" class="text-xl font-bold text-gray-900 dark:text-white mb-2"></h2>
+                    <p id="productDetailSku" class="text-sm text-gray-500 dark:text-gray-400 mb-3"></p>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Category</p>
+                            <p id="productDetailCategory" class="text-sm font-medium text-gray-700 dark:text-gray-300"></p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Stock</p>
+                            <p id="productDetailStock" class="text-sm font-medium text-gray-700 dark:text-gray-300"></p>
+                        </div>
+                    </div>
+                    <div class="bg-indigo-50 dark:bg-indigo-900/20 p-3 rounded-lg">
+                        <p class="text-xs font-medium text-indigo-600 dark:text-indigo-300 mb-1">Special Pricing</p>
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Regular Price</p>
+                                <p id="productDetailRegularPrice" class="text-lg font-bold text-gray-700 dark:text-gray-300"></p>
+                            </div>
+                            <i class="fas fa-arrow-right text-gray-400 mx-2 mb-2"></i>
+                            <div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Special Price</p>
+                                <p id="productDetailSpecialPrice" class="text-lg font-bold text-indigo-600 dark:text-indigo-400"></p>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-xs text-gray-500 dark:text-gray-400">You Save</p>
+                                <p id="productDetailSavings" class="text-lg font-bold text-green-600 dark:text-green-400"></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <div class="mb-4">
-                <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Share this code with members to let them join:</p>
-                <div class="flex items-center justify-center">
-                    <input id="joinCodeInput" type="text" readonly class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-l-lg bg-gray-50 dark:bg-gray-700 dark:text-white text-center font-mono" style="width: 150px;">
-                    <button onclick="copyJoinCode()" class="px-3 py-2 bg-indigo-600 text-white rounded-r-lg hover:bg-indigo-700 transition-colors">
-                        <i class="fas fa-copy"></i>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Sales Performance</p>
+                    <div class="h-32">
+                        <canvas id="productSalesChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Member Engagement</p>
+                    <div class="h-32">
+                        <canvas id="productEngagementChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <button onclick="closeProductDetails()" class="w-full py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    Close Details
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Member Engagement Analytics Modal -->
+<div id="memberEngagementModal" class="hidden fixed inset-0 bg-gray-600/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 transition-opacity duration-300">
+    <div class="relative top-4 mx-auto p-5 border w-full max-w-4xl shadow-2xl rounded-2xl bg-white dark:bg-gray-800 transform transition-all duration-300 scale-95 opacity-0" id="engagementModalContent">
+        <div class="flex justify-between items-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
+            <div>
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+                    <i class="fas fa-chart-bar text-indigo-500 mr-2"></i>
+                    Member Engagement Analytics
+                </h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Detailed insights about community member activity</p>
+            </div>
+            <button onclick="closeMemberEngagementModal()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-transform duration-200 hover:rotate-90">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white dark:bg-gray-700 p-4 rounded-xl border border-gray-200 dark:border-gray-600 shadow-sm">
+                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-3">Active Members Over Time</p>
+                    <div class="h-64">
+                        <canvas id="memberActivityChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-700 p-4 rounded-xl border border-gray-200 dark:border-gray-600 shadow-sm">
+                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-3">Purchase Frequency</p>
+                    <div class="h-64">
+                        <canvas id="purchaseFrequencyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-700 p-4 rounded-xl border border-gray-200 dark:border-gray-600 shadow-sm">
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-3">Top Members by Engagement</p>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+                        <thead class="bg-gray-50 dark:bg-gray-600">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Member</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Visits</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Purchases</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Last Active</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
+                            <tr>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-300 mr-2">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900 dark:text-white">John Doe</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">Gold Member</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">24</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">18</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">2 hours ago</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-300 mr-2">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900 dark:text-white">Jane Smith</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">Silver Member</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">19</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">12</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">1 day ago</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-300 mr-2">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900 dark:text-white">Robert Johnson</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">Bronze Member</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">15</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">8</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">3 days ago</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <button onclick="closeMemberEngagementModal()" class="w-full py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    Close Analytics
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Product Management Modal -->
+<div id="productManagementModal" class="hidden fixed inset-0 bg-gray-600/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 transition-opacity duration-300">
+    <div class="relative top-4 mx-auto p-5 border w-full max-w-6xl shadow-2xl rounded-2xl bg-white dark:bg-gray-800 transform transition-all duration-300 scale-95 opacity-0" id="spreadsheetModalContent">
+        <!-- Modal header -->
+        <div class="flex justify-between items-center pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+                <i class="fas fa-table text-indigo-500 mr-2 animate-pulse"></i>
+                Product Pricing Management
+                <span class="ml-2 text-xs bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 px-2 py-0.5 rounded-full">
+                    Bulk Edit Mode
+                </span>
+            </h3>
+            <div class="flex space-x-2">
+                <button onclick="saveSpreadsheet()" class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md">
+                    <i class="fas fa-save mr-2"></i> Save Changes
+                </button>
+                <button onclick="closeSpreadsheetModal()" class="flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-times mr-2"></i> Close
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal content -->
+        <div class="mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800 transform transition-all duration-300 hover:scale-[1.02]">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300 mr-3">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-blue-800 dark:text-blue-200">Instructions</h4>
+                            <p class="text-sm text-blue-600 dark:text-blue-300">Edit prices directly in the table. Use right-click for more options.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-100 dark:border-purple-800 transform transition-all duration-300 hover:scale-[1.02]">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-purple-100 dark:bg-purple-800 text-purple-600 dark:text-purple-300 mr-3">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-purple-800 dark:text-purple-200">Quick Actions</h4>
+                            <div class="flex flex-wrap gap-2 mt-1">
+                                <button onclick="applyPercentageChange(-5)" class="text-xs px-2 py-1 bg-purple-100 dark:bg-purple-700 hover:bg-purple-200 dark:hover:bg-purple-600 text-purple-800 dark:text-purple-200 rounded transition-all transform hover:scale-105">
+                                    -5%
+                                </button>
+                                <button onclick="applyPercentageChange(-10)" class="text-xs px-2 py-1 bg-purple-100 dark:bg-purple-700 hover:bg-purple-200 dark:hover:bg-purple-600 text-purple-800 dark:text-purple-200 rounded transition-all transform hover:scale-105">
+                                    -10%
+                                </button>
+                                <button onclick="applyPercentageChange(5)" class="text-xs px-2 py-1 bg-purple-100 dark:bg-purple-700 hover:bg-purple-200 dark:hover:bg-purple-600 text-purple-800 dark:text-purple-200 rounded transition-all transform hover:scale-105">
+                                    +5%
+                                </button>
+                                <button onclick="applyPercentageChange(10)" class="text-xs px-2 py-1 bg-purple-100 dark:bg-purple-700 hover:bg-purple-200 dark:hover:bg-purple-600 text-purple-800 dark:text-purple-200 rounded transition-all transform hover:scale-105">
+                                    +10%
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-100 dark:border-green-800 transform transition-all duration-300 hover:scale-[1.02]">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-green-100 dark:bg-green-800 text-green-600 dark:text-green-300 mr-3">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-green-800 dark:text-green-200">Statistics</h4>
+                            <p class="text-sm text-green-600 dark:text-green-300" id="statsInfo">
+                                Loading product stats...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-auto rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                <div id="spreadsheet" class="w-full"></div>
+            </div>
+
+            <div class="mt-4 flex justify-between items-center">
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                    <span id="rowCount">0</span> products loaded |
+                    <span id="modifiedCount">0</span> modifications
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="addNewRow()" class="flex items-center px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-sm rounded-lg transition-all transform hover:scale-105 shadow-sm">
+                        <i class="fas fa-plus mr-1"></i> Add Row
+                    </button>
+                    <button onclick="showImportModal()" class="flex items-center px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-all transform hover:scale-105 shadow-sm">
+                        <i class="fas fa-file-import mr-1"></i> Import
+                    </button>
+                    <button onclick="exportToExcel()" class="flex items-center px-3 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm rounded-lg transition-all transform hover:scale-105 shadow-sm">
+                        <i class="fas fa-file-export mr-1"></i> Export
                     </button>
                 </div>
             </div>
-            
-            <div class="flex justify-center space-x-3">
-                <button onclick="printQRCode()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                    <i class="fas fa-print mr-2"></i> Print
-                </button>
-                <button onclick="downloadQRCode()" class="px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
-                    <i class="fas fa-download mr-2"></i> Download
-                </button>
+        </div>
+    </div>
+</div>
+
+<!-- Import Modal -->
+<div id="importModal" class="hidden fixed inset-0 bg-gray-600/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-2xl rounded-2xl bg-white dark:bg-gray-800">
+        <div class="flex justify-between items-center pb-3">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                <i class="fas fa-file-import text-blue-500 mr-2"></i>
+                Import Product Data
+            </h3>
+            <button onclick="closeImportModal()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="py-4">
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Select Excel/CSV File
+                </label>
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-xl hover:border-indigo-500 transition-colors duration-300">
+                    <div class="space-y-1 text-center">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <div class="flex text-sm text-gray-600 dark:text-gray-400">
+                            <label for="file-upload" class="relative cursor-pointer bg-white dark:bg-gray-700 rounded-md font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 focus-within:outline-none">
+                                <span>Upload a file</span>
+                                <input id="file-upload" name="file-upload" type="file" class="sr-only">
+                            </label>
+                            <p class="pl-1">or drag and drop</p>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                            Excel, CSV up to 5MB
+                        </p>
+                    </div>
+                </div>
             </div>
+            <div class="flex items-center mb-4">
+                <input id="replaceData" name="replaceData" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                <label for="replaceData" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                    Replace existing data
+                </label>
+            </div>
+            <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-100 dark:border-yellow-800 rounded-lg p-3 mb-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-yellow-500 dark:text-yellow-300"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-200">Import Notice</h3>
+                        <div class="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+                            <p>Ensure your file includes all required columns: Product ID, Name, Regular Price, and Special Price.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
+            <button onclick="closeImportModal()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 mr-2">
+                Cancel
+            </button>
+            <button onclick="processImport()" class="px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 flex items-center">
+                <i class="fas fa-upload mr-2"></i> Import Data
+            </button>
         </div>
     </div>
 </div>
@@ -732,6 +1146,7 @@
             opacity: 0;
             transform: translateY(20px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -739,29 +1154,74 @@
     }
 
     @keyframes pulseSlow {
-        0%, 100% {
+
+        0%,
+        100% {
             opacity: 1;
         }
+
         50% {
             opacity: 0.8;
         }
     }
 
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    @keyframes floatFast {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-15px);
+        }
+    }
+
+    @keyframes floatMedium {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-8px);
+        }
+    }
+
     @keyframes slideInRight {
         from {
+            transform: translateX(100%);
             opacity: 0;
-            transform: translateX(20px);
         }
+
         to {
-            opacity: 1;
             transform: translateX(0);
+            opacity: 1;
         }
     }
 
     @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
         to {
+            transform: translateX(100%);
             opacity: 0;
-            transform: translateX(20px);
         }
     }
 
@@ -771,6 +1231,18 @@
 
     .animate-pulse-slow {
         animation: pulseSlow 2s infinite;
+    }
+
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .animate-float-fast {
+        animation: floatFast 4s ease-in-out infinite;
+    }
+
+    .animate-float-medium {
+        animation: floatMedium 5s ease-in-out infinite;
     }
 
     .animate-count {
@@ -784,38 +1256,38 @@
     }
 
     .toast {
-        padding: 12px 16px;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         display: flex;
         align-items: center;
-        max-width: 350px;
+        padding: 1rem;
+        background-color: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        max-width: 24rem;
+        margin-left: auto;
         opacity: 0;
-        transform: translateX(20px);
+        transform: translateX(100%);
         animation: slideInRight 0.3s ease-out forwards;
-        position: relative;
     }
 
-    .toast.toast-success {
+    .toast-success {
         border-left: 4px solid #10B981;
     }
 
-    .toast.toast-error {
+    .toast-error {
         border-left: 4px solid #EF4444;
     }
 
-    .toast.toast-info {
+    .toast-info {
         border-left: 4px solid #3B82F6;
     }
 
-    .toast.toast-warning {
+    .toast-warning {
         border-left: 4px solid #F59E0B;
     }
 
     .toast-icon {
-        margin-right: 12px;
-        font-size: 20px;
+        margin-right: 0.75rem;
+        font-size: 1.25rem;
     }
 
     .toast-success .toast-icon {
@@ -836,123 +1308,296 @@
 
     .toast-message {
         flex: 1;
-        font-size: 14px;
+        font-size: 0.875rem;
         color: #374151;
     }
 
     .toast-close {
-        margin-left: 12px;
+        margin-left: 0.75rem;
         color: #9CA3AF;
         background: none;
         border: none;
         cursor: pointer;
-        font-size: 16px;
     }
 
-    .toast-close:hover {
-        color: #6B7280;
+    .shadow-3xl {
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .hover\:shadow-3xl:hover {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     }
 </style>
 
+@endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jexcel@4.5.0/dist/jexcel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsuites@4.5.0/dist/jsuites.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jexcel@4.5.0/dist/jexcel.min.css">
+
 <script>
-    // Toastr notification function
-    function showToast(message, type = 'success', duration = 5000) {
-        const icons = {
-            success: 'fas fa-check-circle',
-            error: 'fas fa-times-circle',
-            info: 'fas fa-info-circle',
-            warning: 'fas fa-exclamation-circle'
-        };
+    // Initialize variables
+    let spreadsheet = null;
+    let productsData = [];
+    let modifiedRows = new Set();
+    let salesTrendChart = null;
+    let topProductsChart = null;
+    let memberActivityChart = null;
+    let purchaseFrequencyChart = null;
+    let productSalesChart = null;
+    let productEngagementChart = null;
 
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        toast.innerHTML = `
-            <i class="${icons[type]} toast-icon"></i>
-            <span class="toast-message">${message}</span>
-            <button class="toast-close" onclick="this.parentElement.remove()">
-                <i class="fas fa-times"></i>
-            </button>
-        `;
+    // Quick Actions Menu
+    function showQuickActionsMenu() {
+        const menu = document.getElementById('quickActionsMenu');
+        const button = document.querySelector('[onclick="showQuickActionsMenu()"]');
 
-        const container = document.getElementById('toast-container');
-        container.appendChild(toast);
+        if (menu.classList.contains('hidden')) {
+            // Position the dropdown below the button
+            const rect = button.getBoundingClientRect();
+            menu.style.top = `${rect.bottom + window.scrollY + 4}px`;
+            menu.style.right = `${window.innerWidth - rect.right}px`;
 
-        // Trigger the animation
-        setTimeout(() => {
-            toast.style.opacity = '1';
-            toast.style.transform = 'translateX(0)';
-        }, 10);
-
-        // Auto remove after duration
-        setTimeout(() => {
-            toast.style.animation = 'slideOut 0.3s ease-out forwards';
+            menu.classList.remove('hidden');
             setTimeout(() => {
-                toast.remove();
-            }, 300);
-        }, duration);
-    }
-
-    // Display any existing flash messages as toasts
-    @if(session('success'))
-    showToast("{{ session('success') }}", 'success');
-    @endif
-    @if(session('error'))
-    showToast("{{ session('error') }}", 'error');
-    @endif
-    @if(session('info'))
-    showToast("{{ session('info') }}", 'info');
-    @endif
-    @if(session('warning'))
-    showToast("{{ session('warning') }}", 'warning');
-    @endif
-
-    // Toggle description read more/less
-    function toggleDescription() {
-        const desc = document.getElementById('communityDescription');
-        const button = desc.nextElementSibling;
-        
-        if (desc.style.webkitLineClamp === '3') {
-            desc.style.webkitLineClamp = 'unset';
-            button.textContent = 'Read less';
-        } else {
-            desc.style.webkitLineClamp = '3';
-            button.textContent = 'Read more';
-        }
-    }
-
-    // Members list modal functions
-    function toggleMembersList() {
-        const modal = document.getElementById('membersListModal');
-        const content = document.getElementById('membersModalContent');
-        
-        if (modal.classList.contains('hidden')) {
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.add('opacity-100');
-                content.classList.remove('scale-95', 'opacity-0');
-                content.classList.add('scale-100', 'opacity-100');
+                menu.classList.remove('opacity-0');
+                menu.classList.remove('scale-95');
+                menu.classList.add('opacity-100');
+                menu.classList.add('scale-100');
             }, 10);
-            document.body.classList.add('overflow-hidden');
-            
-            // Load members when modal opens
-            fetchMembers(1);
         } else {
-            content.classList.remove('scale-100', 'opacity-100');
-            content.classList.add('scale-95', 'opacity-0');
-            modal.classList.remove('opacity-100');
-            
+            menu.classList.remove('opacity-100');
+            menu.classList.remove('scale-100');
+            menu.classList.add('opacity-0');
+            menu.classList.add('scale-95');
             setTimeout(() => {
-                modal.classList.add('hidden');
-                document.body.classList.remove('overflow-hidden');
+                menu.classList.add('hidden');
             }, 300);
         }
     }
 
-    // Add member modal functions
-    function openAddMemberModal() {
-        const modal = document.getElementById('addMemberModal');
-        const content = document.getElementById('addMemberModalContent');
-        
+    // Close quick actions menu when clicking outside
+    document.addEventListener('click', function(event) {
+        const menu = document.getElementById('quickActionsMenu');
+        const button = document.querySelector('[onclick="showQuickActionsMenu()"]');
+
+        if (!menu.contains(event.target) && !button.contains(event.target)) {
+            menu.classList.remove('opacity-100');
+            menu.classList.remove('scale-100');
+            menu.classList.add('opacity-0');
+            menu.classList.add('scale-95');
+            setTimeout(() => {
+                menu.classList.add('hidden');
+            }, 300);
+        }
+    });
+
+    // Toggle filter dropdown
+    function toggleFilterDropdown() {
+        const dropdown = document.getElementById('filterDropdown');
+        dropdown.classList.toggle('hidden');
+    }
+
+    // Toggle details edit mode
+    function toggleDetailsEdit() {
+        document.getElementById('detailsView').classList.toggle('hidden');
+        document.getElementById('detailsEdit').classList.toggle('hidden');
+    }
+
+    // Initialize charts when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate progress bars
+        const progressBars = document.querySelectorAll('.progress-bar');
+        progressBars.forEach(bar => {
+            const width = bar.getAttribute('data-width');
+            bar.style.width = width + '%';
+        });
+
+        // Initialize sales trend chart
+        const salesCtx = document.getElementById('salesTrendChart').getContext('2d');
+        salesTrendChart = new Chart(salesCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    label: 'Monthly Sales',
+                    data: [12000000, 19000000, 15000000, 18000000, 21000000, 19000000, 23000000],
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    borderColor: 'rgba(79, 70, 229, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Rp ' + context.raw.toLocaleString('id-ID');
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'Rp ' + (value / 1000000).toLocaleString('id-ID') + 'M';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Initialize top products chart
+        const topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
+        topProductsChart = new Chart(topProductsCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Rice 5kg', 'Coffee 250g', 'Sugar 1kg', 'Oil 1L', 'Tea 100g'],
+                datasets: [{
+                    label: 'Revenue',
+                    data: [5000000, 3500000, 2800000, 2200000, 1800000],
+                    backgroundColor: [
+                        'rgba(99, 102, 241, 0.7)',
+                        'rgba(79, 70, 229, 0.7)',
+                        'rgba(67, 56, 202, 0.7)',
+                        'rgba(55, 48, 163, 0.7)',
+                        'rgba(49, 46, 129, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(99, 102, 241, 1)',
+                        'rgba(79, 70, 229, 1)',
+                        'rgba(67, 56, 202, 1)',
+                        'rgba(55, 48, 163, 1)',
+                        'rgba(49, 46, 129, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Rp ' + context.raw.toLocaleString('id-ID');
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'Rp ' + (value / 1000000).toLocaleString('id-ID') + 'M';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Animate counter
+        const counter = document.querySelector('.animate-count');
+        if (counter) {
+            const target = parseInt(counter.getAttribute('data-count'));
+            const duration = 2000; // 2 seconds
+            const step = target / (duration / 16); // 60fps
+
+            let current = 0;
+            const interval = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    clearInterval(interval);
+                    current = target;
+                }
+                counter.textContent = Math.floor(current);
+            }, 16);
+        }
+
+        // Add animation to elements when they come into view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in-up');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Time range selector
+        document.getElementById('timeRange').addEventListener('change', function() {
+            updateCharts(this.value);
+        });
+
+        // Fetch initial activity logs
+        const paguyubanId = {
+            {
+                $paguyuban - > id
+            }
+        };
+        fetchActivityLogs(paguyubanId);
+    });
+
+    // Update charts based on time range
+    function updateCharts(days) {
+        // In a real app, you would fetch new data based on the time range
+        // For demo purposes, we'll just adjust the existing data
+
+        let salesData, labels;
+
+        if (days === '7') {
+            labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            salesData = [3200000, 2800000, 4000000, 3500000, 4200000, 3800000, 4500000];
+        } else if (days === '30') {
+            labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+            salesData = [12000000, 15000000, 14000000, 18000000];
+        } else if (days === '90') {
+            labels = ['Month 1', 'Month 2', 'Month 3'];
+            salesData = [45000000, 52000000, 48000000];
+        }
+
+        // Update sales trend chart
+        salesTrendChart.data.labels = labels;
+        salesTrendChart.data.datasets[0].data = salesData;
+        salesTrendChart.update();
+
+        // Show loading state
+        showToast(`Loading ${days} days of data...`, 'info', 1500);
+
+        // Simulate loading new data
+        setTimeout(() => {
+            showToast('Charts updated successfully', 'success');
+        }, 1500);
+    }
+
+    // Product Management Spreadsheet
+    function openProductManagement() {
+        const modal = document.getElementById('productManagementModal');
+        const content = document.getElementById('spreadsheetModalContent');
+
         modal.classList.remove('hidden');
         setTimeout(() => {
             modal.classList.add('opacity-100');
@@ -960,114 +1605,401 @@
             content.classList.add('scale-100', 'opacity-100');
         }, 10);
         document.body.classList.add('overflow-hidden');
+
+        loadProductData();
     }
 
-    function closeAddMemberModal() {
-        const modal = document.getElementById('addMemberModal');
-        const content = document.getElementById('addMemberModalContent');
-        
+    function closeSpreadsheetModal() {
+        const modal = document.getElementById('productManagementModal');
+        const content = document.getElementById('spreadsheetModalContent');
+
         content.classList.remove('scale-100', 'opacity-100');
         content.classList.add('scale-95', 'opacity-0');
         modal.classList.remove('opacity-100');
-        
+
         setTimeout(() => {
             modal.classList.add('hidden');
             document.body.classList.remove('overflow-hidden');
         }, 300);
     }
 
-    // QR Code modal functions
-    function showQRCode(joinCode) {
-        const modal = document.getElementById('qrCodeModal');
-        const content = document.getElementById('qrModalContent');
-        
-        modal.classList.remove('hidden');
-        setTimeout(() => {
-            modal.classList.add('opacity-100');
-            content.classList.remove('scale-95', 'opacity-0');
-            content.classList.add('scale-100', 'opacity-100');
-        }, 10);
-        document.body.classList.add('overflow-hidden');
-        
-        // Set the join code in the input
-        document.getElementById('joinCodeInput').value = joinCode;
-        
-        // Generate QR code
-        generateQRCode(joinCode);
+    function loadProductData() {
+        // Show loading state
+        document.getElementById('statsInfo').textContent = "Loading product data...";
+
+        // In a real app, you would fetch this from your API
+        fetch(`/api/paguyuban/{{ $paguyuban->id }}/products`)
+            .then(response => response.json())
+            .then(data => {
+                productsData = data;
+                initializeSpreadsheet();
+                updateStats();
+            })
+            .catch(error => {
+                console.error('Error loading product data:', error);
+                showToast('Failed to load product data', 'error');
+                // Fallback to empty data
+                productsData = [];
+                initializeSpreadsheet();
+            });
     }
 
-    function closeQRCodeModal() {
-        const modal = document.getElementById('qrCodeModal');
-        const content = document.getElementById('qrModalContent');
-        
-        content.classList.remove('scale-100', 'opacity-100');
-        content.classList.add('scale-95', 'opacity-0');
-        modal.classList.remove('opacity-100');
-        
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }, 300);
+    function initializeSpreadsheet() {
+        const container = document.getElementById('spreadsheet');
+
+        if (spreadsheet) {
+            spreadsheet.destroy();
+        }
+
+        // Prepare data for spreadsheet
+        const spreadsheetData = productsData.map(product => [
+            product.id,
+            product.name,
+            product.sku,
+            product.category,
+            product.regular_price,
+            product.special_price || product.regular_price,
+            calculateDiscountPercentage(product.regular_price, product.special_price || product.regular_price),
+            product.stock,
+            product.status
+        ]);
+
+        // If no data, create empty row
+        if (spreadsheetData.length === 0) {
+            spreadsheetData.push(['', '', '', '', '', '', '', '', '']);
+        }
+
+        spreadsheet = jexcel(container, {
+            data: spreadsheetData,
+            columns: [{
+                    type: 'hidden',
+                    title: 'ID',
+                    width: 50
+                },
+                {
+                    type: 'text',
+                    title: 'Product Name',
+                    width: 200,
+                    wordWrap: true
+                },
+                {
+                    type: 'text',
+                    title: 'SKU',
+                    width: 120
+                },
+                {
+                    type: 'dropdown',
+                    title: 'Category',
+                    width: 150,
+                    source: ['Food', 'Beverage', 'Electronics', 'Clothing', 'Other'],
+                    autocomplete: true
+                },
+                {
+                    type: 'numeric',
+                    title: 'Regular Price',
+                    width: 120,
+                    mask: 'Rp #,##,###',
+                    decimal: ',',
+                    thousand: '.',
+                    precision: 0
+                },
+                {
+                    type: 'numeric',
+                    title: 'Special Price',
+                    width: 120,
+                    mask: 'Rp #,##,###',
+                    decimal: ',',
+                    thousand: '.',
+                    precision: 0
+                },
+                {
+                    type: 'numeric',
+                    title: 'Discount %',
+                    width: 100,
+                    mask: '#%',
+                    decimal: '.',
+                    precision: 2,
+                    readOnly: true
+                },
+                {
+                    type: 'numeric',
+                    title: 'Stock',
+                    width: 80
+                },
+                {
+                    type: 'dropdown',
+                    title: 'Status',
+                    width: 100,
+                    source: ['Active', 'Inactive']
+                }
+            ],
+            allowExport: true,
+            allowInsertRow: true,
+            allowDeleteRow: true,
+            allowInsertColumn: false,
+            allowDeleteColumn: false,
+            allowRenameColumn: false,
+            allowComments: false,
+            tableOverflow: true,
+            tableHeight: '500px',
+            onchange: function(instance, cell, x, y, value) {
+                // Track modified rows
+                modifiedRows.add(y);
+                document.getElementById('modifiedCount').textContent = modifiedRows.size;
+
+                // Auto-calculate discount when prices change
+                if (x === 4 || x === 5) { // Regular Price or Special Price columns
+                    const regularPrice = parseFloat(instance.getData()[y][4]) || 0;
+                    const specialPrice = parseFloat(instance.getData()[y][5]) || 0;
+                    const discount = calculateDiscountPercentage(regularPrice, specialPrice);
+                    instance.setValueFromCoords(6, y, discount);
+                }
+            },
+            contextMenu: function(obj, x, y, e) {
+                const items = {
+                    insertRowAbove: {
+                        name: '<i class="fas fa-arrow-up mr-2"></i>Insert row above',
+                        function: function() {
+                            obj.insertRow(1, undefined, y);
+                        }
+                    },
+                    insertRowBelow: {
+                        name: '<i class="fas fa-arrow-down mr-2"></i>Insert row below',
+                        function: function() {
+                            obj.insertRow(1, undefined, y + 1);
+                        }
+                    },
+                    deleteRow: {
+                        name: '<i class="fas fa-trash mr-2"></i>Delete row',
+                        function: function() {
+                            if (confirm('Are you sure you want to delete this row?')) {
+                                obj.deleteRow(y);
+                            }
+                        }
+                    },
+                    sep1: '---------',
+                    apply5Discount: {
+                        name: '<i class="fas fa-percentage mr-2"></i>Apply 5% discount',
+                        function: function() {
+                            applyDiscountToRow(obj, y, 5);
+                        }
+                    },
+                    apply10Discount: {
+                        name: '<i class="fas fa-percentage mr-2"></i>Apply 10% discount',
+                        function: function() {
+                            applyDiscountToRow(obj, y, 10);
+                        }
+                    },
+                    apply20Discount: {
+                        name: '<i class="fas fa-percentage mr-2"></i>Apply 20% discount',
+                        function: function() {
+                            applyDiscountToRow(obj, y, 20);
+                        }
+                    }
+                };
+                return items;
+            }
+        });
+
+        // Update row count
+        document.getElementById('rowCount').textContent = spreadsheetData.length;
+        document.getElementById('modifiedCount').textContent = '0';
+        modifiedRows = new Set();
     }
 
-    function generateQRCode(text) {
-        const canvas = document.getElementById('qrCanvas');
-        const qrCode = new QRious({
-            element: canvas,
-            value: text,
-            size: 200,
-            level: 'H'
+    function calculateDiscountPercentage(regularPrice, specialPrice) {
+        if (!regularPrice || !specialPrice || regularPrice <= 0) return 0;
+        return ((regularPrice - specialPrice) / regularPrice * 100).toFixed(2);
+    }
+
+    function applyDiscountToRow(spreadsheet, row, discountPercent) {
+        const regularPrice = parseFloat(spreadsheet.getValueFromCoords(4, row)) || 0;
+        if (regularPrice > 0) {
+            const discountAmount = regularPrice * (discountPercent / 100);
+            const specialPrice = regularPrice - discountAmount;
+            spreadsheet.setValueFromCoords(5, row, specialPrice.toFixed(0));
+
+            // Track this modification
+            modifiedRows.add(row);
+            document.getElementById('modifiedCount').textContent = modifiedRows.size;
+        }
+    }
+
+    function applyPercentageChange(percent) {
+        if (!spreadsheet) return;
+
+        const data = spreadsheet.getData();
+        data.forEach((row, index) => {
+            const regularPrice = parseFloat(row[4]) || 0;
+            if (regularPrice > 0) {
+                const changeAmount = regularPrice * (percent / 100);
+                const newPrice = regularPrice + changeAmount;
+                spreadsheet.setValueFromCoords(5, index, Math.round(newPrice));
+
+                // Track all modified rows
+                modifiedRows.add(index);
+            }
+        });
+
+        document.getElementById('modifiedCount').textContent = modifiedRows.size;
+        showToast(`Applied ${percent > 0 ? '+' : ''}${percent}% change to all products`, 'success');
+    }
+
+    function updateStats() {
+        if (!productsData.length) {
+            document.getElementById('statsInfo').textContent = "No product data available";
+            return;
+        }
+
+        const regularPrices = productsData.map(p => parseFloat(p.regular_price) || 0;
+            const specialPrices = productsData.map(p => parseFloat(p.special_price) || parseFloat(p.regular_price) || 0;
+
+                const totalRegular = regularPrices.reduce((a, b) => a + b, 0);
+                const totalSpecial = specialPrices.reduce((a, b) => a + b, 0);
+                const totalDiscount = totalRegular - totalSpecial;
+                const avgDiscount = (totalDiscount / totalRegular * 100) || 0;
+
+                const activeProducts = productsData.filter(p => p.status === 'Active').length;
+
+                document.getElementById('statsInfo').innerHTML = `
+            <span class="font-medium">${activeProducts}/${productsData.length}</span> active | 
+            <span class="text-green-600 dark:text-green-400">${avgDiscount.toFixed(1)}%</span> avg discount
+        `;
+            }
+
+            function saveSpreadsheet() {
+                if (!spreadsheet) return;
+
+                const data = spreadsheet.getData();
+                const productsToSave = data.map(row => ({
+                    id: row[0],
+                    name: row[1],
+                    sku: row[2],
+                    category: row[3],
+                    regular_price: parseFloat(row[4]) || 0
+                }))
+            }
+            special_price: parseFloat(row[5]) || 0,
+            stock: parseInt(row[7]) || 0,
+            status: row[8]
+        }));
+
+    // Filter only modified rows if needed
+    const modifiedProducts = Array.from(modifiedRows).map(index => productsToSave[index]);
+
+    // Show loading state
+    showToast('Saving changes...', 'info');
+
+    // In a real app, you would send this to your API
+    fetch(`/api/paguyuban/{{ $paguyuban->id }}/products/update`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                products: modifiedProducts.length > 0 ? modifiedProducts : productsToSave
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            showToast('Changes saved successfully!', 'success');
+            modifiedRows = new Set();
+            document.getElementById('modifiedCount').textContent = '0';
+            // Refresh the product list if needed
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        })
+        .catch(error => {
+            console.error('Error saving data:', error);
+            showToast('Failed to save changes', 'error');
         });
     }
 
-    function copyJoinCode() {
-        const input = document.getElementById('joinCodeInput');
-        input.select();
-        document.execCommand('copy');
-        
-        showToast('Join code copied to clipboard!', 'success');
+    function addNewRow() {
+        if (!spreadsheet) return;
+
+        spreadsheet.insertRow(1, ['', '', '', '', '', '', '', '', 'Active'], spreadsheet.options.data.length);
+        document.getElementById('rowCount').textContent = spreadsheet.options.data.length;
+        showToast('New row added', 'success');
     }
 
-    function printQRCode() {
-        const canvas = document.getElementById('qrCanvas');
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title>Print QR Code</title>
-                    <style>
-                        body { text-align: center; padding: 20px; font-family: Arial, sans-serif; }
-                        h1 { margin-bottom: 10px; }
-                        p { margin-bottom: 20px; color: #666; }
-                        img { margin: 20px auto; display: block; }
-                        .code { font-family: monospace; font-size: 18px; margin-top: 20px; }
-                    </style>
-                </head>
-                <body>
-                    <h1>{{ $paguyuban->name }}</h1>
-                    <p>Scan this QR code to join the community</p>
-                    <img src="${canvas.toDataURL()}" width="200" height="200">
-                    <div class="code">Join Code: ${document.getElementById('joinCodeInput').value}</div>
-                    <script>
-                        window.onload = function() {
-                            setTimeout(function() {
-                                window.print();
-                                window.close();
-                            }, 200);
-                        };
-                    <\/script>
-                </body>
-            </html>
-        `);
-        printWindow.document.close();
+    function showImportModal() {
+        const modal = document.getElementById('importModal');
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.add('opacity-100');
+        }, 10);
+        document.body.classList.add('overflow-hidden');
     }
 
-    function downloadQRCode() {
-        const canvas = document.getElementById('qrCanvas');
-        const link = document.createElement('a');
-        link.download = '{{ $paguyuban->name }}-QR-Code.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+    function closeImportModal() {
+        const modal = document.getElementById('importModal');
+        modal.classList.remove('opacity-100');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }, 300);
+    }
+
+    function processImport() {
+        const fileInput = document.getElementById('file-upload');
+        const replaceData = document.getElementById('replaceData').checked;
+
+        if (!fileInput.files.length) {
+            showToast('Please select a file to import', 'error');
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('replace', replaceData);
+        formData.append('paguyuban_id', {
+            {
+                $paguyuban - > id
+            }
+        });
+
+        showToast('Importing data...', 'info');
+
+        fetch('/api/products/import', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(`Successfully imported ${data.imported} products`, 'success');
+                    closeImportModal();
+                    // Reload the spreadsheet
+                    loadProductData();
+                } else {
+                    showToast(data.message || 'Import failed', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Import error:', error);
+                showToast('Failed to import data', 'error');
+            });
+    }
+
+    function exportToExcel() {
+        if (!spreadsheet) return;
+
+        // Show loading state
+        showToast('Preparing export...', 'info');
+
+        // In a real app, you might want to format this differently
+        spreadsheet.download();
+
+        setTimeout(() => {
+            showToast('Export completed', 'success');
+        }, 1000);
     }
 
     // Modal functions
@@ -1098,15 +2030,26 @@
         }, 300);
     }
 
-    // Edit Modal functions
-    function openEditModal(productId, currentPrice, productName, regularPrice) {
+    function openEditModal(productId, currentPrice) {
+        // In a real app, you would fetch the product details
+        const product = productsData.find(p => p.id == productId) || {
+            id: productId,
+            name: 'Loading...',
+            sku: '',
+            price: currentPrice
+        };
+
+        document.getElementById('editProductName').textContent = product.name;
+        document.getElementById('editProductSku').textContent = product.sku || 'SKU: N/A';
+        document.getElementById('editRegularPrice').value = product.price;
+        document.getElementById('editSpecialPrice').value = currentPrice;
+        document.getElementById('editPricingForm').action = `/pos/community/{{ $paguyuban->id }}/pricing/${productId}`;
+
+        // Calculate and show price difference
+        updatePriceDifference('edit');
+
         const modal = document.getElementById('editPricingModal');
         const content = document.getElementById('editModalContent');
-
-        document.getElementById('editProductName').textContent = productName;
-        document.getElementById('editRegularPrice').value = formatRupiah(regularPrice);
-        document.getElementById('editSpecialPrice').value = currentPrice;
-        document.getElementById('editPricingForm').action = `/paguyuban/{{ $paguyuban->id }}/pricing/${productId}`;
 
         modal.classList.remove('hidden');
         setTimeout(() => {
@@ -1115,9 +2058,6 @@
             content.classList.add('scale-100', 'opacity-100');
         }, 10);
         document.body.classList.add('overflow-hidden');
-
-        // Calculate initial difference
-        calculateEditPriceDifference();
     }
 
     function closeEditModal() {
@@ -1134,12 +2074,11 @@
         }, 300);
     }
 
-    // Delete Modal functions
     function confirmDelete(productId) {
+        document.getElementById('deleteForm').action = `/pos/community/{{ $paguyuban->id }}/pricing/${productId}`;
+
         const modal = document.getElementById('deleteConfirmationModal');
         const content = document.getElementById('deleteModalContent');
-
-        document.getElementById('deleteForm').action = `/paguyuban/{{ $paguyuban->id }}/pricing/${productId}`;
 
         modal.classList.remove('hidden');
         setTimeout(() => {
@@ -1164,473 +2103,506 @@
         }, 300);
     }
 
-    // Adjust price in edit modal
-    function adjustPrice(amount) {
-        const specialPriceInput = document.getElementById('editSpecialPrice');
-        const currentValue = parseFloat(specialPriceInput.value) || 0;
-        const newValue = currentValue + amount;
-        
-        if (newValue >= 0) {
-            specialPriceInput.value = newValue;
-            calculateEditPriceDifference();
+    function showProductDetails(productId) {
+        // In a real app, you would fetch the product details
+        const product = productsData.find(p => p.id == productId) || {
+            id: productId,
+            name: 'Loading...',
+            sku: 'N/A',
+            category: 'Unknown',
+            stock: 0,
+            price: 0,
+            special_price: 0,
+            image: null
+        };
+
+        document.getElementById('productDetailName').textContent = product.name;
+        document.getElementById('productDetailSku').textContent = `SKU: ${product.sku}`;
+        document.getElementById('productDetailCategory').textContent = product.category || 'Uncategorized';
+        document.getElementById('productDetailStock').textContent = product.stock || '0 in stock';
+        document.getElementById('productDetailRegularPrice').textContent = `Rp ${product.price.toLocaleString('id-ID')}`;
+        document.getElementById('productDetailSpecialPrice').textContent = `Rp ${(product.special_price || product.price).toLocaleString('id-ID')}`;
+
+        const savings = product.price - (product.special_price || product.price);
+        document.getElementById('productDetailSavings').textContent = `Rp ${savings.toLocaleString('id-ID')}`;
+
+        if (product.image) {
+            document.getElementById('productDetailImage').src = `/storage/${product.image}`;
+            document.getElementById('productDetailImage').classList.remove('hidden');
+            document.getElementById('productDetailIcon').classList.add('hidden');
+        } else {
+            document.getElementById('productDetailImage').classList.add('hidden');
+            document.getElementById('productDetailIcon').classList.remove('hidden');
         }
+
+        // Initialize product charts
+        initProductCharts(productId);
+
+        const modal = document.getElementById('productDetailsModal');
+        const content = document.getElementById('detailsModalContent');
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.add('opacity-100');
+            content.classList.remove('scale-95', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        }, 10);
+        document.body.classList.add('overflow-hidden');
     }
 
-    // Set discount type in add modal
-    function setDiscountType(type, value) {
-        const productSelect = document.getElementById('product_id');
-        const regularPrice = parseFloat(productSelect.options[productSelect.selectedIndex]?.getAttribute('data-price')) || 0;
-        const specialPriceInput = document.getElementById('special_price');
-        
-        if (type === 'percentage' && regularPrice > 0) {
-            const discountAmount = regularPrice * (value / 100);
-            specialPriceInput.value = Math.round(regularPrice - discountAmount);
-            calculatePriceDifference();
-        }
+    function closeProductDetails() {
+        const modal = document.getElementById('productDetailsModal');
+        const content = document.getElementById('detailsModalContent');
+
+        content.classList.remove('scale-100', 'opacity-100');
+        content.classList.add('scale-95', 'opacity-0');
+        modal.classList.remove('opacity-100');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }, 300);
     }
 
-    // Update regular price when product is selected
+    function showMemberEngagementModal() {
+        // Initialize member engagement charts
+        initMemberEngagementCharts();
+
+        const modal = document.getElementById('memberEngagementModal');
+        const content = document.getElementById('engagementModalContent');
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.add('opacity-100');
+            content.classList.remove('scale-95', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        }, 10);
+        document.body.classList.add('overflow-hidden');
+    }
+
+    function closeMemberEngagementModal() {
+        const modal = document.getElementById('memberEngagementModal');
+        const content = document.getElementById('engagementModalContent');
+
+        content.classList.remove('scale-100', 'opacity-100');
+        content.classList.add('scale-95', 'opacity-0');
+        modal.classList.remove('opacity-100');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }, 300);
+    }
+
+    function initProductCharts(productId) {
+        // Destroy existing charts if they exist
+        if (productSalesChart) {
+            productSalesChart.destroy();
+        }
+        if (productEngagementChart) {
+            productEngagementChart.destroy();
+        }
+
+        // Sample data - in a real app, you would fetch this from your API
+        const salesCtx = document.getElementById('productSalesChart').getContext('2d');
+        productSalesChart = new Chart(salesCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [{
+                    label: 'Units Sold',
+                    data: [45, 60, 52, 70],
+                    backgroundColor: 'rgba(79, 70, 229, 0.7)',
+                    borderColor: 'rgba(79, 70, 229, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const engagementCtx = document.getElementById('productEngagementChart').getContext('2d');
+        productEngagementChart = new Chart(engagementCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Views',
+                    data: [120, 190, 170, 210, 240, 190, 230],
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderColor: 'rgba(16, 185, 129, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function initMemberEngagementCharts() {
+        // Destroy existing charts if they exist
+        if (memberActivityChart) {
+            memberActivityChart.destroy();
+        }
+        if (purchaseFrequencyChart) {
+            purchaseFrequencyChart.destroy();
+        }
+
+        // Sample data - in a real app, you would fetch this from your API
+        const activityCtx = document.getElementById('memberActivityChart').getContext('2d');
+        memberActivityChart = new Chart(activityCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    label: 'Active Members',
+                    data: [120, 190, 170, 210, 240, 220, 250],
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    borderColor: 'rgba(99, 102, 241, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        const frequencyCtx = document.getElementById('purchaseFrequencyChart').getContext('2d');
+        purchaseFrequencyChart = new Chart(frequencyCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['1-2 times', '3-5 times', '6-10 times', '10+ times'],
+                datasets: [{
+                    data: [15, 30, 25, 10],
+                    backgroundColor: [
+                        'rgba(99, 102, 241, 0.7)',
+                        'rgba(79, 70, 229, 0.7)',
+                        'rgba(67, 56, 202, 0.7)',
+                        'rgba(55, 48, 163, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(99, 102, 241, 1)',
+                        'rgba(79, 70, 229, 1)',
+                        'rgba(67, 56, 202, 1)',
+                        'rgba(55, 48, 163, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+    }
+
+    // Product select change handler
     document.getElementById('product_id').addEventListener('change', function() {
         const selectedOption = this.options[this.selectedIndex];
-        const regularPrice = selectedOption.getAttribute('data-price');
-        document.getElementById('regular_price').value = formatRupiah(regularPrice);
+        const regularPrice = selectedOption.getAttribute('data-price') || 0;
 
-        // Also update special price field with regular price as default
+        document.getElementById('regular_price').value = regularPrice;
         document.getElementById('special_price').value = regularPrice;
-        calculatePriceDifference();
+
+        updatePriceDifference();
     });
 
-    // Calculate price difference for add modal
-    document.getElementById('special_price').addEventListener('input', calculatePriceDifference);
+    // Special price input handler
+    document.getElementById('special_price').addEventListener('input', function() {
+        updatePriceDifference();
+    });
 
-    function calculatePriceDifference() {
-        const productSelect = document.getElementById('product_id');
-        const regularPrice = parseFloat(productSelect.options[productSelect.selectedIndex]?.getAttribute('data-price')) || 0;
-        const specialPrice = parseFloat(document.getElementById('special_price').value) || 0;
-        const differenceElement = document.getElementById('price_difference');
+    // Edit special price input handler
+    document.getElementById('editSpecialPrice').addEventListener('input', function() {
+        updatePriceDifference('edit');
+    });
 
-        if (regularPrice > 0 && specialPrice > 0) {
-            const difference = specialPrice - regularPrice;
-            const percentage = (difference / regularPrice * 100).toFixed(2);
+    function updatePriceDifference(mode = 'add') {
+        const prefix = mode === 'edit' ? 'edit' : '';
+        const regularPrice = parseFloat(document.getElementById(`${prefix}RegularPrice`).value) || 0;
+        const specialPrice = parseFloat(document.getElementById(`${prefix}SpecialPrice`).value) || 0;
 
-            if (difference < 0) {
-                differenceElement.innerHTML = `<span class="text-green-600 dark:text-green-400"><i class="fas fa-arrow-down mr-1"></i> ${Math.abs(percentage)}% lower than regular price (Rp ${formatRupiah(Math.abs(difference))} less)</span>`;
-            } else if (difference > 0) {
-                differenceElement.innerHTML = `<span class="text-red-600 dark:text-red-400"><i class="fas fa-arrow-up mr-1"></i> ${percentage}% higher than regular price (Rp ${formatRupiah(difference)} more)</span>`;
-            } else {
-                differenceElement.innerHTML = `<span class="text-gray-600 dark:text-gray-400">Same as regular price</span>`;
-            }
+        const difference = regularPrice - specialPrice;
+        const percentage = regularPrice > 0 ? (difference / regularPrice * 100) : 0;
+
+        let message = '';
+        let colorClass = '';
+
+        if (difference > 0) {
+            message = `Members save Rp ${difference.toLocaleString('id-ID')} (${percentage.toFixed(2)}%)`;
+            colorClass = 'text-green-600 dark:text-green-400';
+        } else if (difference < 0) {
+            message = `Members pay Rp ${Math.abs(difference).toLocaleString('id-ID')} more (${Math.abs(percentage).toFixed(2)}%)`;
+            colorClass = 'text-red-600 dark:text-red-400';
         } else {
-            differenceElement.textContent = '';
+            message = 'No price difference';
+            colorClass = 'text-gray-600 dark:text-gray-400';
         }
+
+        const element = document.getElementById(`${prefix}PriceDifference`);
+        element.innerHTML = message;
+        element.className = `text-sm font-medium animate-pulse ${colorClass}`;
     }
 
-    // Calculate price difference for edit modal
-    document.getElementById('editSpecialPrice').addEventListener('input', calculateEditPriceDifference);
-
-    function calculateEditPriceDifference() {
-        const regularPriceInput = document.getElementById('editRegularPrice');
-        const regularPrice = parseFloat(regularPriceInput.value.replace(/[^0-9.-]+/g, "")) || 0;
-        const specialPrice = parseFloat(document.getElementById('editSpecialPrice').value) || 0;
-        const differenceElement = document.getElementById('editPriceDifference');
-
-        if (regularPrice > 0 && specialPrice > 0) {
-            const difference = specialPrice - regularPrice;
-            const percentage = (difference / regularPrice * 100).toFixed(2);
-
-            if (difference < 0) {
-                differenceElement.innerHTML = `<span class="text-green-600 dark:text-green-400"><i class="fas fa-arrow-down mr-1"></i> ${Math.abs(percentage)}% lower than regular price (Rp ${formatRupiah(Math.abs(difference))} less)</span>`;
-            } else if (difference > 0) {
-                differenceElement.innerHTML = `<span class="text-red-600 dark:text-red-400"><i class="fas fa-arrow-up mr-1"></i> ${percentage}% higher than regular price (Rp ${formatRupiah(difference)} more)</span>`;
-            } else {
-                differenceElement.innerHTML = `<span class="text-gray-600 dark:text-gray-400">Same as regular price</span>`;
-            }
-        } else {
-            differenceElement.textContent = '';
-        }
-    }
-
-    // Format currency
-    function formatRupiah(amount) {
-        return new Intl.NumberFormat('id-ID', {
-            maximumFractionDigits: 0
-        }).format(amount);
-    }
-
-    // Filter dropdown toggle
-    document.getElementById('filterDropdownButton').addEventListener('click', function() {
-        const dropdown = document.getElementById('filterDropdown');
-        dropdown.classList.toggle('hidden');
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(event) {
-        const dropdown = document.getElementById('filterDropdown');
-        const button = document.getElementById('filterDropdownButton');
-        
-        if (!dropdown.contains(event.target) && !button.contains(event.target)) {
-            dropdown.classList.add('hidden');
-        }
-    });
-
-    // Apply filters
-    document.getElementById('applyFilters').addEventListener('click', function() {
-        const sortBy = document.getElementById('productSort').value;
-        const discountedOnly = document.getElementById('filter_discounted').checked;
-        const premiumOnly = document.getElementById('filter_premium').checked;
-        
-        // In a real app, you would apply these filters to the product list
-        // For demo, we'll just show a toast
-        showToast('Filters applied!', 'success');
-        document.getElementById('filterDropdown').classList.add('hidden');
-    });
-
-    // Reset filters
-    document.getElementById('resetFilters').addEventListener('click', function() {
-        document.getElementById('productSort').value = 'name_asc';
-        document.getElementById('filter_discounted').checked = false;
-        document.getElementById('filter_premium').checked = false;
-    });
-
-    // Add member form submission
-    document.getElementById('addMemberForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        
-        fetch('/paguyuban/{{ $paguyuban->id }}/add-member', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json',
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showToast('Member added successfully!', 'success');
-                closeAddMemberModal();
-                fetchMembers(1); // Refresh members list
-            } else {
-                showToast(data.message || 'Failed to add member', 'error');
-            }
-        })
-        .catch(error => {
-            showToast('An error occurred. Please try again.', 'error');
-            console.error('Error:', error);
-        });
-    });
-
-    // Fetch members with pagination
-    let currentMembersPage = 1;
-    
-    function fetchMembers(page) {
-        currentMembersPage = page;
-        
-        fetch(`/paguyuban/{{ $paguyuban->id }}/members?page=${page}`)
-        .then(response => response.json())
-        .then(data => {
-            renderMembers(data.members.data);
-            updateMembersPagination(data.members);
-        })
-        .catch(error => {
-            console.error('Error fetching members:', error);
-            showToast('Failed to load members', 'error');
-        });
-    }
-    
-    function renderMembers(members) {
-        const container = document.getElementById('membersListContainer');
-        container.innerHTML = '';
-        
-        if (members.length === 0) {
-            container.innerHTML = `
-                <div class="text-center py-8">
-                    <i class="fas fa-users text-4xl text-gray-300 mb-4"></i>
-                    <p class="text-gray-500">No members found</p>
-                </div>
-            `;
-            return;
-        }
-        
-        members.forEach(member => {
-            const memberElement = document.createElement('div');
-            memberElement.className = 'flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors';
-            
-            memberElement.innerHTML = `
-                <div class="flex items-center">
-                    <div class="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 dark:text-indigo-300 mr-3">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div>
-                        <p class="font-medium text-gray-900 dark:text-white">${member.name}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">${member.email || 'No email'}</p>
-                    </div>
-                </div>
-                <button onclick="confirmRemoveMember(${member.id}, '${member.name}')" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors p-2 rounded-lg hover:bg-red-50/50 dark:hover:bg-red-900/20">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
-            `;
-            
-            container.appendChild(memberElement);
-        });
-    }
-    
-    function updateMembersPagination(pagination) {
-        document.getElementById('membersFrom').textContent = pagination.from;
-        document.getElementById('membersTo').textContent = pagination.to;
-        document.getElementById('membersTotal').textContent = pagination.total;
-        
-        const prevButton = document.getElementById('prevMembersPage');
-        const nextButton = document.getElementById('nextMembersPage');
-        
-        prevButton.disabled = pagination.current_page === 1;
-        nextButton.disabled = pagination.current_page === pagination.last_page;
-        
-        prevButton.onclick = () => pagination.prev_page_url && fetchMembers(pagination.current_page - 1);
-        nextButton.onclick = () => pagination.next_page_url && fetchMembers(pagination.current_page + 1);
-    }
-    
-    function confirmRemoveMember(memberId, memberName) {
-        if (confirm(`Are you sure you want to remove ${memberName} from this community?`)) {
-            fetch(`/paguyuban/{{ $paguyuban->id }}/remove-member/${memberId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Member removed successfully!', 'success');
-                    fetchMembers(currentMembersPage); // Refresh current page
-                } else {
-                    showToast(data.message || 'Failed to remove member', 'error');
-                }
-            })
-            .catch(error => {
-                showToast('An error occurred. Please try again.', 'error');
-                console.error('Error:', error);
-            });
-        }
-    }
-
-    // Fetch activity logs with pagination
     function fetchActivityLogs(paguyubanId, page = 1) {
-        fetch(`/paguyuban/${paguyubanId}/activity-log?page=${page}`)
+        const container = document.getElementById('activityLogsContainer');
+        const pagination = document.getElementById('activityPagination');
+
+        container.innerHTML = `
+            <div class="text-center py-8">
+                <i class="fas fa-spinner fa-spin text-2xl text-indigo-500"></i>
+                <p class="text-gray-500 mt-2">Loading activity logs...</p>
+            </div>
+        `;
+
+        // In a real app, you would fetch this from your API
+        fetch(`/api/paguyuban/${paguyubanId}/activity?page=${page}`)
             .then(response => response.json())
             .then(data => {
-                renderActivityLogs(data.activities.data);
-                setupActivityPagination(data.activities);
+                if (data.data && data.data.length > 0) {
+                    renderActivityLogs(data.data);
+                    renderActivityPagination(data);
+                } else {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="fas fa-history text-2xl text-gray-400"></i>
+                            <p class="text-gray-500 mt-2">No activity logs found</p>
+                        </div>
+                    `;
+                    pagination.innerHTML = '';
+                }
             })
             .catch(error => {
                 console.error('Error fetching activity logs:', error);
-                showToast('Failed to load activity logs', 'error');
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-exclamation-triangle text-2xl text-red-500"></i>
+                        <p class="text-gray-500 mt-2">Failed to load activity logs</p>
+                    </div>
+                `;
+                pagination.innerHTML = '';
             });
     }
 
-    function renderActivityLogs(activities) {
+    function renderActivityLogs(logs) {
         const container = document.getElementById('activityLogsContainer');
         container.innerHTML = '';
 
-        if (activities.length === 0) {
-            container.innerHTML = `
-                <div class="text-center py-8">
-                    <i class="fas fa-history text-4xl text-gray-300 mb-4"></i>
-                    <p class="text-gray-500">No activity logs found</p>
+        logs.forEach((log, index) => {
+            const iconClass = {
+                'price_update': 'fas fa-tag text-purple-500',
+                'member_added': 'fas fa-user-plus text-blue-500',
+                'member_removed': 'fas fa-user-minus text-red-500',
+                'community_updated': 'fas fa-edit text-indigo-500',
+                'product_added': 'fas fa-box-open text-green-500'
+            } [log.type] || 'fas fa-info-circle text-gray-500';
+
+            const bgColor = {
+                'price_update': 'bg-purple-100 dark:bg-purple-900/50',
+                'member_added': 'bg-blue-100 dark:bg-blue-900/50',
+                'member_removed': 'bg-red-100 dark:bg-red-900/50',
+                'community_updated': 'bg-indigo-100 dark:bg-indigo-900/50',
+                'product_added': 'bg-green-100 dark:bg-green-900/50'
+            } [log.type] || 'bg-gray-100 dark:bg-gray-700';
+
+            const logElement = document.createElement('div');
+            logElement.className = `relative pl-8 pb-6 ${index === logs.length - 1 ? '' : 'border-l-2 border-indigo-200 dark:border-indigo-800'}`;
+            logElement.innerHTML = `
+                <div class="absolute -left-2.5 top-0 h-5 w-5 rounded-full ${bgColor} border-4 border-white dark:border-gray-800 flex items-center justify-center">
+                    <i class="${iconClass} text-xs"></i>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700/30 p-4 rounded-xl border border-gray-100 dark:border-gray-700 transition-all duration-300 hover:shadow-md hover:border-gray-200 dark:hover:border-gray-600 transform hover:-translate-x-1">
+                    <div class="flex items-start">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">${log.description}</p>
+                            <div class="mt-1 flex items-center text-xs text-gray-500 dark:text-gray-400">
+                                <i class="far fa-clock mr-1"></i>
+                                ${new Date(log.created_at).toLocaleString()} (${timeAgo(new Date(log.created_at))})
+                            </div>
+                        </div>
+                    </div>
                 </div>
             `;
+            container.appendChild(logElement);
+        });
+    }
+
+    function renderActivityPagination(data) {
+        const pagination = document.getElementById('activityPagination');
+
+        if (data.last_page <= 1) {
+            pagination.innerHTML = '';
             return;
         }
 
-        activities.forEach((activity, index) => {
-            const activityItem = document.createElement('div');
-            activityItem.className = `flex items-start animate-fade-in-up`;
-            activityItem.style.animationDelay = `${index * 0.1}s`;
-
-            // Determine icon and color based on activity type
-            const { iconClass, bgClass, textClass } = getActivityStyles(activity.description);
-            
-            // Format properties if they exist
-            let propertiesHtml = '';
-            if (activity.properties && Object.keys(activity.properties).length > 0) {
-                propertiesHtml = renderActivityProperties(activity.properties);
-            }
-
-            activityItem.innerHTML = `
-                <div class="flex-shrink-0 h-10 w-10 rounded-full ${bgClass} ${textClass} flex items-center justify-center mr-3 transition-transform duration-300 hover:rotate-12">
-                    <i class="${iconClass}"></i>
+        let html = `
+            <div class="flex items-center justify-between w-full">
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                    Showing ${data.from} to ${data.to} of ${data.total} entries
                 </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex justify-between items-start">
-                        <p class="text-sm font-medium text-gray-900 dark:text-white">
-                            ${activity.description}
-                        </p>
-                        <p class="text-xs text-gray-400 dark:text-gray-500 ml-2 whitespace-nowrap">
-                            ${new Date(activity.created_at).toLocaleString()}
-                        </p>
-                    </div>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        ${activity.causer ? `By ${activity.causer.name}` : 'System generated'}
-                    </p>
-                    ${propertiesHtml}
-                </div>
-            `;
-
-            container.appendChild(activityItem);
-        });
-    }
-
-    function setupActivityPagination(paginationData) {
-        const paginationContainer = document.getElementById('activityPagination');
-        if (!paginationContainer) return;
-
-        paginationContainer.innerHTML = `
-            <div class="text-sm text-gray-500 dark:text-gray-400">
-                Showing <span class="font-medium">${paginationData.from}</span> to 
-                <span class="font-medium">${paginationData.to}</span> of 
-                <span class="font-medium">${paginationData.total}</span> results
-            </div>
-            <div class="flex space-x-2">
-                ${paginationData.prev_page_url ? 
-                    `<button onclick="fetchActivityLogs({{ $paguyuban->id }}, ${paginationData.current_page - 1})" class="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 transform hover:-translate-x-0.5">
-                        Previous
-                    </button>` : ''
-                }
-                ${paginationData.next_page_url ? 
-                    `<button onclick="fetchActivityLogs({{ $paguyuban->id }}, ${paginationData.current_page + 1})" class="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 transform hover:translate-x-0.5">
-                        Next
-                    </button>` : ''
-                }
-            </div>
+                <div class="flex space-x-2">
         `;
-    }
 
-    // Helper function to determine activity styles
-    function getActivityStyles(description) {
-        const lowerDesc = description.toLowerCase();
-        
-        if (lowerDesc.includes('added') || lowerDesc.includes('created')) {
-            return {
-                iconClass: 'fas fa-plus',
-                bgClass: 'bg-green-100 dark:bg-green-900/50',
-                textClass: 'text-green-600 dark:text-green-300'
-            };
-        } else if (lowerDesc.includes('updated') || lowerDesc.includes('changed')) {
-            return {
-                iconClass: 'fas fa-pencil-alt',
-                bgClass: 'bg-blue-100 dark:bg-blue-900/50',
-                textClass: 'text-blue-600 dark:text-blue-300'
-            };
-        } else if (lowerDesc.includes('deleted') || lowerDesc.includes('removed')) {
-            return {
-                iconClass: 'fas fa-trash-alt',
-                bgClass: 'bg-red-100 dark:bg-red-900/50',
-                textClass: 'text-red-600 dark:text-red-300'
-            };
-        } else {
-            return {
-                iconClass: 'fas fa-info-circle',
-                bgClass: 'bg-indigo-100 dark:bg-indigo-900/50',
-                textClass: 'text-indigo-600 dark:text-indigo-300'
-            };
+        // Previous button
+        if (data.current_page > 1) {
+            html += `
+                <button onclick="fetchActivityLogs(${data.paguyuban_id}, ${data.current_page - 1})" 
+                    class="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 transform hover:-translate-x-0.5">
+                    Previous
+                </button>
+            `;
         }
-    }
 
-    // Function to render activity properties
-    function renderActivityProperties(properties) {
-        let html = '';
-        const filteredProps = Object.entries(properties).filter(
-            ([key]) => !['attributes', 'old'].includes(key)
-        );
-
-        if (filteredProps.length > 0) {
-            html += `<div class="mt-2 bg-gray-50 dark:bg-gray-700/30 rounded-lg p-3 text-xs">`;
-            html += `<div class="grid grid-cols-2 gap-2">`;
-            
-            filteredProps.forEach(([key, value]) => {
-                const formattedKey = key.replace(/_/g, ' ');
-                const formattedValue = formatPropertyValue(key, value);
-                
+        // Page numbers
+        for (let i = 1; i <= data.last_page; i++) {
+            if (i === data.current_page) {
                 html += `
-                    <div class="break-words">
-                        <span class="font-medium text-gray-500 dark:text-gray-400 capitalize">${formattedKey}:</span>
-                        ${formattedValue}
-                    </div>
+                    <button class="px-3 py-1 rounded-lg bg-indigo-600 text-white">
+                        ${i}
+                    </button>
                 `;
-            });
-            
-            html += `</div></div>`;
+            } else {
+                html += `
+                    <button onclick="fetchActivityLogs(${data.paguyuban_id}, ${i})" 
+                        class="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        ${i}
+                    </button>
+                `;
+            }
         }
 
-        return html;
-    }
-
-    // Helper function to format property values
-    function formatPropertyValue(key, value) {
-        if (isNumeric(value) && ['regular_price', 'special_price', 'old_price', 'new_price', 'removed_price'].includes(key)) {
-            return `<span class="text-gray-700 dark:text-gray-300">Rp ${formatRupiah(value)}</span>`;
-        } else if (key === 'discount_percentage' || key === 'change_percentage') {
-            const colorClass = value < 0 ? 'text-green-600 dark:text-green-400' : 
-                              (value > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300');
-            return `<span class="${colorClass}">${value}%</span>`;
-        } else {
-            return `<span class="text-gray-700 dark:text-gray-300">${value}</span>`;
+        // Next button
+        if (data.current_page < data.last_page) {
+            html += `
+                <button onclick="fetchActivityLogs(${data.paguyuban_id}, ${data.current_page + 1})" 
+                    class="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 transform hover:translate-x-0.5">
+                    Next
+                </button>
+            `;
         }
+
+        html += `</div></div>`;
+        pagination.innerHTML = html;
     }
 
-    // Helper function to check if value is numeric
-    function isNumeric(value) {
-        return !isNaN(parseFloat(value)) && isFinite(value);
+    function timeAgo(date) {
+        const seconds = Math.floor((new Date() - date) / 1000);
+
+        let interval = Math.floor(seconds / 31536000);
+        if (interval >= 1) return interval + " year" + (interval === 1 ? "" : "s") + " ago";
+
+        interval = Math.floor(seconds / 2592000);
+        if (interval >= 1) return interval + " month" + (interval === 1 ? "" : "s") + " ago";
+
+        interval = Math.floor(seconds / 86400);
+        if (interval >= 1) return interval + " day" + (interval === 1 ? "" : "s") + " ago";
+
+        interval = Math.floor(seconds / 3600);
+        if (interval >= 1) return interval + " hour" + (interval === 1 ? "" : "s") + " ago";
+
+        interval = Math.floor(seconds / 60);
+        if (interval >= 1) return interval + " minute" + (interval === 1 ? "" : "s") + " ago";
+
+        return Math.floor(seconds) + " second" + (seconds === 1 ? "" : "s") + " ago";
     }
 
-    // Animate progress bars on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        // Animate progress bars
-        const progressBars = document.querySelectorAll('.progress-bar');
-        progressBars.forEach(bar => {
-            const width = bar.getAttribute('data-width');
-            bar.style.width = width + '%';
-        });
+    // Toast notification system
+    function showToast(message, type = 'info', duration = 3000) {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
 
-        // Animate counters
-        const counters = document.querySelectorAll('.animate-count');
-        counters.forEach(counter => {
-            const target = parseInt(counter.getAttribute('data-count'));
-            const duration = 2000; // 2 seconds
-            const step = target / (duration / 16); // 60fps
+        const icons = {
+            success: 'fas fa-check-circle',
+            error: 'fas fa-exclamation-circle',
+            warning: 'fas fa-exclamation-triangle',
+            info: 'fas fa-info-circle'
+        };
 
-            let current = 0;
-            const interval = setInterval(() => {
-                current += step;
-                if (current >= target) {
-                    clearInterval(interval);
-                    current = target;
-                }
-                counter.textContent = Math.floor(current);
-            }, 16);
-        });
+        toast.className = `toast toast-${type} animate-slide-in-right`;
+        toast.innerHTML = `
+            <div class="toast-icon">
+                <i class="${icons[type]}"></i>
+            </div>
+            <div class="toast-message">${message}</div>
+            <button class="toast-close" onclick="this.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
 
-        // Load activity logs
-        fetchActivityLogs({{ $paguyuban->id }});
+        container.appendChild(toast);
 
-        // Add animation to elements when they come into view
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-fade-in-up');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, {
-            threshold: 0.1
-        });
+        // Auto-remove after duration
+        if (duration > 0) {
+            setTimeout(() => {
+                toast.classList.remove('animate-slide-in-right');
+                toast.classList.add('animate-slide-out');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, duration);
+        }
 
-        document.querySelectorAll('.animate-on-scroll').forEach(el => {
-            observer.observe(el);
-        });
-    });
+        return toast;
+    }
+
+    function openProductManagement() {
+        const modal = document.getElementById('productManagementModal');
+        const content = document.getElementById('spreadsheetModalContent');
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.add('opacity-100');
+            content.classList.remove('scale-95', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        }, 10);
+        document.body.classList.add('overflow-hidden');
+
+        loadProductData();
+    }
+
+    // Close all toasts
+    function closeAllToasts() {
+        const container = document.getElementById('toast-container');
+        container.innerHTML = '';
+    }
 </script>
-@endsection
+@endpush

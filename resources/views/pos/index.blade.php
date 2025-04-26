@@ -17,6 +17,8 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <link rel="stylesheet" href="https://bossanova.uk/jexcel/v4/jexcel.css" />
+  <link rel="stylesheet" href="https://bossanova.uk/jsuites/v3/jsuites.css" />
 
   <script src="/pos/js/script.js"></script>
 
@@ -572,7 +574,11 @@
       `;
       document.head.appendChild(style);
     });
+
+    
   </script>
+  <script src="https://bossanova.uk/jsuites/v3/jsuites.js"></script>
+  <script src="https://bossanova.uk/jexcel/v4/jexcel.js"></script>
 </body>
 
 </html>

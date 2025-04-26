@@ -2,22 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PaguyubanExport;
 use App\Models\Paguyuban;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PaguyubanController extends Controller
 {
     public function index()
     {
         $paguyubans = Paguyuban::withCount('products')->orderBy('name')->paginate(10);
-        
+
         $totalProducts = Product::count();
         $averageDiscount = $paguyubans->avg('discount_percentage') ?? 0;
-        
+
         return view('paguyuban.index', compact('paguyubans', 'totalProducts', 'averageDiscount'));
     }
 
@@ -54,14 +56,14 @@ class PaguyubanController extends Controller
     public function show(Paguyuban $paguyuban)
     {
         // Eager load products with their pivot data
-        $paguyuban->load(['products' => function($query) {
+        $paguyuban->load(['products' => function ($query) {
             $query->select('products.id', 'products.name', 'products.price', 'products.image')
-                  ->withPivot('price as special_price');
+                ->withPivot('price as special_price');
         }]);
 
-        
+
         // Get products not already associated with this paguyuban
-        $availableProducts = Product::whereDoesntHave('paguyubans', function($query) use ($paguyuban) {
+        $availableProducts = Product::whereDoesntHave('paguyubans', function ($query) use ($paguyuban) {
             $query->where('paguyuban_id', $paguyuban->id);
         })->get(['id', 'name', 'price', 'image']);
 
@@ -69,13 +71,13 @@ class PaguyubanController extends Controller
         $paguyuban->discounted_products_count = $paguyuban->products()
             ->whereColumn('paguyuban_product.price', '<', 'products.price')
             ->count();
-        
+
         $paguyuban->average_discount = $paguyuban->products()
             ->whereColumn('paguyuban_product.price', '<', 'products.price')
             ->selectRaw('AVG((1 - (paguyuban_product.price / products.price)) * 100) as avg_discount')
             ->value('avg_discount') ?? 0;
-        
-    
+
+
         return view('paguyuban.show', compact('paguyuban', 'availableProducts'));
     }
 
@@ -147,5 +149,10 @@ class PaguyubanController extends Controller
 
         return redirect()->route('pos.community.index')
             ->with('success', 'Paguyuban deleted successfully');
+    }
+    public function export(Paguyuban $paguyuban)
+    {
+        $fileName = $paguyuban->name . '-export-' . now()->format('Y-m-d') . '.xlsx';
+        return Excel::download(new PaguyubanExport($paguyuban), $fileName);
     }
 }
