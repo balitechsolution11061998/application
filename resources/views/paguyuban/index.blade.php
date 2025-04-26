@@ -5,7 +5,7 @@
     <!-- Toastr Notifications -->
     @if(session('success'))
     <div class="toastr-notification fixed top-5 right-5 z-50">
-        <div class="bg-emerald-500 text-white px-6 py-3 rounded-lg shadow-xl flex items-center animate-fade-in-up">
+        <div class="bg-emerald-500 text-white px-6 py-3 rounded-xl shadow-xl flex items-center animate-fade-in-up">
             <i class="fas fa-check-circle mr-3 text-lg"></i>
             <span class="font-medium">{{ session('success') }}</span>
         </div>
@@ -13,7 +13,7 @@
     @endif
     @if(session('error'))
     <div class="toastr-notification fixed top-5 right-5 z-50">
-        <div class="bg-rose-500 text-white px-6 py-3 rounded-lg shadow-xl flex items-center animate-fade-in-up">
+        <div class="bg-rose-500 text-white px-6 py-3 rounded-xl shadow-xl flex items-center animate-fade-in-up">
             <i class="fas fa-exclamation-circle mr-3 text-lg"></i>
             <span class="font-medium">{{ session('error') }}</span>
         </div>
@@ -21,8 +21,8 @@
     @endif
 
     <!-- Header Section -->
-    <div class="bg-gradient-to-r from-indigo-600 to-purple-700 p-6 mb-6 shadow-lg">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div class="bg-gradient-to-r from-indigo-600 to-purple-700 p-6 mb-6 shadow-lg w-full">
+        <div class="w-full mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div class="transform transition-all duration-300 hover:scale-[1.01]">
                 <h1 class="text-3xl sm:text-4xl font-bold text-white drop-shadow-md">Paguyuban Management</h1>
                 <p class="text-indigo-100 mt-2 text-base sm:text-lg opacity-90">Manage community groups and their special pricing</p>
@@ -37,26 +37,26 @@
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Main Content - Full Width -->
+    <div class="w-full px-4 sm:px-6 lg:px-8">
         <!-- Filters Card -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md mb-6 overflow-hidden border border-gray-200/50 dark:border-gray-700/50">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md mb-6 overflow-hidden border border-gray-200/50 dark:border-gray-700/50 w-full">
             <div class="p-5">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div class="relative w-full max-w-lg group">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
+                    <div class="relative w-full max-w-xl group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
                             <i class="fas fa-search text-lg"></i>
                         </div>
                         <input type="text" id="searchInput" placeholder="Search paguyubans by name..."
                             class="block w-full pl-12 pr-5 py-3 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/70 dark:bg-gray-700/50 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition-all duration-200 group-hover:shadow-md focus:shadow-lg">
                     </div>
-                    <div class="flex items-center space-x-3">
-                        <select id="statusFilter" class="appearance-none bg-white/70 dark:bg-gray-700/50 border border-gray-300/50 dark:border-gray-600/50 rounded-xl px-4 py-3 pr-10 text-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition-all duration-200 hover:shadow-md">
+                    <div class="flex items-center space-x-3 w-full md:w-auto">
+                        <select id="statusFilter" class="w-full md:w-auto appearance-none bg-white/70 dark:bg-gray-700/50 border border-gray-300/50 dark:border-gray-600/50 rounded-xl px-4 py-3 pr-10 text-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition-all duration-200 hover:shadow-md">
                             <option value="">All Status</option>
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
                         </select>
-                        <button id="resetFilters" class="px-4 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl shadow-sm transition-all duration-200 hover:shadow-md">
+                        <button id="resetFilters" class="w-full md:w-auto px-4 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl shadow-sm transition-all duration-200 hover:shadow-md">
                             <i class="fas fa-sync-alt mr-2"></i> Reset
                         </button>
                     </div>
@@ -65,10 +65,10 @@
         </div>
 
         <!-- Main Table Card -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200/50 dark:border-gray-700/50">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200/50 dark:border-gray-700/50 w-full">
             <!-- Table Header -->
-            <div class="px-6 py-4 border-b border-gray-200/50 dark:border-gray-700/50 bg-gray-50/70 dark:bg-gray-700/30">
-                <div class="flex items-center justify-between">
+            <div class="px-6 py-4 border-b border-gray-200/50 dark:border-gray-700/50 bg-gray-50/70 dark:bg-gray-700/30 w-full">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-4">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Paguyuban List</h3>
                     <div class="text-sm text-gray-500 dark:text-gray-400">
                         Showing {{ $paguyubans->firstItem() }} to {{ $paguyubans->lastItem() }} of {{ $paguyubans->total() }} entries
@@ -76,21 +76,21 @@
                 </div>
             </div>
 
-            <!-- Table Content -->
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200/50 dark:divide-gray-700/50">
+            <!-- Table Content - Full Width -->
+            <div class="w-full overflow-x-auto">
+                <table class="w-full divide-y divide-gray-200/50 dark:divide-gray-700/50">
                     <thead class="bg-gray-50/70 dark:bg-gray-700/50">
                         <tr>
-                            <th scope="col" class="px-8 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                            <th scope="col" class="px-8 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider min-w-[250px]">
                                 Community
                             </th>
-                            <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider min-w-[120px]">
                                 Status
                             </th>
-                            <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider min-w-[200px]">
                                 Products & Discount
                             </th>
-                            <th scope="col" class="px-6 py-4 text-right text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-4 text-right text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider min-w-[150px]">
                                 Actions
                             </th>
                         </tr>
@@ -98,7 +98,7 @@
                     <tbody class="bg-white/50 dark:bg-gray-800/30 divide-y divide-gray-200/50 dark:divide-gray-700/50">
                         @forelse ($paguyubans as $paguyuban)
                         <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-700/20 transition-colors duration-150 group">
-                            <td class="px-8 py-5 whitespace-nowrap">
+                            <td class="px-8 py-5">
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0 h-12 w-12 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center overflow-hidden border-2 border-gray-200 dark:border-gray-600 mr-4 group-hover:border-indigo-300 transition-colors duration-200">
                                         @if($paguyuban->logo)
@@ -107,9 +107,9 @@
                                         <i class="fas fa-users text-indigo-500 dark:text-indigo-300 text-xl"></i>
                                         @endif
                                     </div>
-                                    <div>
-                                        <div class="font-semibold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200 text-lg">{{ $paguyuban->name }}</div>
-                                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-md">{{ $paguyuban->description }}</div>
+                                    <div class="min-w-0">
+                                        <div class="font-semibold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-200 text-lg truncate">{{ $paguyuban->name }}</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1 truncate">{{ $paguyuban->description }}</div>
                                     </div>
                                 </div>
                             </td>
@@ -122,7 +122,7 @@
                                     <span class="text-xs text-gray-500 dark:text-gray-400 mt-1">Created: {{ $paguyuban->created_at->format('M d, Y') }}</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-5 whitespace-nowrap">
+                            <td class="px-6 py-5">
                                 <div class="flex flex-col">
                                     <div class="flex items-center">
                                         <span class="text-base text-gray-700 dark:text-gray-300 mr-3 font-medium">{{ $paguyuban->products_count ?? 0 }} products</span>
@@ -169,13 +169,13 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-12 text-center">
-                                <div class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
+                            <td colspan="4" class="px-6 py-12 text-center w-full">
+                                <div class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 w-full">
                                     <div class="bg-indigo-100 dark:bg-indigo-900/50 p-6 rounded-full mb-4">
                                         <i class="fas fa-users-slash text-4xl text-indigo-500 dark:text-indigo-400"></i>
                                     </div>
                                     <p class="text-xl font-semibold mb-1">No paguyubans found</p>
-                                    <p class="text-sm mb-4 max-w-md">You haven't created any paguyuban groups yet. Start by adding your first community group to manage special pricing.</p>
+                                    <p class="text-sm mb-4 max-w-md text-center">You haven't created any paguyuban groups yet. Start by adding your first community group to manage special pricing.</p>
                                     <a href="{{ route('pos.community.create') }}" class="px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition-colors duration-200 inline-flex items-center">
                                         <i class="fas fa-plus mr-2"></i> Create New Paguyuban
                                     </a>
@@ -189,8 +189,8 @@
 
             <!-- Pagination -->
             @if($paguyubans->hasPages())
-            <div class="px-6 py-4 border-t border-gray-200/50 dark:border-gray-700/50 bg-gray-50/70 dark:bg-gray-700/30">
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="px-6 py-4 border-t border-gray-200/50 dark:border-gray-700/50 bg-gray-50/70 dark:bg-gray-700/30 w-full">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
                     <div class="text-sm text-gray-500 dark:text-gray-400">
                         Showing {{ $paguyubans->firstItem() }} to {{ $paguyubans->lastItem() }} of {{ $paguyubans->total() }} entries
                     </div>
@@ -390,6 +390,7 @@
         list-style: none;
         padding: 0;
         margin: 0;
+        width: 100%;
     }
 
     .pagination li {
@@ -439,6 +440,54 @@
     .dark .pagination .active .page-link {
         background-color: #6366f1;
         border-color: #6366f1;
+    }
+
+    /* Responsive table adjustments */
+    @media (max-width: 768px) {
+        table {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        thead {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        
+        tr {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 0;
+        }
+        
+        td {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 1rem;
+            border: none;
+        }
+        
+        td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            margin-right: 1rem;
+            color: #6b7280;
+        }
+        
+        .px-8 {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
     }
 </style>
 @endsection
