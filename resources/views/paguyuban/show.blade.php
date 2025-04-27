@@ -2,12 +2,15 @@
 
 @section('content')
 <div class="w-full px-4 py-6 max-w-7xl mx-auto">
-    <!-- Enhanced Header Section with 3D Effect -->
-    <div class="relative bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-6 mb-8 shadow-2xl transform transition-all duration-500 hover:shadow-3xl hover:-translate-y-1 overflow-hidden">
-        <!-- Floating circles decoration -->
-        <div class="absolute -top-10 -left-10 w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm animate-float-slow"></div>
-        <div class="absolute -bottom-5 -right-5 w-16 h-16 rounded-full bg-white/15 backdrop-blur-sm animate-float-medium"></div>
-        <div class="absolute top-1/4 right-1/4 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm animate-float-fast"></div>
+    <!-- Enhanced Header Section with Glass Morphism Effect -->
+    <div class="relative bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-6 mb-8 shadow-2xl backdrop-blur-md bg-opacity-90 border border-white/20 transform transition-all duration-500 hover:shadow-3xl hover:-translate-y-1 overflow-hidden">
+        <!-- Floating particles decoration -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute -top-10 -left-10 w-24 h-24 rounded-full bg-white/10 backdrop-blur-sm animate-float-slow"></div>
+            <div class="absolute -bottom-5 -right-5 w-20 h-20 rounded-full bg-white/15 backdrop-blur-sm animate-float-medium"></div>
+            <div class="absolute top-1/4 right-1/4 w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm animate-float-fast"></div>
+            <div class="absolute bottom-1/3 left-1/4 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm animate-float"></div>
+        </div>
 
         <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div class="flex items-center space-x-4">
@@ -50,31 +53,54 @@
                 <button onclick="showQuickActionsMenu()" class="flex items-center justify-center px-4 py-2.5 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white shadow-md transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105 group">
                     <i class="fas fa-bolt mr-2 group-hover:animate-bounce"></i>
                     <span class="whitespace-nowrap text-sm font-medium">Quick Actions</span>
-                    <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                    <i class="fas fa-chevron-down ml-2 text-xs transition-transform group-hover:rotate-180"></i>
                 </button>
             </div>
         </div>
     </div>
 
     <!-- Quick Actions Dropdown (Hidden by default) -->
-    <div id="quickActionsMenu" class="hidden absolute right-4 mt-2 w-56 rounded-xl shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 z-50 transform transition-all duration-300 origin-top-right scale-95 opacity-0">
-        <div class="p-2 space-y-1">
-            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200">
-                <i class="fas fa-user-plus mr-3 text-indigo-500"></i>
-                Add Members
+    <div id="quickActionsMenu" class="hidden absolute right-4 mt-2 w-56 rounded-xl shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 z-50 transform transition-all duration-300 origin-top-right scale-95 opacity-0 divide-y divide-gray-100 dark:divide-gray-700">
+        <div class="py-1">
+            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200 group">
+                <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center mr-3 group-hover:bg-blue-200 dark:group-hover:bg-blue-800/30 transition-colors">
+                    <i class="fas fa-user-plus text-blue-500 dark:text-blue-300 text-sm"></i>
+                </div>
+                <div>
+                    <p class="font-medium">Add Members</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Bulk import members</p>
+                </div>
             </a>
-            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200">
-                <i class="fas fa-envelope mr-3 text-blue-500"></i>
-                Send Notification
+            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200 group">
+                <div class="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center mr-3 group-hover:bg-purple-200 dark:group-hover:bg-purple-800/30 transition-colors">
+                    <i class="fas fa-envelope text-purple-500 dark:text-purple-300 text-sm"></i>
+                </div>
+                <div>
+                    <p class="font-medium">Send Notification</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Email/SMS members</p>
+                </div>
             </a>
-            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200">
-                <i class="fas fa-chart-pie mr-3 text-green-500"></i>
-                Generate Report
+        </div>
+        <div class="py-1">
+            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200 group">
+                <div class="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center mr-3 group-hover:bg-green-200 dark:group-hover:bg-green-800/30 transition-colors">
+                    <i class="fas fa-chart-pie text-green-500 dark:text-green-300 text-sm"></i>
+                </div>
+                <div>
+                    <p class="font-medium">Generate Report</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Export community data</p>
+                </div>
             </a>
-            <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
-            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200">
-                <i class="fas fa-cog mr-3 text-purple-500"></i>
-                Community Settings
+        </div>
+        <div class="py-1">
+            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200 group">
+                <div class="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center mr-3 group-hover:bg-orange-200 dark:group-hover:bg-orange-800/30 transition-colors">
+                    <i class="fas fa-cog text-orange-500 dark:text-orange-300 text-sm"></i>
+                </div>
+                <div>
+                    <p class="font-medium">Community Settings</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Configure preferences</p>
+                </div>
             </a>
         </div>
     </div>
@@ -89,7 +115,7 @@
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                         <i class="fas fa-info-circle text-indigo-500 mr-2 animate-bounce" style="animation-duration: 2s"></i>
                         Community Details
-                        <button onclick="toggleDetailsEdit()" class="ml-auto text-xs bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 px-2 py-1 rounded-lg hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors">
+                        <button onclick="toggleDetailsEdit()" class="ml-auto text-xs bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 px-2 py-1 rounded-lg hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors flex items-center">
                             <i class="fas fa-pencil-alt mr-1"></i> Edit
                         </button>
                     </h3>
@@ -141,7 +167,7 @@
 
                     <!-- Edit Mode (Hidden by default) -->
                     <div id="detailsEdit" class="hidden space-y-4">
-                        <form action="{{ route('pos.community.update', $paguyuban) }}" method="POST">
+                        <form action="{{ route('pos.community.update', $paguyuban) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="mb-4">
@@ -170,8 +196,8 @@
                                 <button type="button" onclick="toggleDetailsEdit()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
                                     Cancel
                                 </button>
-                                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                    Save Changes
+                                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 flex items-center">
+                                    <i class="fas fa-save mr-2"></i> Save Changes
                                 </button>
                             </div>
                         </form>
@@ -304,8 +330,8 @@
                         </div>
                     </div>
                     <div class="mt-4">
-                        <button onclick="showMemberEngagementModal()" class="w-full py-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-800/30 transition-colors flex items-center justify-center">
-                            <i class="fas fa-chart-bar mr-2"></i> View Detailed Analytics
+                        <button onclick="showMemberEngagementModal()" class="w-full py-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-800/30 transition-colors flex items-center justify-center group">
+                            <i class="fas fa-chart-bar mr-2 group-hover:animate-bounce"></i> View Detailed Analytics
                         </button>
                     </div>
                 </div>
@@ -326,15 +352,15 @@
                             </span>
                         </h3>
                         <div class="flex space-x-3">
-                            <button onclick="openModal()" class="inline-flex items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all hover:shadow-md transform hover:-translate-y-0.5 animate-pulse-slow">
-                                <i class="fas fa-plus mr-2"></i> Add Product
+                            <button onclick="openModal()" class="inline-flex items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all hover:shadow-md transform hover:-translate-y-0.5 animate-pulse-slow group">
+                                <i class="fas fa-plus mr-2 group-hover:rotate-90 transition-transform"></i> Add Product
                             </button>
                             <div class="relative">
-                                <button onclick="toggleFilterDropdown()" class="inline-flex items-center px-4 py-2.5 border border-gray-300 text-sm font-medium rounded-xl shadow-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all hover:shadow-md transform hover:-translate-y-0.5">
+                                <button onclick="toggleFilterDropdown()" class="inline-flex items-center px-4 py-2.5 border border-gray-300 text-sm font-medium rounded-xl shadow-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all hover:shadow-md transform hover:-translate-y-0.5 group">
                                     <i class="fas fa-filter mr-2"></i> Filter
-                                    <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                                    <i class="fas fa-chevron-down ml-2 text-xs transition-transform group-hover:rotate-180"></i>
                                 </button>
-                                <div id="filterDropdown" class="hidden absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 z-10">
+                                <div id="filterDropdown" class="hidden absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 z-10 divide-y divide-gray-100 dark:divide-gray-700">
                                     <div class="p-2">
                                         <div class="mb-2">
                                             <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Category</label>
@@ -354,14 +380,16 @@
                                                 <option>20%+</option>
                                             </select>
                                         </div>
-                                        <button class="w-full mt-2 px-3 py-1 bg-indigo-600 text-white text-xs rounded-lg hover:bg-indigo-700">
-                                            Apply Filters
+                                    </div>
+                                    <div class="p-2">
+                                        <button class="w-full px-3 py-1.5 bg-indigo-600 text-white text-xs rounded-lg hover:bg-indigo-700 flex items-center justify-center">
+                                            <i class="fas fa-check-circle mr-2"></i> Apply Filters
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                            <button onclick="openProductManagement()" class="inline-flex items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all hover:shadow-md transform hover:-translate-y-0.5 animate-pulse-slow">
-                                <i class="fas fa-table mr-2"></i> Manage Pricing
+                            <button onclick="openProductManagement()" class="inline-flex items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all hover:shadow-md transform hover:-translate-y-0.5 animate-pulse-slow group">
+                                <i class="fas fa-table mr-2 group-hover:scale-110 transition-transform"></i> Manage Pricing
                             </button>
                         </div>
                     </div>
@@ -394,7 +422,7 @@
                             <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors duration-150 transform hover:scale-[1.005]">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-10 w-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden border border-gray-200 dark:border-gray-600 mr-3 transition-transform duration-300 hover:scale-110">
+                                        <div class="flex-shrink-0 h-10 w-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden border-2 border-gray-200 dark:border-gray-600 mr-3 transition-transform duration-300 hover:scale-110">
                                             @if($product->image)
                                             <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="h-full w-full object-cover transform transition-transform duration-500 hover:scale-125">
                                             @else
@@ -416,7 +444,7 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $product->pivot->price < $product->price ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200' : ($product->pivot->price > $product->price ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200') }} transition-all duration-300 hover:scale-105">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $product->pivot->price < $product->price ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200' : ($product->pivot->price > $product->price ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200') }} transition-all duration-300 hover:scale-105">
                                         @if($product->pivot->price < $product->price)
                                             <i class="fas fa-arrow-down mr-1 text-xs"></i>
                                             {{ number_format(100 - ($product->pivot->price / $product->price * 100), 0 )}}%
@@ -466,8 +494,8 @@
                     </div>
                     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No special pricing</h3>
                     <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">This community doesn't have any special pricing for products yet. Add products to provide exclusive pricing.</p>
-                    <button onclick="openModal()" class="inline-flex items-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all hover:shadow-md transform hover:-translate-y-0.5 animate-pulse-slow">
-                        <i class="fas fa-plus mr-2"></i> Add Product Pricing
+                    <button onclick="openModal()" class="inline-flex items-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all hover:shadow-md transform hover:-translate-y-0.5 animate-pulse-slow group">
+                        <i class="fas fa-plus mr-2 group-hover:rotate-90 transition-transform"></i> Add Product Pricing
                     </button>
                 </div>
                 @endif
@@ -516,14 +544,14 @@
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <!-- Top Performing Product -->
-                        <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl border border-green-100 dark:border-green-800 transform transition-all duration-300 hover:scale-[1.02]">
+                        <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl border border-green-100 dark:border-green-800 transform transition-all duration-300 hover:scale-[1.02] group">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-xs font-medium text-green-600 dark:text-green-300 mb-1">Top Performer</p>
                                     <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">Organic Rice 5kg</h4>
                                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Highest sales volume</p>
                                 </div>
-                                <div class="bg-green-100 dark:bg-green-800/50 text-green-600 dark:text-green-300 p-3 rounded-lg">
+                                <div class="bg-green-100 dark:bg-green-800/50 text-green-600 dark:text-green-300 p-3 rounded-lg group-hover:animate-bounce">
                                     <i class="fas fa-trophy text-lg"></i>
                                 </div>
                             </div>
@@ -534,14 +562,14 @@
                         </div>
 
                         <!-- Most Discounted Product -->
-                        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-800 transform transition-all duration-300 hover:scale-[1.02]">
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-800 transform transition-all duration-300 hover:scale-[1.02] group">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-xs font-medium text-blue-600 dark:text-blue-300 mb-1">Best Discount</p>
                                     <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">Premium Coffee 250g</h4>
                                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">25% off regular price</p>
                                 </div>
-                                <div class="bg-blue-100 dark:bg-blue-800/50 text-blue-600 dark:text-blue-300 p-3 rounded-lg">
+                                <div class="bg-blue-100 dark:bg-blue-800/50 text-blue-600 dark:text-blue-300 p-3 rounded-lg group-hover:animate-bounce">
                                     <i class="fas fa-percentage text-lg"></i>
                                 </div>
                             </div>
@@ -552,14 +580,14 @@
                         </div>
 
                         <!-- Newest Addition -->
-                        <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-xl border border-purple-100 dark:border-purple-800 transform transition-all duration-300 hover:scale-[1.02]">
+                        <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-xl border border-purple-100 dark:border-purple-800 transform transition-all duration-300 hover:scale-[1.02] group">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-xs font-medium text-purple-600 dark:text-purple-300 mb-1">Newest Addition</p>
                                     <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200">Honey 500ml</h4>
                                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Added 2 days ago</p>
                                 </div>
-                                <div class="bg-purple-100 dark:bg-purple-800/50 text-purple-600 dark:text-purple-300 p-3 rounded-lg">
+                                <div class="bg-purple-100 dark:bg-purple-800/50 text-purple-600 dark:text-purple-300 p-3 rounded-lg group-hover:animate-bounce">
                                     <i class="fas fa-bolt text-lg"></i>
                                 </div>
                             </div>
@@ -641,7 +669,7 @@
                                 <p id="price_difference" class="text-sm font-medium animate-pulse" style="animation-duration: 1.5s">Select a product to see savings</p>
                             </div>
                             <div class="bg-blue-100 dark:bg-blue-800/50 text-blue-600 dark:text-blue-300 p-2 rounded-lg">
-                                <i class="fas fa-percentage"></i>
+                                <i class="fas fa-chart-line"></i>
                             </div>
                         </div>
                     </div>
@@ -769,7 +797,7 @@
             <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Confirm Removal</h3>
             <p class="text-gray-500 dark:text-gray-400 mb-6">Are you sure you want to remove this special pricing? This action cannot be undone and will affect all community members.</p>
             <div class="flex justify-center space-x-4">
-                <button onclick="closeDeleteModal()" class="px-5 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600 transition-all duration-300 hover:-translate-x-1">
+                <button onclick="closeDeleteModal()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600 transition-all duration-300 hover:-translate-x-1">
                     <i class="fas fa-times mr-2"></i> Cancel
                 </button>
                 <form id="deleteForm" method="POST" class="inline">
@@ -984,11 +1012,11 @@
                 </span>
             </h3>
             <div class="flex space-x-2">
-                <button onclick="saveSpreadsheet()" class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md">
-                    <i class="fas fa-save mr-2"></i> Save Changes
+                <button onclick="saveSpreadsheet()" class="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md group">
+                    <i class="fas fa-save mr-2 group-hover:animate-bounce"></i> Save Changes
                 </button>
-                <button onclick="closeSpreadsheetModal()" class="flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 transform hover:scale-105">
-                    <i class="fas fa-times mr-2"></i> Close
+                <button onclick="closeSpreadsheetModal()" class="flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-300 transform hover:scale-105 group">
+                    <i class="fas fa-times mr-2 group-hover:rotate-90 transition-transform"></i> Close
                 </button>
             </div>
         </div>
@@ -1056,14 +1084,14 @@
                     <span id="modifiedCount">0</span> modifications
                 </div>
                 <div class="flex space-x-2">
-                    <button onclick="addNewRow()" class="flex items-center px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-sm rounded-lg transition-all transform hover:scale-105 shadow-sm">
-                        <i class="fas fa-plus mr-1"></i> Add Row
+                    <button onclick="addNewRow()" class="flex items-center px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-sm rounded-lg transition-all transform hover:scale-105 shadow-sm group">
+                        <i class="fas fa-plus mr-1 group-hover:rotate-90 transition-transform"></i> Add Row
                     </button>
-                    <button onclick="showImportModal()" class="flex items-center px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-all transform hover:scale-105 shadow-sm">
-                        <i class="fas fa-file-import mr-1"></i> Import
+                    <button onclick="showImportModal()" class="flex items-center px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-all transform hover:scale-105 shadow-sm group">
+                        <i class="fas fa-file-import mr-1 group-hover:animate-bounce"></i> Import
                     </button>
-                    <button onclick="exportToExcel()" class="flex items-center px-3 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm rounded-lg transition-all transform hover:scale-105 shadow-sm">
-                        <i class="fas fa-file-export mr-1"></i> Export
+                    <button onclick="exportToExcel()" class="flex items-center px-3 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-white text-sm rounded-lg transition-all transform hover:scale-105 shadow-sm group">
+                        <i class="fas fa-file-export mr-1 group-hover:animate-pulse"></i> Export
                     </button>
                 </div>
             </div>
@@ -1130,8 +1158,8 @@
             <button onclick="closeImportModal()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 mr-2">
                 Cancel
             </button>
-            <button onclick="processImport()" class="px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 flex items-center">
-                <i class="fas fa-upload mr-2"></i> Import Data
+            <button onclick="processImport()" class="px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 flex items-center group">
+                <i class="fas fa-upload mr-2 group-hover:animate-bounce"></i> Import Data
             </button>
         </div>
     </div>
@@ -1146,7 +1174,6 @@
             opacity: 0;
             transform: translateY(20px);
         }
-
         to {
             opacity: 1;
             transform: translateY(0);
@@ -1154,48 +1181,36 @@
     }
 
     @keyframes pulseSlow {
-
-        0%,
-        100% {
+        0%, 100% {
             opacity: 1;
         }
-
         50% {
             opacity: 0.8;
         }
     }
 
     @keyframes float {
-
-        0%,
-        100% {
+        0%, 100% {
             transform: translateY(0);
         }
-
         50% {
             transform: translateY(-10px);
         }
     }
 
     @keyframes floatFast {
-
-        0%,
-        100% {
+        0%, 100% {
             transform: translateY(0);
         }
-
         50% {
             transform: translateY(-15px);
         }
     }
 
     @keyframes floatMedium {
-
-        0%,
-        100% {
+        0%, 100% {
             transform: translateY(0);
         }
-
         50% {
             transform: translateY(-8px);
         }
@@ -1206,7 +1221,6 @@
             transform: translateX(100%);
             opacity: 0;
         }
-
         to {
             transform: translateX(0);
             opacity: 1;
@@ -1218,7 +1232,6 @@
             transform: translateX(0);
             opacity: 1;
         }
-
         to {
             transform: translateX(100%);
             opacity: 0;
@@ -1326,6 +1339,19 @@
 
     .hover\:shadow-3xl:hover {
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Enhanced glass morphism effect */
+    .backdrop-blur-md {
+        backdrop-filter: blur(12px);
+    }
+    
+    .bg-opacity-90 {
+        background-opacity: 0.9;
+    }
+    
+    .border-white\/20 {
+        border-color: rgba(255, 255, 255, 0.2);
     }
 </style>
 
@@ -1553,11 +1579,7 @@
         });
 
         // Fetch initial activity logs
-        const paguyubanId = {
-            {
-                $paguyuban - > id
-            }
-        };
+        const paguyubanId = {{ $paguyuban->id }};
         fetchActivityLogs(paguyubanId);
     });
 
@@ -1666,12 +1688,13 @@
 
         // If no data, create empty row
         if (spreadsheetData.length === 0) {
-            spreadsheetData.push(['', '', '', '', '', '', '', '', '']);
+            spreadsheetData.push(['', '', '', '', '', '', '', '', 'Active']);
         }
 
         spreadsheet = jexcel(container, {
             data: spreadsheetData,
-            columns: [{
+            columns: [
+                {
                     type: 'hidden',
                     title: 'ID',
                     width: 50
@@ -1851,71 +1874,74 @@
             return;
         }
 
-        const regularPrices = productsData.map(p => parseFloat(p.regular_price) || 0;
-            const specialPrices = productsData.map(p => parseFloat(p.special_price) || parseFloat(p.regular_price) || 0;
+        const regularPrices = productsData.map(p => parseFloat(p.regular_price) || 0);
+        const specialPrices = productsData.map(p => parseFloat(p.special_price) || parseFloat(p.regular_price) || 0);
 
-                const totalRegular = regularPrices.reduce((a, b) => a + b, 0);
-                const totalSpecial = specialPrices.reduce((a, b) => a + b, 0);
-                const totalDiscount = totalRegular - totalSpecial;
-                const avgDiscount = (totalDiscount / totalRegular * 100) || 0;
+        const totalRegular = regularPrices.reduce((a, b) => a + b, 0);
+        const totalSpecial = specialPrices.reduce((a, b) => a + b, 0);
+        const totalDiscount = totalRegular - totalSpecial;
+        const avgDiscount = (totalDiscount / totalRegular * 100) || 0;
 
-                const activeProducts = productsData.filter(p => p.status === 'Active').length;
+        const activeProducts = productsData.filter(p => p.status === 'Active').length;
 
-                document.getElementById('statsInfo').innerHTML = `
+        document.getElementById('statsInfo').innerHTML = `
             <span class="font-medium">${activeProducts}/${productsData.length}</span> active | 
             <span class="text-green-600 dark:text-green-400">${avgDiscount.toFixed(1)}%</span> avg discount
         `;
-            }
+    }
 
-            function saveSpreadsheet() {
-                if (!spreadsheet) return;
+    function saveSpreadsheet() {
+    if (!spreadsheet) return;
 
-                const data = spreadsheet.getData();
-                const productsToSave = data.map(row => ({
-                    id: row[0],
-                    name: row[1],
-                    sku: row[2],
-                    category: row[3],
-                    regular_price: parseFloat(row[4]) || 0
-                }))
-            }
-            special_price: parseFloat(row[5]) || 0,
-            stock: parseInt(row[7]) || 0,
-            status: row[8]
-        }));
-
-    // Filter only modified rows if needed
-    const modifiedProducts = Array.from(modifiedRows).map(index => productsToSave[index]);
+    const data = spreadsheet.getData();
+    const paguyubanId = {{ $paguyuban->id }};
+    
+    // Prepare batch update data
+    const updates = data.map(row => ({
+        product_id: row[0],
+        price: parseFloat(row[5]) || 0,
+        effective_date: row[9] || null, // Assuming column 9 is effective_date
+        expiry_date: row[10] || null    // Assuming column 10 is expiry_date
+    })).filter(item => item.product_id); // Filter out empty rows
 
     // Show loading state
     showToast('Saving changes...', 'info');
 
-    // In a real app, you would send this to your API
-    fetch(`/api/paguyuban/{{ $paguyuban->id }}/products/update`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({
-                products: modifiedProducts.length > 0 ? modifiedProducts : productsToSave
-            })
+    // Send updates to the server
+    fetch(`/paguyuban/${paguyubanId}/pricing/batch-update`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            updates: updates
         })
-        .then(response => response.json())
-        .then(data => {
-            showToast('Changes saved successfully!', 'success');
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            showToast(`Successfully updated ${data.updated_count} products`, 'success');
+            // Reset modified rows tracking
             modifiedRows = new Set();
             document.getElementById('modifiedCount').textContent = '0';
-            // Refresh the product list if needed
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        })
-        .catch(error => {
-            console.error('Error saving data:', error);
-            showToast('Failed to save changes', 'error');
-        });
-    }
+            // Reload data to reflect changes
+            loadProductData();
+        } else {
+            throw new Error(data.message || 'Update failed');
+        }
+    })
+    .catch(error => {
+        console.error('Update error:', error);
+        showToast(error.message || 'Failed to save changes', 'error');
+    });
+}
 
     function addNewRow() {
         if (!spreadsheet) return;
@@ -1956,11 +1982,7 @@
         const formData = new FormData();
         formData.append('file', file);
         formData.append('replace', replaceData);
-        formData.append('paguyuban_id', {
-            {
-                $paguyuban - > id
-            }
-        });
+        formData.append('paguyuban_id', {{ $paguyuban->id }});
 
         showToast('Importing data...', 'info');
 
@@ -2346,42 +2368,49 @@
         updatePriceDifference();
     });
 
-    // Special price input handler
-    document.getElementById('special_price').addEventListener('input', function() {
+    document.getElementById('special_price')?.addEventListener('input', function() {
         updatePriceDifference();
     });
 
-    // Edit special price input handler
-    document.getElementById('editSpecialPrice').addEventListener('input', function() {
+    document.getElementById('editSpecialPrice')?.addEventListener('input', function() {
         updatePriceDifference('edit');
     });
 
     function updatePriceDifference(mode = 'add') {
-        const prefix = mode === 'edit' ? 'edit' : '';
-        const regularPrice = parseFloat(document.getElementById(`${prefix}RegularPrice`).value) || 0;
-        const specialPrice = parseFloat(document.getElementById(`${prefix}SpecialPrice`).value) || 0;
+    const prefix = mode === 'edit' ? 'edit' : '';
+    const regularPriceElement = document.getElementById(`regular_price`);
+    const specialPriceElement = document.getElementById(`special_price`);
+    const differenceElement = document.getElementById(`price_difference`);
 
-        const difference = regularPrice - specialPrice;
-        const percentage = regularPrice > 0 ? (difference / regularPrice * 100) : 0;
-
-        let message = '';
-        let colorClass = '';
-
-        if (difference > 0) {
-            message = `Members save Rp ${difference.toLocaleString('id-ID')} (${percentage.toFixed(2)}%)`;
-            colorClass = 'text-green-600 dark:text-green-400';
-        } else if (difference < 0) {
-            message = `Members pay Rp ${Math.abs(difference).toLocaleString('id-ID')} more (${Math.abs(percentage).toFixed(2)}%)`;
-            colorClass = 'text-red-600 dark:text-red-400';
-        } else {
-            message = 'No price difference';
-            colorClass = 'text-gray-600 dark:text-gray-400';
-        }
-
-        const element = document.getElementById(`${prefix}PriceDifference`);
-        element.innerHTML = message;
-        element.className = `text-sm font-medium animate-pulse ${colorClass}`;
+    // Check if all required elements exist
+    if (!regularPriceElement || !specialPriceElement || !differenceElement) {
+        console.error('Required elements not found for price difference calculation');
+        return;
     }
+
+    const regularPrice = parseFloat(regularPriceElement.value) || 0;
+    const specialPrice = parseFloat(specialPriceElement.value) || 0;
+
+    const difference = regularPrice - specialPrice;
+    const percentage = regularPrice > 0 ? (difference / regularPrice * 100) : 0;
+
+    let message = '';
+    let colorClass = '';
+
+    if (difference > 0) {
+        message = `Members save Rp ${difference.toLocaleString('id-ID')} (${percentage.toFixed(2)}%)`;
+        colorClass = 'text-green-600 dark:text-green-400';
+    } else if (difference < 0) {
+        message = `Members pay Rp ${Math.abs(difference).toLocaleString('id-ID')} more (${Math.abs(percentage).toFixed(2)}%)`;
+        colorClass = 'text-red-600 dark:text-red-400';
+    } else {
+        message = 'No price difference';
+        colorClass = 'text-gray-600 dark:text-gray-400';
+    }
+
+    differenceElement.innerHTML = message;
+    differenceElement.className = `text-sm font-medium animate-pulse ${colorClass}`;
+}
 
     function fetchActivityLogs(paguyubanId, page = 1) {
         const container = document.getElementById('activityLogsContainer');
@@ -2395,12 +2424,12 @@
         `;
 
         // In a real app, you would fetch this from your API
-        fetch(`/api/paguyuban/${paguyubanId}/activity?page=${page}`)
+        fetch(`/paguyuban/${paguyubanId}/activity-log?page=${page}`)
             .then(response => response.json())
             .then(data => {
-                if (data.data && data.data.length > 0) {
-                    renderActivityLogs(data.data);
-                    renderActivityPagination(data);
+                if (data.activities.data && data.activities.data.length > 0) {
+                    renderActivityLogs(data.activities.data);
+                    renderActivityPagination(data.activities);
                 } else {
                     container.innerHTML = `
                         <div class="text-center py-8">
@@ -2434,7 +2463,7 @@
                 'member_removed': 'fas fa-user-minus text-red-500',
                 'community_updated': 'fas fa-edit text-indigo-500',
                 'product_added': 'fas fa-box-open text-green-500'
-            } [log.type] || 'fas fa-info-circle text-gray-500';
+            }[log.type] || 'fas fa-info-circle text-gray-500';
 
             const bgColor = {
                 'price_update': 'bg-purple-100 dark:bg-purple-900/50',
@@ -2442,7 +2471,7 @@
                 'member_removed': 'bg-red-100 dark:bg-red-900/50',
                 'community_updated': 'bg-indigo-100 dark:bg-indigo-900/50',
                 'product_added': 'bg-green-100 dark:bg-green-900/50'
-            } [log.type] || 'bg-gray-100 dark:bg-gray-700';
+            }[log.type] || 'bg-gray-100 dark:bg-gray-700';
 
             const logElement = document.createElement('div');
             logElement.className = `relative pl-8 pb-6 ${index === logs.length - 1 ? '' : 'border-l-2 border-indigo-200 dark:border-indigo-800'}`;

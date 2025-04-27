@@ -384,6 +384,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/', [PaguyubanPricingController::class, 'store'])->name('pos.community.pricing.store');
         Route::put('/{product}', [PaguyubanPricingController::class, 'update'])->name('pos.community.pricing.update');
         Route::delete('/{product}', [PaguyubanPricingController::class, 'destroy'])->name('pos.community.pricing.destroy');
+        Route::post('/batch-update', [PaguyubanPricingController::class, 'batchUpdate'])->name('pos.community.pricing.batch-update');
     });
     Route::get('/paguyuban/{paguyuban}/activity-log', [PaguyubanPricingController::class, 'activityLog'])
     ->name('pos.community.activity-log');
